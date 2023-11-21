@@ -24,7 +24,7 @@ https://github.com/Eltirosto/Degrees-of-Lewdity-Chinese-Localization
 # 更新日誌
 **1.3.0**  
 1.新增自訂義快速傳送：  
-* (1)暫定可新增3個傳送節點  
+* (1)暫定可新增3個傳送節點，新增超過三個後，最舊的將被移除。    
 * (2)請勿在事件中隨意傳送，可能引發其他BUG，切記！
 
 2.調整部分UI位置
