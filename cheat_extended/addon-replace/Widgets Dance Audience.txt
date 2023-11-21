@@ -1,0 +1,9 @@
+				<<set $dancetip *= 1 + ($mathstrait / 4)>>
+				
+				
+				<<if $dancetip_FIX is undefined>>
+					<<set $dancetip_FIX to 1>>
+				<</if>>
+				
+				<<set $dancetip to $dancetip * $dancetip_FIX>>
+				<br>

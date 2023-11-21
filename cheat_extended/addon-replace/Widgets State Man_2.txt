@@ -1,0 +1,4 @@
+Ap:<<=Math.round($enemyarousal)>>¦<<=Math.round($enemyarousalmax)>>
+			
+			
+			<<if $enemyanger gte $enemyangermax>>

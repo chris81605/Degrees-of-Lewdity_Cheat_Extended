@@ -1,0 +1,20 @@
+	| <<link ">>>">><<npcincr Charlie love 100>><<clamp>><<replace "#statscharlielove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Charlie")].love)>><</replace>><</link>> (满值50)
+	<br><br>
+
+	<br>
+    <<link "<<<">><<npcincr "Bailey" love -100>><<clamp>><<replace "#statsbaileylove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Bailey")].love)>><</replace>><</link>> |
+	<<link "<<">><<npcincr "Bailey" love -10>><<clamp>><<replace "#statsbaileylove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Bailey")].love)>><</replace>><</link>> |
+	<<link "<">><<npcincr "Bailey" love -1>><<clamp>><<replace "#statsbaileylove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Bailey")].love)>><</replace>><</link>> |
+	贝利好感: <span id="statsbaileylove"><<print Math.trunc($NPCName[$NPCNameList.indexOf("Bailey")].love)>></span>
+	| <<link ">">><<npcincr "Bailey" love 1>><<clamp>><<replace "#statsbaileylove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Bailey")].love)>><</replace>><</link>>
+	| <<link ">>">><<npcincr "Bailey" love 10>><<clamp>><<replace "#statsbaileylove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Bailey")].love)>><</replace>><</link>>
+	| <<link ">>>">><<npcincr "Bailey" love 100>><<clamp>><<replace "#statsbaileylove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Bailey")].love)>><</replace>><</link>> (满值100)
+	<br>
+	<<link "<<<">><<npcincr "Leighton" love -100>><<clamp>><<replace "#statsleightonlove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Leighton")].love)>><</replace>><</link>> |
+	<<link "<<">><<npcincr "Leighton" love -10>><<clamp>><<replace "#statsleightonlove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Leighton")].love)>><</replace>><</link>> |
+	<<link "<">><<npcincr "Leighton" love -1>><<clamp>><<replace "#statsleightonlove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Leighton")].love)>><</replace>><</link>> |
+	礼顿好感: <span id="statsleightonlove"><<print Math.trunc($NPCName[$NPCNameList.indexOf("Leighton")].love)>></span>
+	| <<link ">">><<npcincr "Leighton" love 1>><<clamp>><<replace "#statsleightonlove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Leighton")].love)>><</replace>><</link>>
+	| <<link ">>">><<npcincr "Leighton" love 10>><<clamp>><<replace "#statsleightonlove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Leighton")].love)>><</replace>><</link>>
+	| <<link ">>>">><<npcincr "Leighton" love 100>><<clamp>><<replace "#statsleightonlove">><<print Math.trunc($NPCName[$NPCNameList.indexOf("Leighton")].love)>><</replace>><</link>> (满值100)
+	<br><br>
