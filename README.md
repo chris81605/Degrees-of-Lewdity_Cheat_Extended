@@ -43,14 +43,17 @@ https://github.com/Eltirosto/Degrees-of-Lewdity-Chinese-Localization
 **Degrees of Lewdity 漢化組成員**  
 提供中文本地化  
 **QQ群 污度孤儿中国模组交流群 全體成員**  
-* (1)代碼指導  
+* (1)代碼指導
+
 **贴吧 用户_aeVUUeW@貼吧-DOL吧提供以下協助：**    
 * (1)第二代言靈系統(新增於左側狀態，獨立顯示無須回房間)  
-* (2)隨身衣櫃功能  
-原始地址 https://tieba.baidu.com/p/8613337062  
+* (2)隨身衣櫃功能
+原始地址 https://tieba.baidu.com/p/8613337062
+
 **貼吧 Tony70124@貼吧-DOL吧提供以下協助：**  
-* (1)第三代言靈系統(可即時新增複數言靈於左側狀態列表)  
-原始地址 https://tieba.baidu.com/p/8724301141  
+* (1)第三代言靈系統(可即時新增複數言靈於左側狀態列表)
+原始地址 https://tieba.baidu.com/p/8724301141
+
 **QQ群 北极星勾陈一@北极星mod测试群提供以下協助：**  
 * (1)代碼指導  
 * (2)言靈集代碼優化  
