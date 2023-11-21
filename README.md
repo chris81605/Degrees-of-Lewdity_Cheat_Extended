@@ -52,7 +52,12 @@ https://github.com/Eltirosto/Degrees-of-Lewdity-Chinese-Localization
  (2)言靈集代碼優化  
 
 # 代碼授權證明  
-(上傳中)  
+第二代言靈系統&隨身衣櫃By 用户_aeVUUeW@貼吧-DOL吧  
+![image](https://github.com/chris81605/Degrees-of-Lewdity_Cheat_Extended/blob/main/%E6%8E%88%E6%AC%8A/%E6%8E%88%E6%AC%8A-2%E4%BB%A3%E8%A8%80%E9%9D%88%2B%E9%9A%A8%E8%BA%AB%E8%A1%A3%E6%AB%83.jpg
+)  
+
+第三代言靈系統By Tony70124@貼吧-DOL吧  
+![image](https://github.com/chris81605/Degrees-of-Lewdity_Cheat_Extended/blob/main/%E6%8E%88%E6%AC%8A/%E6%8E%88%E6%AC%8A-3%E4%BB%A3%E8%A8%80%E9%9D%88.jpg)  
  
  
 
