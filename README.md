@@ -1,5 +1,5 @@
 # Degrees-of-Lewdity_Cheat_Extended
-簡介：Degrees-of-Lewdity 作弊拓展MOD
+簡介：Degrees-of-Lewdity 作弊拓展MOD  
 需要搭配MODLOADER使用：  
 https://github.com/Lyoko-Jeremie/sugarcube-2-ModLoader  
 需搭配Degrees of Lewdity 中文本地化使用：  
