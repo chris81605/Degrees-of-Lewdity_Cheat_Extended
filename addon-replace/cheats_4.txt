@@ -3,7 +3,7 @@
 	
 	<span class="gold">左側快捷</span>
 	<br><br>
-	在左側顯示快速傳送及言靈
+	在左側顯示：一鍵恢復全狀態及PC立马高潮
 	<br>
 	<<if $swich is undefined>><<set $swich to 0>><</if>>
 	[[左側快捷开关|$passage][$swich = $swich == 0 ? 1: 0]]
@@ -18,6 +18,39 @@
 		<br>
 	<</if>>		
 	<br><br>
+	<span class="gold">空間節點</span>
+	<br><br>
+	在左側顯示：空間節點功能
+	<br>
+	<<if $swich_teleportation is undefined>><<set $swich_teleportation to 0>><</if>>
+	[[瞬間移動開關|$passage][$swich_teleportation = $swich_teleportation == 0 ? 1: 0]]
+	<br>
+	空間節點：
+	<<if $swich_teleportation is 0>>
+		<span class="red">關</span>
+		<br>
+	<</if>>
+	<<if $swich_teleportation is 1>>
+		<span class="green">開</span>
+		<br>
+	<</if>>		
+	<br><br>
+	<span class="gold">言靈集</span>
+	<br><br>
+	在左側顯示：言靈集功能
+	<br>
+	<<if $swich_yanling is undefined>><<set $swich_yanling to 0>><</if>>
+	[[言靈集開關|$passage][$swich_yanling = $swich_yanling == 0 ? 1: 0]]
+	<br>
+	言靈集開關：
+	<<if $swich_yanling is 0>>
+		<span class="red">關</span>
+		<br>
+	<</if>>
+	<<if $swich_yanling is 1>>
+		<span class="green">開</span>
+		<br>
+	<</if>>		
 <!-- 二代言靈
 	<span class="gold">及時言靈</span>
 	<br><br>
@@ -45,7 +78,6 @@
 <!--三代言靈 架構：by tony70124@貼吧dol吧 https://tieba.baidu.com/p/8724301141-->
 <!--架構優化 by 北極星@ QQ 北极星mod测试群521994232-->
 <!--言靈管理功能優化 by隨風飄逸@ QQ 污度孤儿中国模组交流群671114833-->
-	<span class="gold">言靈集</span><br>
 		<<if $cccheat is undefined>>
 			<<set $cccheat to []>>
 			<<set $cccheat_name to []>>

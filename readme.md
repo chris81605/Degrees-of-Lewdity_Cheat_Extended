@@ -22,6 +22,10 @@ https://github.com/Eltirosto/Degrees-of-Lewdity-Chinese-Localization
 13.時間穿越+時間推進  
  
 # 更新日誌
+**1.3.2**  
+1.調整部分UI  
+* (1)將言靈集及空間節點工能獨立(作弊->其他內新增獨立開關)  
+
 **1.3.1**
 1.調整作弊數值輸入框為滑塊  
 * (1)精簡代碼  

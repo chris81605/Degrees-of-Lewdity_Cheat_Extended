@@ -2,16 +2,16 @@
 				<<append #mobileStats>><<mobileStatsTime>><</append>>
 			<</if>>
 		<</if>>
-
-		
-	
-	<<if $swich is 1>>	
+	<<if $swich is 1>>
 		[[状态全恢复|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]] |
 		[[PC立马高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
 		<br>
+	<</if>>
+	<<if $swich_teleportation is 1>>	
+		
 		<span class="gold">瞬間移動</span><br>
 		<<if $teleportation is undefined>>		<!--初始化-->
-			<<set $$teleportation to []>>
+			<<set $teleportation to []>>
 			<<set $teleportation_name to []>>
 		<</if>>
 		可用傳送節點：<br>
@@ -59,6 +59,8 @@
 			<<set $teleportation[$teleportation.length] to _teleportation_target2>>
 	
 		<</button>><br><br>
+	<</if>>
+	<<if $swich_yanling is 1>> 	
 		<!-- 二代言靈
 
 		<span class="gold">及時言靈</span>
@@ -81,9 +83,9 @@
 		言靈：$name
 		<br><br>
 		-->
-<!--三代言靈 架構：by tony70124@貼吧dol吧 https://tieba.baidu.com/p/8724301141---->
-<!--架構優化 by 北極星@ QQ 北极星mod测试群521994232-->
-<!--言靈管理功能優化 by隨風飄逸@ QQ 污度孤儿中国模组交流群671114833-->
+	<!--三代言靈 架構：by tony70124@貼吧dol吧 https://tieba.baidu.com/p/8724301141---->
+	<!--架構優化 by 北極星@ QQ 北极星mod测试群521994232-->
+	<!--言靈管理功能優化 by隨風飄逸@ QQ 污度孤儿中国模组交流群671114833-->
 		<span class="gold">言靈集</span><br>
 		<<if $cccheat is undefined>>
 			<<set $cccheat to []>>
