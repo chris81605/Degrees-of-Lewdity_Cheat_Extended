@@ -129,18 +129,10 @@
 		<<set $damage to 1>>
 	<</if>>
 	當前傷害倍數：
-	<span class="red">$damage</span>
-	倍
-	<br>
-	在此輸入傷害倍數(只能輸入數字)：<br>
-	<<textbox "$damageset" "">>
-	<<link [[确定|$passage]]>>
-		<<set $damage to $damageset>>
-	<</link>>
-	<br>
-	<<link [[清除|$passage]]>>
-		<<set $damage to 1>>
-	<</link>>
+	<span class="red">$damage</span>倍<br>
+	在此設定傷害倍數，設定後按確認套用。<br>
+	<<numberslider "$damage" $damage 1 100 1>>
+	<<link [[确定|$passage]]>><</link>>
 	<br><br>
 	
 	<<if $debug is 1>>
@@ -159,22 +151,20 @@
 	<br><br>
 	<span class="red">實驗性功能，計算方式待優化</span>
 	<br><br>
-	疼痛衰減調整，預設值為1<span class="red">(無衰減)</span>，數值為<span class="red">0</span>時表示<span class="red">疼痛衰減至0</span>。請勿於戰鬥畫面修改。
+	疼痛衰減調整，預設值為0<span class="red">(無衰減)</span>，數值為<span class="red">100</span>時表示<span class="red">疼痛衰減至0</span>。請勿於戰鬥畫面修改。
 	<<if $painfix is undefined>>
 		<<set $painfix to 1>>
 	<</if>>
-	當前疼痛衰減乘數：
-	<span class="red">$painfix</span>
-	<br>
-	在此輸入衰減數(只能輸入數字)：<br>
-	<<textbox "$painfixset" "">>%
+	當前疼痛衰減百分比：
+	衰減<span class="red">$painfixset</span>%<br>
+	<<if $painfixset is undefined>>
+		<<set $painfixset to 0>>
+	<</if>>	
+	在此設定疼痛衰減百分比，設定完成後按確定以套用數值<br>
+	<<numberslider "$painfixset" $painfixset 0 100 1>>
 	<<link [[确定|$passage]]>>
 		<<if $painfixset gt 100>><<set $painfixset to 100>><</if>>
 		<<set $painfix to ((100-$painfixset)/100)>>
-	<</link>>
-	<br>
-	<<link [[清除|$passage]]>>
-		<<set $painfix to 1>>
 	<</link>>
 	<br><br>
 	<<if $debug is 1>>		
@@ -215,8 +205,9 @@
 	<br>
 	大量擠🥛模式：
 	<<if $milk_releasedswich is 0>>
-		<span class="red">關</span>
-		<br>
+		<span class="red">關</span><br>
+		<<set $milk_releasedFIX_MIN to 0>>
+		<<set $milk_releasedFIX_MAN to 0>>
 	<</if>>
 	<<if $milk_releasedswich is 1>>
 		<span class="green">開</span>
@@ -224,53 +215,41 @@
 	<</if>>		
 	<br><br>
 	
-	在此輸入大量擠🥛下限(只能輸入數字)：<br>
-	<<textbox "$milk_releasedFIX_MIN_set" "">>
+	在此設定大量擠🥛下限：<br>
+	<<numberslider "$milk_releasedFIX_MIN" $milk_releasedFIX_MIN 0 6000 100 >>
 	<<link [[确定|$passage]]>>
-		<<set $milk_releasedFIX_MIN to $milk_releasedFIX_MIN_set>>
-	<</link>>
-	<br>
-	<<link [[清除|$passage]]>>
-		<<set $milk_releasedFIX_MIN to 0>>
+		<<if $milk_releasedswich is 0>>
+			<<set $milk_releasedFIX_MIN to 0>>
+			<<set $milk_releasedFIX_MAN to 0>>
+		<</if>>
 	<</link>>
 	<br><br>
 	
 	在此輸入大量擠🥛上限(只能輸入數字)：<br>
-	<<textbox "$milk_releasedFIX_MAX_set" "">>
+	<<numberslider "$milk_releasedFIX_MAX" $milk_releasedFIX_MAX 0 6000 100>>
 	<<link [[确定|$passage]]>>
-		<<set $milk_releasedFIX_MAX to $milk_releasedFIX_MAX_set>>
-	<</link>>
-	<br>
-	<<link [[清除|$passage]]>>
-		<<set $milk_releasedFIX_MAX to 0>>
+		<<if $milk_releasedswich is 0>>
+			<<set $milk_releasedFIX_MIN to 0>>
+			<<set $milk_releasedFIX_MAN to 0>>
+		<</if>>
 	<</link>>
 	<br><br>
-	可以儲存多少🥛：$milk_max mL<br>
+	當前可以儲存多少🥛：$milk_volume mL<br>
+	當前🥛量最大值：$milk_max mL<br>
 	修改🥛量<br>
-	<<textbox "$milkcow" "">>
-	<<link [[确定|$passage]]>>
-		<<set $milk_max to $milkcow>>
-	<</link>>
-	<br>
-	<<link [[清除|$passage]]>>
-		<<set $milkcow to 0>>
-	<</link>>
-	<br>
-	當前有多少🥛：$milk_volume mL<br>
+	當前🥛量最大值：<br>
+	<<numberslider "$milk_max" $milk_max 3000 60000 100 >><br>
+	當前可以儲存多少🥛：<br>
+	<<numberslider "$milk_volume" $milk_volume 0 60000 100>><br>
+	<<link [[确定|$passage]]>><</link>>
+	<br><br>
+	當前有多少🥛：$milk_amount mL<br>
 	修改🥛量<br>
-	<<textbox "$milkcow_NOW" "">>
-	<<link [[确定|$passage]]>>
-		<<set $milk_volume to $milkcow_NOW>>
-	<</link>>
-	<br>
-	<<link [[清除|$passage]]>>
-		<<set $milkcow_NOW to 0>>
-	<</link>>
-	<br>
+	<<numberslider "$milk_amount" $milk_amount 0 60000 100>>
+	<<link [[确定|$passage]]>><</link>>
+	<br><br>
 	<<if $debug is 1>>
 		除錯：
-		<br>
-		當前🥛量：<span class="red">$milk_volume/$milk_max</span>
 		<br>
 		當前大量擠🥛修正數值--<span class="red">$milk_releasedFIX</span>
 		<br>
@@ -286,6 +265,9 @@
 	一次賣出更多的商品，敲詐更多錢。<br>
 	<<if $black_storeswich is undefined>>
 		<<set $black_storeswich to 0>>
+		<<set $black_store_FIX_MIN to 11>>
+		<<set $black_store_FIX_MAX to 30>>
+		<<set $stall_cost_FIX to 1>>
 	<</if>>
 	[[黑心商店|$passage][$black_storeswich = $black_storeswich == 0 ? 1 : 0]]	<br>
 	<<if $black_storeswich is 0>>
@@ -314,43 +296,41 @@
 		<br>
 	<</if>>		
 	<br><br>
-	在此輸入黑心花店隨機數下限(只能輸入數字)：<br>
-	<<textbox "$black_store_FIX_MIN_set" "">>
+	在此設定黑心花店隨機數下限：<br>
+	<<numberslider "$black_store_FIX_MIN" $black_store_FIX_MIN 11 11000 11>>
 	<<link [[确定|$passage]]>>
-		<<set $black_store_FIX_MIN to $black_store_FIX_MIN_set>>
-	<</link>>
-	<br>
-	<<link [[清除|$passage]]>>
-		<<set $black_store_FIX_MIN to 11>>
+		<<if $black_storeswich is 0>>
+			<<set $black_store_FIX_MIN to 11>>
+			<<set $black_store_FIX_MAX to 30>>
+			<<set $stall_cost_FIX to 1>>
+		<</if>>
 	<</link>>
 	<br><br>
-	在此輸入黑心花店隨機數上限(只能輸入數字)：<br>
-	<<textbox "$black_store_FIX_MAX_set" "">>
+	在此設定黑心花店隨機數上限：<br>
+	<<numberslider "$black_store_FIX_MAX" $black_store_FIX_MAX 30 30000 10>>
 	<<link [[确定|$passage]]>>
-		<<set $black_store_FIX_MAX to $black_store_FIX_MAX_set>>
+		<<if $black_storeswich is 0>>
+			<<set $black_store_FIX_MIN to 11>>
+			<<set $black_store_FIX_MAX to 30>>
+			<<set $stall_cost_FIX to 1>>
+		<</if>>
 	<</link>>
-	<br>
-	<<link [[清除|$passage]]>>
-		<<set $black_store_FIX_MAX to 30>>
-	<</link>>
-	<br>
+	<br><br>
 	當前花店銷售隨機數下限$black_store_FIX_MIN個，當前花店銷售隨機數上限$black_store_FIX_MAX個。
 	<br><br>
-	在此輸入黑心花店銷售額倍數(只能輸入數字)。
+	在此設定黑心花店銷售額倍數：<br>
 	<<if $stall_cost_FIX is undefined>>
 		<<set $stall_cost_FIX to 1>>
 	<</if>>
-	<<textbox "$stall_cost_FIX_set" "">>
+	<<numberslider "$stall_cost_FIX" $stall_cost_FIX 1 1000 1>>
 	<<link [[确定|$passage]]>>
-		<<if $black_storeswich is 1>>
-			<<set $stall_cost_FIX to $stall_cost_FIX_set>>
-		<</if>>		
+		<<if $black_storeswich is 0>>
+			<<set $black_store_FIX_MIN to 11>>
+			<<set $black_store_FIX_MAX to 30>>
+			<<set $stall_cost_FIX to 1>>
+		<</if>>
 	<</link>>
-	<br>
-	<<link [[清除|$passage]]>>
-		<<set $stall_cost_FIX to 1>>
-	<</link>>
-	<br>
+	<br><br>
 	當前花店銷售額倍數$stall_cost_FIX倍。
 	<br><br>
 	<span class="gold">跳舞報酬加倍</span>
@@ -373,21 +353,17 @@
 		<br>
 	<</if>>	
 	<br>
-	在此輸入跳舞報酬加倍倍數(只能輸入數字)：<br>
+	在此設定跳舞報酬加倍倍數(只能輸入數字)：<br>
 	<<if $dancetip_FIX is undefined>>
 		<<set $dancetip_FIX to 1>>
 	<</if>>
-	<<textbox "$dancetip_FIX_set" "">>
+	<<numberslider "$dancetip_FIX" $dancetip_FIX 1 10000 1>>
 	<<link [[确定|$passage]]>>
-		<<if $dance_reward_swich is 1>>
-			<<set $dancetip_FIX to $dancetip_FIX_set>>
+		<<if $dance_reward_swich isnot 1>>
+			<<set $dancetip_FIX to 1>>
 		<</if>>		
 	<</link>>
-	<br>
-	<<link [[清除|$passage]]>>
-		<<set $dancetip_FIX to 1>>
-	<</link>>
-	<br>
+	<br><br>
 	當前跳舞報酬加倍倍數：$dancetip_FIX倍。
 	<br><br>
 	<span class="gold">尋歡洞報酬加倍</span>
@@ -410,21 +386,17 @@
 		<br>
 	<</if>>	
 	<br>
-	在此輸入尋歡洞報酬加倍倍數(只能輸入數字)：<br>
+	在此設定尋歡洞報酬加倍倍數(只能輸入數字)：<br>
 	<<if $brothel_basement_price_FIX is undefined>>
 		<<set $brothel_basement_price_FIX to 1>>
 	<</if>>
-	<<textbox "$brothel_basement_price_FIX_set" "">>
+	<<numberslider "$brothel_basement_price_FIX" $brothel_basement_price_FIX 1 10000 1>>
 	<<link [[确定|$passage]]>>
-		<<if $brothel_basement_swich is 1>>
-			<<set $brothel_basement_price_FIX to $brothel_basement_price_FIX_set>>
+		<<if $brothel_basement_swich isnot 1>>
+			<<set $brothel_basement_price_FIX to 1>>
 		<</if>>		
 	<</link>>
-	<br>
-	<<link [[清除|$passage]]>>
-		<<set $brothel_basement_price_FIX to 1>>
-	<</link>>
-	<br>
+	<br><br>
 	當前尋歡洞報酬加倍倍數：$brothel_basement_price_FIX倍。
 	<br><br>
 	<span class="gold">DEBUG MODE</span>
@@ -473,7 +445,30 @@
 	歷史：$history_exam，下次考試難度，$history_exam_difficulty，[[不想努力了|$passage][$history_exam to 120]]
 	<br>
 	<br><br>
-	
+	<span class="gold">大容量衣櫃</span><br>
+	異次元空間衣櫃，再也不擔心老師們的衣服太好看但衣櫃放不下了！<br>
+	<<if $bigest_wardrobe_swich is undefined>>
+		<<set $bigest_wardrobe_swich to 0>>
+		<<set $bigest_wardrobe_fix to 0>>
+		<<set $wardrobe.space to $wardrobe_space_BK>>
+	<</if>>
+	[[異次元空間衣櫃|$passage][$bigest_wardrobe_swich = $bigest_wardrobe_swich == 0 ? 1 : 0]]<br>	
+	異次元空間衣櫃開關：
+	<<if $bigest_wardrobe_swich is 0>>
+		<span class="red">關</span>
+		<br>
+	<<elseif $bigest_wardrobe_swich is 1>>
+		<span class="green">開</span>
+		<br>
+	<</if>>
+	在此設定異次元空間衣櫃容量，當前容量為$wardrobe.space<br>
+	<<numberslider "$brothel_basement_price_FIX" $brothel_basement_price_FIX 0 10000 10>>
+	<<link [[确定|$passage]]>>
+		<<if $brothel_basement_swich is 1>>
+			<<set $wardrobe.space to $brothel_basement_price_FIX>>
+		<</if>>		
+	<</link>>
+	<br><br>
 	<span class="gold">快速言靈</span>
 	<br>
 	[[一键烘干衣服|$passage][$upperwet to 0, $lowerwet to 0, $underlowerwet to 0, $underupperwet to 0]] 
