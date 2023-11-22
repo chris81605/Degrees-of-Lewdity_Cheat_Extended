@@ -1,0 +1,161 @@
+			<<if $options.sidebarTime is "bottom">>
+				<<append #mobileStats>><<mobileStatsTime>><</append>>
+			<</if>>
+		<</if>>
+
+		
+	
+	<<if $swich is 1>>	
+		[[状态全恢复|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]] |
+		[[PC立马高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
+		<br>
+		<span class="gold">瞬間移動</span><br>
+		<<if $teleportation is undefined>>		<!--初始化-->
+			<<set $$teleportation to []>>
+			<<set $teleportation_name to []>>
+		<</if>>
+		可用傳送節點：<br>
+		◁[[回孤儿院卧室|Bedroom]]▷
+		<br>
+		◁[[随身衣柜|随身衣柜]]▷
+		<br>
+		◁[[伊甸的小屋|Eden Clearing]]▷
+		<br>
+		自訂送節點：<br>
+		<<if $teleportation.length gt 3>>		<!--超過三個節點時將最舊的節點移除-->
+			<<set $teleportation.deleteAt(0)>>
+			<<set $teleportation_name.deleteAt(0)>>
+		<</if>>	
+		
+		<<for _i to 0; _i lt $teleportation.length; _i++>>
+			<<set _j to _i + 1>>
+			(_j) $teleportation[_i]<br>
+		<</for>>
+			
+		在此輸入傳送節點名稱(可留空)<br>
+		<<textbox "_teleportation_name" "">><br>
+		<<button [[將此設為傳送節點(最多3個)|$passage]]>>
+			<<if _teleportation_name is "">>
+			    <<set _teleportation_name to "節點NO." + ($teleportation_name.length + 1)>>
+			<</if>>
+			<<set _name_fix_no to 0>>
+			<<set _teleportation_name_temp to _teleportation_name>>
+			<<set _teleportation_name_temp2 to _teleportation_name>>
+			<<for _l to -1; _l lt $teleportation_name.length; _l++>> 		<!--檢查是否有重複名稱的節點-->
+			    <<if _teleportation_name_temp is $teleportation_name[_l]>>
+			        <<set _name_fix_no += 1 >>
+			        <<set _teleportation_name_temp to _teleportation_name_temp2 + "-" + _name_fix_no>> <!--自動重新命名(名字後加編號-->
+			        <<set _l to -1>> 			<!-- 迴圈重置，重新檢查重新命名後的言靈名稱是否有重複的-->
+			    <<else>>
+			        <<set _teleportation_name to _teleportation_name_temp>>		<!--當無重複命名時套用新名稱-->
+			    <</if>>
+			<</for>>  
+
+			<<set $teleportation_name[$teleportation_name.length] to _teleportation_name>>	<!--命名節點-->
+
+			<<set _teleportation_target to $passage>>	<!--設定傳送位置-->
+			<<set _no to $teleportation_name.length -1 >>
+			<<set _teleportation_target2 to "◁[[" + $teleportation_name[_no] + "|" + _teleportation_target + "]]▷">>	<!--將名稱與位置組合成傳送代碼-->
+			<<set $teleportation[$teleportation.length] to _teleportation_target2>>
+	
+		<</button>><br><br>
+		<!-- 二代言靈
+
+		<span class="gold">及時言靈</span>
+		<br>
+		在此輸入及時言靈：
+		<<textbox "$yanling" "">>
+		<<link [[确定|$passage]]>>
+			<<if $name is "" or $name is undefined>>
+				<<set $name to "$yanling">>
+			<</if>>
+			<<set _normalisedName to Util.escape(name)>>
+			<<set ('$name', '$name', {name: _normalisedName,nameCap: _normalisedName.toUpperFirst()})>>
+		<</link>>
+		<br>
+		<<link [[清除|$passage]]>>
+		<<set $name to undefined>>
+		<</link>>
+		<br><br>
+		
+		言靈：$name
+		<br><br>
+		-->
+<!--三代言靈 架構：by tony70124@貼吧dol吧 https://tieba.baidu.com/p/8724301141---->
+<!--架構優化 by 北極星@ QQ 北极星mod测试群521994232-->
+<!--言靈管理功能優化 by隨風飄逸@ QQ 污度孤儿中国模组交流群671114833-->
+		<span class="gold">言靈集</span><br>
+		<<if $cccheat is undefined>>
+			<<set $cccheat to []>>
+			<<set $cccheat_name to []>>
+			<<set $cccheat_display to "">>
+			<<set $cccheat_name_display to "">>
+		<</if>>
+		<<for _i to 0; _i lt $cccheat.length; _i++>>
+			<<set _j to _i + 1>>
+			(_j) $cccheat[_i]<br>
+		<</for>>
+		<br>在此輸入言靈代碼<br>
+		<<textbox "_cccheat" $cccheat_display>>
+		<br>在此輸入言靈名稱(可留空)<br>
+		<<textbox "_cccheat_name" $cccheat_name_display>>
+		<<button [[加入|$passage]]>>
+			<<if _cccheat != "">>
+				<<set $cccheat[$cccheat.length] to _cccheat>>
+				<<if _cccheat_name is "">>
+				    <<set _cccheat_name to "言靈NO." + ($cccheat_name.length + 1)>>
+				<</if>>
+				<<set _name_fix_no to 0>>
+				<<set _cccheat_name_temp to _cccheat_name>>
+				<<set _cccheat_name_temp2 to _cccheat_name>>
+				<<for _l to -1; _l lt $cccheat_name.length; _l++>> <!--檢查當前是否已經有相同命名的言靈-->
+				    <<if _cccheat_name_temp is $cccheat_name[_l]>>
+				        <<set _name_fix_no += 1 >>
+				        <<set _cccheat_name_temp to _cccheat_name_temp2 + "-" + _name_fix_no>> <!--自動重新命名(名字後加編號-->
+				        <<set _l to -1>> <!-- 迴圈重置，重新檢查重新命名後的言靈名稱是否有重複的-->
+				    <<else>>
+				        <<set _cccheat_name to _cccheat_name_temp>><!--當無重複命名時套用新名稱-->
+				    <</if>>
+				<</for>>
+				<<set $cccheat_name[$cccheat_name.length] to _cccheat_name>>	
+				<<set $cccheat_display to "">>
+				<<set $cccheat_name_display to "">>	
+			<</if>>
+		<</button>><br>
+		選擇言靈：<br>
+		<<listbox "_cccount" autoselect>><<option "未选中">><<optionsfrom $cccheat_name>><</listbox>>
+		<<button [[查看选中|$passage]]>>
+			<<if _cccount isnot "未选中">>
+				<<for _l to 0 ;_l lt $cccheat_name.length ;_l++>>
+					<<if _cccount is $cccheat_name[_l]>>
+						<<set $cccheat_display to $cccheat[_l]>>
+					<</if>>	
+				<</for>>
+				<<set $cccheat_name_display to _cccount>>
+			<<else>>
+				<<set $cccheat_display to "">>
+				<<set $cccheat_name_display to "">>
+			<</if>>	
+		<</button>><br>		
+		<<button [[刪除选中|$passage]]>>
+			<<if _cccount isnot "未选中">>
+				<<for _l to 0 ;_l lt $cccheat_name.length ;_l++>>
+					<<if _cccount is $cccheat_name[_l]>>
+					<!--	<<set _cccheat_display to $cccheat[_l]>>
+						<<set $cccheat.delete(_cccheat_display)>>   -->
+						<<set $cccheat.deleteAt(_l)>>
+						<<set $cccheat_name.deleteAt(_l)>>
+					<</if>>	
+				<</for>>
+				<!--<<set $cccheat_name.delete(_cccount)>>-->
+			<</if>>
+		<</button>>
+		<br>
+		<<button [[清除所有言靈|$passage]]>>
+			<<set $cccheat to []>>
+			<<set $cccheat_name to []>>
+			<<set $cccheat_display to "">>
+			<<set $cccheat_name_display to "">>
+		<</button>>
+		<br><br>
+	<</if>>
