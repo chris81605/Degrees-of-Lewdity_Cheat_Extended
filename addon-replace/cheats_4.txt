@@ -217,6 +217,19 @@
 		數值3 修正前：$painVAR3修正後：$painVAR3_1
 		<br>
 	<</if>>
+	<span class="gold">HP、AP顯示</span>	
+	<br><br>
+	於戰鬥中顯示對方HP、AP。<br>
+	<<if $HP_AP_display_swich is undefined>>
+		<<set $HP_AP_display_swich to 0>>
+	<</if>>
+	[[HP、AP顯示|$passage][$HP_AP_display_swich = $HP_AP_display_swich == 0? 1 : 0]]<br>
+	HP、AP顯示：
+	<<if $HP_AP_display_swich is 0>>
+		<span class="red">關</span><br>
+	<<else>>
+		<span class="green">開</span><br>
+	<</if>>
 	<br><br>
 	<span class="gold">大量擠🥛模式</span>
 	<br><br>
@@ -329,7 +342,7 @@
 	<</if>>		
 	<br><br>
 	在此設定黑心花店隨機數下限：<br>
-	<<numberslider "$black_store_FIX_MIN" $black_store_FIX_MIN 11 11000 11>>
+	<<numberslider "$black_store_FIX_MIN" $black_store_FIX_MIN 11 1100 11>>
 	<<link [[确定|$passage]]>>
 		<<if $black_storeswich is 0>>
 			<<set $black_store_FIX_MIN to 11>>
@@ -339,7 +352,7 @@
 	<</link>>
 	<br><br>
 	在此設定黑心花店隨機數上限：<br>
-	<<numberslider "$black_store_FIX_MAX" $black_store_FIX_MAX 30 30000 10>>
+	<<numberslider "$black_store_FIX_MAX" $black_store_FIX_MAX 30 3000 10>>
 	<<link [[确定|$passage]]>>
 		<<if $black_storeswich is 0>>
 			<<set $black_store_FIX_MIN to 11>>
@@ -354,7 +367,7 @@
 	<<if $stall_cost_FIX is undefined>>
 		<<set $stall_cost_FIX to 1>>
 	<</if>>
-	<<numberslider "$stall_cost_FIX" $stall_cost_FIX 1 1000 1>>
+	<<numberslider "$stall_cost_FIX" $stall_cost_FIX 1 200 1>>
 	<<link [[确定|$passage]]>>
 		<<if $black_storeswich is 0>>
 			<<set $black_store_FIX_MIN to 11>>
@@ -385,11 +398,11 @@
 		<br>
 	<</if>>	
 	<br>
-	在此設定跳舞報酬加倍倍數(只能輸入數字)：<br>
+	在此設定跳舞報酬加倍倍數：<br>
 	<<if $dancetip_FIX is undefined>>
 		<<set $dancetip_FIX to 1>>
 	<</if>>
-	<<numberslider "$dancetip_FIX" $dancetip_FIX 1 10000 1>>
+	<<numberslider "$dancetip_FIX" $dancetip_FIX 1 200 1>>
 	<<link [[确定|$passage]]>>
 		<<if $dance_reward_swich isnot 1>>
 			<<set $dancetip_FIX to 1>>
@@ -418,11 +431,11 @@
 		<br>
 	<</if>>	
 	<br>
-	在此設定尋歡洞報酬加倍倍數(只能輸入數字)：<br>
+	在此設定尋歡洞報酬加倍倍數：<br>
 	<<if $brothel_basement_price_FIX is undefined>>
 		<<set $brothel_basement_price_FIX to 1>>
 	<</if>>
-	<<numberslider "$brothel_basement_price_FIX" $brothel_basement_price_FIX 1 10000 1>>
+	<<numberslider "$brothel_basement_price_FIX" $brothel_basement_price_FIX 1 200 1>>
 	<<link [[确定|$passage]]>>
 		<<if $brothel_basement_swich isnot 1>>
 			<<set $brothel_basement_price_FIX to 1>>

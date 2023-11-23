@@ -3,35 +3,36 @@
 			<</if>>
 
 			
-
-			<<if $enemyhealth gte $enemyhealthmax>>
-				<span class="red">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
-			<<elseif $enemyhealth gte ($enemyhealthmax / 5) * 4>>
-				<span class="pink">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
-			<<elseif $enemyhealth gte ($enemyhealthmax / 5) * 3>>
-				<span class="purple">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
-			<<elseif $enemyhealth gte ($enemyhealthmax / 5) * 2>>
-				<span class="blue">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
-			<<elseif $enemyhealth gte ($enemyhealthmax / 5) * 1>>
-				<span class="lblue">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
-			<<elseif $enemyhealth gt 0>>
-				<span class="teal">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
-			<<elseif $enemyhealth lte 0>>
-				<span class="green">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
-			<</if>>
-			<<if $enemynomax isnot 1 >>
-				|<span class="yellow">
-				<<if $enemynomax is 2 >>
-					<<= Math.round($NPCList[0].health) >>/<<= Math.round($NPCList[1].health) >>
-				<<elseif $enemynomax is 3 >>
-					<<= Math.round($NPCList[0].health) >>/<<= Math.round($NPCList[1].health) >>/<<= Math.round($NPCList[2].health) >>
-				<<elseif $enemynomax is 4 >>
-					<<= Math.round($NPCList[0].health) >>/<<= Math.round($NPCList[1].health) >>/<<= Math.round($NPCList[2].health) >>/<<= Math.round($NPCList[3].health) >>
-				<<elseif $enemynomax is 5 >>
-					<<= Math.round($NPCList[0].health) >>/<<= Math.round($NPCList[1].health) >>/<<= Math.round($NPCList[2].health) >>/<<= Math.round($NPCList[3].health) >>/<<= Math.round($NPCList[4].health) >>
-				<<elseif $enemynomax is 6 >>
-					<<= Math.round($NPCList[0].health) >>/<<= Math.round($NPCList[1].health) >>/<<= Math.round($NPCList[2].health) >>/<<= Math.round($NPCList[3].health) >>/<<= Math.round($NPCList[4].health) >>/<<= Math.round($NPCList[5].health) >>
+			<<if $HP_AP_display_swich is 1>>
+				<<if $enemyhealth gte $enemyhealthmax>>
+					<span class="red">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
+				<<elseif $enemyhealth gte ($enemyhealthmax / 5) * 4>>
+					<span class="pink">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
+				<<elseif $enemyhealth gte ($enemyhealthmax / 5) * 3>>
+					<span class="purple">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
+				<<elseif $enemyhealth gte ($enemyhealthmax / 5) * 2>>
+					<span class="blue">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
+				<<elseif $enemyhealth gte ($enemyhealthmax / 5) * 1>>
+					<span class="lblue">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
+				<<elseif $enemyhealth gt 0>>
+					<span class="teal">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
+				<<elseif $enemyhealth lte 0>>
+					<span class="green">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
 				<</if>>
-				</span>	
+				<<if $enemynomax isnot 1 >>
+					|<span class="yellow">
+					<<if $enemynomax is 2 >>
+						<<= Math.round($NPCList[0].health) >>/<<= Math.round($NPCList[1].health) >>
+					<<elseif $enemynomax is 3 >>
+						<<= Math.round($NPCList[0].health) >>/<<= Math.round($NPCList[1].health) >>/<<= Math.round($NPCList[2].health) >>
+					<<elseif $enemynomax is 4 >>
+						<<= Math.round($NPCList[0].health) >>/<<= Math.round($NPCList[1].health) >>/<<= Math.round($NPCList[2].health) >>/<<= Math.round($NPCList[3].health) >>
+					<<elseif $enemynomax is 5 >>
+						<<= Math.round($NPCList[0].health) >>/<<= Math.round($NPCList[1].health) >>/<<= Math.round($NPCList[2].health) >>/<<= Math.round($NPCList[3].health) >>/<<= Math.round($NPCList[4].health) >>
+					<<elseif $enemynomax is 6 >>
+						<<= Math.round($NPCList[0].health) >>/<<= Math.round($NPCList[1].health) >>/<<= Math.round($NPCList[2].health) >>/<<= Math.round($NPCList[3].health) >>/<<= Math.round($NPCList[4].health) >>/<<= Math.round($NPCList[5].health) >>
+					<</if>>
+					</span>	
+				<</if>>
 			<</if>>
 			<br/>

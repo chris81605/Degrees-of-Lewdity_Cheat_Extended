@@ -1,4 +1,4 @@
-Ap:<<=Math.round($enemyarousal)>>¦<<=Math.round($enemyarousalmax)>>
-			
-			
+<<if $HP_AP_display_swich is 1>>
+	Ap:<<=Math.round($enemyarousal)>>¦<<=Math.round($enemyarousalmax)>>	
+<</if>>	
 			<<if $enemyanger gte $enemyangermax>>
