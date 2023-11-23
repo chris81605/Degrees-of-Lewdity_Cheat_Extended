@@ -1,9 +1,0 @@
-<<widget "stall_sell_actions">>
-	
-	
-	<<if $stall_cost_FIX is undefined>>
-			<<set $stall_cost_FIX to 1>>
-		<</if>>
-	
-	<<set $stall_cost to $stall_cost * $stall_cost_FIX>>
-	<br>

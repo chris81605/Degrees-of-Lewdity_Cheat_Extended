@@ -1,4 +1,0 @@
-			<<if $painfix is undefined>><<
-				set $painfix to 1>>
-			<</if>>
-			<<set $pain += ((_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)))) * $painfix>>

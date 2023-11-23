@@ -1,4 +1,0 @@
-		<<if $damage is undefined>>
-			<<set $damage to 1>>
-		<</if>>
-		<<set $enemyhealth -= _thedamage * $damage>>
