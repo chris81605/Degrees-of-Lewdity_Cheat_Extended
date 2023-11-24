@@ -26,6 +26,8 @@ https://github.com/Eltirosto/Degrees-of-Lewdity-Chinese-Localization
 1.優化代碼  
 * (1)大量新增代碼獨立至
 **Widgets cheat_extended**以**widget**方式調用  
+2.修復空間節點可能造成存檔損毀的問題
+* (1)增加條件判斷當前是否能安全傳送      
 
 **1.3.5**  
 1.優化空間節點  
