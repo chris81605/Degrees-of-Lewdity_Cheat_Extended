@@ -1,16 +1,4 @@
 		<br>
 		<<deskchairicon>>你的_desk.nameCap和<<if _chair.name isnot "chair">>一张<</if>>_chair.nameCap占据着你衣柜旁那狭小的空间。
+		<<study_hard>>
 		
-		
-			<<if $study_hard is undefined>><<set $study_hard to 0>><</if>>
-			<<if $study_hard is 1>>
-				<br>
-				<<scienceicon>><<link [[学习科学 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 1>><</link>><<gscience>>
-				<br>
-				<<mathicon>><<link [[学习数学 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 2>><</link>><<gmaths>>
-				<br>
-				<<englishicon>><<link [[学习语文 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 3>><</link>><<genglish>>
-				<br>
-				<<historyicon>><<link [[学习历史 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 4>><</link>><<ghistory>>
-				<br>
-			<</if>>	

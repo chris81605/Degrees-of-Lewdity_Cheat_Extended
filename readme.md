@@ -22,6 +22,15 @@ https://github.com/Eltirosto/Degrees-of-Lewdity-Chinese-Localization
 13.時間穿越+時間推進  
  
 # 更新日誌
+**1.4.0**  
+1.優化代碼  
+* (1)大量新增代碼獨立至
+**Widgets cheat_extended**以**widget**方式調用  
+
+**1.3.5**  
+1.優化空間節點  
+* (1)新增判斷是否可安全傳送，避免破壞存檔  
+
 **1.3.4**  
 1.修復HP、AP不顯示的問題  
 * (1)修復問題  
