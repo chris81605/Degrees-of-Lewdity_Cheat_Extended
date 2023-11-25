@@ -221,6 +221,11 @@
 				<<set $cccheat_name_display to "">>	
 			<</if>>
 		<</button>><br>
+	<</if>>
+<</widget>>	
+
+<<widget "yanling_unset">>
+	<<if $swich_yanling is 1>>
 		選擇言靈：<br>
 		<<listbox "_cccount" autoselect>><<option "未选中">><<optionsfrom $cccheat_name>><</listbox>><br>
 		<<button [[查看选中|$passage]]>>
@@ -236,12 +241,6 @@
 				<<set $cccheat_name_display to "">>
 			<</if>>	
 		<</button>><br>		
-		
-	<</if>>
-<</widget>>	
-
-<<widget "yanling_unset">>
-	<<if $swich_yanling is 1>>
 		<<button [[刪除选中|$passage]]>>
 			<<if _cccount isnot "未选中">>
 				<<for _l to 0 ;_l lt $cccheat_name.length ;_l++>>
