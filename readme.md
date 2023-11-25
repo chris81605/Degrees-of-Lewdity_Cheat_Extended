@@ -5,11 +5,13 @@
   - [中文英文遊戲維基][wiki-cn]
   - [官方 Discord][discord]
   - [遊戲源碼倉庫][gitgud]
-    
+
+# 需求  
+* 需要搭配[MODLOADER][JML]使用  
+* 需搭配[Degrees of Lewdity 中文本地化][DOLCN]使用      
+
 # Degrees-of-Lewdity_Cheat_Extended
 簡介：Degrees-of-Lewdity 的作弊拓展MOD  
-需要搭配[MODLOADER][JML]使用  
-需搭配[Degrees of Lewdity 中文本地化][DOLCN]使用  
 
 # 功能
 ## 新增若干作弊功能：  
