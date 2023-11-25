@@ -181,14 +181,23 @@
 			<<set $cccheat_display to "">>
 			<<set $cccheat_name_display to "">>
 		<</if>>
+		
 		<<for _i to 0; _i lt $cccheat.length; _i++>>
 			<<set _j to _i + 1>>
-			(_j) $cccheat[_i]<br>
+			<<if _args[0] is "left">>
+				(_j) $cccheat[_i]<br>
+			<<else>>
+				(_j) $cccheat[_i]
+				<<if _j%10 is 0>>
+					<br>
+				<</if>>
+			<</if>>	
 		<</for>>
+		
 		<br>在此輸入言靈代碼<br>
 		<<textbox "_cccheat" $cccheat_display>>
 		<br>在此輸入言靈名稱(可留空)<br>
-		<<textbox "_cccheat_name" $cccheat_name_display>>
+		<<textbox "_cccheat_name" $cccheat_name_display>><br>
 		<<button [[加入|$passage]]>>
 			<<if _cccheat != "">>
 				<<set $cccheat[$cccheat.length] to _cccheat>>
@@ -213,7 +222,7 @@
 			<</if>>
 		<</button>><br>
 		選擇言靈：<br>
-		<<listbox "_cccount" autoselect>><<option "未选中">><<optionsfrom $cccheat_name>><</listbox>>
+		<<listbox "_cccount" autoselect>><<option "未选中">><<optionsfrom $cccheat_name>><</listbox>><br>
 		<<button [[查看选中|$passage]]>>
 			<<if _cccount isnot "未选中">>
 				<<for _l to 0 ;_l lt $cccheat_name.length ;_l++>>
@@ -227,6 +236,12 @@
 				<<set $cccheat_name_display to "">>
 			<</if>>	
 		<</button>><br>		
+		
+	<</if>>
+<</widget>>	
+
+<<widget "yanling_unset">>
+	<<if $swich_yanling is 1>>
 		<<button [[刪除选中|$passage]]>>
 			<<if _cccount isnot "未选中">>
 				<<for _l to 0 ;_l lt $cccheat_name.length ;_l++>>
@@ -242,14 +257,14 @@
 		<</button>>
 		<br>
 		<<button [[清除所有言靈|$passage]]>>
-			<<set $cccheat to []>>
-			<<set $cccheat_name to []>>
-			<<set $cccheat_display to "">>
-			<<set $cccheat_name_display to "">>
-		<</button>>
-		<br><br>
-	<</if>>
-<</widget>>	
+				<<set $cccheat to []>>
+				<<set $cccheat_name to []>>
+				<<set $cccheat_display to "">>
+				<<set $cccheat_name_display to "">>
+			<</button>>
+			<br><br>
+		<</if>>	
+<</widget>>
 
 <<widget "cheat_extended">>
 	<span class="gold">左側快捷</span>
@@ -301,8 +316,9 @@
 	<<if $swich_yanling is 1>>
 		<span class="green">開</span>
 		<br>
+		<<yanling cheat>>
+		<<yanling_unset>>
 	<</if>>		
-	<<yanling>>
 	<br><br>
 	<span class="gold">傷害倍數</span>	
 	<br><br>
@@ -656,14 +672,26 @@
 		<span class="green">開</span>
 		<br>
 	<</if>>
-	在此設定異次元空間衣櫃容量，當前容量為$wardrobe.space<br>
+	在此設定異次元空間衣櫃容量，當前設定容量為$wardrobe.space<br>
 	<<numberslider "$brothel_basement_price_FIX" $brothel_basement_price_FIX 0 10000 10>>
 	<<link [[确定|$passage]]>>
 		<<if $bigest_wardrobe_swich is 1>>
 			<<set $wardrobe.space to $brothel_basement_price_FIX>>
 		<</if>>		
 	<</link>>
-	<br><br>
+	<br>
+	<<set _wardrobe to Furniture.get('wardrobe')>>
+	<<if _wardrobe.type.includes('starter')>>
+		<<set _default_wardrobe to 20>>
+	<<elseif _wardrobe.type.includes('spacious')>>
+		<<set _default_wardrobe to 30>>
+	<<elseif _wardrobe.type.includes('organised')>>
+		<<set _default_wardrobe to 40>>
+	<</if>>
+	當前預設容量：_default_wardrobe<br>
+	<<link [[恢復預設|$passage]]>>
+		<<set $wardrobe.space to _default_wardrobe>>
+	<</link>><br><br>	
 	<span class="gold">快速言靈</span>
 	<br>
 	[[一键烘干衣服|$passage][$upperwet to 0, $lowerwet to 0, $underlowerwet to 0, $underupperwet to 0]] 

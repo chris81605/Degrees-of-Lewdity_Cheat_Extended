@@ -8,5 +8,6 @@
 		<br>
 	<</if>>
 	<<teleportation>>
-	<<yanling>>
+	<<yanling left>>
+	<<yanling_unset>>
 	
