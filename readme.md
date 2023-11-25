@@ -1,9 +1,15 @@
+# Degrees-of-Lewdity
+- <img decoding="async" src="https://gitgud.io/uploads/-/system/user/avatar/9096/avatar.png" width="24" alt=""> <b>遊戲作者</b> $\color{purple} {Vrelnir}$
+  - [Vrelnir 的blog][blog]
+  - [英文遊戲維基][wiki-en]
+  - [中文英文遊戲維基][wiki-cn]
+  - [官方 Discord][discord]
+  - [遊戲源碼倉庫][gitgud]
+    
 # Degrees-of-Lewdity_Cheat_Extended
-簡介：Degrees-of-Lewdity 作弊拓展MOD  
-需要搭配MODLOADER使用：  
-https://github.com/Lyoko-Jeremie/sugarcube-2-ModLoader  
-需搭配Degrees of Lewdity 中文本地化使用：  
-https://github.com/Eltirosto/Degrees-of-Lewdity-Chinese-Localization  
+簡介：Degrees-of-Lewdity 的作弊拓展MOD  
+需要搭配[MODLOADER][JML]使用  
+需搭配[Degrees of Lewdity 中文本地化][DOLCN]使用  
 
 # 功能
 ## 新增若干作弊功能：  
@@ -103,5 +109,13 @@ https://github.com/Eltirosto/Degrees-of-Lewdity-Chinese-Localization
 
 第三代言靈系統By Tony70124@貼吧-DOL吧  
 ![image](https://github.com/chris81605/Degrees-of-Lewdity_Cheat_Extended/blob/main/%E6%8E%88%E6%AC%8A/%E6%8E%88%E6%AC%8A-3%E4%BB%A3%E8%A8%80%E9%9D%88.jpg)  
+
+[blog]: https://vrelnir.blogspot.com/
+[wiki-en]: https://degreesoflewdity.miraheze.org/wiki
+[wiki-cn]: https://degreesoflewditycn.miraheze.org/wiki
+[gitgud]: https://gitgud.io/Vrelnir/degrees-of-lewdity/-/tree/master/
+[discord]: https://discord.gg/VznUtEh
+[JML]:https://github.com/Lyoko-Jeremie/sugarcube-2-ModLoader  
+[DOLCN]:https://github.com/Eltirosto/Degrees-of-Lewdity-Chinese-Localization  
  
  
