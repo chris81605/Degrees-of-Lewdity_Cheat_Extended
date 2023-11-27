@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "styleFileList": [],
   "scriptFileList": [],
   "tweeFileList": [
@@ -29,7 +29,8 @@
     "addon-replace/Widgets_3.txt",
     "addon-replace/Widgets_4.txt",
     "addon-replace/Widgets_5.txt",
-    "readme.md"
+    "readme.md",
+	"LICENSE.txt"
   ],
   "addonPlugin": [
     {

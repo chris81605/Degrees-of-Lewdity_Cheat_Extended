@@ -659,8 +659,6 @@
 	異次元空間衣櫃，再也不擔心老師們的衣服太好看但衣櫃放不下了！<br>
 	<<if $bigest_wardrobe_swich is undefined>>
 		<<set $bigest_wardrobe_swich to 0>>
-		<<set $bigest_wardrobe_fix to 0>>
-		<<set $wardrobe.space to $wardrobe_space_BK>>
 	<</if>>
 	[[異次元空間衣櫃|$passage][$bigest_wardrobe_swich = $bigest_wardrobe_swich == 0 ? 1 : 0]]<br>	
 	異次元空間衣櫃開關：
@@ -672,10 +670,10 @@
 		<br>
 	<</if>>
 	在此設定異次元空間衣櫃容量，當前設定容量為$wardrobe.space<br>
-	<<numberslider "$brothel_basement_price_FIX" $brothel_basement_price_FIX 0 10000 10>>
+	<<numberslider "$bigest_wardrobe_fix" $bigest_wardrobe_fix 0 10000 10>>
 	<<link [[确定|$passage]]>>
 		<<if $bigest_wardrobe_swich is 1>>
-			<<set $wardrobe.space to $brothel_basement_price_FIX>>
+			<<set $wardrobe.space to $bigest_wardrobe_fix>>
 		<</if>>		
 	<</link>>
 	<br>
