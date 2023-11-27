@@ -1,2 +1,1 @@
 <<widget "cheats-other">>
-<<cheat_extended>>

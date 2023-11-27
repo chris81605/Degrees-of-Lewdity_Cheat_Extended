@@ -2,12 +2,9 @@
 				<<append #mobileStats>><<mobileStatsTime>><</append>>
 			<</if>>
 		<</if>>
-	<<if $swich is 1>>
-		[[状态全恢复|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]] |
-		[[PC立马高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
-		<br>
-	<</if>>
-	<<teleportation>>
-	<<yanling left>>
-	<<yanling_unset>>
-	
+	<div id="CEstatebox" class="no-numberify">	
+		<<quick_swich>>
+		<<teleportation>>
+		<<yanling left>>
+		<<yanling_unset>>
+	</div>

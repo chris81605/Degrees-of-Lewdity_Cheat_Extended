@@ -12,6 +12,7 @@
 
 # Degrees-of-Lewdity_Cheat_Extended
 簡介：Degrees-of-Lewdity 的作弊拓展MOD  
+![imge](https://github.com/chris81605/Degrees-of-Lewdity_Cheat_Extended/blob/main/PIC/Cheat_Extended_New_UI.png)  
 
 # 功能
 ## 新增若干作弊功能：  
@@ -54,6 +55,12 @@
 * 時空穿越功能  
 	
 # 更新日誌
+**1.6.0**  
+1.優化作弊拓展UI  
+* (1)獨立選單，作弊=>作弊拓展  
+* (2)各開關、選項操作後不再跳回遊戲畫面，保持在作弊選單，方便操作  
+* (3)UI調整，現在有一個還能看的UI，不再是長長一大串，具體如圖所示：  
+![imge](https://github.com/chris81605/Degrees-of-Lewdity_Cheat_Extended/blob/main/PIC/Cheat_Extended_New_UI.png)
 **1.5.1**  
 1.修復異次元空間衣櫃滑塊與尋歡洞滑塊聯動問題  
 **1.5.0**  

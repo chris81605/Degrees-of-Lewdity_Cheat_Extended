@@ -117,7 +117,7 @@
 			<</for>>
 			在此輸入傳送節點名稱(可留空)<br>
 			<<textbox "_teleportation_name" "">><br>
-			<<button [[將此設為傳送節點(最多3個)|$passage]]>>
+			<<button "將此設為傳送節點(最多3個)">>
 				<<if _teleportation_name is "">>
 					<<set _teleportation_name to "節點NO." + ($teleportation_name.length + 1)>>
 				<</if>>
@@ -138,6 +138,12 @@
 				<<set _no to $teleportation_name.length -1 >>
 				<<set _teleportation_target2 to "◁[[" + $teleportation_name[_no] + "|" + _teleportation_target + "]]▷">>	<!--將名稱與位置組合成傳送代碼-->
 				<<set $teleportation[$teleportation.length] to _teleportation_target2>>
+				<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
+					<<quick_swich>>
+					<<teleportation>>
+					<<yanling left>>
+					<<yanling_unset>>
+				<</replace>>
 			<</button>><br><br>
 		<<else>>
 		    <spen class="red"><b>當前無法傳送</b></spen>
@@ -198,7 +204,7 @@
 		<<textbox "_cccheat" $cccheat_display>>
 		<br>在此輸入言靈名稱(可留空)<br>
 		<<textbox "_cccheat_name" $cccheat_name_display>><br>
-		<<button [[加入|$passage]]>>
+		<<button "加入">>
 			<<if _cccheat != "">>
 				<<set $cccheat[$cccheat.length] to _cccheat>>
 				<<if _cccheat_name is "">>
@@ -220,6 +226,14 @@
 				<<set $cccheat_display to "">>
 				<<set $cccheat_name_display to "">>	
 			<</if>>
+			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
+				<<quick_swich>>
+				<<teleportation>>
+				<<yanling left>>
+				<<yanling_unset>>
+			<</replace>>
+			<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+			<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
 		<</button>><br>
 	<</if>>
 <</widget>>	
@@ -228,7 +242,7 @@
 	<<if $swich_yanling is 1>>
 		選擇言靈：<br>
 		<<listbox "_cccount" autoselect>><<option "未选中">><<optionsfrom $cccheat_name>><</listbox>><br>
-		<<button [[查看选中|$passage]]>>
+		<<button "查看选中">>
 			<<if _cccount isnot "未选中">>
 				<<for _l to 0 ;_l lt $cccheat_name.length ;_l++>>
 					<<if _cccount is $cccheat_name[_l]>>
@@ -239,9 +253,19 @@
 			<<else>>
 				<<set $cccheat_display to "">>
 				<<set $cccheat_name_display to "">>
+			<</if>>
+			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
+				<<quick_swich>>
+				<<teleportation>>
+				<<yanling left>>
+				<<yanling_unset>>
+			<</replace>>
+			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
 			<</if>>	
 		<</button>><br>		
-		<<button [[刪除选中|$passage]]>>
+		<<button "刪除选中">>
 			<<if _cccount isnot "未选中">>
 				<<for _l to 0 ;_l lt $cccheat_name.length ;_l++>>
 					<<if _cccount is $cccheat_name[_l]>>
@@ -253,25 +277,63 @@
 				<</for>>
 				<!--<<set $cccheat_name.delete(_cccount)>>-->
 			<</if>>
+			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
+				<<quick_swich>>
+				<<teleportation>>
+				<<yanling left>>
+				<<yanling_unset>>
+			<</replace>>
+			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
+			<</if>>	
 		<</button>>
 		<br>
-		<<button [[清除所有言靈|$passage]]>>
+		<<button "清除所有言靈">>	
 				<<set $cccheat to []>>
 				<<set $cccheat_name to []>>
 				<<set $cccheat_display to "">>
 				<<set $cccheat_name_display to "">>
+				<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
+					<<quick_swich>>
+					<<teleportation>>
+					<<yanling left>>
+					<<yanling_unset>>
+				<</replace>>
+				<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
+					<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+					<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
+				<</if>>	
 			<</button>>
 			<br><br>
-		<</if>>	
+	<</if>>	
 <</widget>>
 
-<<widget "cheat_extended">>
+<<widget "quick_swich">>
+	<<if $swich is 1>>
+		[[状态全恢复|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]] |
+		[[PC立马高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
+		<br>
+	<</if>>
+<</widget>>	
+
+<<widget "swich">>
 	<span class="gold">左側快捷</span>
 	<br><br>
 	在左側顯示：一鍵恢復全狀態及PC立马高潮
 	<br>
 	<<if $swich is undefined>><<set $swich to 0>><</if>>
-	[[左側快捷开关|$passage][$swich = $swich == 0 ? 1: 0]]
+	<<button "左側快捷開關">>
+		<<set $swich = $swich == 0 ? 1: 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<swich>><br><br><</replace>>
+		<<replace #CEstatebox>>
+			<<quick_swich>>
+			<<teleportation>>
+			<<yanling left>>
+			<<yanling_unset>>
+		<</replace>>
+	<</button>>
 	<br>
 	快捷開關：
 	<<if $swich is 0>>
@@ -281,14 +343,26 @@
 	<<if $swich is 1>>
 		<span class="green">開</span>
 		<br>
-	<</if>>		
-	<br><br>
+	<</if>>	
+<</widget>>	
+
+<<widget "swich_teleportation">>
 	<span class="gold">空間節點</span>
 	<br><br>
 	在左側顯示：空間節點功能
 	<br>
 	<<if $swich_teleportation is undefined>><<set $swich_teleportation to 0>><</if>>
-	[[瞬間移動開關|$passage][$swich_teleportation = $swich_teleportation == 0 ? 1: 0]]
+	<<button "瞬間移動開關">>
+		<<set $swich_teleportation = $swich_teleportation == 0 ? 1: 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<swich_teleportation>><br><br><</replace>>
+		<<replace #CEstatebox>>
+			<<quick_swich>>
+			<<teleportation>>
+			<<yanling left>>
+			<<yanling_unset>>
+		<</replace>>
+	<</button>>	
 	<br>
 	空間節點：
 	<<if $swich_teleportation is 0>>
@@ -299,13 +373,25 @@
 		<span class="green">開</span>
 		<br>
 	<</if>>		
-	<br><br>
+<</widget>>	
+
+<<widget "swich_yanling">>
 	<span class="gold">言靈集</span>
 	<br><br>
 	在左側顯示：言靈集功能
 	<br>
 	<<if $swich_yanling is undefined>><<set $swich_yanling to 0>><</if>>
-	[[言靈集開關|$passage][$swich_yanling = $swich_yanling == 0 ? 1: 0]]
+	<<button "言靈集開關">>
+		<<set $swich_yanling = $swich_yanling == 0 ? 1: 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
+		<<replace #CEstatebox>>
+			<<quick_swich>>
+			<<teleportation>>
+			<<yanling left>>
+			<<yanling_unset>>
+		<</replace>>
+	<</button>>
 	<br>
 	言靈集開關：
 	<<if $swich_yanling is 0>>
@@ -315,10 +401,12 @@
 	<<if $swich_yanling is 1>>
 		<span class="green">開</span>
 		<br>
-		<<yanling cheat>>
-		<<yanling_unset>>
-	<</if>>		
-	<br><br>
+		<<yanling cheat_menu>>
+		<<yanling_unset cheat_menu>>
+	<</if>>	
+<</widget>>
+
+<<widget "damage_fix_setting">>
 	<span class="gold">傷害倍數</span>	
 	<br><br>
 	傷害倍數調整，預設值為1倍。請勿於戰鬥畫面修改。
@@ -329,7 +417,10 @@
 	<span class="red">$damage</span>倍<br>
 	在此設定傷害倍數，設定後按確認套用。<br>
 	<<numberslider "$damage" $damage 1 100 1>>
-	<<link [[确定|$passage]]>><</link>>
+	<<button "确定">>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<damage_fix_setting>><br><br><</replace>>
+	<</button>>
 	<br><br>
 	
 	<<if $debug is 1>>
@@ -342,8 +433,9 @@
 		$damage_oringinal
 		<br>
 	<</if>>
-	<br><br>
-	
+<</widget>>
+
+<<widget "painfix_fix_setting">>
 	<span class="gold">疼痛衰減</span>	
 	<br><br>
 	<span class="red">實驗性功能，計算方式待優化</span>
@@ -359,10 +451,12 @@
 	<</if>>	
 	在此設定疼痛衰減百分比，設定完成後按確定以套用數值<br>
 	<<numberslider "$painfixset" $painfixset 0 100 1>>
-	<<link [[确定|$passage]]>>
+	<<button "确定">>
 		<<if $painfixset gt 100>><<set $painfixset to 100>><</if>>
 		<<set $painfix to ((100-$painfixset)/100)>>
-	<</link>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<painfix_fix_setting>><br><br><</replace>>
+	<</button>>
 	<br><br>
 	<<if $debug is 1>>		
 		<<set $painVAR1 to _pain >> 
@@ -382,20 +476,29 @@
 		數值3 修正前：$painVAR3修正後：$painVAR3_1
 		<br>
 	<</if>>
+<</widget>>
+
+<<widget "swich_HP_AP_display">>
 	<span class="gold">HP、AP顯示</span>	
 	<br><br>
 	於戰鬥中顯示對方HP、AP。<br>
 	<<if $HP_AP_display_swich is undefined>>
 		<<set $HP_AP_display_swich to 0>>
 	<</if>>
-	[[HP、AP顯示|$passage][$HP_AP_display_swich = $HP_AP_display_swich == 0? 1 : 0]]<br>
+	<<button "HP、AP顯示">>
+		<<set $HP_AP_display_swich = $HP_AP_display_swich == 0? 1 : 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<swich_HP_AP_display>><br><br><</replace>>
+	<</button>><br>
 	HP、AP顯示：
 	<<if $HP_AP_display_swich is 0>>
 		<span class="red">關</span><br>
 	<<else>>
 		<span class="green">開</span><br>
 	<</if>>
-	<br><br>
+<</widget>>
+
+<<widget "milk_released_setting">>
 	<span class="gold">大量擠🥛模式</span>
 	<br><br>
 	一次擠出更多的🥛，開啟後記得輸入大量擠🥛上/下限。
@@ -403,7 +506,11 @@
 	<<if $milk_releasedswich is undefined>>
 		<<set $milk_releasedswich to 0>>
 	<</if>>
-	[[大量擠🥛模式|$passage][$milk_releasedswich = $milk_releasedswich == 0 ? 1 : 0]]
+	<<button "大量擠🥛模式">>
+		<<set $milk_releasedswich = $milk_releasedswich == 0 ? 1 : 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
+	<</button>>
 	<<if $milk_releasedswich is 0>>
 		<<set $milk_releasedFIX to 0>>
 		<<set $milk_releasedFIX_MIN to 0>>
@@ -427,21 +534,25 @@
 	
 	在此設定大量擠🥛下限：<br>
 	<<numberslider "$milk_releasedFIX_MIN" $milk_releasedFIX_MIN 0 6000 100 >>
-	<<link [[确定|$passage]]>>
+	<<link "确定">>
 		<<if $milk_releasedswich is 0>>
 			<<set $milk_releasedFIX_MIN to 0>>
 			<<set $milk_releasedFIX_MAN to 0>>
 		<</if>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
 	<</link>>
 	<br><br>
 	
-	在此輸入大量擠🥛上限(只能輸入數字)：<br>
+	在此設定大量擠🥛上限：<br>
 	<<numberslider "$milk_releasedFIX_MAX" $milk_releasedFIX_MAX 0 6000 100>>
-	<<link [[确定|$passage]]>>
+	<<link "确定">>
 		<<if $milk_releasedswich is 0>>
 			<<set $milk_releasedFIX_MIN to 0>>
 			<<set $milk_releasedFIX_MAN to 0>>
 		<</if>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
 	<</link>>
 	<br><br>
 	當前可以儲存多少🥛：$milk_volume mL<br>
@@ -451,12 +562,18 @@
 	<<numberslider "$milk_max" $milk_max 3000 60000 100 >><br>
 	當前可以儲存多少🥛：<br>
 	<<numberslider "$milk_volume" $milk_volume 0 60000 100>><br>
-	<<link [[确定|$passage]]>><</link>>
+	<<link "确定">>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
+	<</link>>
 	<br><br>
 	當前有多少🥛：$milk_amount mL<br>
 	修改🥛量<br>
 	<<numberslider "$milk_amount" $milk_amount 0 60000 100>>
-	<<link [[确定|$passage]]>><</link>>
+	<<link "确定">>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
+	<</link>>
 	<br><br>
 	<<if $debug is 1>>
 		除錯：
@@ -468,8 +585,9 @@
 		當前大量擠🥛修正亂數最大值--<span class="red">$milk_releasedFIX_MAX</span>
 		<br>
 	<</if>>
-	<br><br>
-	
+<</widget>>
+
+<<widget "black_stores_setting">>
 	<span class="gold">黑心商店</span>
 	<br><br>
 	一次賣出更多的商品，敲詐更多錢。<br>
@@ -479,7 +597,12 @@
 		<<set $black_store_FIX_MAX to 30>>
 		<<set $stall_cost_FIX to 1>>
 	<</if>>
-	[[黑心商店|$passage][$black_storeswich = $black_storeswich == 0 ? 1 : 0]]	<br>
+	<<button "黑心商店">>
+		<<set $black_storeswich = $black_storeswich == 0 ? 1 : 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<black_stores_setting>><br><br><</replace>>
+	<</button>>	
+		<br>
 	<<if $black_storeswich is 0>>
 		<<set $black_store_FIX_MIN to 11>>
 		<<set $black_store_FIX_MAX to 30>>
@@ -496,7 +619,7 @@
 			<<set $stall_cost_FIX to 1>>
 		<</if>>
 	<</if>>				
-	黑心花店模式：
+	黑心商店模式：
 	<<if $black_storeswich is 0>>
 		<span class="red">關</span>
 		<br>
@@ -506,43 +629,51 @@
 		<br>
 	<</if>>		
 	<br><br>
-	在此設定黑心花店隨機數下限：<br>
+	在此設定黑心商店隨機數下限：<br>
 	<<numberslider "$black_store_FIX_MIN" $black_store_FIX_MIN 11 1100 11>>
-	<<link [[确定|$passage]]>>
+	<<link "确定">>
 		<<if $black_storeswich is 0>>
 			<<set $black_store_FIX_MIN to 11>>
 			<<set $black_store_FIX_MAX to 30>>
 			<<set $stall_cost_FIX to 1>>
 		<</if>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<black_stores_setting>><br><br><</replace>>
 	<</link>>
 	<br><br>
-	在此設定黑心花店隨機數上限：<br>
+	在此設定黑心商店隨機數上限：<br>
 	<<numberslider "$black_store_FIX_MAX" $black_store_FIX_MAX 30 3000 10>>
-	<<link [[确定|$passage]]>>
+	<<link "确定">>
 		<<if $black_storeswich is 0>>
 			<<set $black_store_FIX_MIN to 11>>
 			<<set $black_store_FIX_MAX to 30>>
 			<<set $stall_cost_FIX to 1>>
 		<</if>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<black_stores_setting>><br><br><</replace>>
 	<</link>>
 	<br><br>
-	當前花店銷售隨機數下限$black_store_FIX_MIN個，當前花店銷售隨機數上限$black_store_FIX_MAX個。
+	當前銷售隨機數下限$black_store_FIX_MIN個，當前銷售隨機數上限$black_store_FIX_MAX個。
 	<br><br>
-	在此設定黑心花店銷售額倍數：<br>
+	在此設定黑心商店銷售額倍數：<br>
 	<<if $stall_cost_FIX is undefined>>
 		<<set $stall_cost_FIX to 1>>
 	<</if>>
 	<<numberslider "$stall_cost_FIX" $stall_cost_FIX 1 200 1>>
-	<<link [[确定|$passage]]>>
+	<<link "确定">>
 		<<if $black_storeswich is 0>>
 			<<set $black_store_FIX_MIN to 11>>
 			<<set $black_store_FIX_MAX to 30>>
 			<<set $stall_cost_FIX to 1>>
 		<</if>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<black_stores_setting>><br><br><</replace>>
 	<</link>>
 	<br><br>
-	當前花店銷售額倍數$stall_cost_FIX倍。
-	<br><br>
+	當前銷售額倍數$stall_cost_FIX倍。
+<</widget>>
+
+<<widget "dance_reward_setting">>
 	<span class="gold">跳舞報酬加倍</span>
 	<br><br>
 	跳舞報酬加倍，輕鬆賺錢。
@@ -550,7 +681,11 @@
 	<<if $dance_reward_swich is undefined>>
 		<<set $dance_reward_swich to 0>>
 	<</if>>
-	[[跳舞報酬加倍|$passage][$dance_reward_swich = $dance_reward_swich == 0 ? 1 : 0]]
+	<<button "跳舞報酬加倍">>
+		<<set $dance_reward_swich = $dance_reward_swich == 0 ? 1 : 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<dance_reward_setting>><br><br><</replace>>
+	<</button>>
 	<br>
 	跳舞報酬加倍開關：
 	<<if $dance_reward_swich is 0>>
@@ -568,14 +703,18 @@
 		<<set $dancetip_FIX to 1>>
 	<</if>>
 	<<numberslider "$dancetip_FIX" $dancetip_FIX 1 200 1>>
-	<<link [[确定|$passage]]>>
+	<<link "确定">>
 		<<if $dance_reward_swich isnot 1>>
 			<<set $dancetip_FIX to 1>>
-		<</if>>		
+		<</if>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<dance_reward_setting>><br><br><</replace>>
 	<</link>>
 	<br><br>
 	當前跳舞報酬加倍倍數：$dancetip_FIX倍。
-	<br><br>
+<</widget>>
+
+<<widget "brothel_basement_setting">>
 	<span class="gold">尋歡洞報酬加倍</span>
 	<br><br>
 	尋歡洞報酬加倍，嫖妓可不便宜啊。
@@ -583,7 +722,11 @@
 	<<if $brothel_basement_swich is undefined>>
 		<<set $brothel_basement_swich to 0>>
 	<</if>>
-	[[尋歡洞報酬加倍|$passage][$brothel_basement_swich = $brothel_basement_swich == 0 ? 1 : 0]]
+	<<button "尋歡洞報酬加倍">>
+		<<set $brothel_basement_swich = $brothel_basement_swich == 0 ? 1 : 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<brothel_basement_setting>><br><br><</replace>>
+	<</button>>
 	<br>
 	尋歡洞報酬加倍：
 	<<if $brothel_basement_swich is 0>>
@@ -601,19 +744,27 @@
 		<<set $brothel_basement_price_FIX to 1>>
 	<</if>>
 	<<numberslider "$brothel_basement_price_FIX" $brothel_basement_price_FIX 1 200 1>>
-	<<link [[确定|$passage]]>>
+	<<link "确定">>
 		<<if $brothel_basement_swich isnot 1>>
 			<<set $brothel_basement_price_FIX to 1>>
-		<</if>>		
+		<</if>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<brothel_basement_setting>><br><br><</replace>>		
 	<</link>>
 	<br><br>
 	當前尋歡洞報酬加倍倍數：$brothel_basement_price_FIX倍。
-	<br><br>
+<</widget>>
+
+<<widget "swich_DEBUG_MODE">>
 	<span class="gold">DEBUG MODE</span>
 	<br><br>
 	DEBUG MODE開關，開啟後你就是上帝？請謹慎使用。
 	<br>
-	[[上帝模式开关|$passage][$debug = $debug == 0 ? 1 : 0]]
+	<<button "上帝模式開關">>
+		<<set $debug = $debug == 0 ? 1 : 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<swich_DEBUG_MODE>><br><br><</replace>>
+	<</button>>
 	<br>
 	DEBUG MODE開關：
 	<<if $debug is 0>>
@@ -624,7 +775,10 @@
 		<span class="green">開</span>
 		<br>
 	<</if>>	
-	<br><br>
+	<<link [[更新|$passage]]>><</link>><br>
+<</widget>>
+
+<<widget "study_hard_mod">>
 	<span class="gold">用功學習</span>
 	<br>
 	放學後在家裡瘋狂內捲(用功讀書)
@@ -632,7 +786,11 @@
 	<<if $study_hard is undefined>>
 		<<set $study_hard to 0>>
 	<</if>>
-	[[用功學習|$passage][$study_hard = $study_hard == 0 ? 1 : 0]]
+	<<button "用功學習">>
+		<<set $study_hard = $study_hard == 0 ? 1 : 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>
+	<</button>>
 	<br>
 	用功學習開關：
 	<<if $study_hard is 0>>
@@ -646,21 +804,56 @@
 	<br>
 	作弊：
 	<br>
-	科學：$science_exam，下次考試難度，$science_exam_difficulty，[[不想努力了|$passage][$science_exam to 120]]
+	科學：$science_exam，下次考試難度，$science_exam_difficulty，
+	<<link "不想努力了">>
+		<<set $science_exam to 120>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
+	<</link>>
 	<br>
-	數學：$maths_exam，下次考試難度，$maths_exam_difficulty，[[不想努力了|$passage][$maths_exam to 120]]
+	數學：$maths_exam，下次考試難度，$maths_exam_difficulty，
+	<<link "不想努力了">>
+		<<set $maths_exam to 120>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
+	<</link>>
 	<br>
-	語文：$english_exam，下次考試難度，$english_exam_difficulty，[[不想努力了|$passage][$english_exam to 120]]
+	語文：$english_exam，下次考試難度，$english_exam_difficulty，
+	<<link "不想努力了">>
+		<<set $english_exam to 120>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
+	<</link>>
 	<br>
-	歷史：$history_exam，下次考試難度，$history_exam_difficulty，[[不想努力了|$passage][$history_exam to 120]]
+	歷史：$history_exam，下次考試難度，$history_exam_difficulty，
+	<<link "不想努力了">>
+		<<set $history_exam to 120>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
+	<</link>>
 	<br>
-	<br><br>
+<</widget>>
+
+<<widget "bigest_wardrobe_mod">>
 	<span class="gold">大容量衣櫃</span><br>
 	異次元空間衣櫃，再也不擔心老師們的衣服太好看但衣櫃放不下了！<br>
-	<<if $bigest_wardrobe_swich is undefined>>
-		<<set $bigest_wardrobe_swich to 0>>
+	<<set _wardrobe to Furniture.get('wardrobe')>>
+	<<if _wardrobe.type.includes('starter')>>
+		<<set _default_wardrobe to 20>>
+	<<elseif _wardrobe.type.includes('spacious')>>
+		<<set _default_wardrobe to 30>>
+	<<elseif _wardrobe.type.includes('organised')>>
+		<<set _default_wardrobe to 40>>
 	<</if>>
-	[[異次元空間衣櫃|$passage][$bigest_wardrobe_swich = $bigest_wardrobe_swich == 0 ? 1 : 0]]<br>	
+	<<if $bigest_wardrobe_swich is undefined or $bigest_wardrobe_fix is undefined>>
+		<<set $bigest_wardrobe_swich to 0>>
+		<<set $bigest_wardrobe_fix to _default_wardrobe>>
+	<</if>>
+	<<button "異次元空間衣櫃">>
+		<<set $bigest_wardrobe_swich = $bigest_wardrobe_swich == 0 ? 1 : 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<bigest_wardrobe_mod>><br><br><</replace>>
+	<</button>><br>	
 	異次元空間衣櫃開關：
 	<<if $bigest_wardrobe_swich is 0>>
 		<span class="red">關</span>
@@ -671,24 +864,24 @@
 	<</if>>
 	在此設定異次元空間衣櫃容量，當前設定容量為$wardrobe.space<br>
 	<<numberslider "$bigest_wardrobe_fix" $bigest_wardrobe_fix 0 10000 10>>
-	<<link [[确定|$passage]]>>
+	<<link "确定">>
 		<<if $bigest_wardrobe_swich is 1>>
 			<<set $wardrobe.space to $bigest_wardrobe_fix>>
-		<</if>>		
+		<</if>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<bigest_wardrobe_mod>><br><br><</replace>>
 	<</link>>
 	<br>
-	<<set _wardrobe to Furniture.get('wardrobe')>>
-	<<if _wardrobe.type.includes('starter')>>
-		<<set _default_wardrobe to 20>>
-	<<elseif _wardrobe.type.includes('spacious')>>
-		<<set _default_wardrobe to 30>>
-	<<elseif _wardrobe.type.includes('organised')>>
-		<<set _default_wardrobe to 40>>
-	<</if>>
 	當前預設容量：_default_wardrobe<br>
-	<<link [[恢復預設|$passage]]>>
+	<<link "恢復預設">>
 		<<set $wardrobe.space to _default_wardrobe>>
-	<</link>><br><br>	
+		<<set $bigest_wardrobe_fix to _default_wardrobe>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<bigest_wardrobe_mod>><br><br><</replace>>
+	<</link>>
+<</widget>>
+
+<<widget "quick_yanling">>
 	<span class="gold">快速言靈</span>
 	<br>
 	[[一键烘干衣服|$passage][$upperwet to 0, $lowerwet to 0, $underlowerwet to 0, $underupperwet to 0]] 
@@ -743,7 +936,9 @@
 	<br>
 	[[长獠牙|$passage][$transformationParts.traits.fangs to String.fromCharCode (105,115,110,111,32,116,100,101,102,97,117,108,116)]]
 	<br>
-	<br>
+<</widget>>
+
+<<widget "Times_jumps">>
 	<span class="gold">時空穿越</span>
 	<br>
 	[[时空穿越到0点|$passage][Time.setTime(0, 0)]]
@@ -794,4 +989,123 @@
 	<br>
 	[[时空穿越到23点|$passage][Time.setTime(23, 0)]]
 	<br>
-<</widget>>	
+<</widget>>
+
+
+
+<<widget "cheat_extended_options">>
+	<<if _selectedOptions is undefined>><<set _selectedOptions to "swich">><</if>>
+		<div @class="_selectedOptions is 'swich' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "左側快捷">>
+				<<set _selectedOptions to "swich">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>	<!--更新顯示各作弊拓展功能切換按鈕-->
+				<<replace #CE_settingsDiv>><<swich>><br><br><</replace>>					<!--顯示各作弊拓展功能詳細設定-->
+			<</button>>	<br>	
+		</div>	
+		<div @class="_selectedOptions is 'swich_teleportation' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "空間節點">>
+				<<set _selectedOptions to "swich_teleportation">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_teleportation>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		<div @class="_selectedOptions is 'swich_yanling' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "言靈集">>
+				<<set _selectedOptions to "swich_yanling">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		<div @class="_selectedOptions is 'damage_fix_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "傷害倍數">>
+				<<set _selectedOptions to "damage_fix_setting">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<damage_fix_setting>><br><br><</replace>>
+			<</button>>	<br>
+		</div>	
+		<div @class="_selectedOptions is 'painfix_fix_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "疼痛衰減">>
+				<<set _selectedOptions to "painfix_fix_setting">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<painfix_fix_setting>><br><br><</replace>>
+			<</button>>	<br>
+		</div>	
+		<div @class="_selectedOptions is 'swich_HP_AP_display' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "HP、AP顯示">>
+				<<set _selectedOptions to "swich_HP_AP_display">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_HP_AP_display>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		<div @class="_selectedOptions is 'milk_released_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "大量擠🥛模式">>
+				<<set _selectedOptions to "milk_released_setting">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		<div @class="_selectedOptions is 'black_stores_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "黑心商店">>
+				<<set _selectedOptions to "black_stores_setting">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<black_stores_setting>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		<div @class="_selectedOptions is 'dance_reward_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "跳舞報酬加倍">>
+				<<set _selectedOptions to "dance_reward_setting">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<dance_reward_setting>><br><br><</replace>>
+			<</button>>	<br>
+		</div>	
+		<div @class="_selectedOptions is 'brothel_basement_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "尋歡洞報酬加倍">>
+				<<set _selectedOptions to "brothel_basement_setting">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<brothel_basement_setting>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		<div @class="_selectedOptions is 'swich_DEBUG_MODE' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "DEBUG MODE">>
+				<<set _selectedOptions to "swich_DEBUG_MODE">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_DEBUG_MODE>><br><br><</replace>>
+			<</button>>	<br>
+		</div>	
+		<div @class="_selectedOptions is 'study_hard_mod' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "用功學習">>
+				<<set _selectedOptions to "study_hard_mod">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
+			<</button>>	<br>
+		</div>	
+		<div @class="_selectedOptions is 'bigest_wardrobe_mod' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "大容量衣櫃">>
+				<<set _selectedOptions to "bigest_wardrobe_mod">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<bigest_wardrobe_mod>><br><br><</replace>>
+			<</button>>	<br>
+		</div>	
+		<div @class="_selectedOptions is 'quick_yanling' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "快速言靈">>
+				<<set _selectedOptions to "quick_yanling">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<quick_yanling>><br><br><</replace>>
+			<</button>>	<br>
+		</div>	
+<</widget>>
+
+<<widget "cheat_extended">>
+	<div class="CEDISPLAY">			<!--套用自訂CSS樣式-->
+		<div class="CEDISPLAY_button">
+			<div id="cheat_extended_options" class="no-numberify">	<!--顯示各作弊拓展功能切換按鈕-->
+				<<cheat_extended_options>>	
+			</div>
+		</div>
+		<div class="CEDISPLAY_setting">
+			<div id="CE_settingsDiv" class="no-numberify">	<!--顯示各作弊拓展功能詳細設定-->
+				<<swich>><br><br>		<!--預設顯示為左側快捷-->
+			</div>
+		</div>	
+	</div>	
+<</widget>>
