@@ -1,14 +1,15 @@
 {
   "name": "cheat extended",
-  "version": "1.5.1",
+  "version": "1.6.1",
+  "styleFileList": [],
+  "scriptFileList": [],
   "styleFileList": [
     "CE_CSS.css"
   ],
-  "scriptFileList": [],
   "tweeFileList": [
-    "Widgets cheat_extended.twee",
+    "Bedroom Study.twee",
     "随身衣柜.twee",
-    "Bedroom Study.twee"
+	"Widgets cheat_extended.twee"
   ],
   "imgFileList": [],
   "additionFile": [
@@ -17,7 +18,7 @@
     "addon-replace/cheats_2.txt",
     "addon-replace/cheats_3.txt",
     "addon-replace/cheats_4.txt",
-    "addon-replace/overlayReplace.txt",
+	"addon-replace/overlayReplace.txt",
     "addon-replace/Stall Seduce.txt",
     "addon-replace/StoryCaption.txt",
     "addon-replace/Widgets Dance Audience.txt",
@@ -33,7 +34,7 @@
     "addon-replace/Widgets_4.txt",
     "addon-replace/Widgets_5.txt",
     "readme.md",
-    "LICENSE.txt"
+	"LICENSE.txt"
   ],
   "addonPlugin": [
     {
@@ -61,7 +62,7 @@
           "findString": "<<widget \"cheats-other\">>",
           "replaceFile": "addon-replace/cheats_4.txt"
         },
-        {
+		 {
           "passage": "overlayReplace",
           "findString": "\t\t\t<<replace #cheatsShown>><<cheats-other>><</replace>>\n\t\t\t<<run $(\"#customOverlayContent\").scrollTop(0);>>\n\t\t<</button>>",
           "replaceFile": "addon-replace/overlayReplace.txt"

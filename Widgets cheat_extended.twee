@@ -192,7 +192,7 @@
 			<<set _j to _i + 1>>
 			<<if _args[0] is "left">>
 				(_j) $cccheat[_i]<br>
-			<<else>>
+			<<elseif _args[0] is "cheat_menu">>
 				(_j) $cccheat[_i]
 				<<if _j%10 is 0>>
 					<br>
@@ -232,8 +232,10 @@
 				<<yanling left>>
 				<<yanling_unset>>
 			<</replace>>
-			<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-			<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
+			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
+			<</if>>	
 		<</button>><br>
 	<</if>>
 <</widget>>	
@@ -1065,6 +1067,13 @@
 				<<replace #CE_settingsDiv>><<brothel_basement_setting>><br><br><</replace>>
 			<</button>>	<br>
 		</div>
+		<div @class="_selectedOptions is 'Times_jumps' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "時空穿越">>
+				<<set _selectedOptions to "Times_jumps">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<Times_jumps>><br><br><</replace>>
+			<</button>>	<br>	
+		</div>
 		<div @class="_selectedOptions is 'swich_DEBUG_MODE' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
 			<<button "DEBUG MODE">>
 				<<set _selectedOptions to "swich_DEBUG_MODE">>
@@ -1091,7 +1100,7 @@
 				<<set _selectedOptions to "quick_yanling">>
 				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 				<<replace #CE_settingsDiv>><<quick_yanling>><br><br><</replace>>
-			<</button>>	<br>
+			<</button>>	<br>	
 		</div>	
 <</widget>>
 
