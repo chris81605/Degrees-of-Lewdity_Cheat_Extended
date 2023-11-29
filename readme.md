@@ -12,7 +12,7 @@
 
 # Degrees-of-Lewdity_Cheat_Extended
 簡介：Degrees-of-Lewdity 的作弊拓展MOD  
-![imge](https://github.com/chris81605/Degrees-of-Lewdity_Cheat_Extended/blob/main/PIC/Cheat_Extended_New_UI.png)  
+![imge](https://github.com/chris81605/Degrees-of-Lewdity_Cheat_Extended/blob/main/PIC/Cheat_Extended_UI.png)  
 
 # 功能
 ## 新增若干作弊功能：  
