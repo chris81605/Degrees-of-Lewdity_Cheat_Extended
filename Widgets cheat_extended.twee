@@ -887,8 +887,8 @@
 	虛空創造、憑空煉成新服裝：<br>
 	(1)選擇服裝類型<br>
 	(2)<span class="gold">選擇添加</span>或
-	<span class="gold">一鍵全添加</span><br>
-	<span class="blue">顏色隨機分配</span><br>
+	<span class="gold">一鍵全添加</span>
+	<span class="blue">(顏色隨機分配)</span><br>
 	選擇服裝類型：<br>
 	<<set _clothes_type_list to ["face", "feet", "hands", "head", "legs", "lower", "neck", "over_head", "over_lower", "over_upper", "under_lower", "under_upper", "upper"]>><!--服裝類型定義-->
 	<<set _clothes_name to []>><!--服裝名稱，用於指定服裝獲取-->
@@ -896,6 +896,8 @@
 	<<link "確認選擇">>
 		<<set _var to setup.clothes[_clothes_type].length - 1>> <!--獲取當前選擇服裝類型內的服裝數量-->
 		<<set _clothes_name to []>>								<!--將當前服裝類型內的服裝名稱導出，用於指定服裝獲取-->
+		<<set _coloraction to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal"]>>
+		<<set _accessorycolouraction to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal"]>>
 		<<set _j to 1>>
 		<<for _i to 0; _i lte _var; _i++>>
 			<<if setup.clothes[_clothes_type][_i].cn_name_cap isnot "赤裸">>
@@ -908,6 +910,29 @@
 		<<replace #clothes_name>>								<!--列出當前類型服裝的名稱，用於指定服裝獲取-->
 			當前類型的服裝有(選擇後指定添加)：<br>
 			<<listbox "_clothes_name_list" autoselect>><<option "none">><<optionsfrom _clothes_name>><</listbox>><br>
+		<</replace>>
+		<<replace #clothes_color>>	
+			顏色選擇：
+			<<link "選擇">>
+				<<if _clothes_coloraction_list isnot "none">>
+					<<set _clothes_coloraction to _clothes_coloraction_list>>
+				<<else>>
+					<<set _clothes_coloraction to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal"][random(0, 8)]>>
+				<</if>>	
+				<<if _clothes_accessorycolouraction_list isnot "none">>
+					<<set _accessorycolouraction to _clothes_accessorycolouraction_list>>
+				<<else>>
+					<<set _accessorycolouraction to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal"][random(0, 8)]>>
+				<</if>>	
+				<<replace #clothes_color>>
+					主要顏色：<span class="green">_clothes_coloraction</span><br>
+					次要顏色：<span class="green">_accessorycolouraction</span><br>
+				<</replace>>
+			<</link>><br>
+			主要顏色：<br>
+			<<listbox "_clothes_coloraction_list" autoselect>><<option "none">><<optionsfrom _coloraction>><</listbox>><br>
+			次要顏色：<br>
+			<<listbox "_clothes_accessorycolouraction_list" autoselect>><<option "none">><<optionsfrom _accessorycolouraction>><</listbox>><br>
 		<</replace>>
 		<<replace #result>>
 			當前狀態：
@@ -925,21 +950,36 @@
 		當前類型的服裝有(選擇後指定添加)：<br>
 		<<listbox "_clothes_name_list" autoselect>><<option "none">><<optionsfrom _clothes_name>><</listbox>><br>
 	</div>
+	
+	<div id="clothes_color"></div>
+	
 	<<button "指定添加">>
-		<<for _i to 0; _i lte _var; _i++>>
-			<<if _clothes_name_list is setup.clothes[_clothes_type][_i].cn_name_cap>>		<!--獲取當前選取的服裝於遊戲服裝列表的索引值，並以此索引值添加服裝-->
-				<<set _coloraction to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal"][random(0,8)]>>
-				<<set _accessorycolouraction to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal"][random(0,8)]>>
-				<<generalSend "wardrobe" _clothes_type _i _coloraction _accessorycolouraction>>
+		<<if _clothes_name_list isnot "none">>
+			<<if _clothes_coloraction_list is "none" or _clothes_coloraction_list is undefined>>
+				<<set _clothes_coloraction to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal"][random(0, 8)]>>
 			<</if>>	
-		<</for>>
-		<<replace #result>>
-			當前狀態：
-			<span class="green">完成，已添加</span>
-			<span class="blue">_clothes_name_list</span>
-			<span class="green">，請至衣櫃查收</span><br>
-			<span class="red">警告！！！部分服裝可能無法正常穿脫！請謹慎使用，建議先存檔。</span>(通常是遊戲內的特殊服裝)
-		<</replace>>
+			<<if _clothes_accessorycolouraction_list is "none" or _clothes_accessorycolouraction_list is undefined>>
+				<<set _clothes_accessorycolouraction to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal"][random(0, 8)]>>
+			<</if>>	
+			<<for _i to 0; _i lte _var; _i++>>
+				<<if _clothes_name_list is setup.clothes[_clothes_type][_i].cn_name_cap>>		<!--獲取當前選取的服裝於遊戲服裝列表的索引值，並以此索引值添加服裝-->
+					<<generalSend "wardrobe" _clothes_type _i _clothes_coloraction _clothes_accessorycolouraction>>
+				<</if>>	
+			<</for>>
+			<<replace #result>>
+				當前狀態：
+				<span class="green">完成，已添加</span>
+				<span class="blue">_clothes_coloraction / _clothes_accessorycolouraction</span>
+				<span class="blue">的_clothes_name_list</span>
+				<span class="green">，請至衣櫃查收</span><br>
+				<span class="red">警告！！！部分服裝可能無法正常穿脫！請謹慎使用，建議先存檔。</span>(通常是遊戲內的特殊服裝)
+			<</replace>>
+		<<else>>
+			<<replace #result>>
+				當前狀態：
+				<span class="red">警告！！！請先選擇要添加的服裝</span>
+			<</replace>>
+		<</if>>
 	<</button>>
 	<br>
 	<<button "一鍵全添加">>
@@ -958,6 +998,31 @@
 	<</button>>
 	<div id="result" class="no-numberify">
 		當前狀態：<span class="blue">待命，請選擇服裝類型。</span>
+	</div>
+	<div id="undress_ALL">
+		<<link"一鍵脫光光">>
+			<<replace #undress_ALL>>
+				<span class="red">>警告！！！強制脫下即解除項圈、貞操帶、口球、眼罩等物可能導致遊戲Bug，請謹慎使用</span><br>
+				<<link [["一鍵脫光光"|$passage]]>>
+					<<set _clothes_type_list to ["face", "feet", "hands", "head", "legs", "lower", "neck", "over_head", "over_lower", "over_upper", "under_lower", "under_upper", "upper"]>>
+					<<for _i to 0; _i lte 12; _i++>>
+						<<generalUndress "wardrobe" _clothes_type_list[_i]>>
+					<</for>>
+					<<set $worn.over_head.type.push("broken")>>
+					<<set $worn.over_head.integrity to 0>>
+					<<overheadruined>>
+					<<set $worn.face.type.push("broken")>>
+					<<set $worn.face.integrity to 0>>
+					<<faceruined>>
+					<<set $worn.genitals.type.push("broken")>>
+					<<genitalsruined>>
+					<<set $worn.feet.type.push("broken")>>
+					<<feetruined>>
+					<<set $worn.neck.type.push("broken")>>
+					<<neckruined>>
+				<</link>><br>
+			<</replace>>		
+		<</link>><br>
 	</div>
 	<!--generalSend推測用法
 		參數1 衣櫃位置
