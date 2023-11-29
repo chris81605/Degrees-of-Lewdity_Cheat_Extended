@@ -884,16 +884,19 @@
 <</widget>>
 
 <<widget "get_all_clothes">>
-	選擇類型，一鍵添加遊戲內所有服裝，<span class="blue">隨機分配</span><br>
+	選擇類型，一鍵添加遊戲內所有服裝，<span class="blue">顏色隨機分配</span><br>
 	選擇服裝類型添加：<br>
-	<<set _clothes_type_list to ["face", "feet", "hands", "head", "legs" ,"lower", "neck", "over_head", "over_lower", "over_upper", "under_lower", "under_upper", "upper"]>>
+	<<set _clothes_type_list to ["face", "feet", "hands", "head", "legs", "lower", "neck", "over_head", "over_lower", "over_upper", "under_lower", "under_upper", "upper"]>>
 	<<listbox "_clothes_type" autoselect>><<optionsfrom _clothes_type_list>><</listbox>>
 	<<link "確認選擇">>
 		<<replace #clothes_type>>
 			當前選擇類型為：<span class="green">_clothes_type</span>
 		<</replace>>
+		<<set _var to setup.clothes[_clothes_type].length - 1>>
+		<<replace #result>>
+			當前狀態：<span class="blue">待命，請添加服裝</span>
+		<</replace>>
 	<</link>>
-	<<set _var to setup.clothes[_clothes_type].length - 1>>
 	<div id="clothes_type" class="no-numberify">
 		當前選擇類型為：<span class="green">_clothes_type</span>
 	</div>
