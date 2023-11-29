@@ -883,6 +883,43 @@
 	<</link>>
 <</widget>>
 
+<<widget "get_all_clothes">>
+	選擇類型，一鍵添加遊戲內所有服裝，<span class="blue">隨機分配</span><br>
+	選擇服裝類型添加：<br>
+	<<set _clothes_type_list to ["face", "feet", "hands", "head", "legs" ,"lower", "neck", "over_head", "over_lower", "over_upper", "under_lower", "under_upper", "upper"]>>
+	<<listbox "_clothes_type" autoselect>><<optionsfrom _clothes_type_list>><</listbox>>
+	<<link "確認選擇">>
+		<<replace #clothes_type>>
+			當前選擇類型為：<span class="green">_clothes_type</span>
+		<</replace>>
+	<</link>>
+	<<set _var to setup.clothes[_clothes_type].length - 1>>
+	<div id="clothes_type" class="no-numberify">
+		當前選擇類型為：<span class="green">_clothes_type</span>
+	</div>
+	<<button "添加">>
+		<<for _i to _var; _i gt 0; _i-->>
+			<<set _coloraction to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal"][random(0,8)]>>
+			<<set _accessorycolouraction to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal"][random(0,8)]>>
+			<<generalSend "wardrobe" _clothes_type _i _coloraction _accessorycolouraction>>
+		<</for>>
+		<<replace #result>>
+			當前狀態：<span class="green">完成，請至衣櫃查收</span><br>
+			<span class="red">警告！！！部分服裝可能無法正常穿脫！請謹慎使用，建議先存檔。</span>(通常是遊戲內的特殊服裝)
+		<</replace>>	
+	<</button>>
+	<div id="result" class="no-numberify">
+		當前狀態：<span class="blue">待命，請添加服裝</span>
+	</div>
+	<!--generalSend推測用法
+		參數1 衣櫃位置
+		參數2 服裝類型
+		參數3 該類型服裝索引編號
+		參數4 主要顏色
+		參數5 次要顏色
+	-->	
+<</widget>>
+
 <<widget "quick_yanling">>
 	<span class="gold">快速言靈</span>
 	<br>
@@ -1093,6 +1130,13 @@
 				<<set _selectedOptions to "bigest_wardrobe_mod">>
 				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 				<<replace #CE_settingsDiv>><<bigest_wardrobe_mod>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		<div @class="_selectedOptions is 'get_all_clothes' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "一鍵添加所有服裝">>
+				<<set _selectedOptions to "get_all_clothes">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<get_all_clothes>><br><br><</replace>>
 			<</button>>	<br>
 		</div>	
 		<div @class="_selectedOptions is 'quick_yanling' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
