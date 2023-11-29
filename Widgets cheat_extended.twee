@@ -957,7 +957,7 @@
 		<</replace>>	
 	<</button>>
 	<div id="result" class="no-numberify">
-		當前狀態：<span class="blue">待命，請服裝類型。</span>
+		當前狀態：<span class="blue">待命，請選擇服裝類型。</span>
 	</div>
 	<!--generalSend推測用法
 		參數1 衣櫃位置
