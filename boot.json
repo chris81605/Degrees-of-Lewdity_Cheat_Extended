@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.7.4",
+  "version": "1.8.0-TEST",
   "styleFileList": [],
   "scriptFileList": [],
   "styleFileList": [
@@ -21,6 +21,7 @@
 	"addon-replace/overlayReplace.txt",
     "addon-replace/Stall Seduce.txt",
     "addon-replace/StoryCaption.txt",
+	"addon-replace/tattoo_index.txt",
     "addon-replace/Widgets Dance Audience.txt",
     "addon-replace/Widgets Market_1.txt",
     "addon-replace/Widgets Market_2.txt",
@@ -102,6 +103,11 @@
           "findString": "\t<<if setup.plants[$stall_plant].special.includes(\"large\")>>\n\t\t<<set $stall_amount to 1>>\n\t<<else>>",
           "replaceFile": "addon-replace/Stall Seduce.txt"
         },
+		{
+          "passage": "Widgets Bodywriting Objects",
+          "findString": "\t\tcircle: {\n\t\t\tindex: 199,",
+          "replaceFile": "addon-replace/tattoo_index.txt"
+        },
         {
           "passage": "Widgets Market",
           "findString": "<<widget \"stall_sell_actions\">>",
@@ -138,6 +144,7 @@
           "findString": "\t\t\t<<run Furniture.set('wallpaper', 'wallpaper', {",
           "replace": "\t\t\t<<set _normalisedName to _chosenWallpaperCustom>>\n\t\t\t<<run Furniture.set('wallpaper', 'wallpaper', {"
         },
+		
         {
           "passage": "Widgets Dance Audience",
           "findString": "\t\t\t\t<<set $dancetip *= 1 + ($mathstrait / 4)>>",

@@ -1075,6 +1075,172 @@
 	-->	
 <</widget>>
 
+<<widget "CE_tattoo">>
+
+	<u>魔術迴路</u>
+	<br><br>
+	<span class="gold">在此......將言靈銘刻在身上！</span>
+	<!--<br>
+	颜色
+	<<listbox "_color_tattooEEE">>
+		<<option "红色" "Red">>
+		<<option "粉色" "Pink">>
+		<<option "紫色" "Purple">>
+		<<option "金色" "Gold">>
+		<<option "橙色" "Orange">>
+		<<option "绿色" "Green">>
+		<<option "蓝色" "Blue">>
+		<<option "七彩" "Lustful">>
+	<</listbox>>
+	<br>-->
+	索引<br>
+	<<set $CE_tattoo_index to 1000>>
+	<<if $CE_tattoo is undefined>>
+		<<set $CE_tattoo to []>>
+		<<for _i to 0; _i lte 8; _i++>>
+			<<set $CE_tattoo[$CE_tattoo.length] to "CE_tattoo" + (_i)>>
+		<</for>>
+	<</if>>		
+	<<numberslider "$CE_tattoo_index" $CE_tattoo_index 1000 1008 1>>
+	<<link "更新索引">>
+		<<set $CE_tattoo_index_NO to $CE_tattoo_index - 1000>>
+		<<replace #CE_tattoo_text>>
+			文字
+			<<textbox "$CE_tattoo_text" $CE_tattoo[$CE_tattoo_index_NO]>>
+			<<link "確認">>
+				<<set $CE_tattoo[$CE_tattoo_index_NO] to $CE_tattoo_text>>
+				<<replace #CE_tattoo_setting>>
+					方式
+					<<listbox "_penstyle">>
+						<<option "pen" "pen">>
+						<<option "marker" "marker">>
+						<<option "lipstick" "lipstick">>
+						<<option "mud" "mud">>
+						<<option "tattoo" "tattoo">>
+					<</listbox>>
+					位置
+					<<listbox "_bodyPartSelected">>
+						<<option "forehead" "forehead">>
+						<<option "left_cheek" "left_cheek">>
+						<<option "right_cheek" "right_cheek">>
+						<<option "left_shoulder" "left_shoulder">>
+						<<option "right_shoulder" "right_shoulder">>
+						<<option "breasts" "breasts">>
+						<<option "back" "back">>
+						<<option "left_bottom" "left_bottom">>
+						<<option "right_bottom" "right_bottom">>
+						<<option "pubic" "pubic">>
+						<<option "left_thigh" "left_thigh">>
+						<<option "right_thigh" "right_thigh">>
+					<</listbox>>
+					類型
+					<<listbox "_special_tattoo">>
+						<<option "通常" "none">>
+						<<option "淫乱" "sex">>
+						<<option "卖淫" "prostitution">>
+						<<option "露出" "exhibitionism">>
+						<<option "异种" "bestiality">>
+						<<option "受虐" "violence">>
+						<<option "顺从" "none2">>
+						<<option "怀孕" "pregnancy">>
+						<<option "爱人" "lover">>
+						<<option "神圣" "holy">>
+					<</listbox>>
+					<br>
+					是否關聯愛人<br>
+					<<set _lover_tattoo_swich to 0>>
+					<div id="lover_tattoo" class="no-numberify">
+						<<if _lover_tattoo_swich is 0>>
+							<span class="red">否</span>
+							<br>
+						<<else>>	
+							<span class="green">是</span>
+							<br>
+						<</if>>
+					</div>
+					<<button "切換">>
+						<<set _lover_tattoo_swich = _lover_tattoo_swich == 0 ? 1 : 0>>
+						<<replace #lover_tattoo>>
+							<<if _lover_tattoo_swich is 0>>
+								<span class="red">否</span>
+								<br>
+							<<else>>	
+								<span class="green">是</span>
+								<br>
+							<</if>>
+						<</replace>>
+					<</button>><br>
+					<<listbox "_lover_tattoo">>
+						<<option "无" "none">>
+						<<option "罗宾" "Robin">>
+						<<option "悉尼" "Sydney">>
+						<<option "凯拉尔" "Kylar">>
+						<<option "惠特尼" "Whitney">>
+						<<option "伊甸" "Eden">>
+						<<option "艾弗里" "Avery">>
+						<<option "艾利克斯" "Alex">>
+						<<option "黑狼" "Black Wolf">>
+						<<option "巨鹰" "Great Hawk">>
+					<</listbox>>
+					<br>
+					是否带有指向性器的箭頭
+					<<listbox "_arrow">>
+						<<option "否" 0>>
+						<<option "是" 1>>
+					<</listbox>>
+					<br>
+					其他屬性：<br>
+					gender
+					<<listbox "_gender">>
+						<<option "n" "n">>
+						<<option "m" "m">>
+						<<option "f" "f">>
+					<</listbox>><br>
+					lewd
+					<<listbox "_lewd">>
+						<<option "0" 0>>
+						<<option "1" 1>>
+					<</listbox>><br>
+					degree
+					<<listbox "_degree">>
+						<<option "0" 0>>
+						<<option "1" 1>>
+					<</listbox>><br>
+					<<button "產生魔術迴路">>
+						<<add_bodywriting _bodyPartSelected $CE_tattoo_index _penstyle>>	
+						<!--<<add_bodywriting 參數1(身體部位) 參數2(紋身索引) 參數3(紋身類型(筆的類型))  --> 
+						<<if _lover_tattoo_swich is 0>>
+							<<set $skin[_bodyPartSelected].special to _special_tattoo>>
+						<<else>>
+							<<set $skin[_bodyPartSelected].special to _lover_tattoo>>
+						<</if>>	
+						<<set $skin[_bodyPartSelected].arrow to _arrow>> <!--設定該紋身是否有箭頭-->
+						<<set $skin[_bodyPartSelected].gender to _gender <!--以下三數值暫時不明-->	
+						<<set $skin[_bodyPartSelected].lewd to _lewd>> 
+						<<set $skin[_bodyPartSelected].degree to _degree>>
+						<<replace #result>>
+							當前狀態：<span class="green">完成，切換場景後，狀態將更新。</span><br>
+							你將<span class="blue">$CE_tattoo_text</span>
+							用_penstyle寫在
+							<span class="blue">_bodyPartSelected</span>上
+							屬性為
+							<span class="blue">$skin[_bodyPartSelected].special</span>
+						<</replace>>
+					<</button>>
+					<br>
+				<</replace>>
+			<</link>>
+		<</replace>>
+	<</link>>
+	<div id="CE_tattoo_text" class="no-numberify"></div>
+	
+	<div id="CE_tattoo_setting" class="no-numberify"></div>	
+	
+	<div id="result" class="no-numberify">
+		當前狀態：<span class="blue">待命，請設定紋身。</span>
+	</div>
+<</widget>>
+
 <<widget "quick_yanling">>
 	<span class="gold">快速言靈</span>
 	<br>
@@ -1294,6 +1460,13 @@
 				<<replace #CE_settingsDiv>><<get_all_clothes>><br><br><</replace>>
 			<</button>>	<br>
 		</div>	
+		<div @class="_selectedOptions is 'CE_tattoo' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "魔術迴路">>
+				<<set _selectedOptions to "CE_tattoo">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<CE_tattoo>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
 		<div @class="_selectedOptions is 'quick_yanling' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
 			<<button "快速言靈">>
 				<<set _selectedOptions to "quick_yanling">>
