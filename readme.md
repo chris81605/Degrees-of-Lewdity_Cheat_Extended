@@ -59,7 +59,8 @@
 	* 新增自訂義紋身
 	* 可自訂義紋身文字等屬性
 	* 可於文字框輸入言靈
-		* 魔術迴路！
+		* 魔術迴路！  
+	* 點子與實現By 丧心病@污度孤儿中国模组交流群 
 		
 * 異次元空間衣櫃(測試中，可能存在問題)	
 * 若干快速言靈  
@@ -73,6 +74,8 @@
 	* 自訂義文字可輸入言靈<=魔術迴路！
 * (2)待優化、深入測試  
 	* 可能有潛在問題  
+* (3)感謝QQ群 丧心病@污度孤儿中国模组交流群提供魔術迴路代碼範例，大佬也製作了有趣的MOD
+在這可以查看[Degrees-of-Lewdity-Exposed-Event-Extended][DOL_EEE]  
 
 ## 1.7.4  
 1.優化 一鍵添加服裝功能
@@ -200,7 +203,10 @@
 * (2)言靈集代碼優化
 
 **貼吧 `不可考`，提供以下協助，如果有人知道出處請務必通知**  
-* (1) 戰鬥多人HP顯示  
+* (1) 戰鬥多人HP顯示
+
+**感謝QQ群 丧心病@污度孤儿中国模组交流群提供以下協助：**  
+* (1)魔術迴路代碼範例  
 
 # 代碼授權證明  
 第二代言靈系統&隨身衣櫃By 用户_aeVUUeW@貼吧-DOL吧  
@@ -219,5 +225,6 @@
 [DOLCN]:https://github.com/Eltirosto/Degrees-of-Lewdity-Chinese-Localization  
 [YL+p_wardrobe]:https://tieba.baidu.com/p/8613337062
 [YL_3G]:https://tieba.baidu.com/p/8724301141
+[DOL_EEE]:https://github.com/MissedHeart/Degrees-of-Lewdity-Exposed-Event-Extended
  
  
