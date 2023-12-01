@@ -884,7 +884,8 @@
 <</widget>>
 
 <<widget "get_all_clothes">>
-	虛空創造、憑空煉成新服裝：<br>
+	<span class="gold">一鍵添加服裝</span><br>
+	虛空創造、憑空煉成新服裝：
 	(1)選擇服裝類型<br>
 	(2)<span class="gold">選擇添加</span>或
 	<span class="gold">一鍵全添加</span>
@@ -1076,32 +1077,38 @@
 <</widget>>
 
 <<widget "CE_tattoo">>
-
-	<u>魔術迴路</u>
+	<span class="gold">魔術迴路</span>
 	<br><br>
-	<span class="gold">在此......將言靈銘刻在身上！</span>
+	在此......將言靈銘刻在身上！<br>
 	<!--<br>
 	颜色
-	<<listbox "_color_tattooEEE">>
-		<<option "红色" "Red">>
-		<<option "粉色" "Pink">>
-		<<option "紫色" "Purple">>
-		<<option "金色" "Gold">>
-		<<option "橙色" "Orange">>
-		<<option "绿色" "Green">>
-		<<option "蓝色" "Blue">>
-		<<option "七彩" "Lustful">>
+	<<listbox "$CE_tattoo_color">>
+		<<option "红色" 0>>
+		<<option "粉色" 1>>
+		<<option "紫色" 2>>
+		<<option "金色" 3>>
+		<<option "橙色" 4>>
+		<<option "绿色" 5>>
+		<<option "蓝色" 6>>
+		<<option "七彩" 7>>
 	<</listbox>>
 	<br>-->
+	
 	索引<br>
 	<<set $CE_tattoo_index to 1000>>
 	<<if $CE_tattoo is undefined>>
 		<<set $CE_tattoo to []>>
-		<<for _i to 0; _i lte 8; _i++>>
+		<<for _i to 0; _i lte 12; _i++>>
 			<<set $CE_tattoo[$CE_tattoo.length] to "CE_tattoo" + (_i)>>
 		<</for>>
-	<</if>>		
-	<<numberslider "$CE_tattoo_index" $CE_tattoo_index 1000 1008 1>>
+	<</if>>
+	<<if $CE_tattoo_color is undefined>>
+		<<set $CE_tattoo_color to []>>
+		<<for _i to 0; _i lte 12; _i++>>
+			<<set $CE_tattoo_color[$CE_tattoo_color.length] to 0>>
+		<</for>>
+	<</if>>
+	<<numberslider "$CE_tattoo_index" $CE_tattoo_index 1000 1011 1>>
 	<<link "更新索引">>
 		<<set $CE_tattoo_index_NO to $CE_tattoo_index - 1000>>
 		<<replace #CE_tattoo_text>>
@@ -1147,7 +1154,10 @@
 						<<option "神圣" "holy">>
 					<</listbox>>
 					<br>
-					是否關聯愛人<br>
+					是否關聯愛人？<br>
+					類型必須選擇
+					<span class="gold">愛人</span>
+					才會生效。<br>
 					<<set _lover_tattoo_swich to 0>>
 					<div id="lover_tattoo" class="no-numberify">
 						<<if _lover_tattoo_swich is 0>>
@@ -1168,21 +1178,22 @@
 								<span class="green">是</span>
 								<br>
 							<</if>>
+							<<if _lover_tattoo_swich is 1>>
+						       <<listbox "_lover_tattoo">>
+				        		    <<option "无" "none">>
+					           	    <<option "罗宾" "Robin">>
+					        	    <<option "悉尼" "Sydney">>
+					    	        <<option "凯拉尔" "Kylar">>
+				          	    	<<option "惠特尼" "Whitney">>
+				              		<<option "伊甸" "Eden">>
+				              		<<option "艾弗里" "Avery">>
+					               	<<option "艾利克斯" "Alex">>
+				             		<<option "黑狼" "Black Wolf">>
+				          	    	<<option "巨鹰" "Great Hawk">>
+					            <</listbox>><br>
+					        <</if>>
 						<</replace>>
 					<</button>><br>
-					<<listbox "_lover_tattoo">>
-						<<option "无" "none">>
-						<<option "罗宾" "Robin">>
-						<<option "悉尼" "Sydney">>
-						<<option "凯拉尔" "Kylar">>
-						<<option "惠特尼" "Whitney">>
-						<<option "伊甸" "Eden">>
-						<<option "艾弗里" "Avery">>
-						<<option "艾利克斯" "Alex">>
-						<<option "黑狼" "Black Wolf">>
-						<<option "巨鹰" "Great Hawk">>
-					<</listbox>>
-					<br>
 					是否带有指向性器的箭頭
 					<<listbox "_arrow">>
 						<<option "否" 0>>
@@ -1215,7 +1226,7 @@
 							<<set $skin[_bodyPartSelected].special to _lover_tattoo>>
 						<</if>>	
 						<<set $skin[_bodyPartSelected].arrow to _arrow>> <!--設定該紋身是否有箭頭-->
-						<<set $skin[_bodyPartSelected].gender to _gender <!--以下三數值暫時不明-->	
+						<<set $skin[_bodyPartSelected].gender to _gender>> <!--以下三數值暫時不明-->	
 						<<set $skin[_bodyPartSelected].lewd to _lewd>> 
 						<<set $skin[_bodyPartSelected].degree to _degree>>
 						<<replace #result>>
@@ -1239,6 +1250,32 @@
 	<div id="result" class="no-numberify">
 		當前狀態：<span class="blue">待命，請設定紋身。</span>
 	</div>
+<</widget>>
+
+<<widget "CE_tattoo_color">>
+	<<for _i to 0; _i lte 12; _i++>>
+		<<if $skin[_active_bodypart].writ_cn is $CE_tattoo[_i]>>
+			<<if $CE_tattoo_color[_i] is 0>>
+				"<span class="red"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $CE_tattoo_color[_i] is 1>>
+				"<span class="pink"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $CE_tattoo_color[_i] is 2>>
+				"<span class="purple"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $CE_tattoo_color[_i] is 3>>
+				"<span class="gold"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $CE_tattoo_color[_i] is 4>>
+				"<span class="orange"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $CE_tattoo_color[_i] is 5>>
+				"<span class="green"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $CE_tattoo_color[_i] is 6>>
+				"<span class="blue"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $CE_tattoo_color[_i] is 7>>
+				"<span class="lustful"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<else>>
+				"<span class="red"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<</if>>
+		<</if>>	
+	<</for>>	
 <</widget>>
 
 <<widget "quick_yanling">>

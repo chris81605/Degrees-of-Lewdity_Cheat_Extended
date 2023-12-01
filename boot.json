@@ -1,15 +1,14 @@
 {
   "name": "cheat extended",
-  "version": "1.8.0-TEST",
-  "styleFileList": [],
-  "scriptFileList": [],
+  "version": "1.8.0-PRE-0.2",
   "styleFileList": [
     "CE_CSS.css"
   ],
+  "scriptFileList": [],
   "tweeFileList": [
     "Bedroom Study.twee",
-    "随身衣柜.twee",
-	"Widgets cheat_extended.twee"
+    "Widgets cheat_extended.twee",
+    "随身衣柜.twee"
   ],
   "imgFileList": [],
   "additionFile": [
@@ -18,10 +17,10 @@
     "addon-replace/cheats_2.txt",
     "addon-replace/cheats_3.txt",
     "addon-replace/cheats_4.txt",
-	"addon-replace/overlayReplace.txt",
+    "addon-replace/overlayReplace.txt",
     "addon-replace/Stall Seduce.txt",
     "addon-replace/StoryCaption.txt",
-	"addon-replace/tattoo_index.txt",
+    "addon-replace/tattoo_index.txt",
     "addon-replace/Widgets Dance Audience.txt",
     "addon-replace/Widgets Market_1.txt",
     "addon-replace/Widgets Market_2.txt",
@@ -35,7 +34,7 @@
     "addon-replace/Widgets_4.txt",
     "addon-replace/Widgets_5.txt",
     "readme.md",
-	"LICENSE.txt"
+    "LICENSE.txt"
   ],
   "addonPlugin": [
     {
@@ -63,7 +62,7 @@
           "findString": "<<widget \"cheats-other\">>",
           "replaceFile": "addon-replace/cheats_4.txt"
         },
-		 {
+        {
           "passage": "overlayReplace",
           "findString": "\t\t\t<<replace #cheatsShown>><<cheats-other>><</replace>>\n\t\t\t<<run $(\"#customOverlayContent\").scrollTop(0);>>\n\t\t<</button>>",
           "replaceFile": "addon-replace/overlayReplace.txt"
@@ -103,10 +102,15 @@
           "findString": "\t<<if setup.plants[$stall_plant].special.includes(\"large\")>>\n\t\t<<set $stall_amount to 1>>\n\t<<else>>",
           "replaceFile": "addon-replace/Stall Seduce.txt"
         },
-		{
+        {
           "passage": "Widgets Bodywriting Objects",
           "findString": "\t\tcircle: {\n\t\t\tindex: 199,",
           "replaceFile": "addon-replace/tattoo_index.txt"
+        },
+        {
+          "passage": "Widgets Bodywriting",
+          "findString": "\t\t\t<<if $skin[_active_bodypart].type is \"text\">>",
+          "replace": "\t\t\t<<if $skin[_active_bodypart].type is \"text\">>\n\t\t\t\t<<CE_tattoo_color>>"
         },
         {
           "passage": "Widgets Market",
@@ -144,7 +148,6 @@
           "findString": "\t\t\t<<run Furniture.set('wallpaper', 'wallpaper', {",
           "replace": "\t\t\t<<set _normalisedName to _chosenWallpaperCustom>>\n\t\t\t<<run Furniture.set('wallpaper', 'wallpaper', {"
         },
-		
         {
           "passage": "Widgets Dance Audience",
           "findString": "\t\t\t\t<<set $dancetip *= 1 + ($mathstrait / 4)>>",
