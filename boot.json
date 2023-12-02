@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.8.0-PRE-0.2",
+  "version": "1.8.0",
   "styleFileList": [
     "CE_CSS.css"
   ],
@@ -109,8 +109,8 @@
         },
         {
           "passage": "Widgets Bodywriting",
-          "findString": "\t\t\t<<if $skin[_active_bodypart].type is \"text\">>",
-          "replace": "\t\t\t<<if $skin[_active_bodypart].type is \"text\">>\n\t\t\t\t<<CE_tattoo_color>>"
+          "findString": "\"<span class=\"purple\"><<print $skin[_active_bodypart].writ_cn>></span>\"",
+          "replace": "<<CE_tattoo_color>>"
         },
         {
           "passage": "Widgets Market",

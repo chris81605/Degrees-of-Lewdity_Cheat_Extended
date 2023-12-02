@@ -865,7 +865,7 @@
 		<br>
 	<</if>>
 	在此設定異次元空間衣櫃容量，當前設定容量為$wardrobe.space<br>
-	<<numberslider "$bigest_wardrobe_fix" $bigest_wardrobe_fix 0 10000 10>>
+	<<numberslider "$bigest_wardrobe_fix" $bigest_wardrobe_fix 20 10000 10>>
 	<<link "确定">>
 		<<if $bigest_wardrobe_swich is 1>>
 			<<set $wardrobe.space to $bigest_wardrobe_fix>>
@@ -1080,42 +1080,50 @@
 	<span class="gold">魔術迴路</span>
 	<br><br>
 	在此......將言靈銘刻在身上！<br>
-	<!--<br>
-	颜色
-	<<listbox "$CE_tattoo_color">>
-		<<option "红色" 0>>
-		<<option "粉色" 1>>
-		<<option "紫色" 2>>
-		<<option "金色" 3>>
-		<<option "橙色" 4>>
-		<<option "绿色" 5>>
-		<<option "蓝色" 6>>
-		<<option "七彩" 7>>
-	<</listbox>>
-	<br>-->
-	
-	索引<br>
+	<br>	
+	紋身索引<br>
+	(自定義紋身索引1000-10011)<br>
 	<<set $CE_tattoo_index to 1000>>
+	<<if $degree is undefined>>
+	    <<set $degree to 0>>
+	<</if>>    
 	<<if $CE_tattoo is undefined>>
 		<<set $CE_tattoo to []>>
 		<<for _i to 0; _i lte 12; _i++>>
 			<<set $CE_tattoo[$CE_tattoo.length] to "CE_tattoo" + (_i)>>
 		<</for>>
 	<</if>>
-	<<if $CE_tattoo_color is undefined>>
-		<<set $CE_tattoo_color to []>>
-		<<for _i to 0; _i lte 12; _i++>>
-			<<set $CE_tattoo_color[$CE_tattoo_color.length] to 0>>
-		<</for>>
-	<</if>>
 	<<numberslider "$CE_tattoo_index" $CE_tattoo_index 1000 1011 1>>
 	<<link "更新索引">>
-		<<set $CE_tattoo_index_NO to $CE_tattoo_index - 1000>>
+		<<set _CE_tattoo_index_NO to $CE_tattoo_index - 1000>>
 		<<replace #CE_tattoo_text>>
+			紋身颜色
+	        <<listbox "_CE_tattoo_color">>
+	           <<option "红色" "red">>
+				<<option "橙色" "orange">>
+				<<option "焦橙色" "burntorange">>
+				<<option "黄色" "yellow">>
+				<<option "姜黄色" "tangerine">>
+				<<option "灰金色" "ashy">>
+				<<option "淡金色" "platinum">>
+				<<option "浅金色" "softblond">>
+				<<option "草莓金" "strawberry">>
+				<<option "金色" "gold">>
+				<<option "绿色" "green">>
+				<<option "柠檬绿" "lime-green">>
+				<<option "浅蓝色" "lblue">>
+				<<option "蓝色" "blue">>
+				<<option "粉色" "pink">>
+				<<option "紫色" "purple">>
+				<<option "黑色" "black">>
+				<<option "白色" "white">>
+				<<option "彩色" "lustful">>
+	        <</listbox>>
+	        <br>
 			文字
-			<<textbox "$CE_tattoo_text" $CE_tattoo[$CE_tattoo_index_NO]>>
+			<<textbox "_CE_tattoo_text" $CE_tattoo[_CE_tattoo_index_NO]>>
 			<<link "確認">>
-				<<set $CE_tattoo[$CE_tattoo_index_NO] to $CE_tattoo_text>>
+				<<set $CE_tattoo[_CE_tattoo_index_NO] to _CE_tattoo_text>>
 				<<replace #CE_tattoo_setting>>
 					方式
 					<<listbox "_penstyle">>
@@ -1123,6 +1131,8 @@
 						<<option "marker" "marker">>
 						<<option "lipstick" "lipstick">>
 						<<option "mud" "mud">>
+						<<option "brand" "brand">>
+						<<option "magic" "magic">>
 						<<option "tattoo" "tattoo">>
 					<</listbox>>
 					位置
@@ -1148,6 +1158,7 @@
 						<<option "露出" "exhibitionism">>
 						<<option "异种" "bestiality">>
 						<<option "受虐" "violence">>
+						<<option "combat" "combat">>
 						<<option "顺从" "none2">>
 						<<option "怀孕" "pregnancy">>
 						<<option "爱人" "lover">>
@@ -1201,41 +1212,58 @@
 					<</listbox>>
 					<br>
 					其他屬性：<br>
-					gender
+					性別意味
 					<<listbox "_gender">>
-						<<option "n" "n">>
-						<<option "m" "m">>
-						<<option "f" "f">>
+						<<option "無" "n">>
+						<<option "男孩" "m">>
+						<<option "女孩" "f">>
 					<</listbox>><br>
-					lewd
+					是否淫穢
 					<<listbox "_lewd">>
 						<<option "0" 0>>
 						<<option "1" 1>>
 					<</listbox>><br>
-					degree
-					<<listbox "_degree">>
-						<<option "0" 0>>
-						<<option "1" 1>>
-					<</listbox>><br>
+					賣淫費用
+					<<numberslider "_degree" $degree 0 1000 1>><br>
 					<<button "產生魔術迴路">>
 						<<add_bodywriting _bodyPartSelected $CE_tattoo_index _penstyle>>	
-						<!--<<add_bodywriting 參數1(身體部位) 參數2(紋身索引) 參數3(紋身類型(筆的類型))  --> 
+						<!--<<add_bodywriting 參數1(身體部位) 參數2(紋身索引) 參數3(紋身類型(筆的類型))  -->
+						<<set $skin[_bodyPartSelected].color to _CE_tattoo_color>> 
+						<!--給選中紋身部位添加顏色用於之後顯示-->
+						<<set $skin[_bodyPartSelected].writ_cn to _CE_tattoo_text>>
+						<!--設定選定部位紋身文字--> 
 						<<if _lover_tattoo_swich is 0>>
 							<<set $skin[_bodyPartSelected].special to _special_tattoo>>
 						<<else>>
 							<<set $skin[_bodyPartSelected].special to _lover_tattoo>>
 						<</if>>	
 						<<set $skin[_bodyPartSelected].arrow to _arrow>> <!--設定該紋身是否有箭頭-->
-						<<set $skin[_bodyPartSelected].gender to _gender>> <!--以下三數值暫時不明-->	
-						<<set $skin[_bodyPartSelected].lewd to _lewd>> 
-						<<set $skin[_bodyPartSelected].degree to _degree>>
+						<<set $skin[_bodyPartSelected].gender to _gender>> <!--設定紋身性別-->	
+						<<set $skin[_bodyPartSelected].lewd to _lewd>> <!--設定紋身是否淫蕩-->
+						<<set _degree *= 1000>>						
+						<<set $skin[_bodyPartSelected].degree to _degree>><!--設定紋身賣淫價格-->
+						<<set _degree to $degree>>
 						<<replace #result>>
 							當前狀態：<span class="green">完成，切換場景後，狀態將更新。</span><br>
-							你將<span class="blue">$CE_tattoo_text</span>
-							用_penstyle寫在
-							<span class="blue">_bodyPartSelected</span>上
+							你將<span class="blue">_CE_tattoo_text</span>
+							用<<CE_tattoo_result_text _penstyle>>在
+							<span class="blue"><<CE_tattoo_result_text _bodyPartSelected>></span>上。
 							屬性為
-							<span class="blue">$skin[_bodyPartSelected].special</span>
+							<span class="blue"><<CE_tattoo_result_text $skin[_bodyPartSelected].special>></span>
+							<<if _gender isnot "n">>
+							    ，意味著
+							    <span class="blue"><<CE_tattoo_result_text _gender>></span>
+							<</if>>    
+							<<if _lewd is 1>>
+							    ，是<span class="blue">淫蕩的</span>
+							<</if>>
+							<<if _arrow is 1>>
+							    <span class="blue">有一個箭頭指向性器</span>
+							<</if>>    
+							<<if _degree gt 0>>
+							    ，賣淫價格為<<printmoney _degree>>
+							<</if>> 
+							。       
 						<</replace>>
 					<</button>>
 					<br>
@@ -1253,29 +1281,145 @@
 <</widget>>
 
 <<widget "CE_tattoo_color">>
-	<<for _i to 0; _i lte 12; _i++>>
-		<<if $skin[_active_bodypart].writ_cn is $CE_tattoo[_i]>>
-			<<if $CE_tattoo_color[_i] is 0>>
+	<<if $debug is 1>>
+		
+	<</if>>
+	    <<if $skin[_active_bodypart].index gte 1000 and $skin[_active_bodypart].index lte 1011>>
+			<<if $skin[_active_bodypart].color is "red">>
 				"<span class="red"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $CE_tattoo_color[_i] is 1>>
-				"<span class="pink"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $CE_tattoo_color[_i] is 2>>
-				"<span class="purple"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $CE_tattoo_color[_i] is 3>>
-				"<span class="gold"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $CE_tattoo_color[_i] is 4>>
+			<<elseif $skin[_active_bodypart].color is "orange">>
 				"<span class="orange"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $CE_tattoo_color[_i] is 5>>
+			<<elseif $skin[_active_bodypart].color is "burntorange">>
+				"<span class="burntorange"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $skin[_active_bodypart].color is "yellow">>
+				"<span class="yellow"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $skin[_active_bodypart].color is "tangerine">>
+				"<span class="tangerine"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $skin[_active_bodypart].color is "ashy">>
+				"<span class="ashy"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $skin[_active_bodypart].color is "platinum">>
+				"<span class="platinum"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $skin[_active_bodypart].color is "softblond">>
+				"<span class="softblond"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $skin[_active_bodypart].color is "strawberry">>
+				"<span class="strawberry"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $skin[_active_bodypart].color is "gold">>
+				"<span class="gold"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $skin[_active_bodypart].color is "green">>
 				"<span class="green"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $CE_tattoo_color[_i] is 6>>
+			<<elseif $skin[_active_bodypart].color is "lime-green">>
+				"<span class="lime-green"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $skin[_active_bodypart].color is "lblue">>
+				"<span class="lblue"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $skin[_active_bodypart].color is "blue">>
 				"<span class="blue"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $CE_tattoo_color[_i] is 7>>
+			<<elseif $skin[_active_bodypart].color is "pink">>
+				"<span class="pink"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $skin[_active_bodypart].color is "purple">>
+				"<span class="purple"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $skin[_active_bodypart].color is "black">>
+				"<span class="black"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $skin[_active_bodypart].color is "white">>
+				"<span class="white"><<print $skin[_active_bodypart].writ_cn>></span>"
+			<<elseif $skin[_active_bodypart].color is "lustful">>
 				"<span class="lustful"><<print $skin[_active_bodypart].writ_cn>></span>"
 			<<else>>
 				"<span class="red"><<print $skin[_active_bodypart].writ_cn>></span>"
 			<</if>>
+		<<else>>
+		    "<span class="purple"><<print $skin[_active_bodypart].writ_cn>></span>"
 		<</if>>	
-	<</for>>	
+<</widget>>
+
+<<widget "CE_tattoo_result_text">>
+	<<if _args[0] is "pen">>
+		普通的筆寫
+	<<elseif _args[0] is "marker">>
+		耐久性記號筆寫
+	<<elseif _args[0] is "lipstick">>
+		口紅寫
+	<<elseif _args[0] is "mud">>
+		泥巴抹
+	<<elseif _args[0] is "magic">>
+		印章印
+	<<elseif _args[0] is "tattoo">>
+		紋身紋
+	<<elseif _args[0] is "brand">>
+		烙鐵烙
+	<<elseif _args[0] is "forehead">>
+		額頭
+	<<elseif _args[0] is "left_cheek">>
+		左臉頰
+	<<elseif _args[0] is "right_cheek">>
+		右臉頰
+	<<elseif _args[0] is "left_shoulder">>
+		左肩
+	<<elseif _args[0] is "right_shoulder">>
+		右肩
+	<<elseif _args[0] is "breasts">>
+		<<breasts>>
+	<<elseif _args[0] is "back">>
+		後背
+	<<elseif _args[0] is "left_bottom">>
+		屁股左側
+	<<elseif _args[0] is "right_bottom">>	
+		屁股右側
+	<<elseif _args[0] is "pubic">>		
+		<<<<genitals true>>>>
+	<<elseif _args[0] is "left_thigh">>		
+		左腿
+	<<elseif _args[0] is "right_thigh">>	
+		右腿
+	<<elseif _args[0] is "none">>		
+		通常
+	<<elseif _args[0] is "sex">>	
+		淫亂
+	<<elseif _args[0] is "prostitution">>	
+		賣淫
+	<<elseif _args[0] is "exhibitionism">>	
+		露出
+	<<elseif _args[0] is "bestiality">>	
+		異種
+	<<elseif _args[0] is "violence">>	
+		受虐
+	<<elseif _args[0] is "none2">>	
+		_args[0]
+	<<elseif _args[0] is "combat">>	
+		_args[0]
+	<<elseif _args[0] is "pregnancy">>	
+		懷孕
+	<<elseif _args[0] is "lover">>	
+		愛人
+	<<elseif _args[0] is "holy">>	
+		神聖
+	<<elseif _args[0] is "Robin">>
+		羅賓
+	<<elseif _args[0] is "Sydney">>
+		悉尼
+	<<elseif _args[0] is "Kylar">>
+		凱拉爾
+	<<elseif _args[0] is "Whitney">>
+		惠特尼
+	<<elseif _args[0] is "Eden">>	
+		伊甸
+	<<elseif _args[0] is "Avery">>	
+		艾佛里
+	<<elseif _args[0] is "Alex">>	
+		愛利克斯
+	<<elseif _args[0] is "Black Wolf">>	
+		黑狼
+	<<elseif _args[0] is "Great Hawk">>	
+		巨鷹
+	<<elseif _args[0] is "n">>
+		無
+	<<elseif _args[0] is "m">>
+		男孩
+	<<elseif _args[0] is "f">>
+		女孩
+	<<else>>
+		_args[0]
+	<</if>>	
+	
 <</widget>>
 
 <<widget "quick_yanling">>
