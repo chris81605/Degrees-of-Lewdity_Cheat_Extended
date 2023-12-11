@@ -921,13 +921,13 @@
 					<<set _clothes_coloraction to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal"][random(0, 8)]>>
 				<</if>>	
 				<<if _clothes_accessorycolouraction_list isnot "none">>
-					<<set _accessorycolouraction to _clothes_accessorycolouraction_list>>
+					<<set _clothes_accessorycolouraction to _clothes_accessorycolouraction_list>>
 				<<else>>
-					<<set _accessorycolouraction to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal"][random(0, 8)]>>
+					<<set _clothes_accessorycolouraction to ["black", "blue", "brown", "green", "pink", "purple", "red", "tangerine", "teal"][random(0, 8)]>>
 				<</if>>	
 				<<replace #clothes_color>>
 					主要顏色：<span class="green">_clothes_coloraction</span><br>
-					次要顏色：<span class="green">_accessorycolouraction</span><br>
+					次要顏色：<span class="green">_clothes_accessorycolouraction</span><br>
 				<</replace>>
 			<</link>><br>
 			主要顏色：<br>
