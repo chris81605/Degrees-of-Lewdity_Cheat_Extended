@@ -1,9 +1,0 @@
-			<<replace #cheatsShown>><<cheats-other>><</replace>>
-			<<run $("#customOverlayContent").scrollTop(0);>>
-		<</button>>
-		<div class="CEinCheatMenuBotton">
-			<<button "作弊拓展">>
-				<<replace #cheatsShown>><<cheat_extended>><</replace>>
-				<<run $("#customOverlayContent").scrollTop(0);>>
-			<</button>>
-		</div>	
