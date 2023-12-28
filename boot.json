@@ -1,10 +1,13 @@
 {
   "name": "cheat extended",
-  "version": "1.8.1",
+  "version": "1.9.0-pre",
   "styleFileList": [
     "CE_CSS.css"
   ],
   "scriptFileList": [],
+  "scriptFileList_inject_early": [
+    "scriptEarly/CERegist.js"
+  ],
   "tweeFileList": [
     "Bedroom Study.twee",
     "Widgets cheat_extended.twee",
@@ -16,10 +19,7 @@
     "addon-replace/cheats_1.txt",
     "addon-replace/cheats_2.txt",
     "addon-replace/cheats_3.txt",
-    "addon-replace/cheats_4.txt",
-    "addon-replace/overlayReplace.txt",
     "addon-replace/Stall Seduce.txt",
-    "addon-replace/StoryCaption.txt",
     "addon-replace/tattoo_index.txt",
     "addon-replace/Widgets Dance Audience.txt",
     "addon-replace/Widgets Market_1.txt",
@@ -27,7 +27,6 @@
     "addon-replace/Widgets Orgasm.txt",
     "addon-replace/Widgets State Man_1.txt",
     "addon-replace/Widgets State Man_2.txt",
-    "addon-replace/Widgets Text.txt",
     "addon-replace/Widgets_1.txt",
     "addon-replace/Widgets_2.txt",
     "addon-replace/Widgets_3.txt",
@@ -56,16 +55,6 @@
           "passage": "Cheats",
           "findString": "\t\t<<farmicon \"barn\">>[[农田|Farmland]]\n\t\t<br>",
           "replaceFile": "addon-replace/cheats_3.txt"
-        },
-        {
-          "passage": "Cheats",
-          "findString": "<<widget \"cheats-other\">>",
-          "replaceFile": "addon-replace/cheats_4.txt"
-        },
-        {
-          "passage": "overlayReplace",
-          "findString": "\t\t\t<<replace #cheatsShown>><<cheats-other>><</replace>>\n\t\t\t<<run $(\"#customOverlayContent\").scrollTop(0);>>\n\t\t<</button>>",
-          "replaceFile": "addon-replace/overlayReplace.txt"
         },
         {
           "passage": "Widgets",
@@ -152,16 +141,6 @@
           "passage": "Widgets Dance Audience",
           "findString": "\t\t\t\t<<set $dancetip *= 1 + ($mathstrait / 4)>>",
           "replaceFile": "addon-replace/Widgets Dance Audience.txt"
-        },
-        {
-          "passage": "StoryCaption",
-          "findString": "\t\t\t<<if $options.sidebarTime is \"bottom\">>\n\t\t\t\t<<append #mobileStats>><<mobileStatsTime>><</append>>\n\t\t\t<</if>>\n\t\t<</if>>",
-          "replaceFile": "addon-replace/StoryCaption.txt"
-        },
-        {
-          "passage": "Widgets Text",
-          "findString": "\t\t\t明天不用上学。\n\t\t<</if>>\n\t\t<br>\n\t<</if>>",
-          "replaceFile": "addon-replace/Widgets Text.txt"
         }
       ]
     },
@@ -197,6 +176,10 @@
     {
       "modName": "ReplacePatcher",
       "version": ">=1.0.0"
+    },
+    {
+   "modName": "Simple Frameworks",
+   "version": ">=1.3.0"
     }
   ]
 }

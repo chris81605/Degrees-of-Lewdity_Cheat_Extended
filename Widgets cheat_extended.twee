@@ -312,6 +312,8 @@
 <</widget>>
 
 <<widget "quick_swich">>
+	<span class="gold">快捷</span>
+	<br>
 	<<if $swich is 1>>
 		[[状态全恢复|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]] |
 		[[PC立马高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
@@ -1532,7 +1534,14 @@
 	<br>
 <</widget>>
 
-
+<<widget "CEstatebox">> <!--用於顯示於左側狀態-->
+    <div id="CEstatebox" class="no-numberify">	
+		<<quick_swich>>
+		<<teleportation>>
+		<<yanling left>>
+		<<yanling_unset>>
+	</div>
+<</widget >>
 
 <<widget "cheat_extended_options">>
 	<<if _selectedOptions is undefined>><<set _selectedOptions to "swich">><</if>>
@@ -1658,6 +1667,7 @@
 <</widget>>
 
 <<widget "cheat_extended">>
+    <br><span class="gold">作弊拓展</span><br> 
 	<div class="CEDISPLAY">			<!--套用自訂CSS樣式-->
 		<div class="CEDISPLAY_button">
 			<div id="cheat_extended_options" class="no-numberify">	<!--顯示各作弊拓展功能切換按鈕-->

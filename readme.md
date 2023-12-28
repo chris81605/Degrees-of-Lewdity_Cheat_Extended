@@ -9,6 +9,7 @@
 # 需求  
 * 需要搭配[MODLOADER][JML]使用  
 * 需搭配[Degrees of Lewdity 中文本地化][DOLCN]使用      
+* 需搭配[Simple Framework][SF]使用  
 
 # Degrees-of-Lewdity_Cheat_Extended
 簡介：Degrees-of-Lewdity 的作弊拓展MOD  
@@ -67,6 +68,9 @@
 * 時空穿越功能  
 	
 # 更新日誌
+## 1.9.0-pre  
+1.嘗試使用simple framework添加選項  
+
 ## 1.8.1  
 1.修復添加服裝功能指定添加狀態顯示異常問題  
 
@@ -196,6 +200,8 @@
 # 感謝  
 **ModLoader開發者Lyoko-Jeremie**  
 提供更方便的Mod開發及使用工具，沒有ModLoader，Mod開發會更加困難。  
+**Simple Framework開發者emicoto**  
+提供更方便的新增內容框架，能更簡單的加入新內容  
 **Degrees of Lewdity 漢化組成員**  
 提供中文本地化  
 **QQ群 污度孤儿中国模组交流群 全體成員**  
@@ -238,5 +244,5 @@
 [YL+p_wardrobe]:https://tieba.baidu.com/p/8613337062
 [YL_3G]:https://tieba.baidu.com/p/8724301141
 [DOL_EEE]:https://github.com/MissedHeart/Degrees-of-Lewdity-Exposed-Event-Extended
- 
+[SF]:https://github.com/emicoto/DOLMods
  
