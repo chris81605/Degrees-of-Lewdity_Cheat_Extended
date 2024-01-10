@@ -104,8 +104,6 @@
 			<br>
 			◁[[随身衣柜|随身衣柜]]▷
 			<br>
-			◁[[伊甸的小屋|Eden Clearing]]▷
-			<br>
 			自訂送節點：<br>
 			<<if $teleportation.length gt 3>>		<!--超過三個節點時將最舊的節點移除-->
 				<<set $teleportation.deleteAt(0)>>
@@ -141,8 +139,9 @@
 				<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
 					<<quick_swich>>
 					<<teleportation>>
+					<<yanling_mini_ui left>>
 					<<yanling left>>
-					<<yanling_unset>>
+			        <<yanling_unset left>>
 				<</replace>>
 			<</button>><br><br>
 		<<else>>
@@ -153,8 +152,8 @@
 	<</if>>
 <</widget>>
 
-<<widget "yanling">>
-	<<if $swich_yanling is 1>> 	
+<<widget "yanling_mini_ui">>
+    <<if $swich_yanling is 1>> 	
 		<!-- 二代言靈
 
 		<span class="gold">及時言靈</span>
@@ -199,7 +198,11 @@
 				<</if>>
 			<</if>>	
 		<</for>>
-		
+	<</if>>
+<</widget>>
+
+<<widget "yanling">>
+	<<if $swich_yanling is 1>> 		
 		<br>在此輸入言靈代碼<br>
 		<<textbox "_cccheat" $cccheat_display>>
 		<br>在此輸入言靈名稱(可留空)<br>
@@ -229,8 +232,9 @@
 			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
 				<<quick_swich>>
 				<<teleportation>>
+				<<yanling_mini_ui left>>
 				<<yanling left>>
-				<<yanling_unset>>
+			    <<yanling_unset left>>
 			<</replace>>
 			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
@@ -259,8 +263,9 @@
 			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
 				<<quick_swich>>
 				<<teleportation>>
+				<<yanling_mini_ui left>>
 				<<yanling left>>
-				<<yanling_unset>>
+			    <<yanling_unset left>>
 			<</replace>>
 			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
@@ -282,8 +287,9 @@
 			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
 				<<quick_swich>>
 				<<teleportation>>
+				<<yanling_mini_ui left>>
 				<<yanling left>>
-				<<yanling_unset>>
+			    <<yanling_unset left>>
 			<</replace>>
 			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
@@ -299,22 +305,51 @@
 				<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
 					<<quick_swich>>
 					<<teleportation>>
+					<<yanling_mini_ui left>>
 					<<yanling left>>
-					<<yanling_unset>>
+			        <<yanling_unset left>>
 				<</replace>>
 				<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 					<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 					<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
 				<</if>>	
-			<</button>>
-			<br><br>
+		<</button>>
+		<br>	
 	<</if>>	
 <</widget>>
 
+<<widget "yanling_ui_hide">>
+     <<if $yanling_ui_hide is 0>>  
+        <<button "隱藏言靈介面">>
+            <<set $yanling_ui_hide to 1>>
+            <<replace #CEstatebox>>		<!--更新左側狀態顯示-->
+			    <<quick_swich>>
+			    <<teleportation>>
+			    <<yanling_mini_ui left>>
+			    <<yanling left>>
+			    <<yanling_unset left>>
+		    <</replace>>
+        <</button>>
+        <br>
+     <<else>>
+       <<button "顯示言靈介面">>
+            <<set $yanling_ui_hide to 0>>
+            <<replace #CEstatebox>>		<!--更新左側狀態顯示-->
+			    <<quick_swich>>
+			    <<teleportation>>
+			    <<yanling_mini_ui left>>
+			    <<yanling left>>
+			    <<yanling_unset left>>
+		    <</replace>>
+       <</button>>
+       <br>    
+     <</if>>   
+<</widget>>
+
 <<widget "quick_swich">>
-	<span class="gold">快捷</span>
-	<br>
 	<<if $swich is 1>>
+	    <span class="gold">快捷</span>
+	    <br>
 		[[状态全恢复|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]] |
 		[[PC立马高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
 		<br>
@@ -334,8 +369,9 @@
 		<<replace #CEstatebox>>
 			<<quick_swich>>
 			<<teleportation>>
+			<<yanling_mini_ui left>>
 			<<yanling left>>
-			<<yanling_unset>>
+			<<yanling_unset left>>
 		<</replace>>
 	<</button>>
 	<br>
@@ -363,8 +399,9 @@
 		<<replace #CEstatebox>>
 			<<quick_swich>>
 			<<teleportation>>
+			<<yanling_mini_ui left>>
 			<<yanling left>>
-			<<yanling_unset>>
+			<<yanling_unset left>>
 		<</replace>>
 	<</button>>	
 	<br>
@@ -385,6 +422,8 @@
 	在左側顯示：言靈集功能
 	<br>
 	<<if $swich_yanling is undefined>><<set $swich_yanling to 0>><</if>>
+	<<if $yanlig_ui_hide is undefined>><<set $yanlig_ui_hide to 0>><</if>>
+	
 	<<button "言靈集開關">>
 		<<set $swich_yanling = $swich_yanling == 0 ? 1: 0>>
 		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
@@ -392,8 +431,9 @@
 		<<replace #CEstatebox>>
 			<<quick_swich>>
 			<<teleportation>>
+			<<yanling_mini_ui left>>
 			<<yanling left>>
-			<<yanling_unset>>
+			<<yanling_unset left>>
 		<</replace>>
 	<</button>>
 	<br>
@@ -405,6 +445,7 @@
 	<<if $swich_yanling is 1>>
 		<span class="green">開</span>
 		<br>
+		<<yanling_mini_ui cheat_menu>>
 		<<yanling cheat_menu>>
 		<<yanling_unset cheat_menu>>
 	<</if>>	
@@ -887,13 +928,13 @@
 
 <<widget "get_all_clothes">>
 	<span class="gold">一鍵添加服裝</span><br>
-	虛空創造、憑空煉成新服裝：
+	虛空創造、憑空煉成新服裝：<br>
 	(1)選擇服裝類型<br>
 	(2)<span class="gold">選擇添加</span>或
 	<span class="gold">一鍵全添加</span>
 	<span class="blue">(顏色隨機分配)</span><br>
 	選擇服裝類型：<br>
-	<<set _clothes_type_list to ["face", "feet", "hands", "head", "legs", "lower", "neck", "over_head", "over_lower", "over_upper", "under_lower", "under_upper", "upper", "genitals"]>><!--服裝類型定義 ("genitals"貞操帶)-->
+	<<set _clothes_type_list to ["face", "feet", "hands", "head", "legs", "lower", "neck", "over_head", "over_lower", "over_upper", "under_lower", "under_upper", "upper", "handheld", "genitals"]>><!--服裝類型定義 ("genitals"貞操帶)-->
 	<<set _clothes_name to []>><!--服裝名稱，用於指定服裝獲取-->
 	<<listbox "_clothes_type" autoselect>><<optionsfrom _clothes_type_list>><</listbox>>
 	<<link "確認選擇">>
@@ -1538,10 +1579,11 @@
     <div id="CEstatebox" class="no-numberify">	
 		<<quick_swich>>
 		<<teleportation>>
+		<<yanling_mini_ui left>>
 		<<yanling left>>
-		<<yanling_unset>>
-	</div>
-<</widget >>
+		<<yanling_unset left>>
+	</div>	
+<</widget>>
 
 <<widget "cheat_extended_options">>
 	<<if _selectedOptions is undefined>><<set _selectedOptions to "swich">><</if>>
