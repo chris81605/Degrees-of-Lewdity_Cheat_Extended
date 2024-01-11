@@ -31,6 +31,10 @@
 	優化代碼 By 北极星勾陈一@北极星mod测试群  
 		* 調用遊戲內的widget、JS
 		* 可同時新增複數言靈  
+* 場景創建功能  
+    * [By Tony70124@貼吧-DOL吧][bccme]
+    * 感謝 Tony70124@貼吧-DOL吧提供核心代碼，沒有他，就沒有動態場景創建了！  
+    * 在遊戲內自定義場景，並以言靈系統當場景入口  
 * 傷害加倍  
 * 疼痛衰減  
 * HP、AP顯示  
@@ -68,6 +72,13 @@
 * 時空穿越功能  
 	
 # 更新日誌
+##1.11.0  
+1.新增 場景創建功能  
+* (1)新增場景的創建功能  
+    * 核心代碼由Tony70124@貼吧-DOL吧提供
+    * 在遊戲內動態創建場景  
+    * 以言靈系統當調用場景入口  
+    
 ## 1.10.0  
 1.更新 一鍵添加服裝功能  
 * (1)新增手持物品添加  
@@ -220,6 +231,9 @@
 **貼吧 Tony70124@貼吧-DOL吧提供以下協助：**  
 * (1)第三代言靈系統(可即時新增複數言靈於左側狀態列表)
 原始地址 https://tieba.baidu.com/p/8724301141
+* (2)場景創建功能(在遊戲內自定義場景，並以言靈系統當入口)
+發布地址 https://github.com/Tony70124/BetterCheatCommandManagement-for-DOL  
+貼吧討論區 https://tieba.baidu.com/p/8851270594?see_lz=0  
 
 **QQ群 北极星勾陈一@北极星mod测试群提供以下協助：**  
 * (1)代碼指導  
@@ -250,4 +264,4 @@
 [YL_3G]:https://tieba.baidu.com/p/8724301141
 [DOL_EEE]:https://github.com/MissedHeart/Degrees-of-Lewdity-Exposed-Event-Extended
 [SF]:https://github.com/emicoto/DOLMods
- 
+[bccme]:https://github.com/Tony70124/BetterCheatCommandManagement-for-DOL

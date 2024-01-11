@@ -1,19 +1,21 @@
 {
   "name": "cheat extended",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "styleFileList": [
-    "CE_CSS.css"
+    "css/CE_CSS.css"
   ],
   "scriptFileList": [],
+  "tweeFileList": [
+    "game/Widgets cheat_extended.twee",
+    "game/Bccm/bccmeditor.twee",
+    "game/ccplot.twee",
+    "game/Bedroom Study.twee",
+    "game/随身衣柜.twee"
+  ],
+  "imgFileList": [],
   "scriptFileList_inject_early": [
     "scriptEarly/CERegist.js"
   ],
-  "tweeFileList": [
-    "Bedroom Study.twee",
-    "Widgets cheat_extended.twee",
-    "随身衣柜.twee"
-  ],
-  "imgFileList": [],
   "additionFile": [
     "addon-replace/Brothel Basement Sex Finish.txt",
     "addon-replace/cheats_1.txt",
@@ -178,8 +180,8 @@
       "version": ">=1.0.0"
     },
     {
-   "modName": "Simple Frameworks",
-   "version": ">=1.3.0"
+      "modName": "Simple Frameworks",
+      "version": ">=1.3.0"
     }
   ]
 }
