@@ -5,10 +5,14 @@
     <</if>>    
 <</widget>>
 
-<<widget "bccmeditor_buttom">>
-    <<button "场景建造">>
-        <<iModReplace "bccmeditor_overlay">>
-    <</button>>
+<<widget "bccmeditor_button">>
+    <div id="CE_bccmeditor" class="no-numberify">
+        <<if $swich_bccmeditor is 1>>
+            <<button "场景建造">>
+                <<iModReplace "bccmeditor_overlay">>
+            <</button>>
+        <</if>>
+    </div>
 <</widget>>
 
 <<widget "bccmeditor_overlay">>
@@ -191,7 +195,10 @@
     <span>场景编写器</span><br><br>
     <span>自订场景包名称(一个足够独一无二的名字):</span><br>
     <<textbox "$bccm.modname" "">><br>
-    <<button "确认">><<set $bccm.state to "naming">><<replace #customOverlayContent>><<bccmeditor>><</replace>><</button>>
+    <<button "确认">>
+        <<set $bccm.state to "naming">>
+        <<replace #customOverlayContent>><<bccmeditor>><</replace>>
+    <</button>>
     <br><br><br><br>
     <span>你能够加载一个曾经在此存档执行的场景言灵</span>
     <<if !($bccmplot is undefined)>>
@@ -285,11 +292,27 @@
         <<replace #customOverlayContent>><<bccmeditor>><</replace>>
     <</button>><br>
     <<textbox "$bccm.generate" $bccm.generate>><br>
-    <<button [[导出至言灵系统|$passage]]>><<set $cccheat[$cccheat.length] to $bccm.generate>><<replace #customOverlayContent>><<bccmeditor>><</replace>><</button>><br>
-    <<button "上一页">><<set $bccm.state to "edit">><<replace #customOverlayContent>><<bccmeditor>><</replace>><<set document.getElementById("bccmarea").value to $bccm.plot[$bccm.selected].replace(/\<br\>/g, "\n").replace(/\<br \/\>/g, "\n")>><</button>><br>
-    <br><br><<button "回首页">><<set $bccm to undefined>><<replace #customOverlayContent>><<bccmeditor>><</replace>><</button>>
+    <<button [[导出至言灵系统|$passage]]>>
+        <<set $cccheat[$cccheat.length] to $bccm.generate>>
+        <<set _cccheat_name to $bccm.modname>>
+        <<set $cccheat_name[$cccheat_name.length] to _cccheat_name>>	
+        <<replace #customOverlayContent>><<bccmeditor>><</replace>>
+    <</button>><br>
+    <<button "上一页">>
+        <<set $bccm.state to "edit">>
+        <<replace #customOverlayContent>><<bccmeditor>><</replace>>
+        <<set document.getElementById("bccmarea").value to $bccm.plot[$bccm.selected].replace(/\<br\>/g, "\n").replace(/\<br \/\>/g, "\n")>>
+    <</button>><br>
+    <br><br>
+    <<button "回首页">>
+        <<set $bccm to undefined>>
+        <<replace #customOverlayContent>><<bccmeditor>><</replace>>
+    <</button>>
 <<else>>
-    <<button "回首页">><<set $bccm to undefined>><<replace #customOverlayContent>><<bccmeditor>><</replace>><</button>>
+    <<button "回首页">>
+        <<set $bccm to undefined>>
+        <<replace #customOverlayContent>><<bccmeditor>><</replace>>
+    <</button>>
 <</if>>
 
 <</widget>>
