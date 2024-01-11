@@ -1,0 +1,17 @@
+:: Bedroom Study
+
+
+<<if $Bedroom_Study_phase is 1>><<scienceskill>>
+	你坐了下来，开始专注地学习科学教材。
+<<elseif $Bedroom_Study_phase is 2>><<mathsskill>>
+	你坐了下来，开始专注地学习数学教材。
+<<elseif $Bedroom_Study_phase is 3>><<englishskill>>
+	你坐了下来，开始专注地学习语文教材。
+<<elseif $Bedroom_Study_phase is 4>><<historyskill>>
+	你坐了下来，开始专注地学习历史教材。
+<</if>>
+<br><br>
+<<link [[继续|Bedroom]]>><</link>>
+
+
+
