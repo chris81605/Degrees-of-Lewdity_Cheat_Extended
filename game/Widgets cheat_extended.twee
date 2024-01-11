@@ -3,7 +3,7 @@
 <<widget "HP_AP_display">>
 	<<if _args[0] is "AP">>
 		<<if $HP_AP_display_swich is 1>>
-			Ap:<<=Math.round($enemyarousal)>>¦<<=Math.round($enemyarousalmax)>>	
+			Ap:<<=Math.round($enemyarousal)>>/<<=Math.round($enemyarousalmax)>>	
 		<</if>>
 	<<else>>
 		<<if $HP_AP_display_swich is 1>>
@@ -140,8 +140,11 @@
 					<<quick_swich>>
 					<<teleportation>>
 					<<yanling_mini_ui left>>
-					<<yanling left>>
-			        <<yanling_unset left>>
+					<<yanling_ui_hide>>
+					<<if $yanling_ui_hide is 0>>
+		                <<yanling left>>
+		                <<yanling_unset left>>
+		            <</if>>
 				<</replace>>
 			<</button>><br><br>
 		<<else>>
@@ -233,8 +236,11 @@
 				<<quick_swich>>
 				<<teleportation>>
 				<<yanling_mini_ui left>>
-				<<yanling left>>
-			    <<yanling_unset left>>
+				<<yanling_ui_hide>>
+				<<if $yanling_ui_hide is 0>>
+		            <<yanling left>>
+		            <<yanling_unset left>>
+		        <</if>>
 			<</replace>>
 			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
@@ -264,8 +270,11 @@
 				<<quick_swich>>
 				<<teleportation>>
 				<<yanling_mini_ui left>>
-				<<yanling left>>
-			    <<yanling_unset left>>
+				<<yanling_ui_hide>>
+				<<if $yanling_ui_hide is 0>>
+		            <<yanling left>>
+		            <<yanling_unset left>>
+		        <</if>>
 			<</replace>>
 			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
@@ -288,8 +297,11 @@
 				<<quick_swich>>
 				<<teleportation>>
 				<<yanling_mini_ui left>>
-				<<yanling left>>
-			    <<yanling_unset left>>
+				<<yanling_ui_hide>>
+				<<if $yanling_ui_hide is 0>>
+		            <<yanling left>>
+		            <<yanling_unset left>>
+		        <</if>>
 			<</replace>>
 			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
@@ -306,8 +318,11 @@
 					<<quick_swich>>
 					<<teleportation>>
 					<<yanling_mini_ui left>>
-					<<yanling left>>
-			        <<yanling_unset left>>
+					<<yanling_ui_hide>>
+					<<if $yanling_ui_hide is 0>>
+		                <<yanling left>>
+		                <<yanling_unset left>>
+		            <</if>>
 				<</replace>>
 				<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 					<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
@@ -319,31 +334,39 @@
 <</widget>>
 
 <<widget "yanling_ui_hide">>
-     <<if $yanling_ui_hide is 0>>  
-        <<button "隱藏言靈介面">>
-            <<set $yanling_ui_hide to 1>>
-            <<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-			    <<quick_swich>>
-			    <<teleportation>>
-			    <<yanling_mini_ui left>>
-			    <<yanling left>>
-			    <<yanling_unset left>>
-		    <</replace>>
-        <</button>>
-        <br>
-     <<else>>
-       <<button "顯示言靈介面">>
-            <<set $yanling_ui_hide to 0>>
-            <<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-			    <<quick_swich>>
-			    <<teleportation>>
-			    <<yanling_mini_ui left>>
-			    <<yanling left>>
-			    <<yanling_unset left>>
-		    <</replace>>
-       <</button>>
-       <br>    
-     <</if>>   
+    <<if $swich_yanling is 1>>        
+        <<if $yanling_ui_hide is 0>>  
+            <<button "隱藏言靈介面">>
+                <<set $yanling_ui_hide to 1>>
+                <<replace #CEstatebox>>		<!--更新左側狀態顯示-->
+			        <<quick_swich>>
+				    <<teleportation>>
+				    <<yanling_mini_ui left>>
+				    <<yanling_ui_hide>>
+				    <<if $yanling_ui_hide is 0>>
+		                <<yanling left>>
+		                <<yanling_unset left>>
+		            <</if>>
+		        <</replace>>
+            <</button>>
+            <br>
+        <<elseif $yanling_ui_hide is 1>>
+            <<button "顯示言靈介面">>
+                <<set $yanling_ui_hide to 0>>
+                <<replace #CEstatebox>>		<!--更新左側狀態顯示-->
+			        <<quick_swich>>
+				    <<teleportation>>
+				    <<yanling_mini_ui left>>
+				    <<yanling_ui_hide>>
+				    <<if $yanling_ui_hide is 0>>
+		                <<yanling left>>
+		                <<yanling_unset left>>
+		            <</if>>
+		        <</replace>>
+            <</button>>
+            <br>    
+        <</if>>
+    <</if>>          
 <</widget>>
 
 <<widget "quick_swich">>
@@ -370,8 +393,11 @@
 			<<quick_swich>>
 			<<teleportation>>
 			<<yanling_mini_ui left>>
-			<<yanling left>>
-			<<yanling_unset left>>
+			<<yanling_ui_hide>>
+			<<if $yanling_ui_hide is 0>>
+		        <<yanling left>>
+		        <<yanling_unset left>>
+		    <</if>>
 		<</replace>>
 	<</button>>
 	<br>
@@ -400,8 +426,11 @@
 			<<quick_swich>>
 			<<teleportation>>
 			<<yanling_mini_ui left>>
-			<<yanling left>>
-			<<yanling_unset left>>
+			<<yanling_ui_hide>>
+			<<if $yanling_ui_hide is 0>>
+		        <<yanling left>>
+		        <<yanling_unset left>>
+		    <</if>>
 		<</replace>>
 	<</button>>	
 	<br>
@@ -422,7 +451,7 @@
 	在左側顯示：言靈集功能
 	<br>
 	<<if $swich_yanling is undefined>><<set $swich_yanling to 0>><</if>>
-	<<if $yanlig_ui_hide is undefined>><<set $yanlig_ui_hide to 0>><</if>>
+	<<if $yanling_ui_hide is undefined>><<set $yanling_ui_hide to 0>><</if>>
 	
 	<<button "言靈集開關">>
 		<<set $swich_yanling = $swich_yanling == 0 ? 1: 0>>
@@ -432,8 +461,11 @@
 			<<quick_swich>>
 			<<teleportation>>
 			<<yanling_mini_ui left>>
-			<<yanling left>>
-			<<yanling_unset left>>
+			<<yanling_ui_hide>>
+			<<if $yanling_ui_hide is 0>>
+		        <<yanling left>>
+		        <<yanling_unset left>>
+		    <</if>>
 		<</replace>>
 	<</button>>
 	<br>
@@ -451,6 +483,34 @@
 	<</if>>	
 <</widget>>
 
+<<widget "swich_bccmeditor">>
+    <span class="gold">場景建造</span>	
+	<br><br>
+	在左側顯示場景建造按鈕
+	<br>
+	場景建造可自定義場景（劇本）
+	<br>
+	<<if $swich_bccmeditor is undefined>><<set $swich_bccmeditor to 0>><</if>>
+	<<button "場景建造開關">>
+		<<set $swich_bccmeditor = $swich_bccmeditor == 0 ? 1: 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<swich_bccmeditor>><br><br><</replace>>
+		<<replace #CE_bccmeditor>>
+			<<bccmeditor_button>>
+		<</replace>>
+	<</button>>
+	<br>
+	場景建造開關：
+	<<if $swich_bccmeditor is 0>>
+		<span class="red">關</span>
+		<br>
+	<</if>>
+	<<if $swich_bccmeditor is 1>>
+		<span class="green">開</span>
+		<br>
+	<</if>>
+<</widget>>
+	
 <<widget "damage_fix_setting">>
 	<span class="gold">傷害倍數</span>	
 	<br><br>
@@ -1580,8 +1640,11 @@
 		<<quick_swich>>
 		<<teleportation>>
 		<<yanling_mini_ui left>>
-		<<yanling left>>
-		<<yanling_unset left>>
+		<<yanling_ui_hide>>
+		<<if $yanling_ui_hide is 0>>
+		    <<yanling left>>
+		    <<yanling_unset left>>
+		<</if>>
 	</div>	
 <</widget>>
 
@@ -1608,6 +1671,15 @@
 				<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
 			<</button>>	<br>
 		</div>
+		
+		<div @class="_selectedOptions is 'swich_bccmeditor' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "場景建造">>
+				<<set _selectedOptions to "swich_bccmeditor">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_bccmeditor>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		
 		<div @class="_selectedOptions is 'damage_fix_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
 			<<button "傷害倍數">>
 				<<set _selectedOptions to "damage_fix_setting">>
