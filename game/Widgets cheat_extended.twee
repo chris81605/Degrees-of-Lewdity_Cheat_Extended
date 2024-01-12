@@ -947,8 +947,10 @@
 		<<set _default_wardrobe to 20>>
 	<<elseif _wardrobe.type.includes('spacious')>>
 		<<set _default_wardrobe to 30>>
-	<<elseif _wardrobe.type.includes('organised')>>
+	<<elseif _wardrobe.type.includes('organiser')>>
 		<<set _default_wardrobe to 40>>
+	<<else>>
+	    <<set _default_wardrobe to 20>>
 	<</if>>
 	<<if $bigest_wardrobe_swich is undefined or $bigest_wardrobe_fix is undefined>>
 		<<set $bigest_wardrobe_swich to 0>>
