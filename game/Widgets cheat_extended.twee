@@ -642,7 +642,7 @@
 	<<link "确定">>
 		<<if $milk_releasedswich is 0>>
 			<<set $milk_releasedFIX_MIN to 0>>
-			<<set $milk_releasedFIX_MAN to 0>>
+			<<set $milk_releasedFIX_MAX to 0>>
 		<</if>>
 		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
@@ -654,7 +654,7 @@
 	<<link "确定">>
 		<<if $milk_releasedswich is 0>>
 			<<set $milk_releasedFIX_MIN to 0>>
-			<<set $milk_releasedFIX_MAN to 0>>
+			<<set $milk_releasedFIX_MAX to 0>>
 		<</if>>
 		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
@@ -881,6 +881,25 @@
 		<br>
 	<</if>>	
 	<<link [[更新|$passage]]>><</link>><br>
+	<<if $debug is 1>>
+		<span class="red">作弊拓展爆紅修復</span>
+		<br>
+		修復由舊版作弊拓展(1.3.2含更早版本)直接升級引發的功能爆紅問題
+		如果使用後仍無法修復請至github 提出issues 
+		<br>
+		<<link [[修復作弊拓展功能爆紅|$passage]]>> 
+            <<set $milk_releasedFIX_MIN to 0>>
+            <<set $milk_releasedFIX_MAX to 0>>
+            <<set $milk_volume to 0>>
+            <<set $milk_max to 3000>>
+            <<set $milk_amount to 0>>
+            <<set $cccheat to []>>
+            <<set $cccheat_name to []>>		
+            <<set $cccheat_display to "">>
+            <<set $cccheat_name_display to "">>
+            <<set $bigest_wardrobe_fix to 20>>
+        <</link>>
+	<</if>>
 <</widget>>
 
 <<widget "study_hard_mod">>
@@ -894,7 +913,7 @@
 	<<button "用功學習">>
 		<<set $study_hard = $study_hard == 0 ? 1 : 0>>
 		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>
+		<<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
 	<</button>>
 	<br>
 	用功學習開關：
@@ -1187,7 +1206,7 @@
 	在此......將言靈銘刻在身上！<br>
 	<br>	
 	紋身索引<br>
-	(自定義紋身索引1000-10011)<br>
+	(自定義紋身索引1000-1011)<br>
 	<<set $CE_tattoo_index to 1000>>
 	<<if $degree is undefined>>
 	    <<set $degree to 0>>
