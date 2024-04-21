@@ -1597,9 +1597,11 @@
 	    <</for>>
 	<</link>>
 	<br>
-	
+    -->
+	<<link [[贝利跟踪|Named NPC Stalk Select]]>><<set $stalkTestNPC to "Bailey">><</link>>
+	<br>
     
-	-->
+
 	转化
 	<br>
 	[[猫化特性|$passage][$cat = 6]]
