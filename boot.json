@@ -1,16 +1,17 @@
 {
   "name": "cheat extended",
-  "version": "1.12.2",
+  "version": "1.14",
   "styleFileList": [
     "css/CE_CSS.css"
   ],
   "scriptFileList": [],
   "tweeFileList": [
-    "game/Widgets cheat_extended.twee",
-    "game/Bccm/bccmeditor.twee",
     "game/ccplot.twee",
+    "game/CE_passage_editor.twee",
     "game/Bedroom Study.twee",
-    "game/随身衣柜.twee"
+    "game/随身衣柜.twee",
+    "game/Widgets cheat_extended.twee",
+    "game/Bccm/bccmeditor.twee"
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
