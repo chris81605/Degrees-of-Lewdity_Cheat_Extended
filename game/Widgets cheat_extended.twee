@@ -42,24 +42,6 @@
 	<br/>
 <</widget>>
 
-<<widget "milk_releasedFIX">>
-	<<if $milk_releasedswich is undefined>>
-			<<set $milk_releasedFIX to 0 >>
-	<</if>>
-	<<if $milk_releasedswich is 0>>
-		<<set $milk_releasedFIX to 0>>
-	<</if>>
-	<<if $milk_releasedswich is 1>>
-		<<if $milk_releasedFIX_MIN is undefined>>
-			<<set $milk_releasedFIX_MIN to 10 >>
-		<</if>>
-		<<if $milk_releasedFIX_MAX is undefined>>
-			<<set $milk_releasedFIX_MAX to 10 >>
-		<</if>>
-		<<set $milk_releasedFIX to random($milk_releasedFIX_MIN,$milk_releasedFIX_MAX) >>
-	<</if>>
-<</widget>>	
-
 <<widget "study_hard">>
 	<<if $study_hard is undefined>>
 		<<set $study_hard to 0>>
@@ -562,25 +544,7 @@
 		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 		<<replace #CE_settingsDiv>><<painfix_fix_setting>><br><br><</replace>>
 	<</button>>
-	<br><br>
-	<<if $debug is 1>>		
-		<<set $painVAR1 to _pain >> 
-		<<set $painVAR1_1 to _pain >> 
-		<<set $painVAR2 to ((_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)))) >>
-		<<set $painVAR2_1 to ((_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)))) * $painfix>>
-		<<set $painVAR3 to ( (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod))>>
-		<<set $painVAR3_1 to (( (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod)))* $painfix>>
-		除錯：
-		<br>
-		疼痛：$pain
-		<br>
-		數值1 修正前：$painVAR1修正後：$painVAR1_1(P.S此處仍未套用乘數)
-		<br>
-		數值2 修正前：$painVAR2修正後：$painVAR2_1
-		<br>
-		數值3 修正前：$painVAR3修正後：$painVAR3_1
-		<br>
-	<</if>>
+	<br>
 <</widget>>
 
 <<widget "swich_HP_AP_display">>
@@ -628,69 +592,55 @@
 	大量擠🥛模式：
 	<<if $milk_releasedswich is 0>>
 		<span class="red">關</span><br>
-		<<set $milk_releasedFIX_MIN to 0>>
-		<<set $milk_releasedFIX_MAN to 0>>
 	<</if>>
 	<<if $milk_releasedswich is 1>>
-		<span class="green">開</span>
-		<br>
-	<</if>>		
-	<br><br>
-	
-	在此設定大量擠🥛下限：<br>
-	<<numberslider "$milk_releasedFIX_MIN" $milk_releasedFIX_MIN 0 6000 100 >>
-	<<link "确定">>
-		<<if $milk_releasedswich is 0>>
-			<<set $milk_releasedFIX_MIN to 0>>
-			<<set $milk_releasedFIX_MAX to 0>>
-		<</if>>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
-	<</link>>
-	<br><br>
-	
-	在此設定大量擠🥛上限：<br>
-	<<numberslider "$milk_releasedFIX_MAX" $milk_releasedFIX_MAX 0 6000 100>>
-	<<link "确定">>
-		<<if $milk_releasedswich is 0>>
-			<<set $milk_releasedFIX_MIN to 0>>
-			<<set $milk_releasedFIX_MAX to 0>>
-		<</if>>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
-	<</link>>
-	<br><br>
-	當前可以儲存多少🥛：$milk_volume mL<br>
-	當前🥛量最大值：$milk_max mL<br>
-	修改🥛量<br>
-	當前🥛量最大值：<br>
-	<<numberslider "$milk_max" $milk_max 3000 60000 100 >><br>
-	當前可以儲存多少🥛：<br>
-	<<numberslider "$milk_volume" $milk_volume 0 60000 100>><br>
-	<<link "确定">>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
-	<</link>>
-	<br><br>
-	當前有多少🥛：$milk_amount mL<br>
-	修改🥛量<br>
-	<<numberslider "$milk_amount" $milk_amount 0 60000 100>>
-	<<link "确定">>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
-	<</link>>
-	<br><br>
-	<<if $debug is 1>>
-		除錯：
-		<br>
-		當前大量擠🥛修正數值--<span class="red">$milk_releasedFIX</span>
-		<br>
-		當前大量擠🥛修正亂數最小值--<span class="red">$milk_releasedFIX_MIN</span>
-		<br>
-		當前大量擠🥛修正亂數最大值--<span class="red">$milk_releasedFIX_MAX</span>
-		<br>
+		<span class="green">開</span><br>
 	<</if>>
+	<br>	
+	在此設定大量擠🥛下限：<br>
+	<<numberslider "$milk_releasedFIX_MIN" $milk_releasedFIX_MIN 0 6000 100 >><br>	
+	在此設定大量擠🥛上限：<br>
+	<<numberslider "$milk_releasedFIX_MAX" $milk_releasedFIX_MAX 0 6000 100>><br>
+	<<link "設定">>
+		<<if $milk_releasedswich is 0>>
+			<<set $milk_releasedFIX_MIN to 0>>
+			<<set $milk_releasedFIX_MAX to 0>>
+		<</if>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
+	<</link>><br>
+	當前大量擠🥛修正亂數<span class="blue">$milk_releasedFIX</span>mL<br>
+	修改🥛量<br>
+	當前🥛量最大值：<span class="blue">$milk_max mL</span>mL<br>
+	<<numberslider "$milk_max" $milk_max 3000 60000 100 >><br>
+	當前可以儲存多少🥛：<span class="blue">$milk_volume</span>mL<br>
+	<<numberslider "$milk_volume" $milk_volume 0 60000 100>><br>
+	當前有多少🥛：<span class="blue">$milk_amount</span>mL<br>
+	<<numberslider "$milk_amount" $milk_amount 0 60000 100>><br>
+	<<link "設定">>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
+	<</link>>
+	<br><br>
 <</widget>>
+
+<<widget "milk_releasedFIX">>
+	<<if $milk_releasedswich is undefined or 0>>
+	    <<set $milk_releasedFIX to 0 >>
+	<<else>>
+		<<if $milk_releasedFIX_MIN is undefined>>
+			<<set $milk_releasedFIX_MIN to 10 >>
+		<</if>>
+		<<if $milk_releasedFIX_MAX is undefined>>
+			<<set $milk_releasedFIX_MAX to 10 >>
+		<</if>>
+		<!-- _args[0]為原始擠奶隨機量-->
+		<<set $milk_releasedFIX to random($milk_releasedFIX_MIN,$milk_releasedFIX_MAX) - _args[0]>>
+		<<if $milk_amount lt $milk_releasedFIX>>
+		    <<set $milk_releasedFIX to $milk_amount - _args[0]>>
+	    <</if>>
+	<</if>>	
+<</widget>>	
 
 <<widget "black_stores_setting">>
 	<span class="gold">黑心商店</span>
@@ -853,11 +803,27 @@
 		<<if $brothel_basement_swich isnot 1>>
 			<<set $brothel_basement_price_FIX to 1>>
 		<</if>>
+		<<set $brothel_basement_price to $brothel_basement_price * $brothel_basement_price_FIX>>
 		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 		<<replace #CE_settingsDiv>><<brothel_basement_setting>><br><br><</replace>>		
 	<</link>>
 	<br><br>
-	當前尋歡洞報酬加倍倍數：$brothel_basement_price_FIX倍。
+	當前尋歡洞報酬加倍倍數：<span class ="blue">$brothel_basement_price_FIX</span>倍。<br>
+	當前尋歡洞報酬：<span class="blue"><<printmoney $brothel_basement_price>></span><br>
+	<<link "恢復預設">>
+	    <<set $brothel_basement_price_FIX to 1>>
+	    <<if $rng gte 95>>
+		    <<set $brothel_basement_price to 3000>>
+	    <<elseif $rng gte 85>>
+		    <<set $brothel_basement_price to 2000>>
+	    <<elseif $rng gte 45>>
+		    <<set $brothel_basement_price to 1000>>
+	    <<else>>
+		    <<set $brothel_basement_price to 500>>
+	    <</if>>
+	    <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<brothel_basement_setting>><br><br><</replace>>
+	<</link>>
 <</widget>>
 
 <<widget "swich_DEBUG_MODE">>
@@ -867,19 +833,33 @@
 	<br>
 	<<button "上帝模式開關">>
 		<<set $debug = $debug == 0 ? 1 : 0>>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<swich_DEBUG_MODE>><br><br><</replace>>
+		<<if $passage is "Start">>
+		    <<replace #debug_mode>>
+		        DEBUG MODE開關：
+	            <<if $debug is 0>>
+		            <span class="red">關</span>
+		            <br>
+		        <<elseif $debug is 1>>
+		            <span class="green">開</span>
+		            <br>   
+	            <</if>>
+	        <</replace>> 
+		<<else>>
+		    <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		    <<replace #CE_settingsDiv>><<swich_DEBUG_MODE>><br><br><</replace>>    
+		<</if>>    
 	<</button>>
 	<br>
-	DEBUG MODE開關：
-	<<if $debug is 0>>
-		<span class="red">關</span>
-		<br>
-	<</if>>
-	<<if $debug is 1>>
-		<span class="green">開</span>
-		<br>
-	<</if>>	
+	<div id="debug_mode">
+	    DEBUG MODE開關：
+	    <<if $debug is 0>>
+		    <span class="red">關</span>
+		    <br>
+		<<elseif $debug is 1>>
+		    <span class="green">開</span>
+		    <br>   
+	    <</if>>
+	</div>    	
 	<<link [[更新|$passage]]>><</link>><br>
 	<<if $debug is 1>>
 		<span class="red">作弊拓展爆紅修復</span>
@@ -898,7 +878,8 @@
             <<set $cccheat_display to "">>
             <<set $cccheat_name_display to "">>
             <<set $bigest_wardrobe_fix to 20>>
-        <</link>>
+        <</link>><br>
+        當前頁面(passage)：<span class="blue">$passage</span><br>
 	<</if>>
 <</widget>>
 
