@@ -7,18 +7,16 @@
   "scriptFileList": [],
   "tweeFileList": [
     "game/Widgets cheat_extended.twee",
-    "game/CE_passage_editor.twee",
-    "game/随身衣柜.twee",
-    "game/Bedroom Study.twee",
     "game/Bccm/bccmeditor.twee",
-    "game/ccplot.twee"
+    "game/ccplot.twee",
+    "game/Bedroom Study.twee",
+    "game/随身衣柜.twee"
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
     "scriptEarly/CERegist.js"
   ],
   "additionFile": [
-    "addon-replace/Brothel Basement Sex Finish.txt",
     "addon-replace/cheats_1.txt",
     "addon-replace/cheats_2.txt",
     "addon-replace/cheats_3.txt",
@@ -27,7 +25,6 @@
     "addon-replace/Widgets Dance Audience.txt",
     "addon-replace/Widgets Market_1.txt",
     "addon-replace/Widgets Market_2.txt",
-    "addon-replace/Widgets Orgasm.txt",
     "addon-replace/Widgets State Man_1.txt",
     "addon-replace/Widgets State Man_2.txt",
     "addon-replace/Widgets_1.txt",
@@ -85,11 +82,6 @@
           "replaceFile": "addon-replace/Widgets_5.txt"
         },
         {
-          "passage": "Brothel Basement Sex Finish",
-          "findString": "\t<<ejaculation>><<set $gloryholestat += 1>><<set $prostitutionstat += 1>>",
-          "replaceFile": "addon-replace/Brothel Basement Sex Finish.txt"
-        },
-        {
           "passage": "Stall Seduce",
           "findString": "\t<<if setup.plants[$stall_plant].special.includes(\"large\")>>\n\t\t<<set $stall_amount to 1>>\n\t<<else>>",
           "replaceFile": "addon-replace/Stall Seduce.txt"
@@ -117,8 +109,8 @@
         },
         {
           "passage": "Widgets Orgasm",
-          "findString": "<<widget \"breastfeed\">>\n\t<<set $_milk_released to random(10, 50)>>",
-          "replaceFile": "addon-replace/Widgets Orgasm.txt"
+          "findString": "<<milkvolume 1>>",
+          "replace": "<<milkvolume 1>>\n\t<<milk_releasedFIX $_milk_released>>\n\t<<set $_milk_released += $milk_releasedFIX>>\n"
         },
         {
           "passage": "Widgets State Man",
