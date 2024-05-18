@@ -1,4 +1,0 @@
-<<widget "breastfeed">>
-	<<milk_releasedFIX>>
-	<<set $_milk_released to random(10, 50)>>
-	<<set $_milk_released += $milk_releasedFIX>>
