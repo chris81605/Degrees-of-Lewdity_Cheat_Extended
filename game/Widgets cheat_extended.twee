@@ -57,7 +57,89 @@
 		<<historyicon>><<link [[学习历史 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 4>><</link>><<ghistory>>
 		<br>
 	<</if>>
+<</widget>>		
+
+<<widget "swich">>
+	<span class="gold">左側快捷</span>
+	<br><br>
+	在左側顯示：一鍵恢復全狀態及PC立马高潮
+	<br>
+	<<if $swich is undefined>><<set $swich to 0>><</if>>
+	<<button "左側快捷開關">>
+		<<set $swich = $swich == 0 ? 1: 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<swich>><br><br><</replace>>
+		<<replace #CEstatebox>>
+			<<quick_swich>>
+			<<teleportation>>
+			<<yanling_mini_ui left>>
+			<<yanling_ui_hide>>
+			<<if $yanling_ui_hide is 0>>
+		        <<yanling left>>
+		        <<yanling_unset left>>
+		    <</if>>
+		<</replace>>
+	<</button>>
+	<br>
+	快捷開關：
+	<<if $swich is 0>>
+		<span class="red">關</span>
+		<br>
+	<</if>>
+	<<if $swich is 1>>
+		<span class="green">開</span>
+		<br>
+	<</if>>	
+<</widget>>
+
+<<widget "quick_swich">>
+	<<if $swich is 1>>
+	    <span class="gold">快捷</span>
+	    <br>
+		[[状态全恢复|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]] |
+		[[PC立马高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
+		<br>
+		<<if $quick_swich isnot undefined>>
+		    <<for _i to 0; _i lt $quick_swich.length; _i++>>
+		        <<set _j to _i + 1>>
+		        (_j) $quick_swich[_i]<br>
+		    <</for>>
+		<</if>>    
+	<</if>>
 <</widget>>	
+
+<<widget "swich_teleportation">>
+	<span class="gold">空間節點</span>
+	<br><br>
+	在左側顯示：空間節點功能
+	<br>
+	<<if $swich_teleportation is undefined>><<set $swich_teleportation to 0>><</if>>
+	<<button "瞬間移動開關">>
+		<<set $swich_teleportation = $swich_teleportation == 0 ? 1: 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<swich_teleportation>><br><br><</replace>>
+		<<replace #CEstatebox>>
+			<<quick_swich>>
+			<<teleportation>>
+			<<yanling_mini_ui left>>
+			<<yanling_ui_hide>>
+			<<if $yanling_ui_hide is 0>>
+		        <<yanling left>>
+		        <<yanling_unset left>>
+		    <</if>>
+		<</replace>>
+	<</button>>	
+	<br>
+	空間節點：
+	<<if $swich_teleportation is 0>>
+		<span class="red">關</span>
+		<br>
+	<</if>>
+	<<if $swich_teleportation is 1>>
+		<span class="green">開</span>
+		<br>
+	<</if>>		
+<</widget>>
 
 <<widget "teleportation">>
 	<<if $swich_teleportation is 1>>	
@@ -113,11 +195,11 @@
 						<<set _teleportation_name to _teleportation_name_temp>>		<!--當無重複命名時套用新名稱-->
 					<</if>>
 				<</for>>  
-				<<set $teleportation_name[$teleportation_name.length] to _teleportation_name>>	<!--命名節點-->
+				<<set $teleportation_name.push(_teleportation_name)>>	<!--命名節點-->
 				<<set _teleportation_target to $passage>>	<!--設定傳送位置-->
 				<<set _no to $teleportation_name.length -1 >>
 				<<set _teleportation_target2 to "◁[[" + $teleportation_name[_no] + "|" + _teleportation_target + "]]▷">>	<!--將名稱與位置組合成傳送代碼-->
-				<<set $teleportation[$teleportation.length] to _teleportation_target2>>
+				<<set $teleportation.push(_teleportation_target2)>>
 				<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
 					<<quick_swich>>
 					<<teleportation>>
@@ -135,6 +217,44 @@
 		    <br>
 		<</if>>
 	<</if>>
+<</widget>>	
+
+<<widget "swich_yanling">>
+	<span class="gold">言靈集</span>
+	<br><br>
+	在左側顯示：言靈集功能
+	<br>
+	<<if $swich_yanling is undefined>><<set $swich_yanling to 0>><</if>>
+	<<if $yanling_ui_hide is undefined>><<set $yanling_ui_hide to 0>><</if>>
+	
+	<<button "言靈集開關">>
+		<<set $swich_yanling = $swich_yanling == 0 ? 1: 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
+		<<replace #CEstatebox>>
+			<<quick_swich>>
+			<<teleportation>>
+			<<yanling_mini_ui left>>
+			<<yanling_ui_hide>>
+			<<if $yanling_ui_hide is 0>>
+		        <<yanling left>>
+		        <<yanling_unset left>>
+		    <</if>>
+		<</replace>>
+	<</button>>
+	<br>
+	言靈集開關：
+	<<if $swich_yanling is 0>>
+		<span class="red">關</span>
+		<br>
+	<</if>>
+	<<if $swich_yanling is 1>>
+		<span class="green">開</span>
+		<br>
+		<<yanling_mini_ui cheat_menu>>
+		<<yanling cheat_menu>>
+		<<yanling_unset cheat_menu>>
+	<</if>>	
 <</widget>>
 
 <<widget "yanling_mini_ui">>
@@ -189,10 +309,22 @@
 <<widget "yanling">>
 	<<if $swich_yanling is 1>> 		
 		<br>在此輸入言靈代碼<br>
-		<<textbox "_cccheat" $cccheat_display>>
+		<<if _args[0] is "left">>
+		    <<textbox "_cccheat" $cccheat_display>>
+		<<else>>
+		    <div class="CEtextarea">
+		        <textarea id="cccheatarea" rows="15"></textarea>
+		        <!--
+		        <textarea id="cccheatarea" rows="10" cols="0"></textarea>
+		        -->
+		    </div>
+		<</if>>    
 		<br>在此輸入言靈名稱(可留空)<br>
 		<<textbox "_cccheat_name" $cccheat_name_display>><br>
 		<<button "加入">>
+		    <<if _args[0] is "cheat_menu">>
+		        <<set _cccheat to document.getElementById("cccheatarea").value>>
+		    <</if>>    
 			<<if _cccheat != "">>
 				<<set $cccheat[$cccheat.length] to _cccheat>>
 				<<if _cccheat_name is "">>
@@ -240,7 +372,10 @@
 			<<if _cccount isnot "未选中">>
 				<<for _l to 0 ;_l lt $cccheat_name.length ;_l++>>
 					<<if _cccount is $cccheat_name[_l]>>
-						<<set $cccheat_display to $cccheat[_l]>>
+					    <<if document.getElementById("cccheatarea") isnot null>>
+					        <<set _cccheat_display_temp to $cccheat[_l]>>    
+						<</if>>
+						<<set $cccheat_display to $cccheat[_l]>>    
 					<</if>>	
 				<</for>>
 				<<set $cccheat_name_display to _cccount>>
@@ -261,19 +396,17 @@
 			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 				<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
+				<<set document.getElementById("cccheatarea").value to _cccheat_display_temp>>
 			<</if>>	
 		<</button>><br>		
 		<<button "刪除选中">>
 			<<if _cccount isnot "未选中">>
 				<<for _l to 0 ;_l lt $cccheat_name.length ;_l++>>
 					<<if _cccount is $cccheat_name[_l]>>
-					<!--	<<set _cccheat_display to $cccheat[_l]>>
-						<<set $cccheat.delete(_cccheat_display)>>   -->
 						<<set $cccheat.deleteAt(_l)>>
 						<<set $cccheat_name.deleteAt(_l)>>
 					<</if>>	
 				<</for>>
-				<!--<<set $cccheat_name.delete(_cccount)>>-->
 			<</if>>
 			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
 				<<quick_swich>>
@@ -349,120 +482,6 @@
             <br>    
         <</if>>
     <</if>>          
-<</widget>>
-
-<<widget "quick_swich">>
-	<<if $swich is 1>>
-	    <span class="gold">快捷</span>
-	    <br>
-		[[状态全恢复|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]] |
-		[[PC立马高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
-		<br>
-	<</if>>
-<</widget>>	
-
-<<widget "swich">>
-	<span class="gold">左側快捷</span>
-	<br><br>
-	在左側顯示：一鍵恢復全狀態及PC立马高潮
-	<br>
-	<<if $swich is undefined>><<set $swich to 0>><</if>>
-	<<button "左側快捷開關">>
-		<<set $swich = $swich == 0 ? 1: 0>>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<swich>><br><br><</replace>>
-		<<replace #CEstatebox>>
-			<<quick_swich>>
-			<<teleportation>>
-			<<yanling_mini_ui left>>
-			<<yanling_ui_hide>>
-			<<if $yanling_ui_hide is 0>>
-		        <<yanling left>>
-		        <<yanling_unset left>>
-		    <</if>>
-		<</replace>>
-	<</button>>
-	<br>
-	快捷開關：
-	<<if $swich is 0>>
-		<span class="red">關</span>
-		<br>
-	<</if>>
-	<<if $swich is 1>>
-		<span class="green">開</span>
-		<br>
-	<</if>>	
-<</widget>>	
-
-<<widget "swich_teleportation">>
-	<span class="gold">空間節點</span>
-	<br><br>
-	在左側顯示：空間節點功能
-	<br>
-	<<if $swich_teleportation is undefined>><<set $swich_teleportation to 0>><</if>>
-	<<button "瞬間移動開關">>
-		<<set $swich_teleportation = $swich_teleportation == 0 ? 1: 0>>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<swich_teleportation>><br><br><</replace>>
-		<<replace #CEstatebox>>
-			<<quick_swich>>
-			<<teleportation>>
-			<<yanling_mini_ui left>>
-			<<yanling_ui_hide>>
-			<<if $yanling_ui_hide is 0>>
-		        <<yanling left>>
-		        <<yanling_unset left>>
-		    <</if>>
-		<</replace>>
-	<</button>>	
-	<br>
-	空間節點：
-	<<if $swich_teleportation is 0>>
-		<span class="red">關</span>
-		<br>
-	<</if>>
-	<<if $swich_teleportation is 1>>
-		<span class="green">開</span>
-		<br>
-	<</if>>		
-<</widget>>	
-
-<<widget "swich_yanling">>
-	<span class="gold">言靈集</span>
-	<br><br>
-	在左側顯示：言靈集功能
-	<br>
-	<<if $swich_yanling is undefined>><<set $swich_yanling to 0>><</if>>
-	<<if $yanling_ui_hide is undefined>><<set $yanling_ui_hide to 0>><</if>>
-	
-	<<button "言靈集開關">>
-		<<set $swich_yanling = $swich_yanling == 0 ? 1: 0>>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
-		<<replace #CEstatebox>>
-			<<quick_swich>>
-			<<teleportation>>
-			<<yanling_mini_ui left>>
-			<<yanling_ui_hide>>
-			<<if $yanling_ui_hide is 0>>
-		        <<yanling left>>
-		        <<yanling_unset left>>
-		    <</if>>
-		<</replace>>
-	<</button>>
-	<br>
-	言靈集開關：
-	<<if $swich_yanling is 0>>
-		<span class="red">關</span>
-		<br>
-	<</if>>
-	<<if $swich_yanling is 1>>
-		<span class="green">開</span>
-		<br>
-		<<yanling_mini_ui cheat_menu>>
-		<<yanling cheat_menu>>
-		<<yanling_unset cheat_menu>>
-	<</if>>	
 <</widget>>
 
 <<widget "swich_bccmeditor">>
@@ -833,7 +852,6 @@
 	<br>
 	<<button "上帝模式開關">>
 		<<set $debug = $debug == 0 ? 1 : 0>>
-		<<if $passage is "Start">>
 		    <<replace #debug_mode>>
 		        DEBUG MODE開關：
 	            <<if $debug is 0>>
@@ -844,7 +862,7 @@
 		            <br>   
 	            <</if>>
 	        <</replace>> 
-		<<else>>
+		<<if document.getElementById("#cheat_extended_options") isnot null>>
 		    <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 		    <<replace #CE_settingsDiv>><<swich_DEBUG_MODE>><br><br><</replace>>    
 		<</if>>    
@@ -1152,10 +1170,12 @@
 			<<replace #undress_ALL>>
 				<span class="red">>警告！！！強制脫下即解除項圈、貞操帶、口球、眼罩等物可能導致遊戲Bug，請謹慎使用</span><br>
 				<<link [["一鍵脫光光"|$passage]]>>
+					<!--脫掉常規衣服-->
 					<<set _clothes_type_list to ["face", "feet", "hands", "head", "legs", "lower", "neck", "over_head", "over_lower", "over_upper", "under_lower", "under_upper", "upper"]>>
 					<<for _i to 0; _i lte 12; _i++>>
 						<<generalUndress "wardrobe" _clothes_type_list[_i]>>
 					<</for>>
+					<!--脫掉特殊服裝，相關代碼未研究-->
 					<<set $worn.over_head.type.push("broken")>>
 					<<set $worn.over_head.integrity to 0>>
 					<<overheadruined>>
@@ -1168,6 +1188,9 @@
 					<<feetruined>>
 					<<set $worn.neck.type.push("broken")>>
 					<<neckruined>>
+					<!--解除拘束服-->
+					<<unbind>>
+					<<exposure>>
 				<</link>><br>
 			<</replace>>		
 		<</link>><br>
