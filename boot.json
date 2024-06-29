@@ -6,12 +6,12 @@
   ],
   "scriptFileList": [],
   "tweeFileList": [
-    "game/Widgets cheat_extended.twee",
+    "game/ccplot.twee",
     "game/Bccm/bccmeditor.twee",
-    "game/CE_passage_editor.twee",
     "game/Bedroom Study.twee",
     "game/随身衣柜.twee",
-    "game/ccplot.twee"
+    "game/CE_passage_editor.twee",
+    "game/Widgets cheat_extended.twee"
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
@@ -91,7 +91,7 @@
         },
         {
           "passage": "Widgets State Man",
-          "findString": "\t\t\t\t<span class=\"green\"><<He>>吃痛退开。</span>\t\t\t\t\n<<combatcontrol 15>><<def 10>>\n\t\t\t<</if>>",
+          "findString": "\t\t\t\t<span class=\"green\"><<He>>吃痛退开。</span>\n\t\t\t\t<<combatcontrol 15>><<def 10>>\n\t\t\t<</if>>",
           "replaceFile": "addon-replace/Widgets State Man_1.txt"
         },
         {
