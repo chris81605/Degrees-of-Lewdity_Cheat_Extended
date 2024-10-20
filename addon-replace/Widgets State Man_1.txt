@@ -1,5 +1,4 @@
-				<span class="green"><<He>>吃痛退开。</span>
-				<<combatcontrol 15>><<def 10>>
+				<span class="green"><<He>>吃痛退开。</span>              <<combatcontrol 15>><<def 10>>
 			<</if>>
 
 			<<HP_AP_display HP>>
