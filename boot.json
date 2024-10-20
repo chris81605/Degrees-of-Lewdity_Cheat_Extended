@@ -1,17 +1,19 @@
 {
   "name": "cheat extended",
-  "version": "1.15.1",
+  "version": "1.16_test_ver2",
   "styleFileList": [
     "css/CE_CSS.css"
   ],
-  "scriptFileList": [],
+  "scriptFileList": [
+    "scripts/CE_Time_Event.js",
+    "scripts/CE_getTargetWarmth2.js"
+  ],
   "tweeFileList": [
-    "game/ccplot.twee",
+    "game/Widgets cheat_extended.twee",
     "game/Bccm/bccmeditor.twee",
+    "game/ccplot.twee",
     "game/Bedroom Study.twee",
-    "game/随身衣柜.twee",
-    "game/CE_passage_editor.twee",
-    "game/Widgets cheat_extended.twee"
+    "game/随身衣柜.twee"
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
@@ -86,8 +88,8 @@
         },
         {
           "passage": "Widgets Orgasm",
-          "findString": "<<milkvolume 1>>",
-          "replace": "<<milkvolume 1>>\n\t<<milk_releasedFIX $_milk_released>>\n\t<<set $_milk_released += $milk_releasedFIX>>\n"
+          "findString": "<<if $milk_amount lt _milk_released>>",
+          "replace": "<<milk_releasedFIX _milk_released>>\n\t<<set _milk_released += $milk_releasedFIX>>\n\t<<if $milk_amount lt _milk_released>>"
         },
         {
           "passage": "Widgets State Man",
@@ -98,16 +100,6 @@
           "passage": "Widgets State Man",
           "findString": "\t\t\t<<if $enemyanger gte $enemyangermax>>",
           "replaceFile": "addon-replace/Widgets State Man_2.txt"
-        },
-        {
-          "passage": "Furniture Shop Papers",
-          "findString": "\t\t\t<<run Furniture.set('poster', 'poster', {",
-          "replace": "\t\t\t<<set _normalisedName to _chosenPosterCustom>>\n\t\t\t<<run Furniture.set('poster', 'poster', {"
-        },
-        {
-          "passage": "Furniture Shop Papers",
-          "findString": "\t\t\t<<run Furniture.set('wallpaper', 'wallpaper', {",
-          "replace": "\t\t\t<<set _normalisedName to _chosenWallpaperCustom>>\n\t\t\t<<run Furniture.set('wallpaper', 'wallpaper', {"
         },
         {
           "passage": "Widgets Dance Audience",
@@ -151,11 +143,11 @@
     },
     {
       "modName": "Simple Frameworks",
-      "version": ">=1.3.0"
+      "version": ">=1.15.3"
     },
     {
       "modName": "GameVersion",
-      "version": "=0.5.0.5"
+      "version": ">=0.5.0.5"
     }
   ]
 }
