@@ -1,0 +1,299 @@
+:: yanling [widget]
+<<widget "swich_yanling">>
+	<span class="gold">言靈集</span>
+	<br><br>
+	在左側顯示：言靈集功能
+	<br>
+	<<if $swich_yanling is undefined>><<set $swich_yanling to 0>><</if>>
+	<<if $yanling_ui_hide is undefined>><<set $yanling_ui_hide to 0>><</if>>
+	
+	<<button "言靈集開關">>
+		<<set $swich_yanling = $swich_yanling == 0 ? 1: 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
+		<<replace #CEstatebox>>
+			<<quick_swich>>
+			<<teleportation>>
+			<<yanling_mini_ui left>>
+			<<yanling_ui_hide>>
+			<<if $yanling_ui_hide is 0>>
+		        <<yanling left>>
+		        <<yanling_unset left>>
+		        <<yanling_move>>
+		    <</if>>
+		<</replace>>
+	<</button>>
+	<br>
+	言靈集開關：
+	<<if $swich_yanling is 0>>
+		<span class="red">關</span>
+		<br>
+	<</if>>
+	<<if $swich_yanling is 1>>
+		<span class="green">開</span>
+		<br>
+		<<yanling_mini_ui cheat_menu>>
+		<<yanling cheat_menu>>
+		<<yanling_unset cheat_menu>>
+	<</if>>	
+<</widget>>
+
+<<widget "yanling_mini_ui">>
+    <<if $swich_yanling is 1>> 	
+		
+	<!--三代言靈 架構：by tony70124@貼吧dol吧 https://tieba.baidu.com/p/8724301141---->
+	<!--架構優化 by 北極星@ QQ 北极星mod测试群521994232-->
+	<!--言靈管理功能優化 by隨風飄逸@ QQ 污度孤儿中国模组交流群671114833-->
+		<span class="gold">言靈集</span><br>
+		<<if $cccheat is undefined>>
+			<<set $cccheat to []>>
+			<<set $cccheat_name to []>>
+			<<set $cccheat_display to "">>
+			<<set $cccheat_name_display to "">>
+		<</if>>
+		
+		<<for _i to 0; _i lt $cccheat.length; _i++>>
+			<<set _j to _i + 1>>
+			<<if _args[0] is "left">>
+				(_j) $cccheat[_i]<br>
+			<<elseif _args[0] is "cheat_menu">>
+				(_j) $cccheat[_i]
+				<<if _j%10 is 0>>
+					<br>
+				<</if>>
+			<</if>>	
+		<</for>>
+	<</if>>
+<</widget>>
+
+<<widget "yanling">>
+	<<if $swich_yanling is 1>> 		
+		<span class="gold">在此輸入言靈代碼</span><br>
+		<<if _args[0] is "left">>
+		    <<textbox "_cccheat" $cccheat_display>>
+		<<else>>
+		    <div class="CEtextarea">
+		        <textarea id="cccheatarea" rows="15"></textarea>
+		        <!--
+		        <textarea id="cccheatarea" rows="10" cols="0"></textarea>
+		        -->
+		    </div>
+		<</if>>    
+		<br>在此輸入言靈名稱(可留空)<br>
+		<<textbox "_cccheat_name" $cccheat_name_display>><br>
+		<<button "加入">>
+		    <<if _args[0] is "cheat_menu">>
+		        <<set _cccheat to document.getElementById("cccheatarea").value>>
+		    <</if>>    
+			<<if _cccheat != "">>
+				<<set $cccheat[$cccheat.length] to _cccheat>>
+				<<if _cccheat_name is "">>
+				    <<set _cccheat_name to "言靈NO." + ($cccheat_name.length + 1)>>
+				<</if>>
+				<<set _name_fix_no to 0>>
+				<<set _cccheat_name_temp to _cccheat_name>>
+				<<set _cccheat_name_temp2 to _cccheat_name>>
+				<<for _l to -1; _l lt $cccheat_name.length; _l++>> <!--檢查當前是否已經有相同命名的言靈-->
+				    <<if _cccheat_name_temp is $cccheat_name[_l]>>
+				        <<set _name_fix_no += 1 >>
+				        <<set _cccheat_name_temp to _cccheat_name_temp2 + "-" + _name_fix_no>> <!--自動重新命名(名字後加編號-->
+				        <<set _l to -1>> <!-- 迴圈重置，重新檢查重新命名後的言靈名稱是否有重複的-->
+				    <<else>>
+				        <<set _cccheat_name to _cccheat_name_temp>><!--當無重複命名時套用新名稱-->
+				    <</if>>
+				<</for>>
+				<<set $cccheat_name[$cccheat_name.length] to _cccheat_name>>	
+				<<set $cccheat_display to "">>
+				<<set $cccheat_name_display to "">>	
+			<</if>>
+			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
+				<<quick_swich>>
+				<<teleportation>>
+				<<yanling_mini_ui left>>
+				<<yanling_ui_hide>>
+				<<if $yanling_ui_hide is 0>>
+		            <<yanling left>>
+		            <<yanling_unset left>>
+		            <<yanling_move>>
+		        <</if>>
+			<</replace>>
+			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
+			<</if>>	
+		<</button>><br>
+	<</if>>
+<</widget>>	
+
+<<widget "yanling_unset">>
+	<<if $swich_yanling is 1>>
+		選擇言靈：<br>
+		<<listbox "_cccount" autoselect>><<option "未选中">><<optionsfrom $cccheat_name>><</listbox>><br>
+		<<button "查看选中">>
+			<<if _cccount isnot "未选中">>
+				<<for _l to 0 ;_l lt $cccheat_name.length ;_l++>>
+					<<if _cccount is $cccheat_name[_l]>>
+					    <<if document.getElementById("cccheatarea") isnot null>>
+					        <<set _cccheat_display_temp to $cccheat[_l]>>    
+						<</if>>
+						<<set $cccheat_display to $cccheat[_l]>>    
+					<</if>>	
+				<</for>>
+				<<set $cccheat_name_display to _cccount>>
+			<<else>>
+				<<set $cccheat_display to "">>
+				<<set $cccheat_name_display to "">>
+			<</if>>
+			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
+				<<quick_swich>>
+				<<teleportation>>
+				<<yanling_mini_ui left>>
+				<<yanling_ui_hide>>
+				<<if $yanling_ui_hide is 0>>
+		            <<yanling left>>
+		            <<yanling_unset left>>
+		            <<yanling_move>>
+		        <</if>>
+			<</replace>>
+			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
+				<<set document.getElementById("cccheatarea").value to _cccheat_display_temp>>
+			<</if>>	
+		<</button>><br>		
+		<<button "刪除选中">>
+			<<if _cccount isnot "未选中">>
+				<<for _l to 0 ;_l lt $cccheat_name.length ;_l++>>
+					<<if _cccount is $cccheat_name[_l]>>
+						<<set $cccheat.deleteAt(_l)>>
+						<<set $cccheat_name.deleteAt(_l)>>
+					<</if>>	
+				<</for>>
+			<</if>>
+			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
+				<<quick_swich>>
+				<<teleportation>>
+				<<yanling_mini_ui left>>
+				<<yanling_ui_hide>>
+				<<if $yanling_ui_hide is 0>>
+		            <<yanling left>>
+		            <<yanling_unset left>>
+		            <<yanling_move>>
+		        <</if>>
+			<</replace>>
+			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
+			<</if>>	
+		<</button>>
+		<br>
+		<<button "清除所有言靈">>	
+				<<set $cccheat to []>>
+				<<set $cccheat_name to []>>
+				<<set $cccheat_display to "">>
+				<<set $cccheat_name_display to "">>
+				<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
+					<<quick_swich>>
+					<<teleportation>>
+					<<yanling_mini_ui left>>
+					<<yanling_ui_hide>>
+					<<if $yanling_ui_hide is 0>>
+		                <<yanling left>>
+		                <<yanling_unset left>>
+		                <<yanling_move>>
+		            <</if>>
+				<</replace>>
+				<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
+					<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+					<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
+				<</if>>	
+		<</button>>
+		<br>	
+	<</if>>	
+<</widget>>
+
+<<widget "yanling_move">>
+<!--這段代碼是在 Microsoft Copilot 的幫助下完成的。-->
+    <<set $fromIndex to $fromIndex ?? 1>>  <!-- 若 $fromIndex 未定義，則設為 1 -->
+    <<set $toIndex to $toIndex ?? 1>>  <!-- 若 $toIndex 未定義，則設為 1 -->
+
+    <!-- 添加金色標題 -->
+    <span style="color: gold;">重新排列言靈</span><br>
+    在下方輸入數字<br>
+    <!-- 數字輸入框 -->
+    起始位置: <input type="number" id="fromIndexInput" value="<<= $fromIndex>>" min="0" max="<<= $cccheat_name.length - 1>>" style="width: 50px; height: 30px;"><br>
+    目標位置: <input type="number" id="toIndexInput" value="<<= $toIndex>>" min="0" max="<<= $cccheat_name.length - 1>>" style="width: 50px; height: 30px;"><br>
+
+    <<button "更新言靈索引">>
+        <<set _fromIndexValue to document.getElementById('fromIndexInput').value>>  <!-- 獲取起始索引的值 -->
+        <<set _toIndexValue to document.getElementById('toIndexInput').value>>  <!-- 獲取目標索引的值 -->
+        <<if _fromIndexValue == "" or _toIndexValue == "" >>  <!-- 檢查是否有輸入值為空 -->
+            <<run alert("輸入錯誤：輸入索引不能為空白")>>  <!-- 彈窗提示錯誤 -->
+        <<elseif parseInt(_fromIndexValue) > $cccheat_name.length or parseInt(_toIndexValue) > $cccheat_name.length>>  <!-- 檢查索引是否超出範圍 -->
+            <<run alert("輸入錯誤：索引超過數組長度")>>  <!-- 彈窗提示錯誤 -->
+        <<elseif parseInt(_fromIndexValue) == 0 or parseInt(_toIndexValue) == 0>>  <!-- 檢查索引是否為零 -->
+            <<run alert("輸入錯誤：索引不能為零")>>  <!-- 彈窗提示錯誤 -->
+        <<else>>  <!-- 若索引有效，更新索引並移動元素 -->
+            <<set $fromIndex to parseInt(_fromIndexValue)>>  <!-- 更新起始索引（字串轉整數） -->
+            <<set $toIndex to parseInt(_toIndexValue)>>  <!-- 更新目標索引（字串轉整數） -->
+            <<run console.log("更新索引: fromIndex =", $fromIndex, "toIndex =", $toIndex)>>  <!-- 記錄更新索引信息 -->
+            <<set $fromIndex to $fromIndex - 1>>  <!-- 起始索引減一以符合數組索引 -->
+            <<set $toIndex to $toIndex - 1>>  <!-- 目標索引減一以符合數組索引 -->
+            <<set _item1 to $cccheat[$fromIndex]>>  <!-- 保存移動的元素 -->
+            <<set _item2 to $cccheat_name[$fromIndex]>>  <!-- 保存移動的元素名稱 -->
+            <<run $cccheat.splice($fromIndex, 1)>>  <!-- 從數組中移除元素 -->
+            <<run $cccheat_name.splice($fromIndex, 1)>>  <!-- 從數組中移除元素名稱 -->
+            <<run $cccheat.splice($toIndex, 0, _item1)>>  <!-- 在目標位置插入元素 -->
+            <<run $cccheat_name.splice($toIndex, 0, _item2)>>  <!-- 在目標位置插入元素名稱 -->
+            <<replace #CEstatebox>>  <!-- 更新狀態顯示 -->
+                <<quick_swich>>
+                <<teleportation>>
+                <<yanling_mini_ui left>>
+                <<yanling_ui_hide>>
+                <<if $yanling_ui_hide is 0>>
+                    <<yanling left>>
+                    <<yanling_unset left>>
+                    <<yanling_move>>
+                <</if>>
+            <</replace>>
+        <</if>>
+    <</button>>
+<</widget>>
+
+<<widget "yanling_ui_hide">>
+    <<if $swich_yanling is 1>>        
+        <<if $yanling_ui_hide is 0>>  
+            <<button "隱藏言靈介面">>
+                <<set $yanling_ui_hide to 1>>
+                <<replace #CEstatebox>>		<!--更新左側狀態顯示-->
+			        <<quick_swich>>
+				    <<teleportation>>
+				    <<yanling_mini_ui left>>
+				    <<yanling_ui_hide>>
+				    <<if $yanling_ui_hide is 0>>
+		                <<yanling left>>
+		                <<yanling_unset left>>
+		                <<yanling_move>>
+		            <</if>>
+		        <</replace>>
+            <</button>>
+            <br>
+        <<elseif $yanling_ui_hide is 1>>
+            <<button "顯示言靈介面">>
+                <<set $yanling_ui_hide to 0>>
+                <<replace #CEstatebox>>		<!--更新左側狀態顯示-->
+			        <<quick_swich>>
+				    <<teleportation>>
+				    <<yanling_mini_ui left>>
+				    <<yanling_ui_hide>>
+				    <<if $yanling_ui_hide is 0>>
+		                <<yanling left>>
+		                <<yanling_unset left>>
+		                <<yanling_move>>
+		            <</if>>
+		        <</replace>>
+            <</button>>
+            <br>    
+        <</if>>
+    <</if>>          
+<</widget>>

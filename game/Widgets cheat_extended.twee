@@ -1,5 +1,25 @@
 :: Widgets cheat_extended [widget]
 
+<<widget "swich_HP_AP_display">>
+	<span class="gold">HP、AP顯示</span>	
+	<br><br>
+	於戰鬥中顯示對方HP、AP。<br>
+	<<if $HP_AP_display_swich is undefined>>
+		<<set $HP_AP_display_swich to 0>>
+	<</if>>
+	<<button "HP、AP顯示">>
+		<<set $HP_AP_display_swich = $HP_AP_display_swich == 0? 1 : 0>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<swich_HP_AP_display>><br><br><</replace>>
+	<</button>><br>
+	HP、AP顯示：
+	<<if $HP_AP_display_swich is 0>>
+		<span class="red">關</span><br>
+	<<else>>
+		<span class="green">開</span><br>
+	<</if>>
+<</widget>>
+
 <<widget "HP_AP_display">>
 	<<if _args[0] is "AP">>
 		<<if $HP_AP_display_swich is 1>>
@@ -42,6 +62,60 @@
 	<br/>
 <</widget>>
 
+<<widget "damage_fix_setting">>
+	<span class="gold">傷害倍數</span>	
+	<br><br>
+	傷害倍數調整，預設值為1倍。請勿於戰鬥畫面修改。
+	<<if $damage is undefined>>
+		<<set $damage to 1>>
+	<</if>>
+	當前傷害倍數：
+	<span class="red">$damage</span>倍<br>
+	在此設定傷害倍數，設定後按確認套用。<br>
+	<<numberslider "$damage" $damage 1 100 1>>
+	<<button "确定">>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<damage_fix_setting>><br><br><</replace>>
+	<</button>>
+	<br><br>
+	
+	<<if $debug is 1>>
+		除錯：
+		<br>
+		當前傷害：_thedamage
+		<br>
+		原始傷害：
+		<<set $damage_oringinal to _thedamage / $damage>>
+		$damage_oringinal
+		<br>
+	<</if>>
+<</widget>>
+
+<<widget "painfix_fix_setting">>
+	<span class="gold">疼痛衰減</span>	
+	<br><br>
+	<span class="red">實驗性功能，計算方式待優化</span>
+	<br><br>
+	疼痛衰減調整，預設值為0<span class="red">(無衰減)</span>，數值為<span class="red">100</span>時表示<span class="red">疼痛衰減至0</span>。請勿於戰鬥畫面修改。
+	<<if $painfix is undefined>>
+		<<set $painfix to 1>>
+	<</if>>
+	當前疼痛衰減百分比：
+	衰減<span class="red">$painfixset</span>%<br>
+	<<if $painfixset is undefined>>
+		<<set $painfixset to 0>>
+	<</if>>	
+	在此設定疼痛衰減百分比，設定完成後按確定以套用數值<br>
+	<<numberslider "$painfixset" $painfixset 0 100 1>>
+	<<button "确定">>
+		<<if $painfixset gt 100>><<set $painfixset to 100>><</if>>
+		<<set $painfix to ((100-$painfixset)/100)>>
+		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+		<<replace #CE_settingsDiv>><<painfix_fix_setting>><br><br><</replace>>
+	<</button>>
+	<br>
+<</widget>>
+
 <<widget "study_hard">>
 	<<if $study_hard is undefined>>
 		<<set $study_hard to 0>>
@@ -57,7 +131,23 @@
 		<<historyicon>><<link [[学习历史 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 4>><</link>><<ghistory>>
 		<br>
 	<</if>>
-<</widget>>		
+<</widget>>
+
+<<widget "quick_swich">>
+	<<if $swich is 1>>
+	    <span class="gold">快捷</span>
+	    <br>
+		[[状态全恢复|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]] |
+		[[PC立马高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
+		<br>
+		<<if $quick_swich isnot undefined>>
+		    <<for _i to 0; _i lt $quick_swich.length; _i++>>
+		        <<set _j to _i + 1>>
+		        (_j) $quick_swich[_i]<br>
+		    <</for>>
+		<</if>>    
+	<</if>>
+<</widget>>			
 
 <<widget "swich">>
 	<span class="gold">左側快捷</span>
@@ -77,6 +167,7 @@
 			<<if $yanling_ui_hide is 0>>
 		        <<yanling left>>
 		        <<yanling_unset left>>
+		        <<yanling_move>>
 		    <</if>>
 		<</replace>>
 	<</button>>
@@ -91,22 +182,6 @@
 		<br>
 	<</if>>	
 <</widget>>
-
-<<widget "quick_swich">>
-	<<if $swich is 1>>
-	    <span class="gold">快捷</span>
-	    <br>
-		[[状态全恢复|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]] |
-		[[PC立马高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
-		<br>
-		<<if $quick_swich isnot undefined>>
-		    <<for _i to 0; _i lt $quick_swich.length; _i++>>
-		        <<set _j to _i + 1>>
-		        (_j) $quick_swich[_i]<br>
-		    <</for>>
-		<</if>>    
-	<</if>>
-<</widget>>	
 
 <<widget "swich_teleportation">>
 	<span class="gold">空間節點</span>
@@ -126,6 +201,7 @@
 			<<if $yanling_ui_hide is 0>>
 		        <<yanling left>>
 		        <<yanling_unset left>>
+		        <<yanling_move>>
 		    <</if>>
 		<</replace>>
 	<</button>>	
@@ -208,6 +284,7 @@
 					<<if $yanling_ui_hide is 0>>
 		                <<yanling left>>
 		                <<yanling_unset left>>
+		                <<yanling_move>>
 		            <</if>>
 				<</replace>>
 			<</button>><br><br>
@@ -218,271 +295,6 @@
 		<</if>>
 	<</if>>
 <</widget>>	
-
-<<widget "swich_yanling">>
-	<span class="gold">言靈集</span>
-	<br><br>
-	在左側顯示：言靈集功能
-	<br>
-	<<if $swich_yanling is undefined>><<set $swich_yanling to 0>><</if>>
-	<<if $yanling_ui_hide is undefined>><<set $yanling_ui_hide to 0>><</if>>
-	
-	<<button "言靈集開關">>
-		<<set $swich_yanling = $swich_yanling == 0 ? 1: 0>>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
-		<<replace #CEstatebox>>
-			<<quick_swich>>
-			<<teleportation>>
-			<<yanling_mini_ui left>>
-			<<yanling_ui_hide>>
-			<<if $yanling_ui_hide is 0>>
-		        <<yanling left>>
-		        <<yanling_unset left>>
-		    <</if>>
-		<</replace>>
-	<</button>>
-	<br>
-	言靈集開關：
-	<<if $swich_yanling is 0>>
-		<span class="red">關</span>
-		<br>
-	<</if>>
-	<<if $swich_yanling is 1>>
-		<span class="green">開</span>
-		<br>
-		<<yanling_mini_ui cheat_menu>>
-		<<yanling cheat_menu>>
-		<<yanling_unset cheat_menu>>
-	<</if>>	
-<</widget>>
-
-<<widget "yanling_mini_ui">>
-    <<if $swich_yanling is 1>> 	
-		<!-- 二代言靈
-
-		<span class="gold">及時言靈</span>
-		<br>
-		在此輸入及時言靈：
-		<<textbox "$yanling" "">>
-		<<link [[确定|$passage]]>>
-			<<if $name is "" or $name is undefined>>
-				<<set $name to "$yanling">>
-			<</if>>
-			<<set _normalisedName to Util.escape(name)>>
-			<<set ('$name', '$name', {name: _normalisedName,nameCap: _normalisedName.toUpperFirst()})>>
-		<</link>>
-		<br>
-		<<link [[清除|$passage]]>>
-		<<set $name to undefined>>
-		<</link>>
-		<br><br>
-		
-		言靈：$name
-		<br><br>
-		-->
-	<!--三代言靈 架構：by tony70124@貼吧dol吧 https://tieba.baidu.com/p/8724301141---->
-	<!--架構優化 by 北極星@ QQ 北极星mod测试群521994232-->
-	<!--言靈管理功能優化 by隨風飄逸@ QQ 污度孤儿中国模组交流群671114833-->
-		<span class="gold">言靈集</span><br>
-		<<if $cccheat is undefined>>
-			<<set $cccheat to []>>
-			<<set $cccheat_name to []>>
-			<<set $cccheat_display to "">>
-			<<set $cccheat_name_display to "">>
-		<</if>>
-		
-		<<for _i to 0; _i lt $cccheat.length; _i++>>
-			<<set _j to _i + 1>>
-			<<if _args[0] is "left">>
-				(_j) $cccheat[_i]<br>
-			<<elseif _args[0] is "cheat_menu">>
-				(_j) $cccheat[_i]
-				<<if _j%10 is 0>>
-					<br>
-				<</if>>
-			<</if>>	
-		<</for>>
-	<</if>>
-<</widget>>
-
-<<widget "yanling">>
-	<<if $swich_yanling is 1>> 		
-		<br>在此輸入言靈代碼<br>
-		<<if _args[0] is "left">>
-		    <<textbox "_cccheat" $cccheat_display>>
-		<<else>>
-		    <div class="CEtextarea">
-		        <textarea id="cccheatarea" rows="15"></textarea>
-		        <!--
-		        <textarea id="cccheatarea" rows="10" cols="0"></textarea>
-		        -->
-		    </div>
-		<</if>>    
-		<br>在此輸入言靈名稱(可留空)<br>
-		<<textbox "_cccheat_name" $cccheat_name_display>><br>
-		<<button "加入">>
-		    <<if _args[0] is "cheat_menu">>
-		        <<set _cccheat to document.getElementById("cccheatarea").value>>
-		    <</if>>    
-			<<if _cccheat != "">>
-				<<set $cccheat[$cccheat.length] to _cccheat>>
-				<<if _cccheat_name is "">>
-				    <<set _cccheat_name to "言靈NO." + ($cccheat_name.length + 1)>>
-				<</if>>
-				<<set _name_fix_no to 0>>
-				<<set _cccheat_name_temp to _cccheat_name>>
-				<<set _cccheat_name_temp2 to _cccheat_name>>
-				<<for _l to -1; _l lt $cccheat_name.length; _l++>> <!--檢查當前是否已經有相同命名的言靈-->
-				    <<if _cccheat_name_temp is $cccheat_name[_l]>>
-				        <<set _name_fix_no += 1 >>
-				        <<set _cccheat_name_temp to _cccheat_name_temp2 + "-" + _name_fix_no>> <!--自動重新命名(名字後加編號-->
-				        <<set _l to -1>> <!-- 迴圈重置，重新檢查重新命名後的言靈名稱是否有重複的-->
-				    <<else>>
-				        <<set _cccheat_name to _cccheat_name_temp>><!--當無重複命名時套用新名稱-->
-				    <</if>>
-				<</for>>
-				<<set $cccheat_name[$cccheat_name.length] to _cccheat_name>>	
-				<<set $cccheat_display to "">>
-				<<set $cccheat_name_display to "">>	
-			<</if>>
-			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-				<<quick_swich>>
-				<<teleportation>>
-				<<yanling_mini_ui left>>
-				<<yanling_ui_hide>>
-				<<if $yanling_ui_hide is 0>>
-		            <<yanling left>>
-		            <<yanling_unset left>>
-		        <</if>>
-			<</replace>>
-			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
-				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-				<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
-			<</if>>	
-		<</button>><br>
-	<</if>>
-<</widget>>	
-
-<<widget "yanling_unset">>
-	<<if $swich_yanling is 1>>
-		選擇言靈：<br>
-		<<listbox "_cccount" autoselect>><<option "未选中">><<optionsfrom $cccheat_name>><</listbox>><br>
-		<<button "查看选中">>
-			<<if _cccount isnot "未选中">>
-				<<for _l to 0 ;_l lt $cccheat_name.length ;_l++>>
-					<<if _cccount is $cccheat_name[_l]>>
-					    <<if document.getElementById("cccheatarea") isnot null>>
-					        <<set _cccheat_display_temp to $cccheat[_l]>>    
-						<</if>>
-						<<set $cccheat_display to $cccheat[_l]>>    
-					<</if>>	
-				<</for>>
-				<<set $cccheat_name_display to _cccount>>
-			<<else>>
-				<<set $cccheat_display to "">>
-				<<set $cccheat_name_display to "">>
-			<</if>>
-			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-				<<quick_swich>>
-				<<teleportation>>
-				<<yanling_mini_ui left>>
-				<<yanling_ui_hide>>
-				<<if $yanling_ui_hide is 0>>
-		            <<yanling left>>
-		            <<yanling_unset left>>
-		        <</if>>
-			<</replace>>
-			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
-				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-				<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
-				<<set document.getElementById("cccheatarea").value to _cccheat_display_temp>>
-			<</if>>	
-		<</button>><br>		
-		<<button "刪除选中">>
-			<<if _cccount isnot "未选中">>
-				<<for _l to 0 ;_l lt $cccheat_name.length ;_l++>>
-					<<if _cccount is $cccheat_name[_l]>>
-						<<set $cccheat.deleteAt(_l)>>
-						<<set $cccheat_name.deleteAt(_l)>>
-					<</if>>	
-				<</for>>
-			<</if>>
-			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-				<<quick_swich>>
-				<<teleportation>>
-				<<yanling_mini_ui left>>
-				<<yanling_ui_hide>>
-				<<if $yanling_ui_hide is 0>>
-		            <<yanling left>>
-		            <<yanling_unset left>>
-		        <</if>>
-			<</replace>>
-			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
-				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-				<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
-			<</if>>	
-		<</button>>
-		<br>
-		<<button "清除所有言靈">>	
-				<<set $cccheat to []>>
-				<<set $cccheat_name to []>>
-				<<set $cccheat_display to "">>
-				<<set $cccheat_name_display to "">>
-				<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-					<<quick_swich>>
-					<<teleportation>>
-					<<yanling_mini_ui left>>
-					<<yanling_ui_hide>>
-					<<if $yanling_ui_hide is 0>>
-		                <<yanling left>>
-		                <<yanling_unset left>>
-		            <</if>>
-				<</replace>>
-				<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
-					<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-					<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
-				<</if>>	
-		<</button>>
-		<br>	
-	<</if>>	
-<</widget>>
-
-<<widget "yanling_ui_hide">>
-    <<if $swich_yanling is 1>>        
-        <<if $yanling_ui_hide is 0>>  
-            <<button "隱藏言靈介面">>
-                <<set $yanling_ui_hide to 1>>
-                <<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-			        <<quick_swich>>
-				    <<teleportation>>
-				    <<yanling_mini_ui left>>
-				    <<yanling_ui_hide>>
-				    <<if $yanling_ui_hide is 0>>
-		                <<yanling left>>
-		                <<yanling_unset left>>
-		            <</if>>
-		        <</replace>>
-            <</button>>
-            <br>
-        <<elseif $yanling_ui_hide is 1>>
-            <<button "顯示言靈介面">>
-                <<set $yanling_ui_hide to 0>>
-                <<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-			        <<quick_swich>>
-				    <<teleportation>>
-				    <<yanling_mini_ui left>>
-				    <<yanling_ui_hide>>
-				    <<if $yanling_ui_hide is 0>>
-		                <<yanling left>>
-		                <<yanling_unset left>>
-		            <</if>>
-		        <</replace>>
-            <</button>>
-            <br>    
-        <</if>>
-    <</if>>          
-<</widget>>
 
 <<widget "swich_bccmeditor">>
     <span class="gold">場景建造</span>	
@@ -509,80 +321,6 @@
 	<<if $swich_bccmeditor is 1>>
 		<span class="green">開</span>
 		<br>
-	<</if>>
-<</widget>>
-	
-<<widget "damage_fix_setting">>
-	<span class="gold">傷害倍數</span>	
-	<br><br>
-	傷害倍數調整，預設值為1倍。請勿於戰鬥畫面修改。
-	<<if $damage is undefined>>
-		<<set $damage to 1>>
-	<</if>>
-	當前傷害倍數：
-	<span class="red">$damage</span>倍<br>
-	在此設定傷害倍數，設定後按確認套用。<br>
-	<<numberslider "$damage" $damage 1 100 1>>
-	<<button "确定">>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<damage_fix_setting>><br><br><</replace>>
-	<</button>>
-	<br><br>
-	
-	<<if $debug is 1>>
-		除錯：
-		<br>
-		當前傷害：_thedamage
-		<br>
-		原始傷害：
-		<<set $damage_oringinal to _thedamage / $damage>>
-		$damage_oringinal
-		<br>
-	<</if>>
-<</widget>>
-
-<<widget "painfix_fix_setting">>
-	<span class="gold">疼痛衰減</span>	
-	<br><br>
-	<span class="red">實驗性功能，計算方式待優化</span>
-	<br><br>
-	疼痛衰減調整，預設值為0<span class="red">(無衰減)</span>，數值為<span class="red">100</span>時表示<span class="red">疼痛衰減至0</span>。請勿於戰鬥畫面修改。
-	<<if $painfix is undefined>>
-		<<set $painfix to 1>>
-	<</if>>
-	當前疼痛衰減百分比：
-	衰減<span class="red">$painfixset</span>%<br>
-	<<if $painfixset is undefined>>
-		<<set $painfixset to 0>>
-	<</if>>	
-	在此設定疼痛衰減百分比，設定完成後按確定以套用數值<br>
-	<<numberslider "$painfixset" $painfixset 0 100 1>>
-	<<button "确定">>
-		<<if $painfixset gt 100>><<set $painfixset to 100>><</if>>
-		<<set $painfix to ((100-$painfixset)/100)>>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<painfix_fix_setting>><br><br><</replace>>
-	<</button>>
-	<br>
-<</widget>>
-
-<<widget "swich_HP_AP_display">>
-	<span class="gold">HP、AP顯示</span>	
-	<br><br>
-	於戰鬥中顯示對方HP、AP。<br>
-	<<if $HP_AP_display_swich is undefined>>
-		<<set $HP_AP_display_swich to 0>>
-	<</if>>
-	<<button "HP、AP顯示">>
-		<<set $HP_AP_display_swich = $HP_AP_display_swich == 0? 1 : 0>>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<swich_HP_AP_display>><br><br><</replace>>
-	<</button>><br>
-	HP、AP顯示：
-	<<if $HP_AP_display_swich is 0>>
-		<span class="red">關</span><br>
-	<<else>>
-		<span class="green">開</span><br>
 	<</if>>
 <</widget>>
 
@@ -1218,351 +956,6 @@
 	-->	
 <</widget>>
 
-<<widget "CE_tattoo">>
-	<span class="gold">魔術迴路</span>
-	<br><br>
-	在此......將言靈銘刻在身上！<br>
-	<br>	
-	紋身索引<br>
-	(自定義紋身索引1000-1012)<br>
-	<<set $CE_tattoo_index to 1000>>
-	<<if $degree is undefined>>
-	    <<set $degree to 0>>
-	<</if>>    
-	<<if $CE_tattoo is undefined>>
-		<<set $CE_tattoo to []>>
-		<<for _i to 0; _i lte 12; _i++>>
-			<<set $CE_tattoo[$CE_tattoo.length] to "CE_tattoo" + (_i)>>
-			<!--為每個紋身索引產生預設文字-->
-		<</for>>
-	<</if>>
-	<<numberslider "$CE_tattoo_index" $CE_tattoo_index 1000 1012 1>>
-	<<link "更新索引">>
-		<<set _CE_tattoo_index_NO to $CE_tattoo_index - 1000>>
-		
-		<<replace #CE_tattoo_text>>
-			紋身颜色
-	        <<listbox "_CE_tattoo_color">>
-	           <<option "红色" "red">>
-				<<option "橙色" "orange">>
-				<<option "焦橙色" "burntorange">>
-				<<option "黄色" "yellow">>
-				<<option "姜黄色" "tangerine">>
-				<<option "灰金色" "ashy">>
-				<<option "淡金色" "platinum">>
-				<<option "浅金色" "softblond">>
-				<<option "草莓金" "strawberry">>
-				<<option "金色" "gold">>
-				<<option "绿色" "green">>
-				<<option "柠檬绿" "lime-green">>
-				<<option "浅蓝色" "lblue">>
-				<<option "蓝色" "blue">>
-				<<option "粉色" "pink">>
-				<<option "紫色" "purple">>
-				<<option "黑色" "black">>
-				<<option "白色" "white">>
-				<<option "彩色" "lustful">>
-	        <</listbox>>
-	        <br>
-			文字
-			<<textbox "_CE_tattoo_text" $CE_tattoo[_CE_tattoo_index_NO]>>
-			<<link "確認">>
-				<<set $CE_tattoo[_CE_tattoo_index_NO] to _CE_tattoo_text>>
-				<<replace #CE_tattoo_setting>>
-					方式
-					<<listbox "_penstyle">>
-						<<option "pen" "pen">>
-						<<option "marker" "marker">>
-						<<option "lipstick" "lipstick">>
-						<<option "mud" "mud">>
-						<<option "brand" "brand">>
-						<<option "magic" "magic">>
-						<<option "tattoo" "tattoo">>
-					<</listbox>>
-					位置
-					<<listbox "_bodyPartSelected">>
-						<<option "forehead" "forehead">>
-						<<option "left_cheek" "left_cheek">>
-						<<option "right_cheek" "right_cheek">>
-						<<option "left_shoulder" "left_shoulder">>
-						<<option "right_shoulder" "right_shoulder">>
-						<<option "breasts" "breasts">>
-						<<option "back" "back">>
-						<<option "left_bottom" "left_bottom">>
-						<<option "right_bottom" "right_bottom">>
-						<<option "pubic" "pubic">>
-						<<option "left_thigh" "left_thigh">>
-						<<option "right_thigh" "right_thigh">>
-					<</listbox>>
-					類型
-					<<listbox "_special_tattoo">>
-						<<option "通常" "none">>
-						<<option "淫乱" "sex">>
-						<<option "卖淫" "prostitution">>
-						<<option "露出" "exhibitionism">>
-						<<option "异种" "bestiality">>
-						<<option "受虐" "violence">>
-						<<option "combat" "combat">>
-						<<option "顺从" "none2">>
-						<<option "怀孕" "pregnancy">>
-						<<option "爱人" "lover">>
-						<<option "神圣" "holy">>
-					<</listbox>>
-					<br>
-					是否關聯愛人？<br>
-					類型必須選擇
-					<span class="gold">愛人</span>
-					才會生效。<br>
-					<<set _lover_tattoo_swich to 0>>
-					<div id="lover_tattoo" class="no-numberify">
-						<<if _lover_tattoo_swich is 0>>
-							<span class="red">否</span>
-							<br>
-						<<else>>	
-							<span class="green">是</span>
-							<br>
-						<</if>>
-					</div>
-					<<button "切換">>
-						<<set _lover_tattoo_swich = _lover_tattoo_swich == 0 ? 1 : 0>>
-						<<replace #lover_tattoo>>
-							<<if _lover_tattoo_swich is 0>>
-								<span class="red">否</span>
-								<br>
-							<<else>>	
-								<span class="green">是</span>
-								<br>
-							<</if>>
-							<<if _lover_tattoo_swich is 1>>
-						       <<listbox "_lover_tattoo">>
-				        		    <<option "无" "none">>
-					           	    <<option "罗宾" "Robin">>
-					        	    <<option "悉尼" "Sydney">>
-					    	        <<option "凯拉尔" "Kylar">>
-				          	    	<<option "惠特尼" "Whitney">>
-				              		<<option "伊甸" "Eden">>
-				              		<<option "艾弗里" "Avery">>
-					               	<<option "艾利克斯" "Alex">>
-				             		<<option "黑狼" "Black Wolf">>
-				          	    	<<option "巨鹰" "Great Hawk">>
-					            <</listbox>><br>
-					        <</if>>
-						<</replace>>
-					<</button>><br>
-					是否带有指向性器的箭頭
-					<<listbox "_arrow">>
-						<<option "否" 0>>
-						<<option "是" 1>>
-					<</listbox>>
-					<br>
-					其他屬性：<br>
-					性別意味
-					<<listbox "_gender">>
-						<<option "無" "n">>
-						<<option "男孩" "m">>
-						<<option "女孩" "f">>
-					<</listbox>><br>
-					是否淫穢
-					<<listbox "_lewd">>
-						<<option "0" 0>>
-						<<option "1" 1>>
-					<</listbox>><br>
-					賣淫費用
-					<<numberslider "_degree" $degree 0 1000 1>><br>
-					<<button "產生魔術迴路">>
-						<<add_bodywriting _bodyPartSelected $CE_tattoo_index _penstyle>>
-						<!--<<add_bodywriting 參數1(身體部位) 參數2(紋身索引) 參數3(紋身類型(筆的類型))  -->
-						<<set $skin[_bodyPartSelected].color to _CE_tattoo_color>> 
-						<!--給選中紋身部位添加顏色用於之後顯示-->
-						<<set $skin[_bodyPartSelected].writ_cn to _CE_tattoo_text>>
-						<!--設定選定部位紋身文字--> 
-						<<if _lover_tattoo_swich is 0>>
-							<<set $skin[_bodyPartSelected].special to _special_tattoo>>
-						<<else>>
-							<<set $skin[_bodyPartSelected].special to _lover_tattoo>>
-						<</if>>	
-						<<set $skin[_bodyPartSelected].arrow to _arrow>> <!--設定該紋身是否有箭頭-->
-						<<set $skin[_bodyPartSelected].gender to _gender>> <!--設定紋身性別-->	
-						<<set $skin[_bodyPartSelected].lewd to _lewd>> <!--設定紋身是否淫蕩-->
-						<<set _degree *= 1000>>						
-						<<set $skin[_bodyPartSelected].degree to _degree>><!--設定紋身賣淫價格-->
-						<<set _degree to $degree>>
-						<<replace #result>>
-							當前狀態：<span class="green">完成，切換場景後，狀態將更新。</span><br>
-							你將<span class="blue">_CE_tattoo_text</span>
-							用<<CE_tattoo_result_text _penstyle>>在
-							<span class="blue"><<CE_tattoo_result_text _bodyPartSelected>></span>上。
-							屬性為
-							<span class="blue"><<CE_tattoo_result_text $skin[_bodyPartSelected].special>></span>
-							<<if _gender isnot "n">>
-							    ，意味著
-							    <span class="blue"><<CE_tattoo_result_text _gender>></span>
-							<</if>>    
-							<<if _lewd is 1>>
-							    ，是<span class="blue">淫蕩的</span>
-							<</if>>
-							<<if _arrow is 1>>
-							    <span class="blue">有一個箭頭指向性器</span>
-							<</if>>    
-							<<if _degree gt 0>>
-							    ，賣淫價格為<<printmoney _degree>>
-							<</if>> 
-							。       
-						<</replace>>
-					<</button>>
-					<br>
-				<</replace>>
-			<</link>>
-		<</replace>>
-	<</link>>
-	<div id="CE_tattoo_text" class="no-numberify"></div>
-	
-	<div id="CE_tattoo_setting" class="no-numberify"></div>	
-	
-	<div id="result" class="no-numberify">
-		當前狀態：<span class="blue">待命，請設定紋身。</span>
-	</div>
-<</widget>>
-
-<<widget "CE_tattoo_color">>
-	    <<if $skin[_active_bodypart].index gte 1000 and $skin[_active_bodypart].index lte 1012>>
-			<<if $skin[_active_bodypart].color is "red">>
-				"<span class="red"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "orange">>
-				"<span class="orange"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "burntorange">>
-				"<span class="burntorange"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "yellow">>
-				"<span class="yellow"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "tangerine">>
-				"<span class="tangerine"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "ashy">>
-				"<span class="ashy"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "platinum">>
-				"<span class="platinum"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "softblond">>
-				"<span class="softblond"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "strawberry">>
-				"<span class="strawberry"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "gold">>
-				"<span class="gold"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "green">>
-				"<span class="green"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "lime-green">>
-				"<span class="lime-green"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "lblue">>
-				"<span class="lblue"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "blue">>
-				"<span class="blue"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "pink">>
-				"<span class="pink"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "purple">>
-				"<span class="purple"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "black">>
-				"<span class="black"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "white">>
-				"<span class="white"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<elseif $skin[_active_bodypart].color is "lustful">>
-				"<span class="lustful"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<<else>>
-				"<span class="red"><<print $skin[_active_bodypart].writ_cn>></span>"
-			<</if>>
-		<<else>>
-		    "<span class="purple"><<print $skin[_active_bodypart].writ_cn>></span>"
-		<</if>>	
-<</widget>>
-
-<<widget "CE_tattoo_result_text">>
-	<<if _args[0] is "pen">>
-		普通的筆寫
-	<<elseif _args[0] is "marker">>
-		耐久性記號筆寫
-	<<elseif _args[0] is "lipstick">>
-		口紅寫
-	<<elseif _args[0] is "mud">>
-		泥巴抹
-	<<elseif _args[0] is "magic">>
-		印章印
-	<<elseif _args[0] is "tattoo">>
-		紋身紋
-	<<elseif _args[0] is "brand">>
-		烙鐵烙
-	<<elseif _args[0] is "forehead">>
-		額頭
-	<<elseif _args[0] is "left_cheek">>
-		左臉頰
-	<<elseif _args[0] is "right_cheek">>
-		右臉頰
-	<<elseif _args[0] is "left_shoulder">>
-		左肩
-	<<elseif _args[0] is "right_shoulder">>
-		右肩
-	<<elseif _args[0] is "breasts">>
-		<<breasts>>
-	<<elseif _args[0] is "back">>
-		後背
-	<<elseif _args[0] is "left_bottom">>
-		屁股左側
-	<<elseif _args[0] is "right_bottom">>	
-		屁股右側
-	<<elseif _args[0] is "pubic">>		
-		<<<<genitals true>>>>
-	<<elseif _args[0] is "left_thigh">>		
-		左腿
-	<<elseif _args[0] is "right_thigh">>	
-		右腿
-	<<elseif _args[0] is "none">>		
-		通常
-	<<elseif _args[0] is "sex">>	
-		淫亂
-	<<elseif _args[0] is "prostitution">>	
-		賣淫
-	<<elseif _args[0] is "exhibitionism">>	
-		露出
-	<<elseif _args[0] is "bestiality">>	
-		異種
-	<<elseif _args[0] is "violence">>	
-		受虐
-	<<elseif _args[0] is "none2">>	
-		_args[0]
-	<<elseif _args[0] is "combat">>	
-		_args[0]
-	<<elseif _args[0] is "pregnancy">>	
-		懷孕
-	<<elseif _args[0] is "lover">>	
-		愛人
-	<<elseif _args[0] is "holy">>	
-		神聖
-	<<elseif _args[0] is "Robin">>
-		羅賓
-	<<elseif _args[0] is "Sydney">>
-		悉尼
-	<<elseif _args[0] is "Kylar">>
-		凱拉爾
-	<<elseif _args[0] is "Whitney">>
-		惠特尼
-	<<elseif _args[0] is "Eden">>	
-		伊甸
-	<<elseif _args[0] is "Avery">>	
-		艾佛里
-	<<elseif _args[0] is "Alex">>	
-		愛利克斯
-	<<elseif _args[0] is "Black Wolf">>	
-		黑狼
-	<<elseif _args[0] is "Great Hawk">>	
-		巨鷹
-	<<elseif _args[0] is "n">>
-		無
-	<<elseif _args[0] is "m">>
-		男孩
-	<<elseif _args[0] is "f">>
-		女孩
-	<<else>>
-		_args[0]
-	<</if>>	
-	
-<</widget>>
-
 <<widget "quick_yanling">>
 	<span class="gold">快速言靈</span>
 	<br>
@@ -1861,57 +1254,6 @@
     
 <</widget>>
 
-<<widget "auto_clothes_Warmth">>
-    <<if $swich_auto_clothes_Warmth is undefined>><<set $swich_auto_clothes_Warmth to 0>><</if>>
-    <span class="gold">自動調溫</span>
-	<br><br>
-	自動調溫功能，PC再也不會熱死冷死啦！
-	<br>
-	<<button "自動調溫模式模式">>
-		<<set $swich_auto_clothes_Warmth = $swich_auto_clothes_Warmth == 0 ? 1 : 0>>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<auto_clothes_Warmth>><br><br><</replace>>
-	<</button>>
-	<br>
-	自動調溫模式：
-	<<if $swich_auto_clothes_Warmth is 0>>
-		<span class="red">關</span><br>
-	<</if>>
-	<<if $swich_auto_clothes_Warmth is 1>>
-		<span class="green">開</span><br>
-	<</if>>
-	<br>
-	<<if $debug is 1>>
-	    <<link “溫度自動校正測試”>>
-            <<set $_minWarmth to getTargetWarmth(36.5)>> <!--獲取原版舒適溫度下限-->	
-            <<set $_maxWarmth to getTargetWarmth(37.5)>> <!--獲取原版舒適溫度上限-->
-            <<set Weather.tempSettings.baseInsulation to 0>>
-            <<if $_minWarmth isnot null and $_maxWarmth isnot null>>
-                <<if Weather.BodyTemperature.getWarmth() lte $_minWarmth>>
-                    <<set _temp to $_minWarmth - Weather.BodyTemperature.getWarmth()>>
-                    <<set Weather.tempSettings.baseInsulation to _temp +1>>
-                    <<set _temp to "當前校正值" + (_temp + 1)>> 
-                <<elseif Weather.BodyTemperature.getWarmth() gte $_maxWarmth>> 
-                    <<set _temp to $_maxWarmth - Weather.BodyTemperature.getWarmth()>>
-                    <<set Weather.tempSettings.baseInsulation to _temp -1>>
-                    <<set _temp to "當前校正值" + (_temp - 1)>> 
-                <<else>>
-                    <<set Weather.tempSettings.baseInsulation to 0>> 
-                    <<set _temp to "現在正在溫度範圍內無須調整">>          
-                <</if>> 
-            <<else>>
-                <<set Weather.tempSettings.baseInsulation to 200>>
-                <<set _temp to "出現低溫null，保暖值直接拉給他爆">>           
-            <</if>> 
-        <</link>> <br>
-        舒適溫度下限 <<print getTargetWarmth(36.5)>><br>
-        舒適溫度上限 <<print getTargetWarmth(37.5)>><br>
-        當前服裝溫度 <<print Weather.BodyTemperature.getWarmth()>><br>
-        當前基礎溫度：<<print Weather.tempSettings.baseInsulation>><br>
-        debug: _temp<br>
-    <</if>>  	
-<</widget>>
-
 <<widget "CEstatebox">> <!--用於顯示於左側狀態-->
     <div id="CEstatebox" class="no-numberify">	
 		<<quick_swich>>
@@ -1921,6 +1263,7 @@
 		<<if $yanling_ui_hide is 0>>
 		    <<yanling left>>
 		    <<yanling_unset left>>
+		    <<yanling_move>>
 		<</if>>
 	</div>	
 <</widget>>
