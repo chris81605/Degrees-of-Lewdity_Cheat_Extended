@@ -20,7 +20,6 @@
     "scriptEarly/CERegist.js"
   ],
   "additionFile": [
-    "addon-replace/tattoo_index.txt",
     "addon-replace/Widgets Dance Audience.txt",
     "addon-replace/Widgets Market_1.txt",
     "addon-replace/Widgets Market_2.txt",
@@ -64,11 +63,6 @@
           "passage": "Widgets",
           "findString": "\t\t<<set $enemyhealth -= _thedamage>>",
           "replaceFile": "addon-replace/Widgets_5.txt"
-        },
-        {
-          "passage": "Widgets Bodywriting Objects",
-          "findString": "\t\tcircle: {\n\t\t\tindex: 199,",
-          "replaceFile": "addon-replace/tattoo_index.txt"
         },
         {
           "passage": "Widgets Bodywriting",
