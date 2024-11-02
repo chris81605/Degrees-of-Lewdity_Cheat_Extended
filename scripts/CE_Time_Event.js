@@ -23,18 +23,18 @@ new TimeEvent('onSec', 'auto_clothes_Warmth')
         if (currentWarmth <= minWarmth) {
           temp = minWarmth - currentWarmth;
           baseInsulation = temp + 1;
-          console.log('作弊拓展-自動恆溫：當前修正值' temp);
+          console.log('作弊拓展-自動恆溫：當前修正值' ,temp);
         } else if (currentWarmth >= maxWarmth) {
           temp = maxWarmth - currentWarmth;
           baseInsulation = temp - 1;
-          console.log('作弊拓展-自動恆溫：當前修正值' temp);
+          console.log('作弊拓展-自動恆溫：當前修正值' ,temp);
         } else {
           // baseInsulation = 0;
-          console.log('現在正在溫度範圍內無須調整' temp);
+          console.log('作弊拓展-自動恆溫：現在正在溫度範圍內無須調整' ,temp);
         }
       } else {
         baseInsulation = 200;
-        console.log('出現低溫null，保暖值直接拉給他爆' temp); 
+        console.log('作弊拓展-自動恆溫：出現低溫null，保暖值直接拉給他爆' ,temp); 
       }
 
       Weather.tempSettings.baseInsulation = baseInsulation;
