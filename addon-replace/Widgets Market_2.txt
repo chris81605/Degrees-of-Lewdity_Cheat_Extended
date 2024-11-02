@@ -1,9 +1,5 @@
-		<<if $black_store_FIX_MIN is undefined>>
-			<<set $black_store_FIX_MIN to 11>>
-		<</if>>
-				
-		<<if $black_store_FIX_MAX is undefined>>
-			<<set $black_store_FIX_MAX to 30>>
-		<</if>>
-		
-		<<set $stall_amount to random($black_store_FIX_MIN, $black_store_FIX_MAX)>> 
+    <<if $black_storeswich is 1>>
+        <<set $stall_amount to random($black_store_FIX_MIN, $black_store_FIX_MAX)>>
+    <</if>>
+    <<if $stall_amount gte $plants[$stall_plant].amount>>
+	     

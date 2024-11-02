@@ -1,0 +1,107 @@
+<!--
+::Ce_test
+
+<<set $TargetPlants = {
+    sunflower: {
+        index: 0,
+        name: "sunflower",
+        singular: "太陽花",
+        plural: "太陽花",
+        plant_cost: 50000,
+        difficulty: 1,
+        bed: "earth",
+        type: "flower",
+        days: 1,
+        multiplier: 1,
+        special: ["large"],
+        season: ["spring", "summer", "autumn", "winter"],
+        icon: "sunflower.png"
+    },
+    blackrose: {
+        index: 1,
+        name: "blackrose",
+        singular: "黑玫瑰",
+        plural: "黑玫瑰",
+        plant_cost: 300,
+        difficulty: 1,
+        bed: "earth",
+        type: "flower",
+        days: 7,
+        multiplier: 1,
+        special: [],
+        season: ["spring", "summer"],
+        icon: "rose.png"
+    },
+    hydrangea: {
+        index: 2,
+        name: "hydrangea",
+        singular: "繡球花",
+        plural: "繡球花",
+        plant_cost: 450,
+        difficulty: 2,
+        bed: "earth",
+        type: "flower",
+        days: 5,
+        multiplier: 1.2,
+        special: ["colorful"],
+        season: ["spring", "summer"],
+        icon: "hydrangea.png"
+    }
+}>>
+
+<<addPlants $TargetPlants>>
+<<unset $TargetPlants>>  -->
+
+:: Ce_test_widget [widget]
+<<widget "addPlants">>
+
+<<set _newPlants = _args[0]>>
+<<set _oldPlants = setup.plants>>  <!-- 將 setup.plants 的數組賦值給區域變量 OldPlants -->
+<<set _debugtest = Object.keys(_newPlants).length>>  <!-- 生成區域變數 debugtest 並獲取 _newPlants 數組的長度 -->
+
+<<for _i = 0; _i < _debugtest; _i++>>  <!-- 使用 _temp 暫存變量來讀取 _newPlants 的每個植物並修改 index -->
+    <<set _key = Object.keys(_newPlants)[_i]>>
+    <<set _temp = _newPlants[_key]>>
+    <<if !_oldPlants[_key]>>  <!-- 如果 _oldPlants 中沒有這個鍵對應的植物 -->
+        <<set _temp.index = Object.values(_oldPlants).length>>  <!-- 設置新植物的索引 -->
+        <<set _oldPlants[_key] = _temp>>  <!-- 將新植物添加到 _oldPlants 中 -->
+    <</if>>
+<</for>>
+
+<<set _sortedPlants = Object.entries(_oldPlants).sort((a, b) => a[1].name.localeCompare(b[1].name))>>  <!-- 將 _oldPlants 按 name 排序 -->
+<<set _oldPlants = {}>>
+<<for _plant = 0; _plant < _sortedPlants.length; _plant++>>  <!-- 重建排序後的 _oldPlants -->
+    <<set _oldPlants[_sortedPlants[_plant][0]] = _sortedPlants[_plant][1]>>
+<</for>>
+
+<<run setup.plants = _oldPlants>>  <!-- 將 _oldPlants 的內容覆蓋 setup.plants -->
+
+<</widget>>
+
+<<widget "display_plants">>
+<!-- 生成表格以顯示 setup.plants 的信息 -->
+<table>
+    <tr>
+        <th>Key</th>
+        <th>Index</th>
+        <th>名稱</th>
+        <th>類型</th>
+        <th>生長天數</th>
+        <th>季節</th>
+    </tr>
+    <<set _plants = Object.entries(setup.plants)>>
+    <<for _plant = 0; _plant < _plants.length; _plant++>>
+        <tr>
+            <td><<print _plants[_plant][0]>></td> <!-- 顯示植物的鍵 -->
+            <td><<print _plants[_plant][1].index>></td> <!-- 顯示植物的索引 -->
+            <td><<print _plants[_plant][1].name>></td> <!-- 顯示植物名稱 -->
+            <td><<print _plants[_plant][1].type>></td> <!-- 顯示植物類型 -->
+            <td><<print _plants[_plant][1].days>> 天</td> <!-- 顯示植物的生長天數 -->
+            <td><<print _plants[_plant][1].season.join(", ")>></td> <!-- 顯示植物的季節 -->
+        </tr>
+    <</for>>
+</table>
+<</widget>>
+
+
+
