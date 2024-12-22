@@ -1,9 +1,0 @@
-	<<ejaculation>><<set $gloryholestat += 1>><<set $prostitutionstat += 1>>
-	
-	
-	<<if $brothel_basement_price_FIX is undefined>>
-		<<set $brothel_basement_price_FIX to 1>>
-	<</if>>
-				
-	<<set $brothel_basement_price to $brothel_basement_price * $brothel_basement_price_FIX>>
-	<br>
