@@ -375,28 +375,32 @@
 	當前有多少🥛：<span class="blue">$milk_amount</span>mL<br>
 	<<numberslider "$milk_amount" $milk_amount 0 60000 100>><br>
 	<<link "設定">>
-	    <<milk_fix $milk_max $milk_volume $milk_amount>>
+	    <<CE_milk_fix $milk_max $milk_volume>>
 		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
 	<</link>>
 	<br><br>
 <</widget>>
 
-<<widget "milk_fix">>
+<<widget "CE_milk_fix">>
+    <<if !$CE_milk_max or !$CE_milk_volume>>
+        <<set $CE_milk_max to $milk_max>>
+        <<set $CE_milk_volume to $milk_volume>>      
+    <</if>>
     <<if _args[0]>>
         <<set $CE_milk_max to _args[0]>>
         <<set $CE_milk_volume to _args[1]>>
-        <<set $CE_milk_amount to _args[2]>>
     <</if>>
-    <<if $milk_max != $CE_milk_max or $milk_volume != $CE_milk_volume or $milk_amount != $CE_milk_amount>>
-        <<set $milk_max to $CE_milk_max>>
-        <<set $milk_volume to $CE_milk_volume>>
-        <<set $milk_amount to $CE_milk_amount>>
+    <<if $milk_max != $CE_milk_max or $milk_volume != $CE_milk_volume>>
+        <<if $milk_releasedswich is 1>> 
+            <<set $milk_max to $CE_milk_max>>
+            <<set $milk_volume to $CE_milk_volume>>
+        <</if>>    
     <</if>>
 <</widget>>
 
 <<widget "milk_releasedFIX">>
-	<<if $milk_releasedswich is undefined or 0>>
+	<<if $milk_releasedswich is undefined or $milk_releasedswich is 0>>
 	    <<set $milk_releasedFIX to 0 >>
 	<<else>>
 		<<if $milk_releasedFIX_MIN is undefined>>
