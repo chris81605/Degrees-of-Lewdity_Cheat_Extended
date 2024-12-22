@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.16",
+  "version": "1.16.1",
   "styleFileList": [
     "css/CE_CSS.css"
   ],
@@ -13,7 +13,10 @@
     "game/Bccm/bccmeditor.twee",
     "game/ccplot.twee",
     "game/Bedroom Study.twee",
-    "game/随身衣柜.twee"
+    "game/随身衣柜.twee",
+    "game/yanling.twee",
+    "game/test_widget.twee",
+    "game/auto_clothes_Warmth.twee"
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
