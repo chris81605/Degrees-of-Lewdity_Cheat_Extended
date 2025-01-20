@@ -116,6 +116,23 @@
 	<br>
 <</widget>>
 
+<<widget "study_hard">>
+	<<if $study_hard is undefined>>
+		<<set $study_hard to 0>>
+	<</if>>
+	<<if $study_hard is 1>>
+		<br>
+		<<scienceicon>><<link [[学习科学 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 1>><</link>><<gscience>>
+		<br>
+		<<mathicon>><<link [[学习数学 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 2>><</link>><<gmaths>>
+		<br>
+		<<englishicon>><<link [[学习语文 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 3>><</link>><<genglish>>
+		<br>
+		<<historyicon>><<link [[学习历史 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 4>><</link>><<ghistory>>
+		<br>
+	<</if>>
+<</widget>>
+
 <<widget "quick_swich">>
 	<<if $swich is 1>>
 	    <span class="gold">快捷</span>
@@ -714,25 +731,6 @@
 	<</link>>
 	<br>
 <</widget>>
-
-<!--
-<<widget "study_hard">>
-	<<if $study_hard is undefined>>
-		<<set $study_hard to 0>>
-	<</if>>
-	<<if $study_hard is 1>>
-		<br>
-		<<scienceicon>><<link [[学习科学 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 1>><</link>><<gscience>>
-		<br>
-		<<mathicon>><<link [[学习数学 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 2>><</link>><<gmaths>>
-		<br>
-		<<englishicon>><<link [[学习语文 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 3>><</link>><<genglish>>
-		<br>
-		<<historyicon>><<link [[学习历史 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 4>><</link>><<ghistory>>
-		<br>
-	<</if>>
-<</widget>>
--->
 
 <<widget "bigest_wardrobe_mod">>
 	<span class="gold">大容量衣櫃</span><br>
