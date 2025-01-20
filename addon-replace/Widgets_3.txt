@@ -1,5 +1,6 @@
-			<<if $painfix is undefined>><<
-				<<set $painfix to 1>>
+			<<set _pain = (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod)>>
+			<<if $painfix isnot undefined>>
+				<<set $pain += _pain * $painfix>>
+			<<else>>
+			    <<set $pain += _pain>>    	
 			<</if>>
-			
-			<<set $pain +=(( (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod)))* $painfix>>

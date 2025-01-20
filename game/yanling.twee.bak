@@ -200,7 +200,7 @@
                     <</if>>
 
                     <<if _cccheat_name is "">>
-                        <<set _cccheat_name to "言靈NO." + $cccheat_name.length>>
+                        <<set _cccheat_name to "言靈NO." + ($cccheat_name.length + 1)>>
                     <</if>>
                     <<set _name_fix_no to 0>>
                     <<set _cccheat_name_temp to _cccheat_name>>

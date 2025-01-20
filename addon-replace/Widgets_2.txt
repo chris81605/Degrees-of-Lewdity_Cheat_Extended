@@ -1,4 +1,0 @@
-		<br>
-		<<deskchairicon>>你的_desk.nameCap和<<if _chair.name isnot "chair">>一张<</if>>_chair.nameCap占据着你衣柜旁那狭小的空间。
-		<<study_hard>>
-		

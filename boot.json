@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.16.1",
+  "version": "1.16.2(dev)",
   "styleFileList": [
     "css/CE_CSS.css"
   ],
@@ -12,9 +12,9 @@
     "game/Widgets cheat_extended.twee",
     "game/Bccm/bccmeditor.twee",
     "game/ccplot.twee",
-    "game/Bedroom Study.twee",
     "game/随身衣柜.twee",
     "game/yanling.twee",
+    "game/Ce_tattoo_widget.twee",
     "game/test_widget.twee",
     "game/auto_clothes_Warmth.twee"
   ],
@@ -28,8 +28,6 @@
     "addon-replace/Widgets Market_2.txt",
     "addon-replace/Widgets State Man_1.txt",
     "addon-replace/Widgets State Man_2.txt",
-    "addon-replace/Widgets_1.txt",
-    "addon-replace/Widgets_2.txt",
     "addon-replace/Widgets_3.txt",
     "addon-replace/Widgets_4.txt",
     "addon-replace/Widgets_5.txt",
@@ -41,17 +39,7 @@
       "modName": "TweeReplacer",
       "addonName": "TweeReplacerAddon",
       "modVersion": "1.0.0",
-      "params": [
-        {
-          "passage": "Widgets",
-          "findString": "\t\t<<christmas_options>>\n\t\t<br>",
-          "replaceFile": "addon-replace/Widgets_1.txt"
-        },
-        {
-          "passage": "Widgets",
-          "findString": "\t\t<br>\n\t\t<<deskchairicon>>你的_desk.nameCap和<<if _chair.name isnot \"chair\">>一张<</if>>_chair.nameCap占据着你衣柜旁那狭小的空间。",
-          "replaceFile": "addon-replace/Widgets_2.txt"
-        },
+      "params": [ 
         {
           "passage": "Widgets",
           "findString": "\t\t\t<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod)>>",
@@ -59,7 +47,7 @@
         },
         {
           "passage": "Widgets",
-          "findString": "\t\t\t<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)))",
+          "findString": "\t\t\t<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)))>>",
           "replaceFile": "addon-replace/Widgets_4.txt"
         },
         {
