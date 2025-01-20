@@ -1,3 +1,0 @@
-		<<christmas_options>>
-		<br>
-		<<study_hard>>
