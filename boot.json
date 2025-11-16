@@ -1,23 +1,26 @@
 {
   "name": "cheat extended",
-  "version": "1.16.2(dev)",
+  "version": "1.17(dev)",
   "styleFileList": [
     "css/CE_CSS.css"
   ],
   "scriptFileList": [
     "scripts/CE_Time_Event.js",
-    "scripts/CE_getTargetWarmth2.js"
+    "scripts/CE_getTargetWarmth2.js",
+    "scripts/CE_tattoo.js"
   ],
   "tweeFileList": [
-    "game/Widgets cheat_extended.twee",
-    "game/Bccm/bccmeditor.twee",
-    "game/ccplot.twee",
     "game/随身衣柜.twee",
-    "game/yanling.twee",
-    "game/Ce_tattoo_widget.twee",
-    "game/test_widget.twee",
     "game/auto_clothes_Warmth.twee",
-    "game/milk_mod.twee"
+    "game/test_widget.twee",
+    "game/milk_mod.twee",
+    "game/Widgets cheat_extended.twee",
+    "game/Ce_tattoo_widget.twee",
+    "game/Bedroom Study.twee",
+    "game/yanling.twee",
+    "game/CE_passage_editor.twee",
+    "game/Bccm/bccmeditor.twee",
+    "game/ccplot.twee"
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
@@ -40,7 +43,7 @@
       "modName": "TweeReplacer",
       "addonName": "TweeReplacerAddon",
       "modVersion": "1.0.0",
-      "params": [ 
+      "params": [
         {
           "passage": "Widgets",
           "findString": "\t\t\t<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod)>>",
