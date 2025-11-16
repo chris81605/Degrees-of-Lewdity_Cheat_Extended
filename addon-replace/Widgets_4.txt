@@ -1,6 +1,6 @@
 			<<set _pain = (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)))>>
 			<<if $painfix isnot undefined>>
 				<<set $pain += _pain * $painfix>>
-			<<esle>>
+			<<else>>
 			    <<set $pain += _pain>>	
 			<</if>>
