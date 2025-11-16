@@ -50,3 +50,19 @@
 		border-style:solid;
 		border-width:2px;
 }
+.CEtextarea {
+		width:100%;
+        overflow:auto;
+}
+.CEliat {
+  width: 100%;           /* 自適應父容器寬度 */
+  max-width: 600px;      /* 可選最大寬度 */
+  max-height: 300px;     /* 當內容超過這個高度才出現滾動條 */
+  overflow-y: auto;      /* 自動垂直滾動 */
+  overflow-x: auto;    /* 自動水平滾動 */
+  padding: 10px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+ /* background-color: #f9f9f9;*/
+  border-radius: 4px;
+}
