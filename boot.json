@@ -16,7 +16,8 @@
     "game/yanling.twee",
     "game/Ce_tattoo_widget.twee",
     "game/test_widget.twee",
-    "game/auto_clothes_Warmth.twee"
+    "game/auto_clothes_Warmth.twee",
+    "game/milk_mod.twee"
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
@@ -98,6 +99,14 @@
       "addonName": "ReplacePatcherAddon",
       "modVersion": "1.0.0",
       "params": {
+        "js": [
+          {
+            "TODO": "semen_releasedFIX",
+            "from": "\tif (V.cow >= 6) released *= 2;",
+            "to": "\tif (V.cow >= 6) released *= 2;\n\tif (V.semen_releasedFIX > 1) released *= V.semen_releasedFIX;\n",
+            "fileName": "ingame.js"
+          }
+        ],
         "twee": [
           {
             "TODO": "caption.twee",
