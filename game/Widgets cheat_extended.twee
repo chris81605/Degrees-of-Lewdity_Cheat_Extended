@@ -143,20 +143,7 @@
 		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 		<<replace #CE_settingsDiv>><<swich>><br><br><</replace>>
 		<<replace #CEstatebox>>
-		    <details open id="CEtoggleSettings" class="settingsToggleItem">
-			<summary>作弊拓展</summary>
-			<<quick_swich>>
-			<hr>
-			<<teleportation>>
-			<hr>
-			<<yanling_mini_ui left>>
-			<<yanling_ui_hide>>
-			<<if $yanling_ui_hide is 0>>
-		        <<yanling left>>
-		        <<yanling_unset left>>
-		        <<yanling_move>>
-		    <</if>>
-		    </details>
+			<<CE_Toggle>>
 		<</replace>>
 	<</button>>
 	<br>
@@ -182,20 +169,7 @@
 		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 		<<replace #CE_settingsDiv>><<swich_teleportation>><br><br><</replace>>
 		<<replace #CEstatebox>>
-		    <details open id="CEtoggleSettings" class="settingsToggleItem">
-			<summary>作弊拓展</summary>
-			<<quick_swich>>
-			<hr>
-			<<teleportation>>
-			<hr>
-			<<yanling_mini_ui left>>
-			<<yanling_ui_hide>>
-			<<if $yanling_ui_hide is 0>>
-		        <<yanling left>>
-		        <<yanling_unset left>>
-		        <<yanling_move>>
-		    <</if>>
-		    </details>
+			<<CE_Toggle>>
 		<</replace>>
 	<</button>>	
 	<br>
@@ -269,22 +243,9 @@
 				<<set _no to $teleportation_name.length -1 >>
 				<<set _teleportation_target2 to "◁[[" + $teleportation_name[_no] + "|" + _teleportation_target + "]]▷">>	<!--將名稱與位置組合成傳送代碼-->
 				<<set $teleportation.push(_teleportation_target2)>>
-				<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-					<details open id="CEtoggleSettings" class="settingsToggleItem">
-					<summary>作弊拓展</summary>
-					<<quick_swich>>
-					<hr>
-					<<teleportation>>
-					<hr>
-					<<yanling_mini_ui left>>
-					<<yanling_ui_hide>>
-					<<if $yanling_ui_hide is 0>>
-		                <<yanling left>>
-		                <<yanling_unset left>>
-		                <<yanling_move>>
-		            <</if>>
-		            </details>
-				<</replace>>
+				<<replace #CEstatebox>>
+			        <<CE_Toggle>>
+		        <</replace>>
 			<</button>><br><br>
 		<<else>>
 		    <spen class="red"><b>當前無法傳送</b></spen>
@@ -1192,23 +1153,40 @@
 <</widget>>
 
 <<widget "CEstatebox">> <!--用於顯示於左側狀態-->
+        
     <div id="CEstatebox" class="no-numberify">	
-		<details open id="CEtoggleSettings" class="settingsToggleItem">
-		<summary>作弊拓展</summary>
-		<<quick_swich>>
-		<hr>
-		<<teleportation>>
-		<hr>
-		<<yanling_mini_ui left>>
-		<<yanling_ui_hide>>
-		<<if $yanling_ui_hide is 0>>
-		    <<yanling left>>
-		    <<yanling_unset left>>
-		    <<yanling_move>>
-		<</if>>
-		</details>
+        <<CE_Toggle>>
 	</div>
 	
+<</widget>>
+
+<<widget "CE_Toggle">>
+    <<if $CE_Toggle is "undefined">>
+        <<set $CE_Toggle to 0>>
+    <</if>>
+    <div class="settingsToggleItem">
+        <<button "作弊拓展">>
+            <<set $CE_Toggle = $CE_Toggle == 0 ? 1: 0>>
+            <<replace #CEstatebox>>
+			    <<CE_Toggle>>
+		    <</replace>>
+        <</button>>
+	    <<if $CE_Toggle>>
+	        <<quick_swich>>
+            <<if $swich_teleportation>><hr><</if>>
+	        <<teleportation>>
+		    <<if $swich_yanling>><hr><</if>>
+		    <<yanling_mini_ui left>>
+		    <<if $CE_YL_leftui_enable is true>>
+		        <<yanling_ui_hide>>			    
+		        <<if $yanling_ui_hide is 0>>
+		            <<yanling left>>
+		            <<yanling_unset left>>
+		            <<yanling_move>>
+		        <</if>>
+            <</if>>
+        <</if>>    
+    </div>
 <</widget>>
 
 <<widget "cheat_extended_options">>
