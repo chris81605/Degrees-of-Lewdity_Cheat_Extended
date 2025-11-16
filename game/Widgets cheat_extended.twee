@@ -143,7 +143,8 @@
 		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 		<<replace #CE_settingsDiv>><<swich>><br><br><</replace>>
 		<<replace #CEstatebox>>
-		    <div class="settingsToggleItem">
+		    <details open id="CEtoggleSettings" class="settingsToggleItem">
+			<summary>作弊拓展</summary>
 			<<quick_swich>>
 			<hr>
 			<<teleportation>>
@@ -155,7 +156,7 @@
 		        <<yanling_unset left>>
 		        <<yanling_move>>
 		    <</if>>
-		    </div>
+		    </details>
 		<</replace>>
 	<</button>>
 	<br>
@@ -181,7 +182,8 @@
 		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 		<<replace #CE_settingsDiv>><<swich_teleportation>><br><br><</replace>>
 		<<replace #CEstatebox>>
-		    <div class="settingsToggleItem">
+		    <details open id="CEtoggleSettings" class="settingsToggleItem">
+			<summary>作弊拓展</summary>
 			<<quick_swich>>
 			<hr>
 			<<teleportation>>
@@ -193,7 +195,7 @@
 		        <<yanling_unset left>>
 		        <<yanling_move>>
 		    <</if>>
-		    </div>
+		    </details>
 		<</replace>>
 	<</button>>	
 	<br>
@@ -268,7 +270,8 @@
 				<<set _teleportation_target2 to "◁[[" + $teleportation_name[_no] + "|" + _teleportation_target + "]]▷">>	<!--將名稱與位置組合成傳送代碼-->
 				<<set $teleportation.push(_teleportation_target2)>>
 				<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-					<div class="settingsToggleItem">
+					<details open id="CEtoggleSettings" class="settingsToggleItem">
+					<summary>作弊拓展</summary>
 					<<quick_swich>>
 					<hr>
 					<<teleportation>>
@@ -280,7 +283,7 @@
 		                <<yanling_unset left>>
 		                <<yanling_move>>
 		            <</if>>
-		            </div>
+		            </details>
 				<</replace>>
 			<</button>><br><br>
 		<<else>>
@@ -317,99 +320,6 @@
 		<span class="green">開</span>
 		<br>
 	<</if>>
-<</widget>>
-
-<<widget "milk_released_setting">>
-	<span class="gold">大量擠🥛模式</span>
-	<br><br>
-	一次擠出更多的🥛，開啟後記得輸入大量擠🥛上/下限。
-	<br>
-	<<if $milk_releasedswich is undefined>>
-		<<set $milk_releasedswich to 0>>
-	<</if>>
-	<<button "大量擠🥛模式">>
-		<<set $milk_releasedswich = $milk_releasedswich == 0 ? 1 : 0>>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
-	<</button>>
-	<<if $milk_releasedswich is 0>>
-		<<set $milk_releasedFIX to 0>>
-		<<set $milk_releasedFIX_MIN to 0>>
-		<<set $milk_releasedFIX_MAX to 0>>
-	<</if>>
-	<<if $milk_releasedswich is 1>>
-		<<set $milk_releasedFIX to random($milk_releasedFIX_MIN, $milk_releasedFIX_MAX) >>
-	<</if>>		
-	<br>
-	大量擠🥛模式：
-	<<if $milk_releasedswich is 0>>
-		<span class="red">關</span><br>
-	<</if>>
-	<<if $milk_releasedswich is 1>>
-		<span class="green">開</span><br>
-	<</if>>
-	<br>	
-	在此設定大量擠🥛下限：<br>
-	<<numberslider "$milk_releasedFIX_MIN" $milk_releasedFIX_MIN 0 6000 100 >><br>	
-	在此設定大量擠🥛上限：<br>
-	<<numberslider "$milk_releasedFIX_MAX" $milk_releasedFIX_MAX 0 6000 100>><br>
-	<<link "設定">>
-		<<if $milk_releasedswich is 0>>
-			<<set $milk_releasedFIX_MIN to 0>>
-			<<set $milk_releasedFIX_MAX to 0>>
-		<</if>>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
-	<</link>><br>
-	當前大量擠🥛修正亂數<span class="blue">$milk_releasedFIX</span>mL<br>
-	修改🥛量<br>
-	當前🥛量最大值：<span class="blue">$milk_max mL</span>mL<br>
-	<<numberslider "$milk_max" $milk_max 3000 60000 100 >><br>
-	當前可以儲存多少🥛：<span class="blue">$milk_volume</span>mL<br>
-	<<numberslider "$milk_volume" $milk_volume 0 60000 100>><br>
-	當前有多少🥛：<span class="blue">$milk_amount</span>mL<br>
-	<<numberslider "$milk_amount" $milk_amount 0 60000 100>><br>
-	<<link "設定">>
-	    <<CE_milk_fix $milk_max $milk_volume>>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
-	<</link>>
-	<br><br>
-<</widget>>
-
-<<widget "CE_milk_fix">>
-    <<if !$CE_milk_max or !$CE_milk_volume>>
-        <<set $CE_milk_max to $milk_max>>
-        <<set $CE_milk_volume to $milk_volume>>      
-    <</if>>
-    <<if _args[0]>>
-        <<set $CE_milk_max to _args[0]>>
-        <<set $CE_milk_volume to _args[1]>>
-    <</if>>
-    <<if $milk_max != $CE_milk_max or $milk_volume != $CE_milk_volume>>
-        <<if $milk_releasedswich is 1>> 
-            <<set $milk_max to $CE_milk_max>>
-            <<set $milk_volume to $CE_milk_volume>>
-        <</if>>    
-    <</if>>
-<</widget>>
-
-<<widget "milk_releasedFIX">>
-	<<if $milk_releasedswich is undefined or $milk_releasedswich is 0>>
-	    <<set $milk_releasedFIX to 0 >>
-	<<else>>
-		<<if $milk_releasedFIX_MIN is undefined>>
-			<<set $milk_releasedFIX_MIN to 10 >>
-		<</if>>
-		<<if $milk_releasedFIX_MAX is undefined>>
-			<<set $milk_releasedFIX_MAX to 10 >>
-		<</if>>
-		<!-- _args[0]為原始擠奶隨機量-->
-		<<set $milk_releasedFIX to random($milk_releasedFIX_MIN,$milk_releasedFIX_MAX) - _args[0]>>
-		<<if $milk_amount lt $milk_releasedFIX>>
-		    <<set $milk_releasedFIX to $milk_amount - _args[0]>>
-	    <</if>>
-	<</if>>	
 <</widget>>	
 
 <<widget "black_stores_setting">>
@@ -920,6 +830,8 @@
 				<span class="gold">指定genitals：</span>以穿上genitals<br>
 			<</replace>>
 			<<replace #normal_button>><</replace>>
+		<<else>>
+		    <<replace #clothes_genitals>><</replace>>
 		<</if>>
 	<</link>>
 <!-----------------------------------------------------------clothes_type----------------------------------------------------------------------------------------------------------------------------------> 
@@ -1281,7 +1193,8 @@
 
 <<widget "CEstatebox">> <!--用於顯示於左側狀態-->
     <div id="CEstatebox" class="no-numberify">	
-		<div class="settingsToggleItem">
+		<details open id="CEtoggleSettings" class="settingsToggleItem">
+		<summary>作弊拓展</summary>
 		<<quick_swich>>
 		<hr>
 		<<teleportation>>
@@ -1293,8 +1206,9 @@
 		    <<yanling_unset left>>
 		    <<yanling_move>>
 		<</if>>
-		</div>
-	</div>	
+		</details>
+	</div>
+	
 <</widget>>
 
 <<widget "cheat_extended_options">>
@@ -1357,6 +1271,15 @@
 				<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
 			<</button>>	<br>
 		</div>
+		<<if $player.penisExist or $debug>>
+	        <div @class="_selectedOptions is 'semen_released_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			    <<button "大爆🐍模式">>
+				    <<set _selectedOptions to "semen_released_setting">>
+				    <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				    <<replace #CE_settingsDiv>><<semen_released_setting>><br><br><</replace>>
+			    <</button>>	<br>
+		    </div>
+	    <</if>>
 		<div @class="_selectedOptions is 'black_stores_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
 			<<button "黑心商店">>
 				<<set _selectedOptions to "black_stores_setting">>

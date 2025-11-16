@@ -12,7 +12,8 @@
 		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 		<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
 		<<replace #CEstatebox>>
-		    <div class="settingsToggleItem">
+		    <details open id="CEtoggleSettings" class="settingsToggleItem">
+			<summary>作弊拓展</summary>
 			<<quick_swich>>
 			<hr>
 			<<teleportation>>
@@ -24,7 +25,7 @@
 		        <<yanling_unset left>>
 		        <<yanling_move>>
 		    <</if>>
-		    </div>
+		    </details>
 		<</replace>>
 	<</button>>
 	<br>
@@ -39,6 +40,7 @@
 		<<yanling_mini_ui cheat_menu>>
 		<<yanling cheat_menu>>
 		<<yanling_unset cheat_menu>>
+		<<yanling_move>>
 	<</if>>	
 <</widget>>
 
@@ -57,9 +59,9 @@
 		<<else>>
 		    <!--自檢，防止第三方言靈管理模組新增言靈造成言靈管理索引失效（CE的言靈管理索引依靠言靈名稱做索引）-->
 		    <<if $cccheat_name.length != $cccheat.length or $cccheat_name is undefined>>
-		        <run alert("作弊拓展：檢測到第三方言靈管理造成作弊拓展言靈索引（言靈名稱）失效，言靈名稱將全數重新命名。")>>
+		        <<run alert("作弊拓展：檢測到第三方言靈管理造成作弊拓展言靈索引（言靈名稱）失效，言靈名稱將全數重新命名。")>>
+		        <<set $cccheat_name to []>>
 		        <<for _i to 0; _i lt $cccheat.length; _i++>>
-		            <<set $cccheat_name to []>>
 		            <<set $cccheat_name[_i] to "言靈NO." + (_i + 1)>>
 		        <</for>>   
 		    <</if>>
@@ -120,7 +122,8 @@
 				<<set $cccheat_name_display to "">>	
 			<</if>>
 			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-				<div class="settingsToggleItem">
+				<details open id="CEtoggleSettings" class="settingsToggleItem">
+				<summary>作弊拓展</summary>
 				<<quick_swich>>
 				<hr>
 				<<teleportation>>
@@ -132,7 +135,7 @@
 		            <<yanling_unset left>>
 		            <<yanling_move>>
 		        <</if>>
-		        </div>
+		        </details>
 			<</replace>>
 			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
@@ -162,7 +165,8 @@
 				<<set $cccheat_name_display to "">>
 			<</if>>
 			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-				<div class="settingsToggleItem">
+				<details open id="CEtoggleSettings" class="settingsToggleItem">
+				<summary>作弊拓展</summary>
 				<<quick_swich>>
 				<hr>
 				<<teleportation>>
@@ -174,7 +178,7 @@
 		            <<yanling_unset left>>
 		            <<yanling_move>>
 		        <</if>>
-		        </div>
+		        </details>
 			<</replace>>
 			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
@@ -221,7 +225,8 @@
             <</if>>
 
             <<replace #CEstatebox>> <!--更新左側狀態顯示-->
-                <div class="settingsToggleItem">
+                <details open id="CEtoggleSettings" class="settingsToggleItem">
+                    <summary>作弊拓展</summary>
                     <<quick_swich>>
                     <hr>
                     <<teleportation>>
@@ -233,7 +238,7 @@
                         <<yanling_unset left>>
                         <<yanling_move>>
                     <</if>>
-                </div>
+                </details>
             <</replace>>
 
             <<if _args[0] is "cheat_menu">> <!--當在作弊選單內時，更新選單顯示-->
@@ -252,7 +257,8 @@
 				<</for>>
 			<</if>>
 			<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-				<div class="settingsToggleItem">
+				<details open id="CEtoggleSettings" class="settingsToggleItem">
+				<summary>作弊拓展</summary>
 				<<quick_swich>>
 				<hr>
 				<<teleportation>>
@@ -264,7 +270,7 @@
 		            <<yanling_unset left>>
 		            <<yanling_move>>
 		        <</if>>
-		        </div>
+		        </details>
 			<</replace>>
 			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
@@ -278,7 +284,8 @@
 				<<set $cccheat_display to "">>
 				<<set $cccheat_name_display to "">>
 				<<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-					<div class="settingsToggleItem">
+					<details open id="CEtoggleSettings" class="settingsToggleItem">
+					<summary>作弊拓展</summary>
 					<<quick_swich>>
 					<hr>
 					<<teleportation>>
@@ -290,7 +297,7 @@
 		                <<yanling_unset left>>
 		                <<yanling_move>>
 		            <</if>>
-		            </div>
+		            </details>
 				<</replace>>
 				<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 					<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
@@ -303,6 +310,7 @@
 
 <<widget "yanling_move">>
 <!--這段代碼是在 Microsoft Copilot 的幫助下完成的。-->
+<<if $swich_yanling is 1>>    
     <<set $fromIndex to $fromIndex ?? 1>>  <!-- 若 $fromIndex 未定義，則設為 1 -->
     <<set $toIndex to $toIndex ?? 1>>  <!-- 若 $toIndex 未定義，則設為 1 -->
 
@@ -335,7 +343,8 @@
             <<run $cccheat.splice($toIndex, 0, _item1)>>  <!-- 在目標位置插入元素 -->
             <<run $cccheat_name.splice($toIndex, 0, _item2)>>  <!-- 在目標位置插入元素名稱 -->
             <<replace #CEstatebox>>  <!-- 更新狀態顯示 -->
-                <div class="settingsToggleItem">
+                <details open id="CEtoggleSettings" class="settingsToggleItem">
+                <summary>作弊拓展</summary>
                 <<quick_swich>>
                 <hr>
                 <<teleportation>>
@@ -347,10 +356,11 @@
                     <<yanling_unset left>>
                     <<yanling_move>>
                 <</if>>
-                </div>
+                </details>
             <</replace>>
         <</if>>
     <</button>>
+<</if>>    
 <</widget>>
 
 <<widget "yanling_ui_hide">>
@@ -359,7 +369,8 @@
             <<button "隱藏言靈介面">>
                 <<set $yanling_ui_hide to 1>>
                 <<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-			        <div class="settingsToggleItem">
+			        <details open id="CEtoggleSettings" class="settingsToggleItem">
+			        <summary>作弊拓展</summary>
 			        <<quick_swich>>
 			        <hr>
 				    <<teleportation>>
@@ -371,7 +382,7 @@
 		                <<yanling_unset left>>
 		                <<yanling_move>>
 		            <</if>>
-		            </div>
+		            </details>
 		        <</replace>>
             <</button>>
             <br>
@@ -379,7 +390,8 @@
             <<button "顯示言靈介面">>
                 <<set $yanling_ui_hide to 0>>
                 <<replace #CEstatebox>>		<!--更新左側狀態顯示-->
-			        <div class="settingsToggleItem">
+			        <details open id="CEtoggleSettings" class="settingsToggleItem">
+			        <summary>作弊拓展</summary>
 			        <<quick_swich>>
 			        <hr>
 				    <<teleportation>>
@@ -391,7 +403,7 @@
 		                <<yanling_unset left>>
 		                <<yanling_move>>
 		            <</if>>
-		            </div>
+		            </details>
 		        <</replace>>
             <</button>>
             <br>    
