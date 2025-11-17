@@ -9,7 +9,7 @@
 # 需求  
 * 需要搭配[MODLOADER][JML]使用  
 * 需搭配[Degrees of Lewdity 中文本地化][DOLCN]使用      
-* 需搭配[Simple Framework][SF]使用  
+* 需搭配[Simple Framework][SF]或[maplebirchframework][MF]使用  
 
 # Degrees-of-Lewdity_Cheat_Extended
 簡介：Degrees-of-Lewdity 的作弊拓展MOD  
@@ -104,6 +104,8 @@
 
 6.修正一鍵添加服裝文字說明異常問題  
 * 嘗試修複選擇生成貞操帶類型後再選擇其他類型服裝時，貞操帶相關說明殘留問題  
+
+7.增加對[maplebirchframework][MF]的兼容性  
 
 ## 1.16.1  
 1.修複大量擠🍼功能  
@@ -378,4 +380,5 @@
 [YL_3G]:https://tieba.baidu.com/p/8724301141
 [DOL_EEE]:https://github.com/MissedHeart/Degrees-of-Lewdity-Exposed-Event-Extended
 [SF]:https://github.com/emicoto/DOLMods
+[MF]:https://github.com/MaplebirchLeaf/SCML-DOL-maplebirchframework
 [bccme]:https://github.com/Tony70124/BetterCheatCommandManagement-for-DOL
