@@ -11,7 +11,7 @@
 		},
 		*/
 
-
+/*
 const CE_Tatoos = [
     {
         key     : 'tattoo_CE0',
@@ -160,6 +160,57 @@ const CE_Tatoos = [
 
 setup.modTattoos.push(...CE_Tatoos); //表格设置完后，推送到简易框架中。
 		
-		
+*/		
+
+// 批量新增 Cheat Extended 紋身
+const CE_tattoos = Array.from({length: 13}, (_, i) => ({
+    key: `tattoo_CE${i}`,
+    writing: `$CE_tattoo[${i}]`,
+    writ_cn: `$CE_tattoo[${i}]`,
+    type: 'text',
+    arrow: 0,
+    special: 'none',
+    gender: 'n',
+    lewd: 0,
+    degree: 0
+}));
+
+function addBodyWriting(key, writing, writ_cn, options = {}) {
+    if (setup.bodywriting[key]) {
+        console.warn(`紋身 ${key} 已存在，跳過新增`);
+        return;
+    }
+    let maxIndex = Object.values(setup.bodywriting).reduce((max, bw) => Math.max(max, bw.index), -1);
+
+    setup.bodywriting[key] = Object.assign({
+        index: maxIndex + 1,
+        writing: writing,
+        writ_cn: writ_cn,
+        type: 'text',
+        arrow: 0,
+        special: 'none',
+        gender: 'n',
+        lewd: 0,
+        degree: 0,
+        key: key,
+        sprites: []
+    }, options);
+
+    setup.bodywriting_namebyindex[setup.bodywriting[key].index] = key;
+
+    console.log(`已新增紋身: ${key} (index=${setup.bodywriting[key].index})`);
+}
+
+// 執行新增
+CE_tattoos.forEach(tattoo => {
+    addBodyWriting(tattoo.key, tattoo.writing, tattoo.writ_cn, {
+        type: tattoo.type,
+        arrow: tattoo.arrow,
+        special: tattoo.special,
+        gender: tattoo.gender,
+        lewd: tattoo.lewd,
+        degree: tattoo.degree
+    });
+});
 		
 		
