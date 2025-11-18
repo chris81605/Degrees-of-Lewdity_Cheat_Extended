@@ -20,8 +20,9 @@
     "game/milk_mod.twee"
   ],
   "imgFileList": [],
-  "scriptFileList_inject_early": [
-    "scriptEarly/CERegist.js"
+  "scriptFileList_inject_early": [   
+    "scriptEarly/CERegist.js",
+    "scriptEarly/framework_detector.js"
   ],
   "additionFile": [
     "addon-replace/Widgets Dance Audience.txt",
@@ -134,10 +135,10 @@
     {
       "modName": "ReplacePatcher",
       "version": ">=1.0.0"
-    },
+    },    
     {
-      "modName": "Simple Frameworks",
-      "version": ">=2.0.5"
+      "modName": "SweetAlert2Mod",
+      "version": "^1.0.0"
     },
     {
       "modName": "GameVersion",
