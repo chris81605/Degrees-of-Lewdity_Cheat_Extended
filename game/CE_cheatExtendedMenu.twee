@@ -231,7 +231,7 @@
 
 <<widget "title_cheatExtendedMenu">>
     <<setupTabs>>
-    <div id="cheat_extended_options" class="CE=tab">
+    <div id="cheat_extended_options" class="CEtab">
 
         <<button "左側快捷">>
             <<toggleTab>>
