@@ -69,7 +69,7 @@
                         <<capture _tempId _amount>>
                             <<link "{_item.plural}（+_amount）">>
                                 <<CE_item_give _tempId _tempAmount>>
-                                <<replace #item_list>>
+                                <<replace #item_grid>>
                                      <<CE_inventory_helper_dp _productType _amount>>
                                 <</replace>>
                             <</link>>
