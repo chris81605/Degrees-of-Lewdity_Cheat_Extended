@@ -66,3 +66,31 @@
  /* background-color: #f9f9f9;*/
   border-radius: 4px;
 }
+
+.CEtab {
+    display: flex;           /* 水平排列按鈕 */
+    flex-wrap: nowrap;       /* 不換行 */
+    overflow-x: auto;        /* 超出寬度可左右滾動 */
+    gap: 1px;                /* 按鈕間距，可調整 */
+    padding: 0px 0;          /* 上下間距 */
+    scrollbar-width: thin;   /* Firefox 滾動條細 */
+    scrollbar-color: var(--500) transparent; /* Firefox 滾動條顏色 */
+}
+
+.CEtab::-webkit-scrollbar {
+    height: 6px;             /* 滾動條高度 */
+}
+
+.CEtab::-webkit-scrollbar-thumb {
+    background-color: var(--500); /* 滾動條顏色 */
+    border-radius: 3px;
+}
+
+.CEtab button {
+    flex: 0 1 auto;           /* 不被壓縮 */
+    padding: 4px 8px;         /* 上下4px、左右8px */
+    font-size: 0.85rem;       /* 字體稍微小一點 */
+    border-radius: 4px;       /* 圓角按鈕 */
+    white-space: nowrap;      /* 不換行文字 */
+    margin: 0;                /* 消除額外 margin */
+}
