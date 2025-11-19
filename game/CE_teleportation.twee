@@ -1,0 +1,97 @@
+:: CE_teleportation [widget]
+<<widget "swich_teleportation">>
+	<div class="settingsHeader options"><span class="gold">空間節點</span></div>
+	<br><br>
+	在左側顯示：空間節點功能
+	<br>
+	<<if $swich_teleportation is undefined>><<set $swich_teleportation to 0>><</if>>
+	<<button "瞬間移動開關">>
+		<<set $swich_teleportation = $swich_teleportation == 0 ? 1: 0>>
+		<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
+		<<replace #CE_settingsDiv>><<swich_teleportation>><br><br><</replace>>
+		<<replace #CEstatebox>>
+			<<CE_Toggle>>
+		<</replace>>
+	<</button>>	
+	<br>
+	空間節點：
+	<<if $swich_teleportation is 0>>
+		<span class="red">關</span>
+		<br>
+	<</if>>
+	<<if $swich_teleportation is 1>>
+		<span class="green">開</span>
+		<br>
+	<</if>>		
+<</widget>>
+
+<<widget "teleportation">>
+	<<if $swich_teleportation is 1>>	
+		<span class="gold">瞬間移動</span><br>
+		<<if $teleportation is undefined>>		<!--初始化-->
+			<<set $teleportation to []>>
+			<<set $teleportation_name to []>>
+		<</if>>
+		<<set setup.majorAreas to [
+		    "Orphanage", "Bedroom", "Barb Street", "Cliff Street", "Connudatus Street", "Danube Street", "Domus Street", "Elk Street",
+	    	"Harvest Street", "High Street", "Mer Street", "Nightingale Street", "Oxford Street", "Starfish Street", "Wolf Street",
+	    	"Residential alleyways", "Commercial alleyways", "Industrial alleyways", "Park", "Hallways", "Brothel", "Strip Club",
+	    	"Beach", "Ocean Breeze", "Docks Work", "Residential Drain", "Commercial Drain", "Industrial Drain", "Forest", "Farmland",
+	    	"Livestock Field", "Moor", "Forest Wolf Cave", "Wolf Cave", "Wolf Cave Clearing", "Asylum", "Asylum Cell", "Underground Cell", "Prison Cell",
+	    	"Lake Shore", "Farmland", "Farm Work", "Meadow",
+		]>>
+    	<<if ["Clothing Shop", "Forest Shop", "School Library Shop", "Adult Shop Store"].includes($passage)>>
+		    <spen class="red"><b>當前無法傳送</b></spen>
+		    <mouse class="tooltip linkBlue">(?)<span class="red">在服飾店傳送可能會破壞你的衣櫃。請在傳送前離開服飾店。</span></mouse>
+	    <<elseif setup.majorAreas.includes($passage) and $event is undefined>>
+		    <spen class="green"><b>當前可隨意傳送</b></spen>
+		    <mouse class="tooltip linkBlue">(?)<span class="blue"><b>從超出世界範圍外的任何地方進行遠端傳送，都可能會導致Bug。</b></span></mouse>
+		    <br>
+			可用傳送節點：<br>
+			◁[[回孤儿院卧室|Bedroom]]▷
+			<br>
+			◁[[随身衣柜|随身衣柜]]▷
+			<br>
+			自訂送節點：<br>
+			<<if $teleportation.length gt 3>>		<!--超過三個節點時將最舊的節點移除-->
+				<<set $teleportation.deleteAt(0)>>
+				<<set $teleportation_name.deleteAt(0)>>
+			<</if>>	
+			<<for _i to 0; _i lt $teleportation.length; _i++>>
+				<<set _j to _i + 1>>
+				(_j) $teleportation[_i]<br>
+			<</for>>
+			在此輸入傳送節點名稱(可留空)<br>
+			<<textbox "_teleportation_name" "">><br>
+			<<button "將此設為傳送節點(最多3個)">>
+				<<if _teleportation_name is "">>
+					<<set _teleportation_name to "節點NO." + ($teleportation_name.length + 1)>>
+				<</if>>
+				<<set _name_fix_no to 0>>
+				<<set _teleportation_name_temp to _teleportation_name>>
+				<<set _teleportation_name_temp2 to _teleportation_name>>
+				<<for _l to -1; _l lt $teleportation_name.length; _l++>> 		<!--檢查是否有重複名稱的節點-->
+					<<if _teleportation_name_temp is $teleportation_name[_l]>>
+						<<set _name_fix_no += 1 >>
+						<<set _teleportation_name_temp to _teleportation_name_temp2 + "-" + _name_fix_no>> <!--自動重新命名(名字後加編號-->
+						<<set _l to -1>> 			<!-- 迴圈重置，重新檢查重新命名後的言靈名稱是否有重複的-->
+					<<else>>
+						<<set _teleportation_name to _teleportation_name_temp>>		<!--當無重複命名時套用新名稱-->
+					<</if>>
+				<</for>>  
+				<<set $teleportation_name.push(_teleportation_name)>>	<!--命名節點-->
+				<<set _teleportation_target to $passage>>	<!--設定傳送位置-->
+				<<set _no to $teleportation_name.length -1 >>
+				<<set _teleportation_target2 to "◁[[" + $teleportation_name[_no] + "|" + _teleportation_target + "]]▷">>	<!--將名稱與位置組合成傳送代碼-->
+				<<set $teleportation.push(_teleportation_target2)>>
+				<<replace #CEstatebox>>
+			        <<CE_Toggle>>
+		        <</replace>>
+			<</button>><br><br>
+		<<else>>
+		    <spen class="red"><b>當前無法傳送</b></spen>
+		    <mouse class="tooltip linkBlue">(?)<span class="red">在你目前所處的區域中傳送可能會破壞你的存檔，或者你目前正在進行一項活動，在傳送之前，請先返回到世界範圍內。</span></mouse>
+		    <br>
+		<</if>>
+	<</if>>
+<</widget>>	

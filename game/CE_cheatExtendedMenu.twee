@@ -1,0 +1,350 @@
+:: CE_cheatExtendedMenu [widget]
+
+<!--用於顯示於左側狀態-->
+<<widget "CEstatebox">> 
+        
+    <div id="CEstatebox" class="no-numberify">	
+        <<CE_Toggle>>
+	</div>
+	
+<</widget>>
+
+<<widget "CE_Toggle">>
+    <<if $CE_Toggle is "undefined">>
+        <<set $CE_Toggle to 0>>
+    <</if>>
+    <div class="settingsToggleItem">
+        <<button "作弊拓展">>
+            <<set $CE_Toggle = $CE_Toggle == 0 ? 1: 0>>
+            <<replace #CEstatebox>>
+			    <<CE_Toggle>>
+		    <</replace>>
+        <</button>>
+	    <<if $CE_Toggle>>
+	        <<quick_swich>>
+            <<if $swich_teleportation>><hr><</if>>
+	        <<teleportation>>
+		    <<if $swich_yanling>><hr><</if>>
+		    <<yanling_mini_ui left>>
+		    <<if $CE_YL_leftui_enable is true>>
+		        <<yanling_ui_hide>>			    
+		        <<if $yanling_ui_hide is 0>>
+		            <<yanling left>>
+		            <<yanling_unset left>>
+		            <<yanling_move>>
+		        <</if>>
+            <</if>>
+        <</if>>    
+    </div>
+<</widget>>
+
+<<widget "CE_buttom">>
+    <<button "作弊拓展">>
+        <<CEoverlayReplace "CEcheatMenu">>
+    <</button>>
+<</widget>>
+
+<!--用於顯示在作弊選單-->
+<<widget "cheat_extended">> 
+    <div class="settingsHeader options">
+        <span class="gold">作弊拓展</span>
+    </div><br><br> 
+	<div class="CEDISPLAY">			<!--套用自訂CSS樣式-->
+		<div class="CEDISPLAY_button">
+			<div id="cheat_extended_options" class="no-numberify">	<!--顯示各作弊拓展功能切換按鈕-->
+				<<set _selectedOptions to "swich">>
+				<<cheat_extended_options>>	
+			</div>
+		</div>
+		<div class="CEDISPLAY_setting">
+			<div id="CE_settingsDiv" class="no-numberify">	<!--顯示各作弊拓展功能詳細設定-->
+				<<swich>><br><br>		<!--預設顯示為左側快捷-->
+			</div>
+		</div>	
+	</div>	
+<</widget>>
+
+<!--用於顯示在彈窗畫面-->
+<<widget "cheat_extended_options">> 
+	<<if _selectedOptions is undefined>><<set _selectedOptions to "swich">><</if>>
+		<div @class="_selectedOptions is 'swich' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "左側快捷">>
+				<<set _selectedOptions to "swich">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>	<!--更新顯示各作弊拓展功能切換按鈕-->
+				<<replace #CE_settingsDiv>><<swich>><br><br><</replace>>					<!--顯示各作弊拓展功能詳細設定-->
+			<</button>>	<br>	
+		</div>	
+		<div @class="_selectedOptions is 'swich_teleportation' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "空間節點">>
+				<<set _selectedOptions to "swich_teleportation">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_teleportation>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		<div @class="_selectedOptions is 'swich_yanling' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "言靈集">>
+				<<set _selectedOptions to "swich_yanling">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		
+		<div @class="_selectedOptions is 'swich_bccmeditor' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "場景建造">>
+				<<set _selectedOptions to "swich_bccmeditor">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_bccmeditor>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		
+		<div @class="_selectedOptions is 'damage_fix_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "傷害倍數">>
+				<<set _selectedOptions to "damage_fix_setting">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<damage_fix_setting>><br><br><</replace>>
+			<</button>>	<br>
+		</div>	
+		<div @class="_selectedOptions is 'painfix_fix_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "疼痛衰減">>
+				<<set _selectedOptions to "painfix_fix_setting">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<painfix_fix_setting>><br><br><</replace>>
+			<</button>>	<br>
+		</div>	
+		<div @class="_selectedOptions is 'swich_HP_AP_display' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "HP、AP顯示">>
+				<<set _selectedOptions to "swich_HP_AP_display">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_HP_AP_display>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		<div @class="_selectedOptions is 'milk_released_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "大量擠🥛模式">>
+				<<set _selectedOptions to "milk_released_setting">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		<<if $player.penisExist or $debug>>
+	        <div @class="_selectedOptions is 'semen_released_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			    <<button "大爆🐍模式">>
+				    <<set _selectedOptions to "semen_released_setting">>
+				    <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				    <<replace #CE_settingsDiv>><<semen_released_setting>><br><br><</replace>>
+			    <</button>>	<br>
+		    </div>
+	    <</if>>
+		<div @class="_selectedOptions is 'black_stores_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "黑心商店">>
+				<<set _selectedOptions to "black_stores_setting">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<black_stores_setting>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		<div @class="_selectedOptions is 'dance_reward_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "跳舞報酬加倍">>
+				<<set _selectedOptions to "dance_reward_setting">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<dance_reward_setting>><br><br><</replace>>
+			<</button>>	<br>
+		</div>	
+		<div @class="_selectedOptions is 'brothel_basement_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "尋歡洞報酬加倍">>
+				<<set _selectedOptions to "brothel_basement_setting">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<brothel_basement_setting>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		<div @class="_selectedOptions is 'Times_jumps' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "時空穿越">>
+				<<set _selectedOptions to "Times_jumps">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<Times_jumps>><br><br><</replace>>
+			<</button>>	<br>	
+		</div>
+		<div @class="_selectedOptions is 'swich_DEBUG_MODE' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "DEBUG MODE">>
+				<<set _selectedOptions to "swich_DEBUG_MODE">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<swich_DEBUG_MODE>><br><br><</replace>>
+			<</button>>	<br>
+		</div>	
+		<div @class="_selectedOptions is 'study_hard_mod' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "用功學習">>
+				<<set _selectedOptions to "study_hard_mod">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
+			<</button>>	<br>
+		</div>	
+		<div @class="_selectedOptions is 'bigest_wardrobe_mod' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "大容量衣櫃">>
+				<<set _selectedOptions to "bigest_wardrobe_mod">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<bigest_wardrobe_mod>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		<div @class="_selectedOptions is 'get_all_clothes' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "一鍵添加所有服裝">>
+				<<set _selectedOptions to "get_all_clothes">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<get_all_clothes>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		<div @class="_selectedOptions is 'CE_item_give' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "虛空創造">>
+				<<set _selectedOptions to "CE_item_give">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<CE_inventory_helper>><br><br><</replace>>
+			<</button>>	<br>
+		</div>	
+		<div @class="_selectedOptions is 'CE_tattoo' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "魔術迴路">>
+				<<set _selectedOptions to "CE_tattoo">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<CE_tattoo>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		<div @class="_selectedOptions is 'CE_Pregnancy' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "PC懷孕">>
+				<<set _selectedOptions to "CE_Pregnancy">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+    			<<replace #CE_settingsDiv>><<CE_Pregnancy>><br><br><</replace>>
+			<</button>>	<br>	
+		</div>
+		<div @class="_selectedOptions is 'auto_clothes_Warmth' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "自動調溫">>
+				<<set _selectedOptions to "auto_clothes_Warmth">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+    			<<replace #CE_settingsDiv>><<auto_clothes_Warmth>><br><br><</replace>>
+			<</button>>	<br>	
+		</div>		
+		<div @class="_selectedOptions is 'quick_yanling' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "快速言靈">>
+				<<set _selectedOptions to "quick_yanling">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<quick_yanling>><br><br><</replace>>
+			<</button>>	<br>	
+		</div>	
+<</widget>>
+
+
+
+<<widget "title_cheatExtendedMenu">>
+    <<setupTabs>>
+    <div id="cheat_extended_options" class="CE=tab">
+
+        <<button "左側快捷">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<swich>></div><</replace>>
+        <</button>>
+
+        <<button "空間節點">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<swich_teleportation>></div><</replace>>
+        <</button>>
+
+        <<button "言靈集">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<swich_yanling>></div><</replace>>
+        <</button>>
+
+        <<button "場景建造">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<swich_bccmeditor>></div><</replace>>
+        <</button>>
+
+        <<button "傷害倍數">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<damage_fix_setting>></div><</replace>>
+        <</button>>
+
+        <<button "疼痛衰減">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<painfix_fix_setting>></div><</replace>>
+        <</button>>
+
+        <<button "HP、AP顯示">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<swich_HP_AP_display>></div><</replace>>
+        <</button>>
+
+        <<button "大量擠🥛模式">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<milk_released_setting>></div><</replace>>
+        <</button>>
+
+        <<if $player.penisExist or $debug>>
+            <<button "大爆🐍模式">>
+                <<toggleTab>>
+                <<replace #customOverlayContent>><div id="CE_settingsDiv"><<semen_released_setting>></div><</replace>>
+            <</button>>
+        <</if>>
+
+        <<button "黑心商店">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<black_stores_setting>></div><</replace>>
+        <</button>>
+
+        <<button "跳舞報酬加倍">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<dance_reward_setting>></div><</replace>>
+        <</button>>
+
+        <<button "尋歡洞報酬加倍">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<brothel_basement_setting>></div><</replace>>
+        <</button>>
+
+        <<button "時空穿越">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<Times_jumps>></div><</replace>>
+        <</button>>
+
+        <<button "DEBUG MODE">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<swich_DEBUG_MODE>></div><</replace>>
+        <</button>>
+
+        <<button "用功學習">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<study_hard_mod>></div><</replace>>
+        <</button>>
+
+        <<button "大容量衣櫃">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<bigest_wardrobe_mod>></div><</replace>>
+        <</button>>
+
+        <<button "一鍵添加所有服裝">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<get_all_clothes>></div><</replace>>
+        <</button>>
+
+        <<button "虛空創造">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<CE_inventory_helper>></div><</replace>>
+        <</button>>
+
+        <<button "魔術迴路">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<CE_tattoo>></div><</replace>>
+        <</button>>
+
+        <<button "PC懷孕">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<CE_Pregnancy>></div><</replace>>
+        <</button>>
+
+        <<button "自動調溫">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<auto_clothes_Warmth>></div><</replace>>
+        <</button>>
+
+        <<button "快速言靈">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<quick_yanling>></div><</replace>>
+        <</button>>
+
+    </div>
+    <<closeButton>>
+<</widget>>
