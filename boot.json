@@ -1,29 +1,37 @@
 {
   "name": "cheat extended",
-  "version": "1.17(dev)",
+  "version": "1.17(DevV251124build1)",
   "styleFileList": [
     "css/CE_CSS.css"
   ],
   "scriptFileList": [
+    "scripts/CE_getTargetWarmth2.js",
     "scripts/CE_Time_Event.js",
-    "scripts/CE_getTargetWarmth2.js"
+    "scripts/CE_forceAttendSchool.js",
+    "scripts/clearCEVars.js",
+    "scripts/CE_sideBarIcon.js",
+    "scripts/CE_tattoo.js"
   ],
   "tweeFileList": [
-    "game/Widgets cheat_extended.twee",
+    "game/CEoverlayReplace.twee",
     "game/Bccm/bccmeditor.twee",
-    "game/Bccm/ccplot.twee",
-    "game/CE_Wardrobe.twee",
-    "game/Ce_tattoo_widget.twee",
+    "game/CE_teleportation.twee",
+    "game/CE_passage_editor.twee",
     "game/CE_yanling.twee",
     "game/CE_auto_clothes_Warmth.twee",
+    "game/CE_cheatExtendedMenu.twee",
     "game/CE_milk_mod.twee",
+    "game/CE_Bedroom Study.twee",
+    "game/CE_test_widget.twee",
+    "game/Bccm/ccplot.twee",
     "game/CE_inventory_helper.twee",
-    "game/CE_teleportation.twee",
-    "game/CEoverlayReplace.twee",
-    "game/CE_cheatExtendedMenu.twee"
+    "game/Ce_tattoo_widget.twee",
+    "game/Widgets cheat_extended.twee",
+    "game/CE_Wardrobe.twee",
+    "game/CE_studyHard.twee"
   ],
   "imgFileList": [],
-  "scriptFileList_inject_early": [   
+  "scriptFileList_inject_early": [
     "scriptEarly/CERegist.js",
     "scriptEarly/framework_detector.js"
   ],
@@ -36,6 +44,7 @@
     "addon-replace/Widgets_3.txt",
     "addon-replace/Widgets_4.txt",
     "addon-replace/Widgets_5.txt",
+    "addon-replace/StoryCaption.txt",
     "readme.md",
     "LICENSE.txt"
   ],
@@ -44,57 +53,73 @@
       "modName": "TweeReplacer",
       "addonName": "TweeReplacerAddon",
       "modVersion": "1.0.0",
-      "params": [ 
+      "params": [
         {
           "passage": "Widgets",
           "findString": "\t\t\t<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod)>>",
-          "replaceFile": "addon-replace/Widgets_3.txt"
+          "replaceFile": "addon-replace/Widgets_3.txt",
+          "comments": "金鐘罩、鐵布衫"
         },
         {
           "passage": "Widgets",
           "findString": "\t\t\t<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)))>>",
-          "replaceFile": "addon-replace/Widgets_4.txt"
+          "replaceFile": "addon-replace/Widgets_4.txt",
+          "comments": "金鐘罩、鐵布衫"
         },
         {
           "passage": "Widgets",
           "findString": "\t\t<<set $enemyhealth -= _thedamage>>",
-          "replaceFile": "addon-replace/Widgets_5.txt"
+          "replaceFile": "addon-replace/Widgets_5.txt",
+          "comments": "小鎮拳皇"
         },
         {
           "passage": "Widgets Bodywriting",
           "findString": "\"<span class=\"purple\"><<print $skin[_active_bodypart].writ_cn>></span>\"",
-          "replace": "<<CE_tattoo_color>>"
+          "replace": "<<CE_tattoo_color>>",
+          "comments": "魔術迴路紋身顏色添加"
         },
         {
           "passage": "Widgets Market",
           "findString": "<<widget \"stall_sell_actions\">>",
-          "replaceFile": "addon-replace/Widgets Market_1.txt"
+          "replaceFile": "addon-replace/Widgets Market_1.txt",
+          "comments": "黑心商店"
         },
         {
           "passage": "Widgets Market",
           "findString": "\t<<if $stall_amount gte $plants[$stall_plant].amount>>",
           "replaceFile": "addon-replace/Widgets Market_2.txt",
-          "all": true
+          "all": true,
+          "comments": "黑心商店"
         },
         {
           "passage": "Widgets Orgasm",
           "findString": "<<if $milk_amount lt _milk_released>>",
-          "replace": "<<milk_releasedFIX _milk_released>>\n\t<<set _milk_released += $milk_releasedFIX>>\n\t<<if $milk_amount lt _milk_released>>"
+          "replace": "<<milk_releasedFIX _milk_released>>\n\t<<set _milk_released += $milk_releasedFIX>>\n\t<<if $milk_amount lt _milk_released>>",
+          "comments": "大量產奶"
         },
         {
           "passage": "Widgets State Man",
           "findString": "\t\t\t\t<span class=\"green\"><<He>>吃痛退开。</span>\n\t\t\t\t<<combatcontrol 15>><<def 10>>\n\t\t\t<</if>>",
-          "replaceFile": "addon-replace/Widgets State Man_1.txt"
+          "replaceFile": "addon-replace/Widgets State Man_1.txt",
+          "comments": "顯示HPAP"
         },
         {
           "passage": "Widgets State Man",
           "findString": "\t\t\t<<if $enemyanger gte $enemyangermax>>",
-          "replaceFile": "addon-replace/Widgets State Man_2.txt"
+          "replaceFile": "addon-replace/Widgets State Man_2.txt",
+          "comments": "顯示HPAP"
         },
         {
           "passage": "Widgets Dance Audience",
           "findString": "\t\t\t\t<<set $dancetip *= 1 + ($mathstrait / 4)>>",
-          "replaceFile": "addon-replace/Widgets Dance Audience.txt"
+          "replaceFile": "addon-replace/Widgets Dance Audience.txt",
+          "comments": "跳舞報酬加倍"
+        },
+        {
+          "passage": "StoryCaption",
+          "findString": "<<if $options.sidebarStats isnot \"disabled\">>",
+          "replaceFile": "addon-replace/StoryCaption.txt",
+          "comments": "作弊拓展入口"
         }
       ]
     },
@@ -138,7 +163,7 @@
     {
       "modName": "ReplacePatcher",
       "version": ">=1.0.0"
-    },    
+    },
     {
       "modName": "SweetAlert2Mod",
       "version": "^1.0.0"
