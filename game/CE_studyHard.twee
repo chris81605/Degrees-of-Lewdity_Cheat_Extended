@@ -4,8 +4,9 @@
 	<div class="settingsHeader options"><span class="gold">用功學習</span></div><br>
     
     <span class="gold">再也不想天天去學校報到了！</span>
-    <<button "不想去學校了開關">>
+    <<button "不想去學校了開關">>        
         <<set $CE_forceAttendSchool = $CE_forceAttendSchool == 0 ? 1 : 0>>           
+        <<run CE_forceAttendSchool()>>
         <<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
     <</button>>    
     <br>
@@ -28,7 +29,7 @@
         <</for>>
 
         <!-- 處理 maths / housekeeping 特殊規則 -->
-        <<if [4,6].includes(Time.weekDay)>> <!-- 星期 4 或 6 -->
+        <<if [3,5].includes(Time.weekDay)>> <!-- 星期 2 或 4 -->
             <<set _attended.housekeeping = V.daily.school.attended.housekeeping ? 1 : 0>>
         <<else>> <!-- 其他天 -->
             <<set _attended.maths = V.daily.school.attended.maths ? 1 : 0>>
@@ -50,7 +51,7 @@
                         <<if _subject is "english">><<CE_studyResults_DP $english_star>><</if>>
                         <<if _subject is "history">><<CE_studyResults_DP $history_star>><</if>>
                         <<if _subject is "maths">><<CE_studyResults_DP $maths_star>><</if>>
-                        <<if _subject is "swimming">>
+                        <<if _subject is "swimming" or _subject is "housekeeping">>
                             <<silently>>
                                 <<set _detailedSkillGrades=[
 				                    { requiredValue: 0,		level: "无",	color: 'red'},
@@ -66,9 +67,13 @@
 				                    { requiredValue: 900,	level: "A+",	color: 'teal'},
 				                    { requiredValue: 1000,	level: "S",		color: 'green'}
 			                    ]>>
-			               <</silently>>
-                           <<set _config = { currentValue : $swimmingskill, states : _detailedSkillGrades}>>
-                           <<set _config.currentLevel = 0>>
+			                <</silently>>
+			                <<if _subject is "swimming">>
+                                <<set _config = { currentValue : $swimmingskill, states : _detailedSkillGrades}>>
+                            <<elseif _subject is "housekeeping">>
+                                <<set _config = { currentValue : $housekeeping, states : _detailedSkillGrades}>>
+                            <</if>>
+                            <<set _config.currentLevel = 0>>
 		                    /* Loop through the provided states to find the one we are currently at*/
 		                    <<for _i to 0; _i lt _config.states.length; _i++>>
 			                    <<if _config.currentValue gte _config.states[_i].requiredValue>>
