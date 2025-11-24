@@ -1,0 +1,4 @@
+<<if $CE_SFflag is true>>
+    <<CE_sideBarIcon>>
+<</if>>
+<<if $options.sidebarStats isnot "disabled">>
