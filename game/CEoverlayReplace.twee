@@ -26,6 +26,9 @@
 	<<switch _key>>
 		<<case "CEcheatMenu">>
 		    <<replace #customOverlayTitle>><<title_cheatExtendedMenu>><</replace>>
-			<<replace #customOverlayContent>><div id="CE_settingsDiv"><<swich>></div><</replace>>
+			<<replace #customOverlayContent>><div id="CE_settingsDiv"><<swich>></div><</replace>>	
+		<<case "bccmeditor">>
+		    <<replace #customOverlayTitle>><<titlebccmeditor>><</replace>>
+			<<replace #customOverlayContent>><<bccmeditor>><</replace>>		
 	<</switch>>
 <</widget>>

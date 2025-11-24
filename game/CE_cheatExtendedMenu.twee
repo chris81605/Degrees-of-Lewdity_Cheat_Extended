@@ -3,8 +3,9 @@
 <!--用於顯示於左側狀態-->
 <<widget "CEstatebox">> 
         
-    <div id="CEstatebox" class="no-numberify">	
-        <<CE_Toggle>>
+    <div id="CEstatebox">	
+        <div id="CE_Toggle"><<CE_Toggle>></div>
+        <div id="CE_UiLists"></div>
 	</div>
 	
 <</widget>>
@@ -13,31 +14,47 @@
     <<if $CE_Toggle is "undefined">>
         <<set $CE_Toggle to 0>>
     <</if>>
-    <div class="settingsToggleItem">
         <<button "作弊拓展">>
             <<set $CE_Toggle = $CE_Toggle == 0 ? 1: 0>>
             <<replace #CEstatebox>>
 			    <<CE_Toggle>>
 		    <</replace>>
         <</button>>
-	    <<if $CE_Toggle>>
-	        <<quick_swich>>
-            <<if $swich_teleportation>><hr><</if>>
-	        <<teleportation>>
-		    <<if $swich_yanling>><hr><</if>>
-		    <<yanling_mini_ui left>>
-		    <<if $CE_YL_leftui_enable is true>>
-		        <<yanling_ui_hide>>			    
-		        <<if $yanling_ui_hide is 0>>
-		            <<yanling left>>
-		            <<yanling_unset left>>
-		            <<yanling_move>>
-		        <</if>>
-            <</if>>
-        <</if>>    
-    </div>
+        <<CE_UiLists>>	  <!--暫時放這-->    
 <</widget>>
 
+<<widget "CE_UiLists">>
+    <<if $CE_Toggle>>        
+        <<quick_swich>>
+        <<if $swich_teleportation>><hr><</if>>
+    	<<teleportation>>
+    	<<if $swich_yanling>><hr><</if>>
+    	<<yanling_mini_ui left>>
+        <<if $CE_YL_leftui_enable is true>>
+            <<yanling_ui_hide>>			    
+    		<<if $yanling_ui_hide is 0>>
+    		    <<yanling left>>
+    		    <<yanling_unset left>>
+    		    <<yanling_move>>
+    		<</if>>
+        <</if>>
+    <</if>>  
+<</widget>>
+
+<<widget "CEstatebox_hiden">>
+    <<if $swich is 1 or $swich_teleportation is 1 or $swich_yanling is 1>>
+        <<run $("#CEstatebox").removeAttr("hidden")>>
+    <<else>>
+        <<run $("#CEstatebox").attr("hidden", true)>>
+    <</if>>
+<</widget>>
+
+<!--sideBarIcon入口-->
+<<widget "CE_sideBarIcon">>
+    <input type="button" class="saveMenuButton CE_sideBarIconBtn" value="" onclick="CEiconClicked()">
+<</widget>>
+
+<!--按鈕入口-->
 <<widget "CE_buttom">>
     <<button "作弊拓展">>
         <<CEoverlayReplace "CEcheatMenu">>

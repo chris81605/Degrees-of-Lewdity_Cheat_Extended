@@ -22,13 +22,12 @@
 		<span class="red">關</span>
 		<br>
 	<</if>>
-	<label><<checkbox "$CE_YL_leftui_enable" false true autocheck>>啟用側邊欄言靈編輯相關UI</label>
-    <mouse class="tooltip linkBlue">(?)
-        <span>取消勾選將只顯示言靈列表於側邊欄。改變勾選狀態後請關閉言靈及開關再打開以即時套用效果。</span>
-    </mouse>
 	<<if $swich_yanling is 1>>
 		<span class="green">開</span>
 		<br>
+	    <label><<checkbox "$CE_YL_leftui_enable" false true autocheck>>啟用側邊欄言靈編輯相關UI</label>
+        <mouse class="tooltip linkBlue">(?)<span>取消勾選將只顯示言靈列表於側邊欄。改變勾選狀態後請關閉言靈及開關再打開以即時套用效果。</span></mouse>
+        <br>
 		<<yanling_mini_ui cheat_menu>>
 		<<yanling cheat_menu>>
 		<<yanling_unset cheat_menu>>

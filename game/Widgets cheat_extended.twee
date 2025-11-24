@@ -373,142 +373,76 @@
 <</widget>>
 
 <<widget "swich_DEBUG_MODE">>
-    <<if document.getElementById("#cheat_extended_options") isnot null>>
-        <span class="gold">DEBUG MODE</span>
-    <<else>>
-        <div class="settingsHeader options"><span class="gold">DEBUG MODE</span></div>
-    <</if>>      
-	<br>
-	DEBUG MODE開關，開啟後你就是上帝？請謹慎使用。
-	<br>
-	<<button "上帝模式開關">>
-		<<set $debug = $debug == 0 ? 1 : 0>>
-		    <<replace #debug_mode>>
-		        DEBUG MODE開關：
-	            <<if $debug is 0>>
-		            <span class="red">關</span>
-		            <br>
-		        <<elseif $debug is 1>>
-		            <span class="green">開</span>
-		            <br>   
-	            <</if>>
-	        <</replace>> 
-		<<if document.getElementById("#cheat_extended_options") isnot null>>
-		    <!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
-		    <<replace #CE_settingsDiv>><<swich_DEBUG_MODE>><br><br><</replace>>    
-		<</if>>    
-	<</button>>
-	<br>
-	<div id="debug_mode">
-	    DEBUG MODE開關：
-	    <<if $debug is 0>>
-		    <span class="red">關</span>
-		    <br>
-		<<elseif $debug is 1>>
-		    <span class="green">開</span>
-		    <br>   
-	    <</if>>
-	</div>    	
-	<<link [[更新|$passage]]>><</link>><br>
-	<<if $debug is 1>>
-		<span class="red">作弊拓展爆紅修復</span>
-		<br>
-		修復由舊版作弊拓展(1.3.2含更早版本)直接升級引發的功能爆紅問題
-		如果使用後仍無法修復請至github 提出issues 
-		<br>
-		<<link [[修復作弊拓展功能爆紅|$passage]]>> 
-            <<set $milk_releasedFIX_MIN to 0>>
-            <<set $milk_releasedFIX_MAX to 0>>
-            <<set $milk_volume to 0>>
-            <<set $milk_max to 3000>>
-            <<set $milk_amount to 0>>
-            <<set $cccheat to []>>
-            <<set $cccheat_name to []>>		
-            <<set $cccheat_display to "">>
-            <<set $cccheat_name_display to "">>
-            <<set $bigest_wardrobe_fix to 20>>
-        <</link>><br>
-        當前頁面(passage)：<span class="blue">$passage</span><br>
-	<</if>>
-<</widget>>
 
-<<widget "study_hard_mod">>
-	<div class="settingsHeader options"><span class="gold">用功學習</span></div>
-	<br>
-	放學後在家裡瘋狂內捲（作弊）
-	<br>
-	<!--
-	<<if $study_hard is undefined>>
-		<<set $study_hard to 0>>
-	<</if>>
-	
-	<<button "用功學習">>
-		<<set $study_hard = $study_hard == 0 ? 1 : 0>>
-		<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
-		<<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
-	<</button>>
-	<br>
-	用功學習開關：
-	<<if $study_hard is 0>>
-		<span class="red">關</span>
-		<br>
-	<</if>>
-	<<if $study_hard is 1>>
-		<span class="green">開</span>
-		<br>
-	<</if>>
-	-->
-	<br>
-	作弊：
-	<br>
-	科學：$science_exam，下次考試難度，$science_exam_difficulty，
-	<<link "不想努力了">>
-		<<set $science_exam to 120>>
-		<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
-		<<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
-	<</link>>
-	<br>
-	數學：$maths_exam，下次考試難度，$maths_exam_difficulty，
-	<<link "不想努力了">>
-		<<set $maths_exam to 120>>
-		<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
-		<<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
-	<</link>>
-	<br>
-	語文：$english_exam，下次考試難度，$english_exam_difficulty，
-	<<link "不想努力了">>
-		<<set $english_exam to 120>>
-		<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
-		<<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
-	<</link>>
-	<br>
-	歷史：$history_exam，下次考試難度，$history_exam_difficulty，
-	<<link "不想努力了">>
-		<<set $history_exam to 120>>
-		<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
-		<<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
-	<</link>>
-	<br>
-<</widget>>
+<div class="settingsHeader options"><span class="gold">DEBUG MODE</span></div>      
+<br>
+DEBUG MODE 開啟後你就是上帝？請謹慎使用。
+<br>
 
-<!--
-<<widget "study_hard">>
-	<<if $study_hard is undefined>>
-		<<set $study_hard to 0>>
-	<</if>>
-	<<if $study_hard is 1>>
-		<br>
-		<<scienceicon>><<link [[学习科学 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 1>><</link>><<gscience>>
-		<br>
-		<<mathicon>><<link [[学习数学 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 2>><</link>><<gmaths>>
-		<br>
-		<<englishicon>><<link [[学习语文 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 3>><</link>><<genglish>>
-		<br>
-		<<historyicon>><<link [[学习历史 (0:20)|Bedroom Study]]>><<pass 20>><<set $Bedroom_Study_phase to 4>><</link>><<ghistory>>
-		<br>
-	<</if>>
+<!-- 按鈕區塊 -->
+<div style="display:flex; gap:0.5em; flex-wrap:wrap; margin-top:0.5em;">
+    <!-- 上帝模式開關 -->
+    <<button "上帝模式開關">>
+        <<set $debug = $debug == 0 ? 1 : 0>>
+        <<replace #debug_mode>>
+            DEBUG MODE開關：
+            <<if $debug is 0>>
+                <span style="color:red;">關</span>
+            <<elseif $debug is 1>>
+                <span style="color:green;">開</span>   
+            <</if>>
+        <</replace>>
+        <<replace #CE_settingsDiv>><<swich_DEBUG_MODE>><br><br><</replace>>
+    <</button>>
+
+    <!-- 卸載 cheatExtended 按鈕 -->
+    <<button "卸載 cheatExtended">>
+        <<script>>
+            if (confirm("確認要卸載 cheatExtended 並清除相關變數嗎？")) {
+                window.clearCEVars();
+                alert("已清除 CE 相關變數！");
+            }
+        <</script>>
+    <</button>>
+</div>
+
+<br>
+
+<<if $debug is 1>>
+<div style="border:1px solid #aaa; padding:0.5em 0.8em; border-radius:6px; margin-top:1em;">
+    <div style="color:red; font-weight:bold; margin-bottom:0.3em;">作弊拓展爆紅修復</div>
+    <div style="margin-bottom:0.5em;">
+        修復由舊版作弊拓展(1.3.2含更早版本)直接升級引發的功能爆紅問題。
+        如果使用後仍無法修復，請至 github 提出 issues。
+    </div>
+    <<link [[修復作弊拓展功能爆紅|$passage]]>> 
+        <<set $milk_releasedFIX_MIN to 0>>
+        <<set $milk_releasedFIX_MAX to 0>>
+        <<set $milk_volume to 0>>
+        <<set $milk_max to 3000>>
+        <<set $milk_amount to 0>>
+        <<set $cccheat to []>>
+        <<set $cccheat_name to []>>		
+        <<set $cccheat_display to "">>
+        <<set $cccheat_name_display to "">>
+        <<set $bigest_wardrobe_fix to 20>>
+    <</link>>
+    <div style="margin-top:0.5em;">當前頁面(passage)：<span style="color:blue;">$passage</span></div>
+</div>
+<</if>>
+
+<br>
+
+<div id="debug_mode">
+    DEBUG MODE 開關：
+    <<if $debug is 0>>
+        <span style="color:red;">關</span>
+    <<elseif $debug is 1>>
+        <span style="color:green;">開</span>   
+    <</if>>
+</div>
+
 <</widget>>
--->
 
 <<widget "bigest_wardrobe_mod">>
 	<div class="settingsHeader options"><span class="gold">大容量衣櫃</span></div><br>

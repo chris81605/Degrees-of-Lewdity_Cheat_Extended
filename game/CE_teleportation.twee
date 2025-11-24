@@ -50,7 +50,7 @@
 			可用傳送節點：<br>
 			◁[[回孤儿院卧室|Bedroom]]▷
 			<br>
-			◁[[随身衣柜|随身衣柜]]▷
+			◁[[随身衣柜|CE_Wardrobe]]▷
 			<br>
 			自訂送節點：<br>
 			<<if $teleportation.length gt 3>>		<!--超過三個節點時將最舊的節點移除-->
