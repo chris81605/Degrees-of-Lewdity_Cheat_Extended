@@ -14,18 +14,17 @@ function CE_forceAttendSchool() {
     V.daily.school.attended.english  = 1;
     V.daily.school.attended.history  = 1;
     V.daily.school.attended.swimming = 1;
-
-    // maths / housekeeping（數學家政兩科目互斥）
-    if ([4, 6].includes(Time.weekDay)) {
-        V.daily.school.attended.housekeeping = 1;
+    V.daily.school.attended.housekeeping = 1;
+    V.daily.school.attended.maths = 1;
+    // maths / housekeeping（數學家政兩科目互斥，週二及周四數學課替換為家政課）
+    if ([3, 5].includes(Time.weekDay)) {        
         delete V.daily.school.attended.maths;
-    } else {
-        V.daily.school.attended.maths = 1;
+    } else {        
         delete V.daily.school.attended.housekeeping;
     }
     //設定達成每日學習目標以增加對應技能
     V.science_star = 3;
-    V.maths_star   = 3;
+    V.maths_star = 3;
     V.english_star = 3;
     V.history_star = 3;
     //設定考試成功率
@@ -59,7 +58,7 @@ function registerCE_forceAttendSchool() {
     }
 }
 // 3. 初始化
-registerCE_forceAttendSchool();=
+registerCE_forceAttendSchool();
 
 ///////////////////////////////////
 //一鍵考試通過機率120% //
