@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.17(DevV251204build1)",
+  "version": "1.17(DevV251204build2)",
   "styleFileList": [
     "css/CE_CSS.css"
   ],
@@ -12,7 +12,7 @@
     "scripts/CE_sideBarIcon.js",
     "scripts/CE_tattoo.js",
     "scripts/CE_MoneyCheat.js",
-    "scripts/CE_painControl.js"
+    "scripts/CE_statControl.js"
   ],
   "tweeFileList": [
     "game/CEoverlayReplace.twee",
@@ -32,7 +32,7 @@
     "game/CE_Wardrobe.twee",
     "game/CE_studyHard.twee",
     "game/CE_moneyCheat.twee",
-    "game/CE_painControl.twee"
+    "game/CE_statControl.twee"
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
@@ -144,13 +144,7 @@
             "from": "DefineMacro(\"money\", money);",
             "to": "window.money = money;\n\tconsole.log(\"[Cheat Extended] 🔧 money 函數已掛到全局\");\n\tDefineMacro(\"money\", money);",
             "fileName": "stat-changes.js"
-          },
-          {
-            "TODO": "function=>hook pain",
-            "from": "DefineMacro(\"pain\", pain);",
-            "to": "window.pain = pain;\n\tconsole.log(\"[Cheat Extended] 🔧 pain 函數已掛到全局\");\n\tDefineMacro(\"pain\", pain);",
-            "fileName": "stat-changes.js"
-          }          
+          }                 
         ],
         "twee": [
           {
