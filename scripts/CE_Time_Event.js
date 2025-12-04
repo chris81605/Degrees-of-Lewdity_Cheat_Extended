@@ -44,12 +44,17 @@ function registerAutoClothesWarmth() {
             once: false,
             //accumulate: { unit: 'sec', target: 1 },
         });
-        logger.log('[Cheat Extended] Maplebirch 已註冊自動恆溫事件');
+        logger.log('[Cheat Extended] ✅ Maplebirch 已註冊自動恆溫事件');
+        console.log('[Cheat Extended] ✅ Maplebirch 已註冊自動恆溫事件');
+        
     } else if (simpleMod) {
         new TimeEvent('onSec', 'auto_clothes_Warmth').Action(()=>autoWarmthAction());
-        logger.log('[Cheat Extended] Simple Frameworks 已註冊自動恆溫事件');
+        logger.log('[Cheat Extended] ✅ Simple Frameworks 已註冊自動恆溫事件');
+        console.log('[Cheat Extended] ✅ Simple Frameworks 已註冊自動恆溫事件');
+        
     } else {
-        logger.error('[Cheat Extended] 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊自動恆溫事件');
+        logger.error('[Cheat Extended] ❌ 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊自動恆溫事件');
+        console.error('[Cheat Extended] ❌ 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊自動恆溫事件');
     }
 }
 

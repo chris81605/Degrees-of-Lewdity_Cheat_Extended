@@ -24,7 +24,7 @@ function createCETattoos() {
 // ----------------------------
 function addBodyWritingForMaplebirch(tattoos) {
     if (!window.setup) {
-        console.error('[Cheat Extended] setup 不存在，無法添加紋身');
+        console.error('[Cheat Extended] ❌ setup 不存在，無法添加紋身');
         return;
     }
 
@@ -55,7 +55,7 @@ function addBodyWritingForMaplebirch(tattoos) {
         }
     });
 
-    console.log(`[Cheat Extended] Maplebirch 環境下已添加 ${addedCount} 個 CE 紋身，總數 ${Object.keys(setup.bodywriting).length}`);
+    console.log(`[Cheat Extended] ✅ Maplebirch 環境下已添加 ${addedCount} 個 CE 紋身，總數 ${Object.keys(setup.bodywriting).length}`);
 }
 
 // ----------------------------
@@ -71,7 +71,8 @@ function registerCETattoos() {
     if (simpleMod) {
         setup.modTattoos = setup.modTattoos || [];
         setup.modTattoos.push(...tattoos);
-        logger.log(`[Cheat Extended] Simple Frameworks 已註冊 CE 紋身，總數 ${setup.modTattoos.length}`);
+        logger.log(`[Cheat Extended] ✅ Simple Frameworks 已註冊 CE 紋身，總數 ${setup.modTattoos.length}`);
+        console.log(`[Cheat Extended] ✅ Simple Frameworks 已註冊 CE 紋身，總數 ${setup.modTattoos.length}`);
     }
 
     if (maplebirchMod) {
@@ -85,7 +86,8 @@ function registerCETattoos() {
     }
 
     if (!simpleMod && !maplebirchMod) {
-        logger.error('[Cheat Extended] 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊 CE 紋身');
+        logger.error('[Cheat Extended] ❌ 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊 CE 紋身');
+        console.error('[Cheat Extended] ❌ 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊 CE 紋身');
     }
 }
 

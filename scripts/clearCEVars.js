@@ -76,7 +76,12 @@
         //"wardrobe_location",
         "yanling_ui_hide",
         "CE_SFflag",
-        "CE_forceAttendSchool"
+        "CE_forceAttendSchool",
+        "V.CE_moneyCheat",
+        "V.CE_moneyInMultiplier",
+        "V.CE_moneyOutMultiplier",
+        "V.CE_moneyWatchEnabled",
+        "V.CE_moneyChangeQueue"
     ];
 
     // 封裝成全局函數
@@ -84,7 +89,7 @@
         varsToClear.forEach(v => {
             State.variables[v] = undefined; // 清空變數
         });
-        console.log("已清除 CE 相關變數清單");
+        console.log("[Cheat Extended] 🔧已清除 CE 相關變數清單");
     };
     window.clearCEVars = clearCEVars;
 })();
