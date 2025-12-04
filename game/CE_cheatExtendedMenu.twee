@@ -113,6 +113,14 @@
 			<</button>>	<br>
 		</div>
 		
+		<div @class="_selectedOptions is 'CE_statControlPanel' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "狀態控制">>
+				<<set _selectedOptions to "CE_statControlPanel">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<CE_statControlPanel>><br><br><</replace>>
+			<</button>>	<br>
+		</div>
+		
 		<div @class="_selectedOptions is 'damage_fix_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
 			<<button "傷害倍數">>
 				<<set _selectedOptions to "damage_fix_setting">>
@@ -274,7 +282,12 @@
             <<toggleTab>>
             <<replace #customOverlayContent>><div id="CE_settingsDiv"><<swich_bccmeditor>></div><</replace>>
         <</button>>
-
+        
+        <<button "狀態控制">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<CE_statControlPanel>></div><</replace>>
+        <</button>>
+        
         <<button "傷害倍數">>
             <<toggleTab>>
             <<replace #customOverlayContent>><div id="CE_settingsDiv"><<damage_fix_setting>></div><</replace>>

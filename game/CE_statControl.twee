@@ -1,0 +1,391 @@
+:: CE_statControl [widget]
+
+<<widget "CE_statControlPanel">>
+<style>
+#CE_tabButtons {
+    display: flex;
+    flex-wrap: wrap;      /* 自動換行 */
+    gap: 4px 6px;         /* 行列間距 */
+}
+#CE_tabButtons button {
+    flex: 1 0 22%;        /* 每個按鈕佔 22% 寬度，自動換行 */
+    padding: 6px 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background-color: #222;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+}
+#CE_tabButtons button.active {
+    background-color: gold;
+    color: #000;
+    font-weight: bold;
+}
+</style>
+
+<div class="settingsHeader options">
+    <span class="gold">🛠️ 角色屬性作弊面板</span>
+</div>
+<br>
+
+<div id="CE_tabButtons">
+    <<button "疼痛" _active="true">><<replace "#CE_tabContent">><<CE_painCheat>><</replace>><</button>>
+    <<button "創傷">><<replace "#CE_tabContent">><<CE_traumaCheat>><</replace>><</button>>
+    <<button "控制">><<replace "#CE_tabContent">><<CE_controlCheat>><</replace>><</button>>
+    <<button "壓力">><<replace "#CE_tabContent">><<CE_stressCheat>><</replace>><</button>>
+    <<button "敏感度">><<replace "#CE_tabContent">><<CE_sensCheat>><</replace>><</button>>
+    <<button "興奮">><<replace "#CE_tabContent">><<CE_arousalCheat>><</replace>><</button>>
+    <<button "疲勞">><<replace "#CE_tabContent">><<CE_tiredCheat>><</replace>><</button>>
+    <<button "技能">><<replace "#CE_tabContent">><<CE_skillCheat>><</replace>><</button>>
+</div>
+<br>
+
+<div id="CE_tabContent">
+    <<CE_painCheat>>
+</div>
+<</widget>>
+
+<<widget "CE_painCheat">>
+<div class="settingsHeader options">
+    <span class="gold">😌 疼痛控制</span>
+</div>
+<br>
+<div>
+    調整角色疼痛值，開啟後：
+    <ul>
+        <li>增加疼痛量時會按「增加倍率」縮小</li>
+        <li>減少疼痛量時會按「減少倍率」放大</li>
+    </ul>
+</div>
+<br>
+
+<<if $CE_painCheat is undefined>>
+    <<set $CE_painCheat = false>>
+    <<set $CE_painMultiplier = 0.5>>          <!-- 正數倍率 -->
+    <<set $CE_painNegativeMultiplier = 1.5>>  <!-- 負數倍率 -->
+<</if>>
+
+<<set _painBtnText = $CE_painCheat ? "關閉疼痛控制" : "啟用疼痛控制">>
+<<button _painBtnText>>
+    <<set $CE_painCheat = !$CE_painCheat>>
+    <<replace #CE_tabContent>><<CE_painCheat>><</replace>>
+<</button>>
+<br><br>
+
+當前狀態：
+<<if $CE_painCheat>>
+    <span class="green">開</span>
+<<else>>
+    <span class="red">關</span>
+<</if>>
+<br><br>
+
+增加倍率 (0~1，越小越減少增加量)：<br>
+<<numberslider "$CE_painMultiplier" $CE_painMultiplier 0 1 0.05>><br><br>
+
+減少倍率 (1~5，越大越放大減少量)：<br>
+<<numberslider "$CE_painNegativeMultiplier" $CE_painNegativeMultiplier 1 5 0.05>><br><br>
+
+<span class="note">💡 0.5 為減半增加量，2 為雙倍減少量</span>
+<</widget>>
+
+<<widget "CE_traumaCheat">>
+<div class="settingsHeader options">
+    <span class="gold">🧘 創傷控制</span>
+</div>
+<br>
+<div>
+    調整角色創傷值，開啟後：
+    <ul>
+        <li>增加創傷量時會按「增加倍率」縮小</li>
+        <li>減少創傷量時會按「減少倍率」放大</li>
+    </ul>
+</div>
+<br>
+
+<<if $CE_traumaCheat is undefined>>
+    <<set $CE_traumaCheat = false>>
+    <<set $CE_traumaMultiplier = 0.5>>           <!-- 正數倍率 -->
+    <<set $CE_traumaNegativeMultiplier = 1.5>>   <!-- 負數倍率 -->
+<</if>>
+
+<<set _traumaBtnText = $CE_traumaCheat ? "關閉創傷控制" : "啟用創傷控制">>
+<<button _traumaBtnText>>
+    <<set $CE_traumaCheat = !$CE_traumaCheat>>
+    <<replace #CE_tabContent>><<CE_traumaCheat>><</replace>>
+<</button>>
+<br><br>
+
+當前狀態：
+<<if $CE_traumaCheat>>
+    <span class="green">開</span>
+<<else>>
+    <span class="red">關</span>
+<</if>>
+<br><br>
+
+增加倍率 (0~1，越小越減少增加量)：<br>
+<<numberslider "$CE_traumaMultiplier" $CE_traumaMultiplier 0 1 0.05>><br><br>
+
+減少倍率 (1~5，越大越放大減少量)：<br>
+<<numberslider "$CE_traumaNegativeMultiplier" $CE_traumaNegativeMultiplier 1 5 0.05>><br><br>
+
+<span class="note">💡 0.5 為減半增加量，2 為雙倍減少量</span>
+<</widget>>
+
+<<widget "CE_controlCheat">>
+<div class="settingsHeader options">
+    <span class="gold">🎮 控制值作弊</span>
+</div>
+<br>
+<div>
+    調整角色控制值，開啟後：
+    <ul>
+        <li>增加控制值時可放大正面效果</li>
+        <li>減少控制值時可縮小負面損失</li>
+    </ul>
+</div>
+<br>
+
+<<if $CE_controlCheat is undefined>>
+    <<set $CE_controlCheat = false>>
+    <<set $CE_controlMultiplier = 2>>           <!-- 正數倍率 1~5 -->
+    <<set $CE_controlNegativeMultiplier = 0.5>>  <!-- 負數倍率 0~1 -->
+<</if>>
+
+<<set _controlBtnText = $CE_controlCheat ? "關閉控制作弊" : "啟用控制作弊">>
+<<button _controlBtnText>>
+    <<set $CE_controlCheat = !$CE_controlCheat>>
+    <<replace #CE_tabContent>><<CE_controlCheat>><</replace>>
+<</button>>
+<br><br>
+
+當前狀態：
+<<if $CE_controlCheat>>
+    <span class="green">開</span>
+<<else>>
+    <span class="red">關</span>
+<</if>>
+<br><br>
+
+增加倍率 (正面效果放大，1~5)：<br>
+<<numberslider "$CE_controlMultiplier" $CE_controlMultiplier 1 5 0.05>><br><br>
+
+減少倍率 (負面效果縮小，0~1)：<br>
+<<numberslider "$CE_controlNegativeMultiplier" $CE_controlNegativeMultiplier 0 1 0.05>><br><br>
+
+<span class="note">💡 正數倍率放大增加量，負數倍率縮小減少量</span>
+<</widget>>
+
+<<widget "CE_stressCheat">>
+<div class="settingsHeader options">
+    <span class="gold">😰 壓力值作弊</span>
+</div>
+<br>
+<div>
+    調整角色壓力值，開啟後：
+    <ul>
+        <li>增加壓力量時會按「增加倍率」縮小（減少不利效果）</li>
+        <li>減少壓力量時會按「減少倍率」放大（增強有利效果）</li>
+    </ul>
+</div>
+<br>
+
+<<if $CE_stressCheat is undefined>>
+    <<set $CE_stressCheat = false>>
+    <<set $CE_stressMultiplier = 0.5>>          <!-- 正數倍率 -->
+    <<set $CE_stressNegativeMultiplier = 2>>    <!-- 負數倍率 -->
+<</if>>
+
+<<set _stressBtnText = $CE_stressCheat ? "關閉壓力作弊" : "啟用壓力作弊">>
+<<button _stressBtnText>>
+    <<set $CE_stressCheat = !$CE_stressCheat>>
+    <<replace #CE_tabContent>><<CE_stressCheat>><</replace>>
+<</button>>
+<br><br>
+
+當前狀態：
+<<if $CE_stressCheat>>
+    <span class="green">開</span>
+<<else>>
+    <span class="red">關</span>
+<</if>>
+<br><br>
+
+增加倍率 (0~1，越小越削弱增加量)：<br>
+<<numberslider "$CE_stressMultiplier" $CE_stressMultiplier 0 1 0.05>><br><br>
+
+減少倍率 (1~5，越大越放大減少量)：<br>
+<<numberslider "$CE_stressNegativeMultiplier" $CE_stressNegativeMultiplier 1 5 0.05>><br><br>
+
+<span class="note">💡 正數倍率縮小壓力增加，負數倍率放大壓力減少</span>
+<</widget>>
+
+<<widget "CE_sensCheat">>
+<div class="settingsHeader options">
+    <span class="gold">⚡ 敏感度作弊</span>
+</div>
+<br>
+<div>
+    調整角色敏感度，開啟後：
+    <ul>
+        <li>增加敏感度時會按「增加倍率」縮小（減少不利效果）</li>
+        <li>減少敏感度時會按「減少倍率」放大（增強有利效果）</li>
+    </ul>
+</div>
+<br>
+
+<<if $CE_sensCheat is undefined>>
+    <<set $CE_sensCheat = false>>
+    <<set $CE_sensMultiplier = 0.5>>          <!-- 增加倍率 -->
+    <<set $CE_sensNegativeMultiplier = 2>>    <!-- 減少倍率 -->
+<</if>>
+
+<<set _sensBtnText = $CE_sensCheat ? "關閉敏感度作弊" : "啟用敏感度作弊">>
+<<button _sensBtnText>>
+    <<set $CE_sensCheat = !$CE_sensCheat>>
+    <<replace #CE_tabContent>><<CE_sensCheat>><</replace>>
+<</button>>
+<br><br>
+
+當前狀態：
+<<if $CE_sensCheat>>
+    <span class="green">開</span>
+<<else>>
+    <span class="red">關</span>
+<</if>>
+<br><br>
+
+增加倍率 (0~1，越小越削弱增加量)：<br>
+<<numberslider "$CE_sensMultiplier" $CE_sensMultiplier 0 1 0.05>><br><br>
+
+減少倍率 (1~5，越大越放大減少量)：<br>
+<<numberslider "$CE_sensNegativeMultiplier" $CE_sensNegativeMultiplier 1 5 0.05>><br><br>
+
+<span class="note">💡 增加倍率縮小敏感度上升，減少倍率放大下降量</span>
+<</widget>>
+
+<<widget "CE_arousalCheat">>
+<div class="settingsHeader options">
+    <span class="gold">🔥 性興奮作弊</span>
+</div>
+<br>
+<div>
+    調整角色性興奮值，開啟後：
+    <ul>
+        <li>增加興奮時會按「增加倍率」縮小（減少過快上升帶來的刺激）</li>
+        <li>減少興奮時會按「減少倍率」放大（增強有利效果）</li>
+    </ul>
+</div>
+<br>
+
+<<if $CE_arousalCheat is undefined>>
+    <<set $CE_arousalCheat = false>>
+    <<set $CE_arousalMultiplier = 0.5>>          <!-- 增加倍率 -->
+    <<set $CE_arousalNegativeMultiplier = 2>>    <!-- 減少倍率 -->
+<</if>>
+
+<<set _arousalBtnText = $CE_arousalCheat ? "關閉性興奮作弊" : "啟用性興奮作弊">>
+<<button _arousalBtnText>>
+    <<set $CE_arousalCheat = !$CE_arousalCheat>>
+    <<replace #CE_tabContent>><<CE_arousalCheat>><</replace>>
+<</button>>
+<br><br>
+
+當前狀態：
+<<if $CE_arousalCheat>>
+    <span class="green">開</span>
+<<else>>
+    <span class="red">關</span>
+<</if>>
+<br><br>
+
+增加倍率 (0~1，越小越削弱增加量)：<br>
+<<numberslider "$CE_arousalMultiplier" $CE_arousalMultiplier 0 1 0.05>><br><br>
+
+減少倍率 (1~5，越大越放大減少量)：<br>
+<<numberslider "$CE_arousalNegativeMultiplier" $CE_arousalNegativeMultiplier 1 5 0.05>><br><br>
+
+<span class="note">💡 正數倍率縮小興奮增加，負數倍率放大興奮下降</span>
+<</widget>>
+
+<<widget "CE_tiredCheat">>
+<div class="settingsHeader options">
+    <span class="gold">😴 疲勞作弊</span>
+</div>
+<br>
+<div>
+    調整角色疲勞值，開啟後：
+    <ul>
+        <li>增加疲勞時會按「增加倍率」縮小（減少對玩家不利效果）</li>
+        <li>減少疲勞時會按「減少倍率」放大（增強對玩家有利效果）</li>
+    </ul>
+</div>
+<br>
+
+<<if $CE_tiredCheat is undefined>>
+    <<set $CE_tiredCheat = false>>
+    <<set $CE_tiredMultiplier = 0.5>>          <!-- 增加倍率 -->
+    <<set $CE_tiredNegativeMultiplier = 2>>   <!-- 減少倍率 -->
+<</if>>
+
+<<set _tiredBtnText = $CE_tiredCheat ? "關閉疲勞作弊" : "啟用疲勞作弊">>
+<<button _tiredBtnText>>
+    <<set $CE_tiredCheat = !$CE_tiredCheat>>
+    <<replace #CE_tabContent>><<CE_tiredCheat>><</replace>>
+<</button>>
+<=br><br>
+
+當前狀態：
+<<if $CE_tiredCheat>>
+    <span class="green">開</span>
+<<else>>
+    <span class="red">關</span>
+<</if>>
+<br><br>
+
+增加倍率 (0~1，越小越削弱疲勞增加)：<br>
+<<numberslider "$CE_tiredMultiplier" $CE_tiredMultiplier 0 1 0.05>><br><br>
+
+減少倍率 (1~5，越大越放大疲勞下降)：<br>
+<<numberslider "$CE_tiredNegativeMultiplier" $CE_tiredNegativeMultiplier 1 5 0.05>><br><br>
+
+<span class="note">💡 正數倍率縮小疲勞增加，負數倍率放大疲勞下降</span>
+<</widget>>
+
+<<widget "CE_skillCheat">>
+<div class="settingsHeader options">
+    <span class="gold">🏆 技能作弊</span>
+</div>
+<br>
+<div>
+    開啟後，技能增加量會按倍率放大。
+</div>
+<br>
+
+<<if $CE_skillCheat is undefined>>
+    <<set $CE_skillCheat to false>>
+    <<set $CE_skillMultiplier to 2>>
+<</if>>
+
+<<set _skillBtnText = $CE_skillCheat ? "關閉技能作弊" : "啟用技能作弊">>
+<<button _skillBtnText>>
+    <<set $CE_skillCheat = !$CE_skillCheat>>
+    <<replace #CE_tabContent>><<CE_skillCheat>><</replace>>
+<</button>>
+<br><br>
+
+當前狀態：
+<<if $CE_skillCheat>>
+    <span class="green">開</span>
+<<else>>
+    <span class="red">關</span>
+<</if>>
+<br><br>
+
+技能倍率：<br>
+<<numberslider "$CE_skillMultiplier" $CE_skillMultiplier 1 5 0.1>><br>
+<br>
+<span class="note">💡 1 為原始增加量，2 為雙倍，5 為五倍增長</span>
+<</widget>>
