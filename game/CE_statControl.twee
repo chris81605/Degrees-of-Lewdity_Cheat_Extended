@@ -30,7 +30,7 @@
 <br>
 
 <div id="CE_tabButtons">
-    <<button "疼痛" _active="true">><<replace "#CE_tabContent">><<CE_painCheat>><</replace>><</button>>
+    <<button "疼痛">><<replace "#CE_tabContent">><<CE_painCheat>><</replace>><</button>>
     <<button "創傷">><<replace "#CE_tabContent">><<CE_traumaCheat>><</replace>><</button>>
     <<button "控制">><<replace "#CE_tabContent">><<CE_controlCheat>><</replace>><</button>>
     <<button "壓力">><<replace "#CE_tabContent">><<CE_stressCheat>><</replace>><</button>>
@@ -335,7 +335,7 @@
     <<set $CE_tiredCheat = !$CE_tiredCheat>>
     <<replace #CE_tabContent>><<CE_tiredCheat>><</replace>>
 <</button>>
-<=br><br>
+<br><br>
 
 當前狀態：
 <<if $CE_tiredCheat>>
