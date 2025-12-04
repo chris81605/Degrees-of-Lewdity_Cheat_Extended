@@ -45,7 +45,18 @@
 	<</link>><br>
 	當前大量擠🥛修正亂數<span class="blue">$milk_releasedFIX</span>mL<br>
 	<hr>
+	
 	修改🥛量<br>
+	<!--防止個別使用者變數超過滑塊最大值導致爆紅-->
+	
+	<<silently>>
+	    <<set $milk_amount = Math.clamp($milk_amount, 0, 60000)>>
+	    <<set $milk_volume = Math.clamp($milk_volume, 0, 60000)>>
+	    <<set $milk_max = Math.clamp($milk_max, 0, 60000)>>
+    <</silently>>
+	
+	<!--------------------------------------->
+	
 	當前🥛量最大值：<span class="blue">$milk_max mL</span>mL<br>
 	<<numberslider "$milk_max" $milk_max 3000 60000 100 >><br>
 	當前可以儲存多少🥛：<span class="blue">$milk_volume</span>mL<br>
@@ -124,6 +135,17 @@
 	<br>
 	<hr>
 	修改🍼量<br>
+	
+    <!--防止個別使用者變數超過滑塊最大值導致爆紅-->
+	
+	<<silently>>
+	    <<set $semen_amount = Math.clamp($semen_amount, 0, 60000)>>
+	    <<set $semen_volume = Math.clamp($semen_volume, 0, 60000)>>
+	    <<set $semen_max    = Math.clamp($semen_max, 0, 60000)>>
+    <</silently>>
+	
+	<!--------------------------------------->
+	
 	當前🍼量最大值：<span class="blue">$semen_max mL</span>mL<br>
 	<<numberslider "$semen_max" $semen_max 3000 60000 100 >><br>
 	當前可以儲存多少🍼：<span class="blue">$semen_volume</span>mL<br>

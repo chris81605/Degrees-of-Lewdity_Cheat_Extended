@@ -1,0 +1,39 @@
+:: CE_painCheat [widget]
+
+<<widget "CE_painCheat">>
+<div class="settingsHeader options">
+    <span class="gold">😌 疼痛控制</span>
+</div>
+<br>
+<div>
+    調整角色疼痛值，開啟後受到的疼痛會按倍率減少。
+</div>
+<br>
+
+<<if $CE_painCheat is undefined>>
+    <<set $CE_painCheat to false>>
+    <<set $CE_painMultiplier to 0.5>>
+<</if>>
+
+<!-- 開關按鈕 -->
+<<button $CE_painCheat ? "關閉疼痛控制" : "啟用疼痛控制">>
+    <<set $CE_painCheat = !$CE_painCheat>>
+    <<replace #CE_settingsDiv>><<CE_painCheat>><</replace>>
+<</button>>
+<br><br>
+
+<!-- 顯示當前狀態 -->
+當前狀態：
+<<if $CE_painCheat>>
+    <span class="green">開</span>
+<<else>>
+    <span class="red">關</span>
+<</if>>
+<br><br>
+
+<!-- 調整疼痛倍率 -->
+疼痛倍率 (0~1，越小疼痛越低)：<br>
+<<numberslider "$CE_painMultiplier" $CE_painMultiplier 0 1 0.05>><br>
+<br>
+<span class="note">💡 1 為原始疼痛，0.5 為減半，0 為完全免疫</span>
+<</widget>>

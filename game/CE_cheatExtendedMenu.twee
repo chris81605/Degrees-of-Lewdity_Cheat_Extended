@@ -2,10 +2,9 @@
 
 <!--用於顯示於左側狀態-->
 <<widget "CEstatebox">> 
-        
-    <div id="CEstatebox">	
-        <div id="CE_Toggle"><<CE_Toggle>></div>
-        <div id="CE_UiLists"></div>
+    <div id="CE_Toggle"><<CE_Toggle>></div>   
+    <div id="CEstatebox">	        
+        <div id="CE_UiLists"><<CE_UiLists>></div>
 	</div>
 	
 <</widget>>
@@ -17,10 +16,9 @@
         <<button "作弊拓展">>
             <<set $CE_Toggle = $CE_Toggle == 0 ? 1: 0>>
             <<replace #CEstatebox>>
-			    <<CE_Toggle>>
+			    <<CE_UiLists>>
 		    <</replace>>
-        <</button>>
-        <<CE_UiLists>>	  <!--暫時放這-->    
+        <</button>>  
 <</widget>>
 
 <<widget "CE_UiLists">>
@@ -41,6 +39,7 @@
     <</if>>  
 <</widget>>
 
+<!--棄用
 <<widget "CEstatebox_hiden">>
     <<if $swich is 1 or $swich_teleportation is 1 or $swich_yanling is 1>>
         <<run $("#CEstatebox").removeAttr("hidden")>>
@@ -48,13 +47,14 @@
         <<run $("#CEstatebox").attr("hidden", true)>>
     <</if>>
 <</widget>>
+-->
 
 <!--sideBarIcon入口-->
 <<widget "CE_sideBarIcon">>
     <input type="button" class="saveMenuButton CE_sideBarIconBtn" value="" onclick="CEiconClicked()">
 <</widget>>
 
-<!--按鈕入口-->
+<!--按鈕入口，已棄用，僅保留功能-->
 <<widget "CE_buttom">>
     <<button "作弊拓展">>
         <<CEoverlayReplace "CEcheatMenu">>
@@ -81,7 +81,6 @@
 	</div>	
 <</widget>>
 
-<!--用於顯示在彈窗畫面-->
 <<widget "cheat_extended_options">> 
 	<<if _selectedOptions is undefined>><<set _selectedOptions to "swich">><</if>>
 		<div @class="_selectedOptions is 'swich' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
@@ -164,6 +163,13 @@
 				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
 				<<replace #CE_settingsDiv>><<dance_reward_setting>><br><br><</replace>>
 			<</button>>	<br>
+		</div>
+		<div @class="_selectedOptions is 'CE_moneyCheat' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+			<<button "收支調整">>
+				<<set _selectedOptions to "CE_moneyCheat">>
+				<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+				<<replace #CE_settingsDiv>><<CE_moneyCheat>><br><br><</replace>>
+			<</button>>	<br>
 		</div>	
 		<div @class="_selectedOptions is 'brothel_basement_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
 			<<button "尋歡洞報酬加倍">>
@@ -244,8 +250,7 @@
 		</div>	
 <</widget>>
 
-
-
+<!--用於顯示在彈窗畫面-->
 <<widget "title_cheatExtendedMenu">>
     <<setupTabs>>
     <div id="cheat_extended_options" class="CEtab">
@@ -301,7 +306,12 @@
             <<toggleTab>>
             <<replace #customOverlayContent>><div id="CE_settingsDiv"><<black_stores_setting>></div><</replace>>
         <</button>>
-
+        
+        <<button "收支倍率調整">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<CE_moneyCheat>></div><</replace>>
+        <</button>>
+        
         <<button "跳舞報酬加倍">>
             <<toggleTab>>
             <<replace #customOverlayContent>><div id="CE_settingsDiv"><<dance_reward_setting>></div><</replace>>

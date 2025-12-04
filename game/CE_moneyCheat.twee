@@ -1,0 +1,58 @@
+:: CE_moneyCheat [widget]
+
+<<widget "CE_moneyCheat">>
+	<div class="settingsHeader options"><span class="gold">收支倍率調整</span></div>	
+	<br><br>
+    調整Pc收支的倍率，跳舞賺更多錢，給貝利交更少的錢。<br>
+	<<if $CE_moneyCheat is undefined>>
+		<<set $CE_moneyCheat to false>>
+		<<set $CE_moneyInMultiplier to 2>>
+		<<set $CE_moneyOutMultiplier to 0.5>>
+	<</if>>
+	<<button "收支倍率調整">>
+		<<set $CE_moneyCheat = $CE_moneyCheat == false? true : false>>
+		<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
+		<<replace #CE_settingsDiv>><<CE_moneyCheat>><br><br><</replace>>
+	<</button>><br>
+	收支倍率調整：
+	<<if $CE_moneyCheat is false>>
+		<span class="red">關</span><br>
+	<<else>>
+		<span class="green">開</span><br>
+	<</if>>
+	<br>
+	收支倍率調整：<br>
+	收入倍率（範圍:1-100）：
+	<<numberslider "$CE_moneyInMultiplier" $CE_moneyInMultiplier 1 100 0.5>><br>
+	支出倍率（範圍0.1-1）：
+	<<numberslider "$CE_moneyOutMultiplier" $CE_moneyOutMultiplier 0.1 1 0.1>><br>
+	<br>
+
+    <<if $debug>>
+
+	    <!-- Money Watch 監控開關 -->
+	    <div class="settingsHeader options"><span class="gold">Money Watch（金錢變動監控）</span></div>
+	    <br>
+	    
+	    嘗試監控所有直接操作 V.money 的行為並將變動值重新導向至受控的宏執行<br>
+	    <span class ="red">⚠️警告此功能為實驗性功能，可能不穩定，或不按預期操作，啟用後將全面接管所有操作V.money變量的行為</span><br>
+	    
+	    <<if $CE_moneyWatchEnabled is undefined>>
+		    <<set $CE_moneyWatchEnabled to false>>
+	    <</if>>
+
+	    <<button "Money Watch">>
+		    <<set $CE_moneyWatchEnabled = $CE_moneyWatchEnabled ? false : true>>
+		    
+		    <<replace #CE_settingsDiv>><<CE_moneyCheat>><br><br><</replace>>
+	    <</button>><br>
+
+	    Money Watch：
+	    <<if $CE_moneyWatchEnabled is false>>
+		    <span class="red">關</span><br>
+	    <<else>>
+		    <span class="green">開</span><br>
+	    <</if>>
+
+    <</if>>
+<</widget>>

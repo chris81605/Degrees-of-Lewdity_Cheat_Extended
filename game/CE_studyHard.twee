@@ -18,9 +18,10 @@
     <<else>>
         開關：<span class="green">開</span><br>
     <</if>>    
-    <<if $debug>>
-        <<print JSON.stringify(V.daily.school.attended, null, 2)>><br>
-
+    <<if $debug or $CE_forceAttendSchool>>
+        <<if $debug>>
+            V.daily.school.attended:<<print JSON.stringify(V.daily.school.attended, null, 2)>><br>
+        <</if>>
         <!-- 基本固定科目 -->
         <<set _attended = {}>>
         <<set _subjects = ["science", "english", "history", "swimming"]>>
