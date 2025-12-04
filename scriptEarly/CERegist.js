@@ -63,7 +63,7 @@ simpleFrameworks.addto('iModOptions', 'swich_DEBUG_MODE')
                         simpleFrameworks.addto('ModCaptionAfterDescription', 'bccmeditor_init');
                         simpleFrameworks.addto('ModCaptionAfterDescription', 'CEstatebox');
                         simpleFrameworks.addto('iModOptions', 'swich_DEBUG_MODE');
-                        State.variables.CE_SFflag = true;
+                        V.CE_SFflag = true;
 
                     } else {
                         logger.error(`[Cheat Extended] Simple Frameworks 版本過低，至少需要 v2.0.5，當前 v${simpleMod.version}`);
