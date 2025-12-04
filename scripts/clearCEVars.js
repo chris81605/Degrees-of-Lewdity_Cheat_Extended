@@ -77,11 +77,30 @@
         "yanling_ui_hide",
         "CE_SFflag",
         "CE_forceAttendSchool",
-        "V.CE_moneyCheat",
-        "V.CE_moneyInMultiplier",
-        "V.CE_moneyOutMultiplier",
-        "V.CE_moneyWatchEnabled",
-        "V.CE_moneyChangeQueue"
+        // 新增 CE 控制面板變數
+        "CE_painCheat",
+        "CE_painMultiplier",
+        "CE_painNegativeMultiplier",
+        "CE_traumaCheat",
+        "CE_traumaMultiplier",
+        "CE_traumaNegativeMultiplier",
+        "CE_controlCheat",
+        "CE_controlMultiplier",
+        "CE_controlNegativeMultiplier",
+        "CE_stressCheat",
+        "CE_stressMultiplier",
+        "CE_stressNegativeMultiplier",
+        "CE_sensCheat",
+        "CE_sensMultiplier",
+        "CE_sensNegativeMultiplier",
+        "CE_arousalCheat",
+        "CE_arousalMultiplier",
+        "CE_arousalNegativeMultiplier",
+        "CE_tiredCheat",
+        "CE_tiredMultiplier",
+        "CE_tiredNegativeMultiplier",
+        "CE_skillCheat",
+        "CE_skillMultiplier"
     ];
 
     // 封裝成全局函數
