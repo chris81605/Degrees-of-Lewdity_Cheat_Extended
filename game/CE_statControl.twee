@@ -25,7 +25,7 @@
 </style>
 
 <div class="settingsHeader options">
-    <span class="gold">🛠️ 角色屬性作弊面板</span>
+    <span class="gold">🛠️ 角色屬性控制面板</span>
 </div>
 <br>
 
@@ -136,7 +136,7 @@
 
 <<widget "CE_controlCheat">>
 <div class="settingsHeader options">
-    <span class="gold">🎮 控制值作弊</span>
+    <span class="gold">🎮 自控值控制</span>
 </div>
 <br>
 <div>
@@ -154,7 +154,7 @@
     <<set $CE_controlNegativeMultiplier = 0.5>>  <!-- 負數倍率 0~1 -->
 <</if>>
 
-<<set _controlBtnText = $CE_controlCheat ? "關閉控制作弊" : "啟用控制作弊">>
+<<set _controlBtnText = $CE_controlCheat ? "關閉自制控制" : "啟用自制控制">>
 <<button _controlBtnText>>
     <<set $CE_controlCheat = !$CE_controlCheat>>
     <<replace #CE_tabContent>><<CE_controlCheat>><</replace>>
@@ -180,7 +180,7 @@
 
 <<widget "CE_stressCheat">>
 <div class="settingsHeader options">
-    <span class="gold">😰 壓力值作弊</span>
+    <span class="gold">😰 壓力值控制</span>
 </div>
 <br>
 <div>
@@ -198,7 +198,7 @@
     <<set $CE_stressNegativeMultiplier = 2>>    <!-- 負數倍率 -->
 <</if>>
 
-<<set _stressBtnText = $CE_stressCheat ? "關閉壓力作弊" : "啟用壓力作弊">>
+<<set _stressBtnText = $CE_stressCheat ? "關閉壓力控制" : "啟用壓力控制">>
 <<button _stressBtnText>>
     <<set $CE_stressCheat = !$CE_stressCheat>>
     <<replace #CE_tabContent>><<CE_stressCheat>><</replace>>
@@ -224,7 +224,7 @@
 
 <<widget "CE_sensCheat">>
 <div class="settingsHeader options">
-    <span class="gold">⚡ 敏感度作弊</span>
+    <span class="gold">⚡ 敏感度控制</span>
 </div>
 <br>
 <div>
@@ -242,7 +242,7 @@
     <<set $CE_sensNegativeMultiplier = 2>>    <!-- 減少倍率 -->
 <</if>>
 
-<<set _sensBtnText = $CE_sensCheat ? "關閉敏感度作弊" : "啟用敏感度作弊">>
+<<set _sensBtnText = $CE_sensCheat ? "關閉敏感度控制" : "啟用敏感度控制">>
 <<button _sensBtnText>>
     <<set $CE_sensCheat = !$CE_sensCheat>>
     <<replace #CE_tabContent>><<CE_sensCheat>><</replace>>
@@ -268,7 +268,7 @@
 
 <<widget "CE_arousalCheat">>
 <div class="settingsHeader options">
-    <span class="gold">🔥 性興奮作弊</span>
+    <span class="gold">🔥 性興奮控制</span>
 </div>
 <br>
 <div>
@@ -286,7 +286,7 @@
     <<set $CE_arousalNegativeMultiplier = 2>>    <!-- 減少倍率 -->
 <</if>>
 
-<<set _arousalBtnText = $CE_arousalCheat ? "關閉性興奮作弊" : "啟用性興奮作弊">>
+<<set _arousalBtnText = $CE_arousalCheat ? "關閉性興奮控制" : "啟用性興奮控制">>
 <<button _arousalBtnText>>
     <<set $CE_arousalCheat = !$CE_arousalCheat>>
     <<replace #CE_tabContent>><<CE_arousalCheat>><</replace>>
@@ -312,7 +312,7 @@
 
 <<widget "CE_tiredCheat">>
 <div class="settingsHeader options">
-    <span class="gold">😴 疲勞作弊</span>
+    <span class="gold">😴 疲勞控制</span>
 </div>
 <br>
 <div>
@@ -330,7 +330,7 @@
     <<set $CE_tiredNegativeMultiplier = 2>>   <!-- 減少倍率 -->
 <</if>>
 
-<<set _tiredBtnText = $CE_tiredCheat ? "關閉疲勞作弊" : "啟用疲勞作弊">>
+<<set _tiredBtnText = $CE_tiredCheat ? "關閉疲勞控制" : "啟用疲勞控制">>
 <<button _tiredBtnText>>
     <<set $CE_tiredCheat = !$CE_tiredCheat>>
     <<replace #CE_tabContent>><<CE_tiredCheat>><</replace>>
@@ -356,7 +356,7 @@
 
 <<widget "CE_skillCheat">>
 <div class="settingsHeader options">
-    <span class="gold">🏆 技能作弊</span>
+    <span class="gold">🏆 技能控制</span>
 </div>
 <br>
 <div>
@@ -369,7 +369,7 @@
     <<set $CE_skillMultiplier to 2>>
 <</if>>
 
-<<set _skillBtnText = $CE_skillCheat ? "關閉技能作弊" : "啟用技能作弊">>
+<<set _skillBtnText = $CE_skillCheat ? "關閉技能控制" : "啟用技能控制">>
 <<button _skillBtnText>>
     <<set $CE_skillCheat = !$CE_skillCheat>>
     <<replace #CE_tabContent>><<CE_skillCheat>><</replace>>
