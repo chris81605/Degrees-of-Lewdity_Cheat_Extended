@@ -1,196 +1,62 @@
-// ---------------------- Pain 宏 Hook ----------------------
+/**
+ * ========================================================
+ * Cheat Extended 宏 Hook 通用函數說明
+ * ========================================================
+ *
+ * 功能：
+ *  1. 安全 hook Twine/SugarCube 宏，保留原始 this 上下文。
+ *  2. 可修改任意數量參數（args），支援正負倍率、單倍率或自訂邏輯。
+ *  3. 支援 log 輸出前後參數變化。
+ *  4. 可快速擴充新宏，只需呼叫 hookMacro()。
+ *
+ * 核心函數：
+ *  hookMacro(macroName, options)
+ *
+ * 參數說明：
+ *  - macroName : 字串，宏的名稱 (Macro.get(macroName))
+ *  - options : 物件，包含以下欄位：
+ *      * cheatVar        : V 物件上的開關名稱 (boolean)，開啟/關閉作弊
+ *      * multiplierVar   : V 物件上的正數倍率名稱 (number)
+ *      * negativeVar     : V 物件上的負數倍率名稱 (number，可選)
+ *      * modifyFunc      : 函數 (args) → 回傳修改後的 args 陣列
+ *                          args 是宏原始傳入的參數陣列，可修改任意參數或新增參數
+ *      * logFunc         : 函數 (macroName, oldArgs, newArgs)，可自訂 log
+ *
+ * 使用範例：
+ * hookMacro('pain', {
+ *     cheatVar: 'CE_painCheat',
+ *     multiplierVar: 'CE_painMultiplier',
+ *     negativeVar: 'CE_painNegativeMultiplier',
+ *     modifyFunc: args => {
+ *         args[0] = args[0] > 0 ? args[0] * V.CE_painMultiplier : args[0] * V.CE_painNegativeMultiplier;
+ *         args[1] = args[1] ?? 4; // 保留或補預設值
+ *         return args;
+ *     },
+ *     logFunc: (name, oldArgs, newArgs) => console.log(`😌 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
+ * });
+ *
+ * 注意事項：
+ *  1. 所有宏的 this 上下文會被保留，不會丟失隱藏屬性。
+ *  2. 若宏有多個參數需修改，可全部寫在 modifyFunc 中操作。
+ *  3. 不需要修改的參數可以直接保留。
+ *  4. 若需要新增參數，也可以在 modifyFunc 裡補入 args 陣列。
+ *  5. logFunc 可自訂 log 或直接省略。
+ *
+ * ========================================================
+ * 作者: CahtGpt & 隨風飄逸
+ * 日期: 2025-12-05
+ * ========================================================
+ */
+
 (function(){
-    const macro = Macro.get('pain');
-    if (!macro) {
-        console.error("[Cheat Extended] ❌ 找不到 pain 宏");
-        return;
-    }
-
-    const originalHandler = macro.handler;
-
-    // 初始化變數
-    if (typeof V.CE_painCheat !== 'boolean') V.CE_painCheat = false;
-    if (typeof V.CE_painMultiplier !== 'number') V.CE_painMultiplier = 0.5;          // 正數倍率 0~1
-    if (typeof V.CE_painNegativeMultiplier !== 'number') V.CE_painNegativeMultiplier = 2; // 負數倍率 1~5
-
-    macro.handler = function() {
-        const args = Array.from(this.args);
-        let amount = Number(args[0] ?? 0);
-        let modifier = args[1] ?? 4;
-
-        if (V.CE_painCheat && amount !== 0) {
-            if (amount > 0) {
-                amount *= V.CE_painMultiplier;
-            } else {
-                amount *= V.CE_painNegativeMultiplier;
-            }
-            console.log(`[Cheat Extended] 😌 Pain ${args[0]} → ${amount}`);
-        }
-
-        return originalHandler.call({ args: [amount, modifier] });
-    };
-
-    console.log("[Cheat Extended] ✅ Pain macro hook（正負倍率）");
-})();
-
-// ---------------------- masopain 宏 Hook ----------------------
-//似乎與受虐掛勾
-(function(){
-    const macro = Macro.get('masopain');
-    if (!macro) {
-        console.warn("[Cheat Extended] ⚠️ 找不到宏: masopain");
-        return;
-    }
-
-    const originalHandler = macro.handler;
-
-    // 初始化作弊變數（與 pain 共用）
-    if (typeof V.CE_painCheat !== 'boolean') V.CE_painCheat = false;
-    if (typeof V.CE_painMultiplier !== 'number') V.CE_painMultiplier = 0.5;          // 增加時倍率
-    if (typeof V.CE_painNegativeMultiplier !== 'number') V.CE_painNegativeMultiplier = 2; // 減少時倍率
-
-    // Hook 宏
-    macro.handler = function() {
-        const args = Array.from(this.args);
-        let amount = Number(args[0] ?? 0);
-
-        if (V.CE_painCheat && amount !== 0) {
-            if (amount > 0) {
-                amount *= V.CE_painMultiplier;  // 增加 → 縮小
-            } else {
-                amount *= V.CE_painNegativeMultiplier;  // 減少 → 放大
-            }
-            console.log(`[Cheat Extended] 😌 Masopain ${args[0]} → ${amount}`);
-        }
-
-        // 呼叫原始 masopain 宏，保留 arousal 計算
-        return originalHandler.call({ args: [amount] });
-    };
-
-    console.log("[Cheat Extended] ✅ Masopain 宏已 Hook（與 pain 共用倍率）");
-})();
-
-// ---------------------- Trauma 宏 Hook ----------------------
-(function () {
-    if (typeof V.CE_traumaCheat !== 'boolean') V.CE_traumaCheat = false;
-    if (typeof V.CE_traumaMultiplier !== 'number') V.CE_traumaMultiplier = 0.5;          // 正數倍率 0~1
-    if (typeof V.CE_traumaNegativeMultiplier !== 'number') V.CE_traumaNegativeMultiplier = 2; // 負數倍率 1~5
-
-    const traumaMacros = ['trauma', 'combattrauma', 'straighttrauma'];
-
-    traumaMacros.forEach(name => {
-        const macro = Macro.get(name);
-        if (!macro) {
-            console.warn(`[Cheat Extended] ⚠️ 找不到宏: ${name}`);
-            return;
-        }
-
-        const originalHandler = macro.handler;
-
-        macro.handler = function () {
-            const args = Array.from(this.args);
-            let amount = Number(args[0] ?? 0);
-
-            if (V.CE_traumaCheat && amount !== 0) {
-                if (amount > 0) {
-                    amount *= V.CE_traumaMultiplier;
-                } else {
-                    amount *= V.CE_traumaNegativeMultiplier;
-                }
-                console.log(`[Cheat Extended] 💀 ${name} ${args[0]} → ${amount}`);
-            }
-
-            return originalHandler.call({ args: [amount] });
-        };
-
-        console.log(`[Cheat Extended] ✅ 宏 ${name} hook（正負倍率）`);
-    });
-})();
-
-// ---------------------- Control 宏 Hook ----------------------
-(function () {
-    if (typeof V.CE_controlCheat !== 'boolean') V.CE_controlCheat = false;
-    if (typeof V.CE_controlMultiplier !== 'number') V.CE_controlMultiplier = 2;          // 正數倍率 1~5
-    if (typeof V.CE_controlNegativeMultiplier !== 'number') V.CE_controlNegativeMultiplier = 0.5; // 負數倍率 0~1
-
-    const controlMacros = ['control', 'combatcontrol'];
-
-    controlMacros.forEach(name => {
-        const macro = Macro.get(name);
-        if (!macro) {
-            console.warn(`[Cheat Extended] ⚠️ 找不到宏: ${name}`);
-            return;
-        }
-
-        const originalHandler = macro.handler;
-
-        macro.handler = function () {
-            const args = Array.from(this.args);
-            let amount = Number(args[0] ?? 0);
-
-            if (V.CE_controlCheat && amount !== 0) {
-                if (amount > 0) {
-                    amount *= V.CE_controlMultiplier;
-                } else {
-                    amount *= V.CE_controlNegativeMultiplier;
-                }
-                console.log(`[Cheat Extended] 🎮 ${name} ${args[0]} → ${amount}`);
-            }
-
-            return originalHandler.call({ args: [amount] });
-        };
-
-        console.log(`[Cheat Extended] ✅ 宏 ${name} hook（正負倍率）`);
-    });
-})();
-
-// ---------------------- stress 宏 Hook ----------------------
-(function(){
-    const macro = Macro.get('stress');
-    if (!macro) {
-        console.error("[Cheat Extended] ❌ 找不到 stress 宏");
-        return;
-    }
-
-    // 保存原 handler
-    const originalHandler = macro.handler;
-
-    // 初始化作弊變數
-    if (typeof V.CE_stressCheat !== 'boolean') V.CE_stressCheat = false;
-    if (typeof V.CE_stressMultiplier !== 'number') V.CE_stressMultiplier = 0.5;          // 正數倍率：增加量衰減 0~1
-    if (typeof V.CE_stressNegativeMultiplier !== 'number') V.CE_stressNegativeMultiplier = 2; // 負數倍率：減少量放大 >1
-
-    // Hook
-    macro.handler = function(){
-        const args = Array.from(this.args);
-        let amount = Number(args[0] ?? 0);
-        let multiplierOverride = args[1] ? Number(args[1]) : undefined;
-
-        if (V.CE_stressCheat && amount) {
-            if (amount > 0) {
-                amount *= V.CE_stressMultiplier;              // 衰減增加量
-            } else {
-                amount *= V.CE_stressNegativeMultiplier;      // 放大減少量
-            }
-        }
-
-        return originalHandler.call({ args: [amount, multiplierOverride] });
-    };
-
-    console.log("[Cheat Extended] ✅ Stress 宏已 Hook（壓力可調整正負倍率）");
-})();
-
-// ---------------------- sensitivity 宏 Hook ----------------------
-(function(){
-    // 初始化作弊變數
-    if (typeof V.CE_sensCheat !== 'boolean') V.CE_sensCheat = false;
-    if (typeof V.CE_sensMultiplier !== 'number') V.CE_sensMultiplier = 0.5;           // 增加倍率 0~1
-    if (typeof V.CE_sensNegativeMultiplier !== 'number') V.CE_sensNegativeMultiplier = 2; // 減少倍率 >1
-
-    const keys = ["breast", "mouth", "genital", "bottom"];
-
-    keys.forEach(key => {
-        const macroName = key + "_sensitivity";
+    // ------------------- 通用 Hook 函數 -------------------
+    function hookMacro(macroName, {
+        cheatVar,          // V.CE_xxx 作弊開關
+        multiplierVar,     // V.CE_xxxMultiplier 正數倍率
+        negativeVar,       // V.CE_xxxNegativeMultiplier 負數倍率（可選）
+        modifyFunc,        // 自訂修改函數 (args) → 回傳新的 args
+        logFunc            // 自訂 log 函數 (macroName, oldArgs, newArgs)
+    }) {
         const macro = Macro.get(macroName);
         if (!macro) {
             console.warn(`[Cheat Extended] ⚠️ 找不到宏: ${macroName}`);
@@ -199,117 +65,147 @@
 
         const originalHandler = macro.handler;
 
-        macro.handler = function(){
-            const args = Array.from(this.args);
-            let amount = Number(args[0] ?? 0);
-
-            if (V.CE_sensCheat && amount) {
-                if (amount > 0) amount *= V.CE_sensMultiplier;       // 增加不利 → 衰減
-                else amount *= V.CE_sensNegativeMultiplier;          // 減少有利 → 放大
-            }
-
-            return originalHandler.call({ args: [amount] });
-        };
-
-        console.log(`[Cheat Extended] ✅ 宏 ${macroName} 已 Hook（敏感度可調整正負倍率）`);
-    });
-})();
-
-// ---------------------- arousal 宏 Hook ----------------------
-(function(){
-    const macroNames = ["arousal", "breastarousal", "genitalarousal"];
-    
-    // 初始化作弊變數
-    if (typeof V.CE_arousalCheat !== 'boolean') V.CE_arousalCheat = false;
-    if (typeof V.CE_arousalMultiplier !== 'number') V.CE_arousalMultiplier = 0.5;           // 增加倍率 0~1
-    if (typeof V.CE_arousalNegativeMultiplier !== 'number') V.CE_arousalNegativeMultiplier = 2; // 減少倍率 >1
-
-    macroNames.forEach(name => {
-        const macro = Macro.get(name);
-        if (!macro) {
-            console.warn(`[Cheat Extended] ⚠️ 找不到宏: ${name}`);
-            return;
-        }
-
-        const originalHandler = macro.handler;
+        // 初始化作弊變數
+        if (typeof V[cheatVar] !== 'boolean') V[cheatVar] = false;
+        if (typeof V[multiplierVar] !== 'number') V[multiplierVar] = 1;
+        if (negativeVar && typeof V[negativeVar] !== 'number') V[negativeVar] = 1;
 
         macro.handler = function(){
-            const args = Array.from(this.args);
-            let amount = Number(args[0] ?? 0);
-            let source = args[1]; // source 可以是 undefined 或字串
+            let args = Array.from(this.args);
+            const oldArgs = [...args];
 
-            if (V.CE_arousalCheat && amount) {
-                if (amount > 0) amount *= V.CE_arousalMultiplier;      // 增加量衰減
-                else amount *= V.CE_arousalNegativeMultiplier;         // 減少量放大
+            if (V[cheatVar] && modifyFunc) {
+                args = modifyFunc(args);
             }
 
-            return originalHandler.call({ args: [amount, source] });
+            // 覆寫回 this.args
+            for (let i = 0; i < args.length; i++) this.args[i] = args[i];
+
+            if (logFunc) logFunc(macroName, oldArgs, args);
+
+            return originalHandler.call(this);
         };
 
-        console.log(`[Cheat Extended] ✅ 宏 ${name} 已 Hook（性興奮可調整正負倍率）`);
+        console.log(`[Cheat Extended] ✅ 宏 ${macroName} 已 Hook`);
+    }
+
+    // ------------------- Pain / Masopain -------------------
+    ['pain','masopain'].forEach(name => {
+        hookMacro(name, {
+            cheatVar: 'CE_painCheat',
+            multiplierVar: 'CE_painMultiplier',
+            negativeVar: 'CE_painNegativeMultiplier',
+            modifyFunc: args => {
+                let amount = Number(args[0] ?? 0);
+                args[0] = amount > 0 ? amount * V.CE_painMultiplier : amount * V.CE_painNegativeMultiplier;
+                // Pain 第二參數保留
+                if (name === 'pain') args[1] = args[1] ?? 4;
+                return args;
+            },
+            logFunc: (name, oldArgs, newArgs) => console.log(`😌 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
+        });
     });
-})();
 
-// ---------------------- tiredness 宏 Hook ----------------------
-(function(){
-    const macro = Macro.get('tiredness');
-    if (!macro) return console.warn("[Cheat Extended] ⚠️ 找不到宏: tiredness");
+    // ------------------- Trauma -------------------
+    ['trauma','combattrauma','straighttrauma'].forEach(name => {
+        hookMacro(name, {
+            cheatVar: 'CE_traumaCheat',
+            multiplierVar: 'CE_traumaMultiplier',
+            negativeVar: 'CE_traumaNegativeMultiplier',
+            modifyFunc: args => {
+                let amount = Number(args[0] ?? 0);
+                args[0] = amount > 0 ? amount * V.CE_traumaMultiplier : amount * V.CE_traumaNegativeMultiplier;
+                return args;
+            },
+            logFunc: (name, oldArgs, newArgs) => console.log(`💀 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
+        });
+    });
 
-    const originalHandler = macro.handler;
+    // ------------------- Control -------------------
+    ['control','combatcontrol'].forEach(name => {
+        hookMacro(name, {
+            cheatVar: 'CE_controlCheat',
+            multiplierVar: 'CE_controlMultiplier',
+            negativeVar: 'CE_controlNegativeMultiplier',
+            modifyFunc: args => {
+                let amount = Number(args[0] ?? 0);
+                args[0] = amount > 0 ? amount * V.CE_controlMultiplier : amount * V.CE_controlNegativeMultiplier;
+                return args;
+            },
+            logFunc: (name, oldArgs, newArgs) => console.log(`🎮 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
+        });
+    });
 
-    // 初始化作弊變數
-    if (typeof V.CE_tiredCheat !== 'boolean') V.CE_tiredCheat = false;
-    if (typeof V.CE_tiredMultiplier !== 'number') V.CE_tiredMultiplier = 0.5;           // 增加倍率
-    if (typeof V.CE_tiredNegativeMultiplier !== 'number') V.CE_tiredNegativeMultiplier = 2; // 減少倍率
+    // ------------------- Stress -------------------
+    hookMacro('stress', {
+        cheatVar: 'CE_stressCheat',
+        multiplierVar: 'CE_stressMultiplier',
+        negativeVar: 'CE_stressNegativeMultiplier',
+        modifyFunc: args => {
+            let amount = Number(args[0] ?? 0);
+            args[0] = amount > 0 ? amount * V.CE_stressMultiplier : amount * V.CE_stressNegativeMultiplier;
+            return args;
+        },
+        logFunc: (name, oldArgs, newArgs) => console.log(`😰 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
+    });
 
-    macro.handler = function(){
-        const args = Array.from(this.args);
-        let amount = Number(args[0] ?? 0);
+    // ------------------- Sensitivity -------------------
+    ['breast','mouth','genital','bottom'].forEach(key => {
+        hookMacro(key + '_sensitivity', {
+            cheatVar: 'CE_sensCheat',
+            multiplierVar: 'CE_sensMultiplier',
+            negativeVar: 'CE_sensNegativeMultiplier',
+            modifyFunc: args => {
+                let amount = Number(args[0] ?? 0);
+                args[0] = amount > 0 ? amount * V.CE_sensMultiplier : amount * V.CE_sensNegativeMultiplier;
+                return args;
+            }
+        });
+    });
 
-        if (V.CE_tiredCheat && amount) {
-            if (amount > 0) amount *= V.CE_tiredMultiplier;
-            else amount *= V.CE_tiredNegativeMultiplier;
+    // ------------------- Arousal -------------------
+    ['arousal','breastarousal','genitalarousal'].forEach(name => {
+        hookMacro(name, {
+            cheatVar: 'CE_arousalCheat',
+            multiplierVar: 'CE_arousalMultiplier',
+            negativeVar: 'CE_arousalNegativeMultiplier',
+            modifyFunc: args => {
+                let amount = Number(args[0] ?? 0);
+                args[0] = amount > 0 ? amount * V.CE_arousalMultiplier : amount * V.CE_arousalNegativeMultiplier;
+                return args;
+            },
+            logFunc: (name, oldArgs, newArgs) => console.log(`🔥 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
+        });
+    });
+
+    // ------------------- Tiredness -------------------
+    hookMacro('tiredness', {
+        cheatVar: 'CE_tiredCheat',
+        multiplierVar: 'CE_tiredMultiplier',
+        negativeVar: 'CE_tiredNegativeMultiplier',
+        modifyFunc: args => {
+            let amount = Number(args[0] ?? 0);
+            args[0] = amount > 0 ? amount * V.CE_tiredMultiplier : amount * V.CE_tiredNegativeMultiplier;
+            return args;
         }
+    });
 
-        return originalHandler.call({ args: [amount] });
-    };
-
-    console.log("[Cheat Extended] ✅ 宏 tiredness 已 Hook（疲勞可調整正負倍率）");
-})();
-
-// ---------------------- SexSkill相關 宏 Hook ----------------------
-(function(){
-    const skillMacros = [
+    // ------------------- SexSkill -------------------
+    [
         "oralskill","vaginalskill","penileskill","handskill","analskill",
         "feetskill","bottomskill","thighskill","chestskill",
         "beauty","seductionskill","skulduggery"
-    ];
-
-    // 初始化作弊變數
-    if (typeof V.CE_skillCheat !== 'boolean') V.CE_skillCheat = false;
-    if (typeof V.CE_skillMultiplier !== 'number') V.CE_skillMultiplier = 2; // 預設雙倍
-
-    skillMacros.forEach(name => {
-        const macro = Macro.get(name);
-        if (!macro) {
-            console.warn(`[Cheat Extended] ⚠️ 找不到宏: ${name}`);
-            return;
-        }
-
-        const originalHandler = macro.handler;
-
-        macro.handler = function() {
-            let args = Array.from(this.args);
-            let amount = Number(args[0] ?? 0);
-
-            if (V.CE_skillCheat && amount > 0) {
-                amount *= V.CE_skillMultiplier;
-                console.log(`[Cheat Extended] 💪 ${name} 原始 ${args[0]} → ${amount}`);
-            }
-
-            return originalHandler.call({ args: [amount] });
-        };
-
-        console.log(`[Cheat Extended] ✅ 宏 ${name} 已 Hook（技能可放大）`);
+    ].forEach(name => {
+        hookMacro(name, {
+            cheatVar: 'CE_skillCheat',
+            multiplierVar: 'CE_skillMultiplier',
+            modifyFunc: args => {
+                let amount = Number(args[0] ?? 0);
+                if (amount > 0) args[0] = amount * V.CE_skillMultiplier;
+                return args;
+            },
+            logFunc: (name, oldArgs, newArgs) => console.log(`💪 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
+        });
     });
+
 })();
