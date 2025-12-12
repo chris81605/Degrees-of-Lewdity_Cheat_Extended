@@ -1,4 +1,4 @@
-		<<if $damage is undefined>>
-			<<set $damage to 1>>
+		<<if $CE_damageEnabled is undefined>>
+			<<set $CE_damageMultiplier to 1>>
 		<</if>>
-		<<set $enemyhealth -= _thedamage * $damage>>
+		<<set $enemyhealth -= _thedamage * $CE_damageMultiplier>>
