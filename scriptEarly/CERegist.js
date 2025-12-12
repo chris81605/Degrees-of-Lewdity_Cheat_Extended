@@ -39,7 +39,7 @@ simpleFrameworks.addto('iModOptions', 'swich_DEBUG_MODE')
                         maplebirchFrameworks.addto('Cheats', 'cheat_extended');
                         maplebirchFrameworks.addto('MenuBig', 'bccmeditor_button');
                        // maplebirchFrameworks.addto('MenuBig', 'CE_buttom');
-                        maplebirchFrameworks.addto('CaptionAfterDescription', 'bccmeditor_init');
+                       // maplebirchFrameworks.addto('CaptionAfterDescription', 'bccmeditor_init');
                         maplebirchFrameworks.addto('CaptionAfterDescription', 'CEstatebox');
                         maplebirchFrameworks.addto('Options', 'swich_DEBUG_MODE');
                         maplebirchFrameworks.addto('HintMobile', 'CE_sideBarIcon');
@@ -60,7 +60,7 @@ simpleFrameworks.addto('iModOptions', 'swich_DEBUG_MODE')
                         simpleFrameworks.addto('iModCheats', 'cheat_extended');
                         simpleFrameworks.addto('ModMenuBig', 'bccmeditor_button');
                       //  simpleFrameworks.addto('ModMenuBig', 'CE_buttom');
-                        simpleFrameworks.addto('ModCaptionAfterDescription', 'bccmeditor_init');
+                      //  simpleFrameworks.addto('ModCaptionAfterDescription', 'bccmeditor_init');
                         simpleFrameworks.addto('ModCaptionAfterDescription', 'CEstatebox');
                         simpleFrameworks.addto('iModOptions', 'swich_DEBUG_MODE');
                         V.CE_SFflag = true;
