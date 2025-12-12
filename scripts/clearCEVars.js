@@ -35,8 +35,10 @@
         "cccheat_name_display",
         "ccpassagecount",
         "ccplot",
+        //舊版傷害加倍變數⬇️
         "damage",
         "damage_oringinal",
+        //舊版傷害加倍變數 End
         "dance_reward_swich",
         "dancetip_FIX",
         //"debug",
@@ -55,8 +57,10 @@
         "milk_releasedFIX_MIN",
         "milk_releasedswich",
         //"milk_volume",
-        "painfix",
+        //舊的疼痛衰減變數⬇️
+        "painfix", 
         "painfixset",
+        //舊版疼痛衰減變數 End
         //"science_exam",
         //"semen_max",
         "semen_releasedFIX",
@@ -100,7 +104,13 @@
         "CE_tiredMultiplier",
         "CE_tiredNegativeMultiplier",
         "CE_skillCheat",
-        "CE_skillMultiplier"
+        "CE_skillMultiplier",
+        "CE_timePassMultiplier",
+        "CE_timeMultiplier",
+        "CE_violenceEnabled",
+        "CE_violenceMultiplier",
+        "CE_damageEnabled",
+        "CE_damageMultiplier"
     ];
 
     // 封裝成全局函數

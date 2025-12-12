@@ -102,7 +102,7 @@
                 if (name === 'pain') args[1] = args[1] ?? 4;
                 return args;
             },
-            logFunc: (name, oldArgs, newArgs) => console.log(`😌 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
+            logFunc: (name, oldArgs, newArgs) => console.log(`[Cheat Extended] 😌 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
         });
     });
 
@@ -117,7 +117,7 @@
                 args[0] = amount > 0 ? amount * V.CE_traumaMultiplier : amount * V.CE_traumaNegativeMultiplier;
                 return args;
             },
-            logFunc: (name, oldArgs, newArgs) => console.log(`💀 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
+            logFunc: (name, oldArgs, newArgs) => console.log(`[Cheat Extended] 💀 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
         });
     });
 
@@ -132,7 +132,7 @@
                 args[0] = amount > 0 ? amount * V.CE_controlMultiplier : amount * V.CE_controlNegativeMultiplier;
                 return args;
             },
-            logFunc: (name, oldArgs, newArgs) => console.log(`🎮 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
+            logFunc: (name, oldArgs, newArgs) => console.log(`[Cheat Extended] 🎮 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
         });
     });
 
@@ -146,7 +146,7 @@
             args[0] = amount > 0 ? amount * V.CE_stressMultiplier : amount * V.CE_stressNegativeMultiplier;
             return args;
         },
-        logFunc: (name, oldArgs, newArgs) => console.log(`😰 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
+        logFunc: (name, oldArgs, newArgs) => console.log(`[Cheat Extended] 😰 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
     });
 
     // ------------------- Sensitivity -------------------
@@ -174,7 +174,7 @@
                 args[0] = amount > 0 ? amount * V.CE_arousalMultiplier : amount * V.CE_arousalNegativeMultiplier;
                 return args;
             },
-            logFunc: (name, oldArgs, newArgs) => console.log(`🔥 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
+            logFunc: (name, oldArgs, newArgs) => console.log(`[Cheat Extended] 🔥 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
         });
     });
 
@@ -204,7 +204,7 @@
                 if (amount > 0) args[0] = amount * V.CE_skillMultiplier;
                 return args;
             },
-            logFunc: (name, oldArgs, newArgs) => console.log(`💪 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
+            logFunc: (name, oldArgs, newArgs) => console.log(`[Cheat Extended] 💪 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
         });
     });
 
