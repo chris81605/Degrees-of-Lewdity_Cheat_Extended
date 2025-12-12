@@ -8,49 +8,61 @@
     <</for>>
 
     <<set _select_amount = [1, 10, 100, 500, 1000]>>
-<div class="settingsHeader options"><span class="gold">虛空創造</span></div><br>
-<!-- 外層容器 -->
-<div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
+<div class="dol-settings dol-shadow">
 
-    <!-- 操作面板 -->
-    <div class="ce_inventory_helper_panel" style="display: flex; flex-direction: column; gap: 6px; border: 1px solid #ccc; padding: 8px; border-radius: 6px; max-width: 300px; width: 100%;">
-        
-        <!-- 標題 -->
-        <div style="font-weight: bold; color: gold; margin-bottom: 4px;">
-            虛空創造 - PC想要的物品+起來！
-        </div>
+    <!-- 標題 -->
+    <div class="dol-header">
+        <span class="dol-title">虛空創造</span>
+    </div>
 
-        <!-- 物品類型 -->
-        <div style="display: flex; flex-direction: column;">
-            <label style="font-weight: bold;">物品類型：</label>
-            <<listbox "_productType" autoselect>><<optionsfrom _allTypes>><</listbox>>
-        </div>
+    <!-- 說明 / 操作區 -->
+    <div class="dol-body">
 
-        <!-- 數量 -->
-        <div style="display: flex; flex-direction: column;">
-            <label style="font-weight: bold;">數量：</label>
-            <<listbox "_amount" autoselect>><<optionsfrom _select_amount>><</listbox>>
-        </div>
+        <!-- 外層容器 -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
 
-        <!-- 篩選按鈕 -->
-        <div style="display: flex; justify-content: flex-end; margin-top: 4px;">
-            <<link "篩選">>
-                <<replace "#item_grid">>
+            <!-- 操作面板 -->
+            <div class="dol-section" style="display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: 6px; max-width: 300px; width: 100%;">
+                
+                <!-- 標題 -->
+                <div style="font-weight: bold; color: gold; margin-bottom: 4px;">
+                    虛空創造 - PC想要的物品+起來！
+                </div>
+
+                <!-- 物品類型 -->
+                <div style="display: flex; flex-direction: column;">
+                    <label style="font-weight: bold;">物品類型：</label>
+                    <<listbox "_productType" autoselect>><<optionsfrom _allTypes>><</listbox>>
+                </div>
+
+                <!-- 數量 -->
+                <div style="display: flex; flex-direction: column;">
+                    <label style="font-weight: bold;">數量：</label>
+                    <<listbox "_amount" autoselect>><<optionsfrom _select_amount>><</listbox>>
+                </div>
+
+                <!-- 篩選按鈕 -->
+                <div style="display: flex; justify-content: flex-end; margin-top: 4px;">
+                    <span class="dol-link"><<link "篩選">>
+                        <<replace "#item_grid">>
+                            <<CE_inventory_helper_dp _productType _amount>>
+                        <</replace>>
+                    <</link>></span>
+                </div>
+
+            </div>
+
+            <!-- 物品列表容器 -->
+            <div id="item_list" style="overflow-x: auto; max-width: 300px; width: 100%;">
+                <!-- Grid 容器 -->
+                <div id="item_grid" style="display: grid; grid-template-columns: repeat(5, auto); grid-auto-rows: auto; gap: 6px;">
                     <<CE_inventory_helper_dp _productType _amount>>
-                <</replace>>
-            <</link>>
+                </div>
+            </div>
+
         </div>
 
     </div>
-
-    <!-- 物品列表容器 -->
-    <div id="item_list" style="overflow-x: auto; max-width: 300px; width: 100%;">
-        <!-- Grid 容器 -->
-        <div id="item_grid" style="display: grid; grid-template-columns: repeat(5, auto); grid-auto-rows: auto; gap: 6px;">
-            <<CE_inventory_helper_dp _productType _amount>>
-        </div>
-    </div>
-
 </div>
 <</widget>>
 
@@ -60,19 +72,19 @@
     <<for _id, _item range setup.plants>>
             <<set _tempId to _id>>
             <<if _item.type is _tempProductType>>
-                <div class="plant_item" style="flex: 0 0 22%; display: flex; flex-direction: column; align-items: center; border: 1px solid #ccc; padding: 4px; border-radius: 4px; box-sizing: border-box; min-height: 80px;">
+                <div class="dol-section plant_item" style="flex: 0 0 22%; display: flex; flex-direction: column; align-items: center; border: 1px solid #ccc; padding: 4px; border-radius: 4px; box-sizing: border-box; min-height: 80px;">
                     <!-- 圖標 + 連結一行 -->
                     <div style="display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%;">
                         <img class="tending_icon"
                              @src="`img/misc/icon/tending/` + setup.plants[_tempId].icon"
                              width="32">
                         <<capture _tempId _amount>>
-                            <<link "{_item.plural}（+_amount）">>
+                            <span class="dol-link"><<link "{_item.plural}（+_amount）">>
                                 <<CE_item_give _tempId _tempAmount>>
                                 <<replace #item_grid>>
                                      <<CE_inventory_helper_dp _productType _amount>>
                                 <</replace>>
-                            <</link>>
+                            <</link>></span>
                         <</capture>>
                     </div>
                     <!-- 數量在下面 -->

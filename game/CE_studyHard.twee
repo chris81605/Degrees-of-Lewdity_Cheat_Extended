@@ -1,124 +1,134 @@
 :: CE_studyHard [widget]
 
 <<widget "study_hard_mod">>
-	<div class="settingsHeader options"><span class="gold">用功學習</span></div><br>
-    
-    <span class="gold">再也不想天天去學校報到了！</span>
-    <<button "不想去學校了開關">>        
-        <<set $CE_forceAttendSchool = $CE_forceAttendSchool == 0 ? 1 : 0>>           
-        <<run CE_forceAttendSchool()>>
-        <<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
-    <</button>>    
-    <br>
-    <<if $CE_forceAttendSchool is undefined >>
-        <<set $CE_forceAttendSchool to 0>>
-    <</if>>    
-    <<if $CE_forceAttendSchool is 0>>
-        開關：<span class="red">關</span><br>
-    <<else>>
-        開關：<span class="green">開</span><br>
-    <</if>>    
-    <<if $debug or $CE_forceAttendSchool>>
-        <<if $debug>>
-            V.daily.school.attended:<<print JSON.stringify(V.daily.school.attended, null, 2)>><br>
+<div class="dol-settings dol-shadow">
+    <div class="dol-header"><span class="dol-title">用功學習</span></div>
+    <div class="dol-body">
+        <div class="dol-desc">再也不想天天去學校報到了！</div>
+        <span class="dol-btn"><<button "不想去學校了開關">>
+            <<set $CE_forceAttendSchool = $CE_forceAttendSchool == 0 ? 1 : 0>>           
+            <<run CE_forceAttendSchool()>>
+            <<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
+        <</button>></span>
+        <br><br>
+
+        <<if $CE_forceAttendSchool is undefined>>
+            <<set $CE_forceAttendSchool to 0>>
         <</if>>
-        <!-- 基本固定科目 -->
-        <<set _attended = {}>>
-        <<set _subjects = ["science", "english", "history", "swimming"]>>
-        <<for _subject range _subjects>>
-            <<set _attended[_subject] = V.daily.school.attended[_subject] ? 1 : 0>>
-        <</for>>
+        <div class="dol-desc">
+            開關：
+            <<if $CE_forceAttendSchool is 0>>
+                <span class="red">關</span>
+            <<else>>
+                <span class="green">開</span>
+            <</if>>
+        </div>
+        <br>
 
-        <!-- 處理 maths / housekeeping 特殊規則 -->
-        <<if [3,5].includes(Time.weekDay)>> <!-- 星期 2 或 4 -->
-            <<set _attended.housekeeping = V.daily.school.attended.housekeeping ? 1 : 0>>
-        <<else>> <!-- 其他天 -->
-            <<set _attended.maths = V.daily.school.attended.maths ? 1 : 0>>
-        <</if>>        
-				
-        <!-- 顯示表格 -->
-        <table border="1" style="border-collapse: collapse; width: 100%; text-align: center;">
-            <tr style="background:#f8f8f8; color:#000;">
-                <th>科目</th>
-                <th>出席狀態</th>
-                <th>學習進度</th>
-            </tr>
-            <<for _subject, _status range _attended>>
-                <tr>
-                    <td><<= _subject>></td>
-                    <td><<= _status ? "✅ 已到課" : "❌ 未到課">></td>
-                    <td>
-                        <<if _subject is "science">><<CE_studyResults_DP $science_star>><</if>>
-                        <<if _subject is "english">><<CE_studyResults_DP $english_star>><</if>>
-                        <<if _subject is "history">><<CE_studyResults_DP $history_star>><</if>>
-                        <<if _subject is "maths">><<CE_studyResults_DP $maths_star>><</if>>
-                        <<if _subject is "swimming" or _subject is "housekeeping">>
-                            <<silently>>
-                                <<set _detailedSkillGrades=[
-				                    { requiredValue: 0,		level: "无",	color: 'red'},
-				                    { requiredValue: 1,		level: "F",		color: 'pink'},
-				                    { requiredValue: 100,	level: "F+",	color: 'pink'},
-				                    { requiredValue: 200,	level: "D",		color: 'purple'},
-				                    { requiredValue: 300,	level: "D+",	color: 'purple'},
-				                    { requiredValue: 400,	level: "C",		color: 'blue'},
-				                    { requiredValue: 500,	level: "C+",	color: 'blue'},				            
-				                    { requiredValue: 600,	level: "B",		color: 'lblue'},
-				                    { requiredValue: 700,	level: "B+",	color: 'lblue'},
-				                    { requiredValue: 800,	level: "A",		color: 'teal'},
-				                    { requiredValue: 900,	level: "A+",	color: 'teal'},
-				                    { requiredValue: 1000,	level: "S",		color: 'green'}
-			                    ]>>
-			                <</silently>>
-			                <<if _subject is "swimming">>
-                                <<set _config = { currentValue : $swimmingskill, states : _detailedSkillGrades}>>
-                            <<elseif _subject is "housekeeping">>
-                                <<set _config = { currentValue : $housekeeping, states : _detailedSkillGrades}>>
-                            <</if>>
-                            <<set _config.currentLevel = 0>>
-		                    /* Loop through the provided states to find the one we are currently at*/
-		                    <<for _i to 0; _i lt _config.states.length; _i++>>
-			                    <<if _config.currentValue gte _config.states[_i].requiredValue>>
-				                    <<set _config.currentLevel = _i>>
-			                    <</if>>
-		                    <</for>> 
-		                    
-		                    /* Set the details to show from the current state */
-		                    <<set _config.level =		_config.states[_config.currentLevel].level>>
-		                    <<set _config.description = _config.states[_config.currentLevel].description>>
-		                    <<set _config.color =		_config.states[_config.currentLevel].color>>
-		                    <<if _config.currentLevel eq (_config.states.length - 1)>>				                
-				                <<set _config.percent = 100>>
-			                <<else>>
-				                <<set _config.percent = Math.floor(100*(_config.currentValue - _config.states[_config.currentLevel].requiredValue) / (_config.states[_config.currentLevel + 1].requiredValue - _config.states[_config.currentLevel].requiredValue))>>
-			                <</if>>		                    		                   		                    
-		                    <span class="characteristic-level">
-						        評級：<span @class="_config.color">_config.level</span> <<if _config.level neq 'None'>><small class="grade-percent black">_config.percent%</small><</if>>
-					        </span>     		                    		                  		                    
-                        <</if>>                                               
-                    </td>    
-                </tr>
+        <<if $debug or $CE_forceAttendSchool>>
+            <<if $debug>>
+                <div class="dol-desc">V.daily.school.attended:<<print JSON.stringify(V.daily.school.attended, null, 2)>></div><br>
+            <</if>>
+
+            <!-- 基本固定科目 -->
+            <<set _attended = {}>>
+            <<set _subjects = ["science", "english", "history", "swimming"]>>
+            <<for _subject range _subjects>>
+                <<set _attended[_subject] = V.daily.school.attended[_subject] ? 1 : 0>>
             <</for>>
-        </table><br>          
-    <</if>>
 
-    <span class="gold">放學後在家裡瘋狂內捲（作弊）</span><br>
+            <!-- 處理 maths / housekeeping 特殊規則 -->
+            <<if [3,5].includes(Time.weekDay)>>
+                <<set _attended.housekeeping = V.daily.school.attended.housekeeping ? 1 : 0>>
+            <<else>>
+                <<set _attended.maths = V.daily.school.attended.maths ? 1 : 0>>
+            <</if>>
 
-    所有科目：<br>
-    科學：$science_exam<br>
-    數學：$maths_exam<br>
-    語文：$english_exam<br>
-    歷史：$history_exam<br><br>
+            <!-- 顯示表格 -->
+            <table border="1" style="border-collapse: collapse; width: 100%; text-align: center;">
+                <tr style="background:#f8f8f8; color:#000;">
+                    <th>科目</th>
+                    <th>出席狀態</th>
+                    <th>學習進度</th>
+                </tr>
+                <<for _subject, _status range _attended>>
+                    <tr>
+                        <td><<= _subject>></td>
+                        <td><<= _status ? "✅ 已到課" : "❌ 未到課">></td>
+                        <td>
+                            <<if _subject is "science">><<CE_studyResults_DP $science_star>><</if>>
+                            <<if _subject is "english">><<CE_studyResults_DP $english_star>><</if>>
+                            <<if _subject is "history">><<CE_studyResults_DP $history_star>><</if>>
+                            <<if _subject is "maths">><<CE_studyResults_DP $maths_star>><</if>>
+                            <<if _subject is "swimming" or _subject is "housekeeping">>
+                                <<silently>>
+                                    <<set _detailedSkillGrades=[
+                                        { requiredValue: 0, level: "无", color: 'red'},
+                                        { requiredValue: 1, level: "F", color: 'pink'},
+                                        { requiredValue: 100, level: "F+", color: 'pink'},
+                                        { requiredValue: 200, level: "D", color: 'purple'},
+                                        { requiredValue: 300, level: "D+", color: 'purple'},
+                                        { requiredValue: 400, level: "C", color: 'blue'},
+                                        { requiredValue: 500, level: "C+", color: 'blue'},				            
+                                        { requiredValue: 600, level: "B", color: 'lblue'},
+                                        { requiredValue: 700, level: "B+", color: 'lblue'},
+                                        { requiredValue: 800, level: "A", color: 'teal'},
+                                        { requiredValue: 900, level: "A+", color: 'teal'},
+                                        { requiredValue: 1000, level: "S", color: 'green'}
+                                    ]>>
+                                <</silently>>
+                                <<if _subject is "swimming">>
+                                    <<set _config = { currentValue : $swimmingskill, states : _detailedSkillGrades}>>
+                                <<elseif _subject is "housekeeping">>
+                                    <<set _config = { currentValue : $housekeeping, states : _detailedSkillGrades}>>
+                                <</if>>
+                                <<set _config.currentLevel = 0>>
+                                <<for _i to 0; _i lt _config.states.length; _i++>>
+                                    <<if _config.currentValue gte _config.states[_i].requiredValue>>
+                                        <<set _config.currentLevel = _i>>
+                                    <</if>>
+                                <</for>> 
+                                <<set _config.level = _config.states[_config.currentLevel].level>>
+                                <<set _config.description = _config.states[_config.currentLevel].description>>
+                                <<set _config.color = _config.states[_config.currentLevel].color>>
+                                <<if _config.currentLevel eq (_config.states.length - 1)>>
+                                    <<set _config.percent = 100>>
+                                <<else>>
+                                    <<set _config.percent = Math.floor(100*(_config.currentValue - _config.states[_config.currentLevel].requiredValue) / (_config.states[_config.currentLevel + 1].requiredValue - _config.states[_config.currentLevel].requiredValue))>>
+                                <</if>>		                    
+                                <span class="characteristic-level">
+                                    評級：<span @class="_config.color">_config.level</span> 
+                                    <<if _config.level neq 'None'>><small class="grade-percent black">_config.percent%</small><</if>>
+                                </span>
+                            <</if>>
+                        </td>
+                    </tr>
+                <</for>>
+            </table><br>          
+        <</if>>
 
-    <<button "不想努力了（一次修改全部科目）">>
-        <<cheatAllExams>>
-        <<replace #CE_settingsDiv>><<study_hard_mod>><</replace>>
-    <</button>>
+        <div class="dol-desc">放學後在家裡瘋狂內捲（作弊）</div><br>
+
+        <div class="dol-desc">
+            所有科目：<br>
+            科學：$science_exam<br>
+            數學：$maths_exam<br>
+            語文：$english_exam<br>
+            歷史：$history_exam
+        </div><br>
+
+        <span class="dol-btn"><<button "不想努力了（一次修改全部科目）">>
+            <<cheatAllExams>>
+            <<replace #CE_settingsDiv>><<study_hard_mod>><</replace>>
+        <</button>></span>
+    </div>
+</div>
 <</widget>>
 
 <<widget "CE_studyResults_DP">>
-	<div class="progress-stars">
-		<img class="icon" @src="'img/ui/' + (_args[0] > 0 ? 'bronze_star'	: 'empty_star') + '.png'" />
-		<img class="icon" @src="'img/ui/' + (_args[0] > 1 ? 'silver_star'	: 'empty_star') + '.png'" />
-		<img class="icon" @src="'img/ui/' + (_args[0]> 2 ? 'gold_star'	: 'empty_star') + '.png'" />
-	</div>
+<div class="progress-stars">
+    <img class="icon" @src="'img/ui/' + (_args[0] > 0 ? 'bronze_star' : 'empty_star') + '.png'" />
+    <img class="icon" @src="'img/ui/' + (_args[0] > 1 ? 'silver_star' : 'empty_star') + '.png'" />
+    <img class="icon" @src="'img/ui/' + (_args[0] > 2 ? 'gold_star' : 'empty_star') + '.png'" />
+</div>
 <</widget>>

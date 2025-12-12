@@ -1,28 +1,42 @@
 :: CE_teleportation [widget]
+
 <<widget "swich_teleportation">>
-	<div class="settingsHeader options"><span class="gold">空間節點</span></div>
-	<br><br>
-	在左側顯示：空間節點功能
-	<br>
-	<<if $swich_teleportation is undefined>><<set $swich_teleportation to 0>><</if>>
-	<<button "瞬間移動開關">>
-		<<set $swich_teleportation = $swich_teleportation == 0 ? 1: 0>>
-		<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
-		<<replace #CE_settingsDiv>><<swich_teleportation>><br><br><</replace>>
-		<<replace #CEstatebox>>
-			<<CE_Toggle>>
-		<</replace>>
-	<</button>>	
-	<br>
-	空間節點：
-	<<if $swich_teleportation is 0>>
-		<span class="red">關</span>
-		<br>
-	<</if>>
-	<<if $swich_teleportation is 1>>
-		<span class="green">開</span>
-		<br>
-	<</if>>		
+<div class="dol-settings dol-shadow">
+    <div class="dol-header"><span class="dol-title">空間節點</span></div>
+    <div class="dol-body">
+        <div class="dol-desc">
+            在左側顯示：空間節點功能
+            <ul>
+                <li>將任意地點加入空間節點</li>
+                <li>建議只加入地點</li>
+                <li>將場景加入傳送點可能會產生不可逆的問題</li>
+                <li>常駐節點為隨身衣櫃及返回孤兒院臥室</li>
+            </ul>
+        </div>
+        <br>
+        <<if $swich_teleportation is undefined>><<set $swich_teleportation to 0>><</if>>
+        
+        <div class = "dol-btn">
+            <<button "瞬間移動開關">>
+                <<set $swich_teleportation = $swich_teleportation == 0 ? 1: 0>>
+                <<replace #CE_settingsDiv>><<swich_teleportation>><br><br><</replace>>
+                <<replace #CEstatebox>>
+                    <<CE_Toggle>>
+                <</replace>>
+            <</button>>
+        </div>
+        <br>
+
+        <div class="dol-desc">
+            空間節點狀態：
+            <<if $swich_teleportation is 0>>
+                <span class="red">關</span>
+            <<else>>
+                <span class="green">開</span>
+            <</if>>
+        </div>
+    </div>
+</div>
 <</widget>>
 
 <<widget "teleportation">>

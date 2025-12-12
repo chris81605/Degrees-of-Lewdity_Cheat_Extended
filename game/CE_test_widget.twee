@@ -105,5 +105,62 @@
 <<unset $TargetPlants>>  -->
 
 
+/*樣式模板*/
+
+<<widget "YourWidgetName">>
+
+<!-- 外框 -->
+<div class="dol-settings dol-shadow">
+
+    <!-- 標題 -->
+    <div class="dol-header">
+        <span class="dol-title">Your Widget 標題</span>
+    </div>
+
+    <div class="dol-body">
+
+        <!-- 說明文字 -->
+        <div class="dol-desc">
+            這裡放說明文字，簡述功能或用途。
+        </div>
+
+        <br>
+
+        <!-- 範例按鈕 -->
+        <div class="dol-section-block">
+            <span class="dol-btn">
+                <<button "按鈕文字">>
+                    <<!-- 在這裡放你按鈕的 SC 邏輯 -->>
+                <</button>>
+            </span>
+        </div>
+
+        <br>
+
+        <!-- 範例狀態文字 -->
+        <div class="dol-section-block">
+            當前狀態：
+            <span class="dol-green">開</span> / <span class="dol-red">關</span>
+        </div>
+
+        <br>
+
+        <!-- 範例輸入或滑桿 -->
+        <div class="dol-section-block">
+            <label>數值調整：</label><br>
+            <<numberslider "$YourVariable" $YourVariable 1 100 1>>
+        </div>
+
+        <br>
+
+        <!-- 提示文字 -->
+        <span class="note">💡 這裡放提示文字或額外說明</span>
+
+    </div> <!-- dol-body end -->
+</div> <!-- dol-settings end -->
+
+<</widget>>
+
+
 
 

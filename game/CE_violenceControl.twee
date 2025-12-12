@@ -1,0 +1,54 @@
+:: CE_violenceControl[widget]
+
+<<widget "CE_violenceControl">>
+<div class="dol-settings dol-shadow">
+    <div class="dol-header"><span class="dol-title">⚔️ 暴力控制</span></div>
+    <div class="dol-body">
+        <div class="dol-desc">
+            調整暴力效果倍率，開啟後：
+            <ul>
+                <li>主要影響戰鬥場景疼痛增加倍率</li>
+                <li>倍率 &lt; 1 → 疼痛值增加較慢</li>
+                <li>⚔️ 可同時調整戰鬥與非戰鬥暴力（部分場景使用）</li>
+            </ul>
+        </div>
+        <br>
+
+        <!-- 初始化變數 -->
+        <<if $CE_violenceEnabled is undefined>>
+            <<set $CE_violenceEnabled = false>>
+            <<set $CE_violenceMultiplier = 1>>
+        <</if>>
+
+        <!-- 開關按鈕 -->
+        <<set _violenceBtnText = $CE_violenceEnabled ? "關閉暴力控制" : "啟用暴力控制">>
+        <div class ="dol-btn">
+            <<button _violenceBtnText>>
+                <<set $CE_violenceEnabled = !$CE_violenceEnabled>>
+                <<replace #CE_settingsDiv>><<CE_violenceControl>><</replace>>
+            <</button>>
+        </div>    
+        <br>
+
+        <div class="dol-desc">
+            當前狀態：
+            <<if $CE_violenceEnabled>>
+                <span class="green">開</span>
+            <<else>>
+                <span class="red">關</span>
+            <</if>>
+        </div>
+        <br>
+
+        <div class="dol-section">
+            暴力倍率 (0~1)：<br>
+            <<numberslider "$CE_violenceMultiplier" $CE_violenceMultiplier 0 1 0.1>>
+        </div>
+        <br>
+
+        <div class="dol-desc">
+            <span class="note">💡 1 為正常暴力效果，0.5 為減半</span>
+        </div>
+    </div>
+</div>
+<</widget>>

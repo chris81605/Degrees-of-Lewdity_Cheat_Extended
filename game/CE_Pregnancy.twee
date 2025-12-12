@@ -1,0 +1,195 @@
+:: CE_Pregnancy[widget]
+
+/* ---------- CE_Pregnancy (主介面) ---------- */
+<<widget "CE_Pregnancy">>
+<!-- DoL 官方風格：深色容器 + 金色標題 -->
+<div class="dol-settings dol-shadow">
+  <div class="dol-header">
+    <span class="dol-title">PC 懷孕設定</span>
+  </div>
+
+  <div class="dol-body">
+    <div class="dol-desc">無性生殖、自我分裂、處女懷胎？</div>
+
+    <div id="CE_Pregnancy_setting" class="dol-section no-numberify">
+      <label class="dol-label">選擇懷孕類型：</label>
+      <<listbox "_CE_Pregnancy_type">>
+        <<option "人類" "human">>
+        <<option "非人類" "creature">>
+      <</listbox>>
+
+      <div class="dol-actions">
+        <span class="dol-btn">
+        <<button "確認">>
+          <<if _CE_Pregnancy_type is "human">>
+            <<replace #CE_Pregnancy_setting>>
+              <<CE_Pregnancy_human>>
+            <</replace>>
+            <<replace #CE_Pregnancy_text>>
+              狀態：當前懷孕類型為 <span class="dol-blue">人類</span><br>
+            <</replace>>
+          <<else>>
+            <<replace #CE_Pregnancy_setting>>
+              <<CE_Pregnancy_creature>>
+            <</replace>>
+            <<replace #CE_Pregnancy_text>>
+              狀態：當前懷孕類型為 <span class="dol-blue">生物</span><br>
+            <</replace>>
+          <</if>>
+        <</button>>
+        </span>
+      </div>
+    </div>
+
+    <div id="CE_Pregnancy_text" class="dol-status no-numberify">
+      狀態：<span class="dol-blue">請選擇懷孕類型</span><br>
+    </div>
+  </div>
+</div>
+<</widget>>
+
+/* ---------- CE_Pregnancy_creature (非人類) ---------- */
+<<widget "CE_Pregnancy_creature">>
+<<set _temppreg_list to ["anus", "vagina"]>>
+<<set _temppreg_type_list to ["Pale Tentacle", "tentacle", "eels", "slimes", "fish", "snake", "worms", "lurker", "wasp", "bee", "squid", "vine", "slug"]>>
+<<set _temppreg_gender_list to ["male", "female", "Hermaphrodite"]>>
+
+<div class="dol-section-block">
+  <label class="dol-label">懷孕位置</label>
+  <<listbox "_temppreg" autoselect>><<optionsfrom _temppreg_list>><</listbox>>
+
+  <label class="dol-label mt10">懷孕類型</label>
+  <<listbox "_temppreg_type" autoselect>><<optionsfrom _temppreg_type_list>><</listbox>>
+
+  <label class="dol-label mt10">懷孕性別</label>
+  <<listbox "_temppreg_gender" autoselect>><<optionsfrom _temppreg_gender_list>><</listbox>>
+
+  <div class="dol-actions mt15">
+    <span class="dol-btn">
+    <<button "強制受孕">>
+      <<impregnateParasite _temppreg_type true _temppreg>>
+      <<if _temppreg_gender is "Hermaphrodite">>
+        <<set $pregnancyStats.parasiteDoctorEvents to 2>>
+        <<set $sexStats[_temppreg].pregnancy.motherStatus to 2>>
+        <<set $sexStats[_temppreg].pregnancy.fetus.last().stats.lastEgg to Math.floor($sexStats[_temppreg].pregnancy.fetus.last().stats.growth / 3)>>
+      <<else>>
+        <<if $sexStats[_temppreg].pregnancy.motherStatus is 0>>
+          <<set $sexStats[_temppreg].pregnancy.motherStatus to 1>>
+        <</if>>
+      <</if>>
+      <<set $sexStats[_temppreg].pregnancy.fetus.last().stats.gender to _temppreg_gender>>
+      <<fertiliseParasites _temppreg>>
+      <<replace #CE_Pregnancy_text>>
+        狀態：<span class="dol-blue">_temppreg_gender</span> 的 <span class="dol-blue">_temppreg_type</span>
+        已在 <span class="dol-blue">_temppreg</span> 成功受孕！<br>
+      <</replace>>
+    <</button>>
+    </span>
+  </div>
+</div>
+<</widget>>
+
+/* ---------- CE_Pregnancy_human (人類) ---------- */
+<<widget "CE_Pregnancy_human">>
+<<set _temppreg_list to ["anus", "vagina"]>>
+<<set _temppreg_type_list to ["human", "wolf", "wolfgirl", "hawk", "harpy"]>>
+<<set _temppreg_sparm_list to []>>
+<<for _i to 0; _i lt $NPCName.length; _i++>>
+  <<set _temppreg_sparm_list[_temppreg_sparm_list.length] to $NPCName[_i].nam>>
+<</for>>
+<<set _temppreg_sparm_list[_temppreg_sparm_list.length] to "pc">>
+
+<div class="dol-section-block">
+  <label class="dol-label">懷孕位置（肛門可能無法懷孕）</label>
+  <<listbox "_temppreg" autoselect>><<optionsfrom _temppreg_list>><</listbox>>
+
+  <label class="dol-label mt10">懷孕類型</label>
+  <<listbox "_temppreg_type" autoselect>><<optionsfrom _temppreg_type_list>><</listbox>>
+
+  <label class="dol-label mt10">精子來源</label>
+  <<listbox "_temppreg_sparm" autoselect>><<optionsfrom _temppreg_sparm_list>><</listbox>>
+
+  <div class="mt8">
+    <<textbox "_temppreg_sparm_name" "自定義精子來源">>
+    <span class="dol-link">
+    <<link "添加">>
+      <<set _temppreg_sparm_list[_temppreg_sparm_list.length] to _temppreg_sparm_name>>
+      <<set _temp_index to _temppreg_sparm_list.length - 1>>
+      <<set _temppreg_sparm to _temppreg_sparm_list[_temp_index]>>
+      <<replace #CE_Pregnancy_text>>
+        狀態：成功添加自定義精子來源！名字是 <span class="dol-blue">_temppreg_sparm_list[_temp_index]</span><br>
+        按 <span class="dol-gold">受孕</span> 以懷上該來源的孩子！
+      <</replace>>
+    <</link>>
+    </span>
+  </div>
+
+  <label class="dol-label mt12">知道父親是誰？（可能不生效）</label>
+  <<listbox "_temppreg_know_father">>
+    <<option "是" true>>
+    <<option "否" false>>
+  <</listbox>>
+
+  <label class="dol-label mt10">察覺懷孕？</label>
+  <<listbox "_temppreg_awareof">>
+    <<option "是" true>>
+    <<option "否" false>>
+  <</listbox>>
+
+  <div class="dol-actions mt15">
+    <span class="dol-btn">
+    <<button "添加精子">>
+      <<recordSperm `{target: "pc", spermOwner: _temppreg_sparm, spermType: _temppreg_type, genital: _temppreg}`>>
+      <<set _menstruation to $sexStats.vagina.menstruation>>
+
+      <<replace #CE_Pregnancy_text>>
+        狀態：添加精子！來自 <span class="dol-blue">_temppreg_sparm</span><br>
+        （需搭配實驗性懷孕內容）<br>
+        <span class="dol-link">
+        <<link "立刻排卵">>
+          <<set _menstruation.currentDay to _menstruation.stages[2]>>
+          <<replace #CE_Pregnancy_text>>
+            狀態：<span class="dol-blue">已排卵</span><br>
+            <span class="dol-red">現在是危險期！</span>
+          <</replace>>
+        <</link>>
+        </span>
+      <</replace>>
+    <</button>>
+    </span>
+  </div>
+
+  <div class="dol-actions mt12">
+    <span class="dol-btn dol-gold-btn">
+    <<button "受孕">>
+      <<set _temp to $incompletePregnancyDisable>>
+      <<set $incompletePregnancyDisable to "f">>
+      <<playerPregnancy _temppreg_sparm _temppreg_type _temppreg_know_father _temppreg undefined _temppreg_awareof>>
+      <<set $incompletePregnancyDisable to _temp>>
+
+      <<replace #CE_Pregnancy_text>>
+        狀態：成功受孕！父親是 <span class="dol-blue">_temppreg_sparm</span><br>
+        <span class="dol-link">
+        <<link [[後悔了！清除懷孕！|$passage]]>>
+          <<set _pregnancyClear to getPregnancyObject()>>
+          <<set _pregnancyClear.type to null>>
+          <<set _pregnancyClear.fetus to []>>
+          <<set _pregnancyClear.waterBreaking to false>>
+          <<set _pregnancyClear.waterBreakingTimer to null>>
+          <<set _pregnancyClear.timer to null>>
+          <<set _pregnancyClear.timerEnd to null>>
+          <<set _pregnancyClear.awareOf to null>>
+          <<set _pregnancyClear.awareOfMultiple to null>>
+          <<set _pregnancyClear.awareOfDetails to null>>
+          <<set _pregnancyClear.potentialFathers to []>>
+          <<set $sexStats[($player.vaginaExist ? "vagina" : "anus")].sperm to []>>
+          <<restartMenstruationCycle>>
+        <</link>>
+        </span>
+      <</replace>>
+    <</button>>
+    </span>
+  </div>
+</div>
+<</widget>>
+

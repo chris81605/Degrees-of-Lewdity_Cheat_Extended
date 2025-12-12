@@ -1,38 +1,83 @@
 :: CE_yanling [widget]
 <<widget "swich_yanling">>
-	<div class="settingsHeader options"><span class="gold">言靈集</span></div>
-	<br><br>
-	在左側顯示：言靈集功能
-	<br>
-	<<if $swich_yanling is undefined>><<set $swich_yanling to 0>><</if>>
-	<<if $yanling_ui_hide is undefined>><<set $yanling_ui_hide to 0>><</if>>
-	<<if $CE_YL_leftui_enable is undefined>><<set $CE_YL_leftui_enable to true>><</if>>
-	<<button "言靈集開關">>
-		<<set $swich_yanling = $swich_yanling == 0 ? 1: 0>>
-		<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
-		<<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
-		<<replace #CEstatebox>>
-			<<CE_Toggle>>
-		<</replace>>
-	<</button>>
-	<br>
+<div class="dol-settings dol-shadow">
 
-	言靈集開關：
-	<<if $swich_yanling is 0>>
-		<span class="red">關</span>
-		<br>
-	<</if>>
-	<<if $swich_yanling is 1>>
-		<span class="green">開</span>
-		<br>
-	    <label><<checkbox "$CE_YL_leftui_enable" false true autocheck>>啟用側邊欄言靈編輯相關UI</label>
-        <mouse class="tooltip linkBlue">(?)<span>取消勾選將只顯示言靈列表於側邊欄。改變勾選狀態後請關閉言靈及開關再打開以即時套用效果。</span></mouse>
+    <!-- 標題 -->
+    <div class="dol-header">
+        <span class="dol-title gold">言靈集</span>
+    </div>
+
+    <!-- 內文 -->
+    <div class="dol-body">
+
+        <div class="dol-desc">
+            在左側顯示：言靈集功能
+            <ul>
+                <li>言出法隨</li>
+                <li><span class="red">謹慎使用，不當使用言靈可能造成不可逆的存檔損壞</span></li>
+            </ul>
+        </div>
+
+        <<if $swich_yanling is undefined>><<set $swich_yanling to 0>><</if>>
+        <<if $yanling_ui_hide is undefined>><<set $yanling_ui_hide to 0>><</if>>
+        <<if $CE_YL_leftui_enable is undefined>><<set $CE_YL_leftui_enable to true>><</if>>
+
         <br>
-		<<yanling_mini_ui cheat_menu>>
-		<<yanling cheat_menu>>
-		<<yanling_unset cheat_menu>>
-		<<yanling_move>>
-	<</if>>	
+
+        <!-- 按鈕 -->
+        <div class="dol-btn">
+            <<button "言靈集開關">>
+                <<set $swich_yanling = $swich_yanling == 0 ? 1: 0>>
+
+                <<replace #CE_settingsDiv>>
+                    <<swich_yanling>><br><br>
+                <</replace>>
+
+                <<replace #CEstatebox>>
+                    <<CE_UiLists>>
+                <</replace>>
+            <</button>>
+        </div>
+
+        <br><br>
+
+        <!-- 開關狀態 -->
+        <div class="dol-desc">
+            言靈集開關：
+            <<if $swich_yanling is 0>>
+                <span class="red">關</span>
+                <br><br>
+            <</if>>
+
+            <<if $swich_yanling is 1>>
+                <span class="green">開</span>
+                <br><br>
+
+                <label>
+                    <<checkbox "$CE_YL_leftui_enable" false true autocheck>>
+                    啟用側邊欄言靈編輯相關 UI
+                </label>
+                <br>
+
+                <mouse class="tooltip linkBlue">(?)<span>
+                    取消勾選將只顯示言靈列表於側邊欄。  
+                    改變勾選狀態後請關閉言靈及開關再打開以即時套用效果。
+                </span></mouse>
+
+                <br><br>
+
+                <<yanling_mini_ui cheat_menu>>
+                <div style="width:100%; box-sizing:border-box;">
+                    <<yanling cheat_menu>>
+                </div>    
+                <<yanling_unset cheat_menu>>
+                <<yanling_move>>
+            <</if>>
+        </div>
+
+    </div> <!-- end dol-body -->
+
+</div> <!-- end dol-settings -->
 <</widget>>
 
 <<widget "yanling_mini_ui">>
@@ -117,7 +162,7 @@
 				<<set $cccheat_name_display to "">>	
 			<</if>>
 			<<replace #CEstatebox>>
-			    <<CE_Toggle>>
+			    <<CE_UiLists>>
 		    <</replace>>
 			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 				<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
@@ -148,7 +193,7 @@
 				<<set $cccheat_name_display to "">>
 			<</if>>
 			<<replace #CEstatebox>>
-			    <<CE_Toggle>>
+			    <<CE_UiLists>>
 		    <</replace>>
 			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 				<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
@@ -195,7 +240,7 @@
             <</if>>
 
 			<<replace #CEstatebox>>
-			    <<CE_Toggle>>
+			    <<CE_UiLists>>
 		    <</replace>>
 
             <<if _args[0] is "cheat_menu">> <!--當在作弊選單內時，更新選單顯示-->
@@ -214,7 +259,7 @@
 				<</for>>
 			<</if>>
 			<<replace #CEstatebox>>
-			    <<CE_Toggle>>
+			    <<CE_UiLists>>
 		    <</replace>>
 			<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 				<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
@@ -228,7 +273,7 @@
 				<<set $cccheat_display to "">>
 				<<set $cccheat_name_display to "">>
 			    <<replace #CEstatebox>>
-			        <<CE_Toggle>>
+			        <<CE_UiLists>>
 		        <</replace>>
 				<<if _args[0] is "cheat_menu">>		<!--當在作弊選單內時，更新選單顯示-->
 					<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
@@ -278,7 +323,7 @@
                 <<run $cccheat.splice($toIndex, 0, _item1)>>  <!-- 在目標位置插入元素 -->
                 <<run $cccheat_name.splice($toIndex, 0, _item2)>>  <!-- 在目標位置插入元素名稱 -->
 			    <<replace #CEstatebox>>
-			        <<CE_Toggle>>
+			        <<CE_UiLists>>
 		        <</replace>>
             <</if>>
         <</button>>
@@ -292,7 +337,7 @@
             <<button "隱藏言靈介面">>
                 <<set $yanling_ui_hide to 1>>
 			    <<replace #CEstatebox>>
-			        <<CE_Toggle>>
+			        <<CE_UiLists>>
 		        <</replace>>
             <</button>>
             <br>
@@ -300,7 +345,7 @@
             <<button "顯示言靈介面">>
                 <<set $yanling_ui_hide to 0>>
 			    <<replace #CEstatebox>>
-			        <<CE_Toggle>>
+			        <<CE_UiLists>>
 		        <</replace>>
             <</button>>
             <br>    

@@ -1,73 +1,87 @@
 :: CE_milk_mod [widget]
 
 <<widget "milk_released_setting">>
-	<div class="settingsHeader options"><span class="gold">大量擠🥛模式</span></div>
-	<br><br>
-	一次擠出更多的🥛，開啟後記得輸入大量擠🥛上/下限。
-	<br>
-	<<if $milk_releasedswich is undefined>>
-		<<set $milk_releasedswich to 0>>
-	<</if>>
-	<<button "大量擠🥛模式">>
-		<<set $milk_releasedswich = $milk_releasedswich == 0 ? 1 : 0>>
-		<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
-		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
-	<</button>>
-	<<if $milk_releasedswich is 0>>
-		<<set $milk_releasedFIX to 0>>
-		<<set $milk_releasedFIX_MIN to 0>>
-		<<set $milk_releasedFIX_MAX to 0>>
-	<</if>>
-	<<if $milk_releasedswich is 1>>
-		<<set $milk_releasedFIX to random($milk_releasedFIX_MIN, $milk_releasedFIX_MAX) >>
-	<</if>>		
-	<br>
-	大量擠🥛模式：
-	<<if $milk_releasedswich is 0>>
-		<span class="red">關</span><br>
-	<</if>>
-	<<if $milk_releasedswich is 1>>
-		<span class="green">開</span><br>
-	<</if>>
-	<br>
-	<hr>	
-	在此設定大量擠🥛下限：<br>
-	<<numberslider "$milk_releasedFIX_MIN" $milk_releasedFIX_MIN 0 6000 100 >><br>	
-	在此設定大量擠🥛上限：<br>
-	<<numberslider "$milk_releasedFIX_MAX" $milk_releasedFIX_MAX 0 6000 100>><br>
-	<<link "設定">>
-		<<if $milk_releasedswich is 0>>
-			<<set $milk_releasedFIX_MIN to 0>>
-			<<set $milk_releasedFIX_MAX to 0>>
-		<</if>>
-		<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
-		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
-	<</link>><br>
-	當前大量擠🥛修正亂數<span class="blue">$milk_releasedFIX</span>mL<br>
-	<hr>
-	
-	修改🥛量<br>
-	<!--防止個別使用者變數超過滑塊最大值導致爆紅-->
-	
-	<<silently>>
-	    <<set $milk_amount = Math.clamp($milk_amount, 0, 60000)>>
-	    <<set $milk_volume = Math.clamp($milk_volume, 0, 60000)>>
-	    <<set $milk_max = Math.clamp($milk_max, 0, 60000)>>
-    <</silently>>
-	
-	<!--------------------------------------->
-	
-	當前🥛量最大值：<span class="blue">$milk_max mL</span>mL<br>
-	<<numberslider "$milk_max" $milk_max 3000 60000 100 >><br>
-	當前可以儲存多少🥛：<span class="blue">$milk_volume</span>mL<br>
-	<<numberslider "$milk_volume" $milk_volume 0 60000 100>><br>
-	當前有多少🥛：<span class="blue">$milk_amount</span>mL<br>
-	<<numberslider "$milk_amount" $milk_amount 0 60000 100>><br>
-	<<link "設定">>
-	    <<CE_milk_fix $milk_max $milk_volume>>
-		<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
-		<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
-	<</link>>
+<div class="dol-settings dol-shadow">
+
+    <div class="dol-header">
+        <span class="dol-title">大量擠🥛模式</span>
+    </div>
+    <div class="dol-body">
+
+        <div class="dol-desc">
+            一次擠出更多的🥛，開啟後記得輸入大量擠🥛上/下限。
+        </div>
+        <br>
+
+        <<if $milk_releasedswich is undefined>>
+            <<set $milk_releasedswich to 0>>
+        <</if>>
+
+        <div class="dol-btn"><<button "大量擠🥛模式">>
+            <<set $milk_releasedswich = $milk_releasedswich == 0 ? 1 : 0>>        
+            <<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
+        <</button>></div>
+
+        <<if $milk_releasedswich is 0>>
+            <<set $milk_releasedFIX to 0>>
+            <<set $milk_releasedFIX_MIN to 0>>
+            <<set $milk_releasedFIX_MAX to 0>>
+        <</if>>
+        <<if $milk_releasedswich is 1>>
+            <<set $milk_releasedFIX to random($milk_releasedFIX_MIN, $milk_releasedFIX_MAX) >>
+        <</if>>
+
+        <br><br>
+        大量擠🥛模式：
+        <<if $milk_releasedswich is 0>>
+            <span class="dol-red">關</span>
+        <</if>>
+        <<if $milk_releasedswich is 1>>
+            <span class="dol-green">開</span>
+        <</if>>
+
+        <br><br>
+        <hr>
+        <div class="dol-section">
+          
+            <div class="dol-desc">在此設定大量擠🥛下限：</div>
+            <<numberslider "$milk_releasedFIX_MIN" $milk_releasedFIX_MIN 0 6000 100 >><br>    
+            <div class="dol-desc">在此設定大量擠🥛上限：</div>
+            <<numberslider "$milk_releasedFIX_MAX" $milk_releasedFIX_MAX 0 6000 100>><br>
+
+            <span class="dol-link"><<link "設定">>
+                <<if $milk_releasedswich is 0>>
+                    <<set $milk_releasedFIX_MIN to 0>>
+                    <<set $milk_releasedFIX_MAX to 0>>
+                <</if>>        
+                <<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
+            <</link>></span>
+
+            <br>
+            <div class="dol-desc">當前大量擠🥛修正亂數：<span class="dol-blue">$milk_releasedFIX</span>mL</div>
+            <hr>
+
+            <div class="dol-desc">修改🥛量</div>
+            <<silently>>
+                <<set $milk_amount = Math.clamp($milk_amount, 0, 60000)>>
+                <<set $milk_volume = Math.clamp($milk_volume, 0, 60000)>>
+                <<set $milk_max = Math.clamp($milk_max, 0, 60000)>>
+            <</silently>>
+
+            <div class="dol-desc">當前🥛量最大值：<span class="dol-blue">$milk_max mL</span></div>
+            <<numberslider "$milk_max" $milk_max 3000 60000 100 >><br>
+            <div class="dol-desc">當前可以儲存多少🥛：<span class="dol-blue">$milk_volume</span>mL</div>
+            <<numberslider "$milk_volume" $milk_volume 0 60000 100>><br>
+            <div class="dol-desc">當前有多少🥛：<span class="dol-blue">$milk_amount</span>mL</div>
+            <<numberslider "$milk_amount" $milk_amount 0 60000 100>><br>
+
+            <span class="dol-link"><<link "設定">>
+                <<CE_milk_fix $milk_max $milk_volume>>
+                <<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
+            <</link>></span>
+        </div>
+    </div>
+</div>
 <</widget>>
 
 <<widget "CE_milk_fix">>
@@ -88,83 +102,92 @@
 <</widget>>
 
 <<widget "milk_releasedFIX">>
-	<<if $milk_releasedswich is undefined or $milk_releasedswich is 0>>
-	    <<set $milk_releasedFIX to 0 >>
-	<<else>>
-		<<if $milk_releasedFIX_MIN is undefined>>
-			<<set $milk_releasedFIX_MIN to 10 >>
-		<</if>>
-		<<if $milk_releasedFIX_MAX is undefined>>
-			<<set $milk_releasedFIX_MAX to 10 >>
-		<</if>>
-		<!-- _args[0]為原始擠奶隨機量-->
-		<<set $milk_releasedFIX to random($milk_releasedFIX_MIN,$milk_releasedFIX_MAX) - _args[0]>>
-		<<if $milk_amount lt $milk_releasedFIX>>
-		    <<set $milk_releasedFIX to $milk_amount - _args[0]>>
-	    <</if>>
-	<</if>>	
+    <<if $milk_releasedswich is undefined or $milk_releasedswich is 0>>
+        <<set $milk_releasedFIX to 0 >>
+    <<else>>
+        <<if $milk_releasedFIX_MIN is undefined>>
+            <<set $milk_releasedFIX_MIN to 10 >>
+        <</if>>
+        <<if $milk_releasedFIX_MAX is undefined>>
+            <<set $milk_releasedFIX_MAX to 10 >>
+        <</if>>
+        <<set $milk_releasedFIX to random($milk_releasedFIX_MIN,$milk_releasedFIX_MAX) - _args[0]>>
+        <<if $milk_amount lt $milk_releasedFIX>>
+            <<set $milk_releasedFIX to $milk_amount - _args[0]>>
+        <</if>>
+    <</if>>    
 <</widget>>
 
 <<widget "semen_released_setting">>
+<div class="dol-settings dol-shadow">
+
     <<if $semen_releasedFIX is undefined>>
         <<set $semen_releasedFIX to 1>>
-    <</if>>    
-   	<div class="settingsHeader options"><span class="gold">大爆🐍模式</span></div> 
-   		<br><br>
-	一次🐍出更多的🍼，Pc已經沖暈在廁所。
-	<br>
-	<<if $semen_releasedswich is undefined>>
-		<<set $semen_releasedswich to 0>>
-	<</if>>
-	<<if !$semen_releasedswich>>
-	    <<set $semen_releasedFIX to 1>>
-	<</if>>    
-	<<button "大爆🐍模式">>
-		<<set $semen_releasedswich = $semen_releasedswich == 0 ? 1 : 0>>
-		<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
-		<<replace #CE_settingsDiv>><<semen_released_setting>><br><br><</replace>>
-	<</button>>
-		<br>
-	大爆🐍模式：
-	<<if $semen_releasedswich is 0>>
-		<span class="red">關</span><br>
-	<</if>>
-	<<if $semen_releasedswich is 1>>
-		<span class="green">開</span><br>
-	<</if>>
-	<br>
-	<hr>
-	修改🍼量<br>
-	
-    <!--防止個別使用者變數超過滑塊最大值導致爆紅-->
-	
-	<<silently>>
-	    <<set $semen_amount = Math.clamp($semen_amount, 0, 60000)>>
-	    <<set $semen_volume = Math.clamp($semen_volume, 0, 60000)>>
-	    <<set $semen_max    = Math.clamp($semen_max, 0, 60000)>>
-    <</silently>>
-	
-	<!--------------------------------------->
-	
-	當前🍼量最大值：<span class="blue">$semen_max mL</span>mL<br>
-	<<numberslider "$semen_max" $semen_max 3000 60000 100 >><br>
-	當前可以儲存多少🍼：<span class="blue">$semen_volume</span>mL<br>
-	<<numberslider "$semen_volume" $semen_volume 0 60000 100>><br>
-	當前有多少🍼：<span class="blue">$semen_amount</span>mL<br>
-	<<numberslider "$semen_amount" $semen_amount 0 60000 100>><br>
-	<br>
-	<<set _semen_released to calculateSemenReleased()>>
-    <hr>
-    當前🐍精量：<spen class="blue">_semen_released</spen><br>
-    🐍精倍數：<<numberslider "$semen_releasedFIX" $semen_releasedFIX 1 100 1>><br>    
-	<<link "設定">>
-	    <<if !$semen_releasedswich>>
-	        <<set $semen_releasedFIX to 1>>
-	    <</if>>    
-	    <<CE_semen_fix $semen_max $semen_volume>>
-		<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
-		<<replace #CE_settingsDiv>><<semen_released_setting>><br><br><</replace>>
-	<</link>>	
+    <</if>>
+
+    <div class="dol-header">
+        <span class="dol-title">大爆🐍模式</span>
+    </div>
+    <div class="dol-body">
+
+        <div class="dol-desc">一次🐍出更多的🍼，Pc已經沖暈在廁所。</div>
+        <br>
+
+        <<if $semen_releasedswich is undefined>>
+            <<set $semen_releasedswich to 0>>
+        <</if>>
+        <<if !$semen_releasedswich>>
+            <<set $semen_releasedFIX to 1>>
+        <</if>>
+
+        <div class="dol-btn"><<button "大爆🐍模式">>
+            <<set $semen_releasedswich = $semen_releasedswich == 0 ? 1 : 0>>        
+            <<replace #CE_settingsDiv>><<semen_released_setting>><br><br><</replace>>
+        <</button>></div>
+
+        <br><br>
+        大爆🐍模式：
+        <<if $semen_releasedswich is 0>>
+            <span class="dol-red">關</span>
+        <</if>>
+        <<if $semen_releasedswich is 1>>
+            <span class="dol-green">開</span>
+        <</if>>
+
+        <br><br><hr>
+        <div class="dol-section">
+            <div class="dol-desc">修改🍼量</div>
+
+            <<silently>>
+                <<set $semen_amount = Math.clamp($semen_amount, 0, 60000)>>
+                <<set $semen_volume = Math.clamp($semen_volume, 0, 60000)>>
+                <<set $semen_max    = Math.clamp($semen_max, 0, 60000)>>
+            <</silently>>
+
+            <div class="dol-desc">當前🍼量最大值：<span class="dol-blue">$semen_max mL</span></div>
+            <<numberslider "$semen_max" $semen_max 3000 60000 100 >><br>
+            <div class="dol-desc">當前可以儲存多少🍼：<span class="dol-blue">$semen_volume</span>mL</div>
+            <<numberslider "$semen_volume" $semen_volume 0 60000 100>><br>
+            <div class="dol-desc">當前有多少🍼：<span class="dol-blue">$semen_amount</span>mL</div>
+            <<numberslider "$semen_amount" $semen_amount 0 60000 100>><br><br>
+
+            <<set _semen_released to calculateSemenReleased()>>
+            <hr>
+            <div class="dol-desc">當前🐍精量：<span class="dol-blue">_semen_released</span></div>
+            🐍精倍數：<<numberslider "$semen_releasedFIX" $semen_releasedFIX 1 100 1>><br>
+
+            <span class="dol-link">
+                <<link "設定">>
+                    <<if !$semen_releasedswich>>
+                        <<set $semen_releasedFIX to 1>>
+                    <</if>>
+                    <<CE_semen_fix $semen_max $semen_volume>>    
+                    <<replace #CE_settingsDiv>><<semen_released_setting>><br><br><</replace>>
+                <</link>>
+            </span>
+        </div>
+    </div>
+</div>
 <</widget>>
 
 <<widget "CE_semen_fix">>
@@ -183,4 +206,3 @@
         <</if>>    
     <</if>>
 <</widget>>
-

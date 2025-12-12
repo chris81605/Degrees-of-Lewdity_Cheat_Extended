@@ -1,0 +1,52 @@
+:: CE_timeMultiplier[widget]
+
+<<widget "CE_timeMultiplier">>
+<div class="dol-settings dol-shadow">
+    <div class="dol-header"><span class="dol-title">⌛ 時間流速控制</span></div>
+    <div class="dol-body">
+        <div class="dol-desc">
+            調整時間流速，開啟後：
+            <ul>
+                <li>時間流速 &gt; 1 時，時間過得更快</li>
+                <li>時間流速 &lt; 1 時，時間過得更慢</li>
+                <li>⌛ The World!</li>
+            </ul>
+        </div>
+        <br>
+        <<if $CE_timePassMultiplier is undefined >>
+            <<set $CE_timePassMultiplier to false >>
+            <<set $CE_timeMultiplier to 1>>
+        <</if>>
+
+        <<set _timePassBtnText = $CE_timePassMultiplier ? "關閉時間流速控制" : "啟用時間流速控制">>
+        
+        <div class ="dol-btn">
+            <<button _timePassBtnText>>
+                <<set $CE_timePassMultiplier = !$CE_timePassMultiplier>>
+                <<replace #CE_settingsDiv>><<CE_timeMultiplier>><</replace>>
+            <</button>>
+        </div>
+        <br>
+
+        <div class="dol-desc">
+            當前狀態：
+            <<if $CE_timePassMultiplier>>
+                <span class="green">開</span>
+            <<else>>
+                <span class="red">關</span>
+            <</if>>
+        </div>
+        <br>
+
+        <div class="dol-section">
+            時間流速控制 (0~10)：<br>
+            <<numberslider "$CE_timeMultiplier" $CE_timeMultiplier 0 10 0.1>>
+        </div>
+        <br>
+
+        <div class="dol-desc">
+            <span class="note">💡 0.5 為時間流速減半，2 為時間流速加倍</span>
+        </div>
+    </div>
+</div>
+<</widget>>

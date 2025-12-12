@@ -1,0 +1,66 @@
+:: CE_damageMultiplier[widget]
+
+<<widget "CE_damageMultiplier">>
+
+<!-- 外框 -->
+<div class="dol-settings dol-shadow">
+
+    <!-- 標題 -->
+    <div class="dol-header">
+        <span class="dol-title">👊 傷害倍數控制</span>
+    </div>
+
+    <div class="dol-body">
+
+        <!-- 說明文字 -->
+        <div class="dol-desc">
+            調整傷害倍數，開啟後：
+            <ul>
+                <li>倍率 > 1 → 傷害增加</li>
+                <li>倍率 = 1 → 正常傷害</li>              
+            </ul>
+        </div>
+
+        <!-- 初始化變數 -->
+        <<if $CE_damageEnabled is undefined>>
+            <<set $CE_damageEnabled = false>>
+            <<set $CE_damageMultiplier = 1>>
+        <</if>>
+
+        <!-- 開關按鈕 -->
+        <<set _damageBtnText = $CE_damageEnabled ? "關閉傷害控制" : "啟用傷害控制">>
+        
+        <div class="dol-btn">
+            <<button _damageBtnText>>
+                <<set $CE_damageEnabled = !$CE_damageEnabled>>
+                <<replace #CE_settingsDiv>><<CE_damageMultiplier>><</replace>>
+            <</button>>
+        </div>      
+        <br>
+
+        <!-- 當前狀態 -->
+        <div class="dol-section-block">
+            當前狀態：
+            <<if $CE_damageEnabled>>
+                <span class="dol-green">開</span>
+            <<else>>
+                <span class="dol-red">關</span>
+            <</if>>
+        </div>
+
+        <br>
+
+        <!-- 傷害倍率滑桿 -->
+        <div class="dol-section-block">
+            傷害倍率 (1~100)：<br>
+            <<numberslider "$CE_damageMultiplier" $CE_damageMultiplier 1 100 1>>
+        </div>
+
+        <br>
+
+        <span class="note">💡 1 為正常傷害，2 為傷害加倍</span>
+
+    </div> <!-- dol-body end -->
+</div> <!-- dol-settings end -->
+
+<</widget>>
