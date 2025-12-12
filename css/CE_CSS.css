@@ -1,59 +1,97 @@
-.CEDISPLAY{
-        display: flex;
-		flex-direction: row;
-		flex-wrap:wrap;
-		column-gap: 5px; 
-		border-style:solid;
-		border-width:1px;
-		overflow:auto;
+/*用於作弊選單內顯示作弊拓展UI*/
+/* 最外層容器，上下結構 */
+.CEDISPLAY {
+    display: flex;
+    flex-direction: column;   /* 上下結構 */
+    gap: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px;
+    border: 1px solid #ccc;
 }
-.CEDISPLAY_button {
-		width: 150px;
-		border-style:solid;
-		border-width:1px;
-		padding-top:5px;
-		padding-right:5px;
-		padding-left:5px;
-		padding-bottom:5px;
-		margin-top:5px;
-		margin-bottom:5px;
-		margin-right:5px;
-		margin-left:5px;
+
+/* 按鈕區容器，水平排列，可左右滑動 */
+.CEbuttonBar {
+    display: flex;
+    flex-wrap: nowrap;        /* 不換行 */
+    overflow-x: auto;         /* 超出寬度可左右滑動 */
+    gap: 2px;                 /* 按鈕間距縮小 */
+    padding: 0;               /* 去掉多餘 padding */
+    -webkit-overflow-scrolling: touch; /* 移動端平滑滾動 */
+    width: 100%;
 }
-.CEDISPLAY_setting {
-		flex: 1;
-		border-style:solid;
-		border-width:1px;
-		padding-top:5px;
-		padding-right:5px;
-		padding-left:5px;
-		padding-bottom:5px;
-		overflow:auto;
-		margin-top:5px;
-		margin-bottom:5px;
-		margin-right:5px;
-		margin-left:5px;
+
+/* 確保直接子元素水平排列 */
+.CEbuttonBar > * {
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
 }
+
+/* 按鈕容器（支援多個樣式） */
 .CEbuttonSettings {
-		display: flex;
-		flex-direction: row;
-		flex-wrap:wrap;
-		margin-top:5px;
-		margin-bottom:5px;
+    flex: 0 0 auto;          /* 固定大小，不換行 */
+    display: flex;
+    align-items: center;
 }
+
+/* 按鈕樣式 */
+.CEbuttonSettings button {
+    flex: 0 0 auto;          /* 固定大小，不會換行 */
+    width: 100px;             /* 按鈕寬度，可視需求調整 */
+    height: 36px;             /* 調整高度，保持比例 */
+    padding: 0 8px;           /* 內距縮小，避免過大間距 */
+    font-size: clamp(12px, 1.5vw, 16px);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    border: 1px solid var(--gold);
+    border-radius: 5px;
+    background-color: var(--button-bg, #222);
+    color: var(--button-color, #fff);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* 選中按鈕樣式 */
 .CEbuttonSettingsSelected button {
-		border: 1px solid var(--gold);
-		margin-top:5px;
-		margin-bottom:5px;
+    width: 100px;             /* 按鈕寬度，可視需求調整 */
+    padding: 0 8px;           /* 內距縮小，避免過大間距 */
+    font-size: clamp(12px, 1.5vw, 16px);
+    border-color: var(--gold);
+    background-color: var(--gold-bg, #444);
+    border-radius: 5px;
 }
+
+/* 按鈕懸停效果 */
+.CEbuttonSettings button:hover {
+    background-color: var(--button-hover-bg, #333);
+    color: var(--button-hover-color, #fff);
+}
+
+/* 下方設定區塊 */
+.CEDISPLAY_setting {
+    flex: 1 1 auto;
+    min-height: 100px;
+    border: 1px solid #999;
+    border-radius: 4px;
+    padding: 5px;
+    overflow: auto;
+    box-sizing: border-box;
+}
+
+/*用途不明，忘了*/
 .CEinCheatMenuBotton button {
 		border-style:solid;
 		border-width:2px;
 }
+/*用於言靈輸入框*/
 .CEtextarea {
 		width:100%;
         overflow:auto;
 }
+
+/*用於顯示言靈列表*/
 .CEliat {
   width: 100%;           /* 自適應父容器寬度 */
   max-width: 600px;      /* 可選最大寬度 */
@@ -66,33 +104,32 @@
  /* background-color: #f9f9f9;*/
   border-radius: 4px;
 }
-
 .CEtab {
-    display: flex;           /* 水平排列按鈕 */
-    flex-wrap: nowrap;       /* 不換行 */
-    overflow-x: auto;        /* 超出寬度可左右滾動 */
-    gap: 1px;                /* 按鈕間距，可調整 */
-    padding: 0px 0;          /* 上下間距 */
-    scrollbar-width: thin;   /* Firefox 滾動條細 */
-    scrollbar-color: var(--500) transparent; /* Firefox 滾動條顏色 */
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 2px;               /* 按鈕間距稍微大一點但不誇張 */
+    padding: 2px 0;         /* 上下間距 */
+    scrollbar-width: thin;
+    scrollbar-color: var(--500) transparent;
 }
 
 .CEtab::-webkit-scrollbar {
-    height: 6px;             /* 滾動條高度 */
+    height: 6px;
 }
 
 .CEtab::-webkit-scrollbar-thumb {
-    background-color: var(--500); /* 滾動條顏色 */
+    background-color: var(--500);
     border-radius: 3px;
 }
 
 .CEtab button {
-    flex: 0 1 auto;           /* 不被壓縮 */
-    padding: 4px 8px;         /* 上下4px、左右8px */
-    font-size: 0.85rem;       /* 字體稍微小一點 */
-    border-radius: 4px;       /* 圓角按鈕 */
-    white-space: nowrap;      /* 不換行文字 */
-    margin: 0;                /* 消除額外 margin */
+flex: 0 1 auto;           /* 不被壓縮 */
+padding: 4px 8px;         /* 上下4px、左右8px */
+font-size: 0.85rem;       /* 字體稍微小一點 */
+border-radius: 5px;       /*圓角按鈕 */
+white-space: nowrap;      /* 不換行文字 */
+margin: 0;                /* 消除額外 margin */
 }
 
 /*
@@ -107,7 +144,7 @@
 }
 */
 
-/* 只在 #mobileStats 下有效，外觀 100% 一樣 */
+/*側邊欄入口icon用 只在 #mobileStats 下有效，外觀 100% 一樣 */
 #mobileStats > .CE_sideBarIconBtn {
     background-image: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iTGF5ZXJfMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSIzMnB4IiBoZWlnaHQ9IjMycHgiIHZpZXdCb3g9IjAgMCAzMiAzMiIgZW5hYmxlLWJhY2tncm91bmQ9Im5ldyAwIDAgMzIgMzIiIHhtbDpzcGFjZT0icHJlc2VydmUiPiAgPGltYWdlIGlkPSJpbWFnZTAiIHdpZHRoPSIzMiIgaGVpZ2h0PSIzMiIgeD0iMCIgeT0iMCIKICAgIHhsaW5rOmhyZWY9ImRhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFBQ0FBQUFBZ0NBTUFBQUJFcElyR0FBQUFJR05JVWswQUFIb21BQUNBaEFBQStnQUFBSURvCkFBQjFNQUFBNm1BQUFEcVlBQUFYY0p5NlVUd0FBQUM2VUV4VVJmLy8vMFpZWVVWYlpFUmFaRVZhWTBWYVpFVllZa1pZWmdBQUFFVmEKWkVSYVpFVmFaRVJhWkVaYVkwZFZZME5aWWtWYVpFVmFaVVJWWmtWYVpFVmFaRVZhWkVSYVpVVmFaVWhjWWtWYVpFVmFaRWRaWlVWYQpaRVZhWTBWYVpVUmJaRVZhWkVWYlkwUmFZNENBZ0VWYVpFUlpaRWRjWmtWYVpFTlpaRVpiWTBsYlcwUmFaVUJBZ0VWYVpFVmJaRUJWCllFVlpaVVZhWTBaYVpFWlpaa1ZhWkVOYllVVmFZMFZhWkV0YWFVVmFaRUJnWUVaYlkwVmFaUC8vLzh2MnF2TUFBQUE4ZEZKT1V3QWQKMW4rbnpEUTNBZkJlL3RoeEVqbkxZQS9xK095T2t5ZjYvQ3UxMnFKd3ZFTjBBa3A3TW4wWGVRNnZCT0NtR0hLMnV5ajdLcENSRWVzUQpYM2ZCNUNFQUFBQUJZa3RIUkFDSUJSMUlBQUFBQ1hCSVdYTUFBQURkQUFBQTNRRndVNklIQUFBQUIzUkpUVVVINlFzVURTZ0plVzJVCmJnQUFBUUpKUkVGVU9NdU5VMWtXZ2pBTWpLSUNvcmpocnFBZ3VJdjcydnVmUzFzb3JVcGZtWTgrTWhtU05FMEFHSEo1UkpEUFFUb1UKRkVNUkNBcFVVQkFJaWxSUS9QV1VWSHhxT2hYb0dyYlZFdldYRFZTcG1yVTZTbEN2bWRVS01ocVJ2OW5DbkdVZ0RvYUZ6N1pKQkIwawpSQmY3ZTMyeFlERDhDRVljTWJZZHh4NXp4QVJneWl6TDlYQkl6N1VZTndPZitRTjZyWUFwNXJCSUlycXNNY3NrNXdKZ3RZNi9QU2JZCmJDTnV2U0ptbE1YbWU3c2psQjliSWJFY1hyQW5WSmhWSUVraEsxSnl6VkRlcVA5V2I1WmZyWWJEOTJQdGQxdU9PSDUrT0ozRnozMisKNEpCWHNlQkdTcnEzU1FFcEkvZDRSa1UzUkVQN3lqcjI4c1hKdW5yUzVVMWQvemY2NTMzMzVKRStNd0FBQUNWMFJWaDBaR0YwWlRwagpjbVZoZEdVQU1qQXlOUzB4TVMweU1GUXhNem8wTURvd09Tc3dNRG93TUNRb0FRSUFBQUFsZEVWWWRHUmhkR1U2Ylc5a2FXWjVBREl3Ck1qVXRNVEV0TWpCVU1UTTZOREE2TURrck1EQTZNREJWZGJtK0FBQUFLSFJGV0hSa1lYUmxPblJwYldWemRHRnRjQUF5TURJMUxURXgKTFRJd1ZERXpPalF3T2pBNUt6QXdPakF3QW1DWVlRQUFBQmwwUlZoMFUyOW1kSGRoY21VQWQzZDNMbWx1YTNOallYQmxMbTl5WjV2dQpQQm9BQUFBQVNVVk9SSzVDWUlJPSIgLz4KPC9zdmc+Cg==");
     background-repeat: no-repeat;
@@ -115,4 +152,146 @@
     background-repeat: no-repeat;
     width: 100%;
     background-color: transparent !important;
+}
+
+
+/*實驗性ui*/
+
+/* ---------- DoL 官方風格：深色主題 + 金色標題 ---------- */
+.dol-shadow {
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.04);
+  overflow: hidden;
+  background: linear-gradient(180deg, rgba(16,16,16,0.95), rgba(8,8,8,0.95));
+  color: #dcdcdc;
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.dol-header {
+  background: linear-gradient(180deg, rgba(38,30,20,0.6), rgba(28,20,12,0.6));
+  padding: 10px 14px;           /* 邊框內距 */
+  border: 2px solid #d8b04a;    /* 金色邊框 */
+  border-radius: 6px;            /* 圓角 */
+  text-align: center;            /* 文字置中 */
+  display: block;                /* 邊框包住整個容器 */
+  width: 100%;                   /* 讓邊框寬度填滿父容器 */
+  box-sizing: border-box;        /* 包含 padding 與 border */
+}
+
+.dol-title {
+  font-weight: 700;
+  color: #d8b04a;
+  font-size: 1.05em;
+  letter-spacing: 0.6px;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.6);
+  
+}
+
+.dol-body {
+  padding: 12px 14px;
+}
+
+.dol-desc {
+  font-size: 0.95em;
+  margin-bottom: 10px;
+  color: #bfc7d1;
+}
+
+.dol-section {
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,0.03);
+  border-radius: 6px;
+  background: rgba(255,255,255,0.01);
+}
+
+.dol-section-block {
+  margin-bottom: 8px;
+  padding: 10px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.01));
+  border: 1px solid rgba(255,255,255,0.02);
+}
+
+.dol-label {
+  display: block;
+  font-weight: 600;
+  color: #cfd7e2;
+  margin-bottom: 6px;
+  font-size: 0.92em;
+}
+
+.mt10 { margin-top: 10px; }
+.mt12 { margin-top: 12px; }
+.mt15 { margin-top: 15px; }
+.mt8 { margin-top: 8px; }
+
+.dol-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.dol-btn {
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.03);
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all .12s ease;
+  color: #e6e6e6;
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.6);
+}
+
+.dol-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.45);
+}
+
+.dol-gold-btn {
+  color: #2b1b00;
+  background: linear-gradient(180deg, rgba(255,215,90,0.95), rgba(210,165,60,0.95));
+  border: 1px solid rgba(0,0,0,0.35);
+}
+
+.dol-link {
+  color: #cbb56a;
+  text-decoration: underline;
+  cursor: pointer;
+  font-weight: 600;
+  margin-left: 6px;
+}
+
+.dol-status {
+  margin-top: 12px;
+  padding: 10px;
+  border-left: 3px solid rgba(74,163,255,0.12);
+  background: rgba(0,0,0,0.15);
+  border-radius: 4px;
+  color: #dfe9f8;
+}
+
+.dol-blue { color: #75bdf0; font-weight: 700; }
+.dol-red { color: #ff7070; font-weight: 700; }
+.dol-green { color: #70d070; font-weight: 700; }
+.dol-gold { color: #d8b04a; font-weight: 700; }
+
+/* Improve listbox / textbox appearance in SugarCube */
+select, input[type="text"], textarea {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.03);
+  padding: 6px 8px;
+  border-radius: 4px;
+  color: #e6eef8;
+  min-width: 160px;
+  font-size: 0.94em;
+}
+
+/* make the UI adapt a little on smaller screens */
+@media (max-width: 640px) {
+  .dol-body { padding: 10px; }
+  select, input[type="text"] { min-width: 120px; }
+  .dol-actions { flex-direction: column; align-items: stretch; }
 }
