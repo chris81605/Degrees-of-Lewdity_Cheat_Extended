@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.17(DevV251204build2)",
+  "version": "1.17(DevV2512111bulid1)",
   "styleFileList": [
     "css/CE_CSS.css"
   ],
@@ -12,7 +12,8 @@
     "scripts/CE_sideBarIcon.js",
     "scripts/CE_tattoo.js",
     "scripts/CE_MoneyCheat.js",
-    "scripts/CE_statControl.js"
+    "scripts/CE_statControl.js",
+    "scripts/CE_timeMultiplier.js"    
   ],
   "tweeFileList": [
     "game/CEoverlayReplace.twee",
@@ -23,16 +24,19 @@
     "game/CE_auto_clothes_Warmth.twee",
     "game/CE_cheatExtendedMenu.twee",
     "game/CE_milk_mod.twee",
-    "game/CE_Bedroom Study.twee",
     "game/CE_test_widget.twee",
-    "game/Bccm/ccplot.twee",
     "game/CE_inventory_helper.twee",
     "game/Ce_tattoo_widget.twee",
     "game/Widgets cheat_extended.twee",
     "game/CE_Wardrobe.twee",
     "game/CE_studyHard.twee",
     "game/CE_moneyCheat.twee",
-    "game/CE_statControl.twee"
+    "game/CE_statControl.twee",
+    "game/CE_timeMultiplier.twee",
+    "game/CE_violenceControl.twee",
+    "game/CE_damageMultiplier.twee",
+    "game/CE_Pregnancy.twee",
+    "game/CE_getAllCothes.twee"
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
