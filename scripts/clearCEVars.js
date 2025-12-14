@@ -110,7 +110,10 @@
         "CE_violenceEnabled",
         "CE_violenceMultiplier",
         "CE_damageEnabled",
-        "CE_damageMultiplier"
+        "CE_damageMultiplier",
+        "CE_forceEnableCheat",
+        "CE_sideBarIconEnable",
+        "CE_featBypass"
     ];
 
     // 封裝成全局函數
