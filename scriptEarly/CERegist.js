@@ -37,11 +37,13 @@ simpleFrameworks.addto('iModOptions', 'swich_DEBUG_MODE')
 
                         // Maplebirch 註冊對應 Cheat Extended
                         maplebirchFrameworks.addto('Cheats', 'cheat_extended');
-                        maplebirchFrameworks.addto('MenuBig', 'bccmeditor_button');
+                        //maplebirchFrameworks.addto('MenuBig', 'bccmeditor_button');
                        // maplebirchFrameworks.addto('MenuBig', 'CE_buttom');
+                       //maplebirchFrameworks.addto('MenuSmall', 'CE_originalCheatButton');
+                       maplebirchFrameworks.addto('MenuBig', 'CE_originalCheatButton');
                        // maplebirchFrameworks.addto('CaptionAfterDescription', 'bccmeditor_init');
                         maplebirchFrameworks.addto('CaptionAfterDescription', 'CEstatebox');
-                        maplebirchFrameworks.addto('Options', 'swich_DEBUG_MODE');
+                        maplebirchFrameworks.addto('Options', 'CE_options');
                         maplebirchFrameworks.addto('HintMobile', 'CE_sideBarIcon');
 
                     } else {
@@ -58,11 +60,12 @@ simpleFrameworks.addto('iModOptions', 'swich_DEBUG_MODE')
 
                         // Simple Frameworks 註冊 Cheat Extended
                         simpleFrameworks.addto('iModCheats', 'cheat_extended');
-                        simpleFrameworks.addto('ModMenuBig', 'bccmeditor_button');
+                     //   simpleFrameworks.addto('ModMenuBig', 'bccmeditor_button');
+                        simpleFrameworks.addto('ModMenuBig', 'CE_originalCheatButton');
                       //  simpleFrameworks.addto('ModMenuBig', 'CE_buttom');
                       //  simpleFrameworks.addto('ModCaptionAfterDescription', 'bccmeditor_init');
                         simpleFrameworks.addto('ModCaptionAfterDescription', 'CEstatebox');
-                        simpleFrameworks.addto('iModOptions', 'swich_DEBUG_MODE');
+                        simpleFrameworks.addto('iModOptions', 'CE_options');
                         V.CE_SFflag = true;
 
                     } else {
