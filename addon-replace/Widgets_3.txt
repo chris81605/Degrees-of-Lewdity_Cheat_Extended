@@ -1,4 +1,4 @@
-			<<set _pain = (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod)>>
+			<<set _pain = (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod / _clothesMod)>>
 			<<if $CE_violenceEnabled is true>>
 				<<set $pain += _pain * $CE_violenceMultiplier>>
 			<<else>>
