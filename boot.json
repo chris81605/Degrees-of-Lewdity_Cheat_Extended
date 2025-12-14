@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.17(DevV2512111bulid1)",
+  "version": "1.17(DevV251214alpha2)",
   "styleFileList": [
     "css/CE_CSS.css"
   ],
@@ -13,11 +13,11 @@
     "scripts/CE_tattoo.js",
     "scripts/CE_MoneyCheat.js",
     "scripts/CE_statControl.js",
-    "scripts/CE_timeMultiplier.js"    
+    "scripts/CE_timeMultiplier.js",
+    "scripts/CE_featBypass.js"    
   ],
   "tweeFileList": [
-    "game/CEoverlayReplace.twee",
-    "game/Bccm/bccmeditor.twee",
+    "game/CEoverlayReplace.twee",   
     "game/CE_teleportation.twee",
     "game/CE_passage_editor.twee",
     "game/CE_yanling.twee",
@@ -64,7 +64,7 @@
       "params": [
         {
           "passage": "Widgets",
-          "findString": "\t\t\t<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod)>>",
+          "findString": "\t\t\t<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod / _clothesMod)>>",
           "replaceFile": "addon-replace/Widgets_3.txt",
           "comments": "金鐘罩、鐵布衫"
         },
@@ -148,14 +148,32 @@
             "from": "DefineMacro(\"money\", money);",
             "to": "window.money = money;\n\tconsole.log(\"[Cheat Extended] 🔧 money 函數已掛到全局\");\n\tDefineMacro(\"money\", money);",
             "fileName": "stat-changes.js"
+          },
+          {
+            "TODO": "function=>patch earnHourlyFeats",
+            "from": "if (V.feats.locked || V.cheatsEnabled === true || V.debug || V.gamemode === \"soft\" || V.settings.allureModifier < 1 || V.replayScene) return false;",
+            "to": "if (V.gamemode === \"soft\" || V.replayScene) return false;",
+            "fileName": "feats.js"
           }                 
         ],
         "twee": [
           {
-            "TODO": "caption.twee",
+            "TODO": "cheat button（不修改，改用別的方案）",
             "passageName": "StoryCaption",
-            "from": "<<if $dancing is 0 and $combat is 0 and $passage isnot \"Start2\" and $cheatdisable is \"f\" or $debug is 1>>",
-            "to": "<<if $dancing is 0 and $combat is 0 and $passage isnot \"Start2\" or $debug is 1>>"
+            "from": "<<if $dancing is 0 and $combat is 0 and $passage isnot \"Start2\" and $cheatsEnabled is true or $debug is 1>>",
+            "to": "<<if $dancing is 0 and $combat is 0 and $passage isnot \"Start2\" and $cheatsEnabled is true or $debug is 1>>"
+          },
+          {
+            "TODO": "作弊模式解鎖成就系統",
+            "passageName": "FeatsUI",
+            "from": "<<if $feats.locked>>",
+            "to": "<<if $feats.locked and !$CE_featBypass>>"
+          },
+          {
+            "TODO": "調試模式解鎖成就系統",
+            "passageName": "FeatsUI",
+            "from": "<<elseif $debug is 1>>",
+            "to": "<<elseif $debug is 1 and !$CE_featBypass>>"
           }
         ]
       }
