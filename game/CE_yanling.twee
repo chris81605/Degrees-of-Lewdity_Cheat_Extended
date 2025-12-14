@@ -66,10 +66,7 @@
 
                 <br><br>
 
-                <<yanling_mini_ui cheat_menu>>
-                <div style="width:100%; box-sizing:border-box;">
-                    <<yanling cheat_menu>>
-                </div>    
+                <<yanling_mini_ui cheat_menu>>                    <<yanling cheat_menu>>   
                 <<yanling_unset cheat_menu>>
                 <<yanling_move>>
             <</if>>
@@ -127,10 +124,7 @@
 		    <<textbox "_cccheat" $cccheat_display>>
 		<<else>>
 		    <div class="CEtextarea">
-		        <textarea id="cccheatarea" rows="15"></textarea>
-		        <!--
-		        <textarea id="cccheatarea" rows="10" cols="0"></textarea>
-		        -->
+		        <textarea id="cccheatarea" rows="15" style="width:100%; box-sizing:border-box;"></textarea>		        
 		    </div>
 		<</if>>    
 		<br>

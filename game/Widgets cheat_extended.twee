@@ -142,7 +142,7 @@
                 <</replace>>
 
                 <<replace #CEstatebox>>
-                    <<CE_Toggle>>
+                    <<CE_UiLists>>
                 <</replace>>
             <</button>>
         </div>
@@ -506,9 +506,8 @@
 
     <!-- 主體描述 -->
     <div class="dol-body">
-        DEBUG MODE 開啟後你就是上帝？請謹慎使用。
-    
-
+        DEBUG MODE ，限除錯用，請謹慎使用。            
+   
     <div style="display:flex; gap:0.5em; flex-wrap:wrap; margin-top:0.5em;">
         <<button "上帝模式開關">>
             <<set $debug = $debug == 0 ? 1 : 0>>

@@ -51,7 +51,9 @@
 
 <!--sideBarIcon入口-->
 <<widget "CE_sideBarIcon">>
-    <input type="button" class="saveMenuButton CE_sideBarIconBtn" value="" onclick="CEiconClicked()">
+    <<if $CE_sideBarIconEnable is true>>
+        <input type="button" class="saveMenuButton CE_sideBarIconBtn" value="" onclick="CEiconClicked()">
+    <</if>>
 <</widget>>
 
 <!--按鈕入口，已棄用，僅保留功能-->
@@ -61,7 +63,77 @@
     <</button>>
 <</widget>>
 
-<!--用於顯示在作弊選單-->
+<!--原版遊戲自帶的作弊按鈕-->
+<<widget "CE_originalCheatButton">>
+    <<if $CE_forceEnableCheat is true>> 
+        <<button 作弊>>
+	        <<overlayReplace "cheats">>
+	    <</button>>
+	<</if>>    	
+<</widget>>	
+
+<!--作弊拓展選項-->
+<<widget "CE_options">>
+    <div class="settingsHeader options">
+        <span class="gold">--作弊拓展選項--</span>
+    </div>        
+    <div class ="settingsGrid">              
+        <div class ="settingsToggleItem">
+            <div class="small-description">
+                強制啟用作弊模式
+            </div>
+            <label>
+                <<checkbox "$CE_forceEnableCheat" false true autocheck>>強制啟用作弊
+            </label>
+            <mouse class="tooltip linkBlue">(?)
+                <span>
+                    啟用原版的作弊模式就不需要開，否則會出現兩個作弊按鈕。                  
+                </span>
+            </mouse>
+        </div>     
+        <hr>
+        <div class ="settingsToggleItem">
+            <div class="small-description">
+                啟用作弊拓展側邊Icon按鈕
+            </div>
+            <label>
+                <<checkbox "$CE_sideBarIconEnable" false true autocheck>>啟用側邊Icon按鈕
+            </label>
+            <mouse class="tooltip linkBlue">(?)
+                <span>
+                    啟用後左側狀態欄收合時會出現作弊拓展的Icon按鈕                  
+                </span>
+            </mouse>
+        </div>
+        <hr>
+        <div class ="settingsToggleItem">
+            <div class="small-description">
+                無視遊戲限制，強制啟用成就系統<br>
+                目前無視下列條件：<br>
+                <ur>
+                    <li>作弊模式</li>
+                    <li>調試模式</li>                    
+                </ur>
+            </div>
+            <label>
+                <<checkbox "$CE_featBypass" false true autocheck>>強制啟用成就系統
+            </label>
+            <mouse class="tooltip linkBlue">(?)
+                <span>
+                    啟用後即使開啟作弊模式、曾經使用作弊成就被鎖、開啟調試模式等情況也能獲取成就               
+                </span>
+            </mouse>
+        </div>        
+        <div>
+            <<button "保存設置">>
+                <<run State.display($passage)>>
+            <</button>>
+        </div>                     
+    </div>    
+    
+<</widget>>
+
+<!--用於顯示在作弊選單的UI-->
 <<widget "cheat_extended">> 
 <hr>
 <div class="settingsHeader options">
