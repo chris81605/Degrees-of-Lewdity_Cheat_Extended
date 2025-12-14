@@ -104,6 +104,8 @@
  /* background-color: #f9f9f9;*/
   border-radius: 4px;
 }
+
+/*用於顯示彈窗式ui上方按鈕*/
 .CEtab {
     display: flex;
     flex-wrap: nowrap;
@@ -155,7 +157,7 @@ margin: 0;                /* 消除額外 margin */
 }
 
 
-/*實驗性ui*/
+/*新的ui*/
 
 /* ---------- DoL 官方風格：深色主題 + 金色標題 ---------- */
 .dol-shadow {
