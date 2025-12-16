@@ -161,139 +161,164 @@ margin: 0;                /* 消除額外 margin */
 
 /* ---------- DoL 官方風格：深色主題 + 金色標題 ---------- */
 .dol-shadow {
-  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.04);
-  overflow: hidden;
-  background: linear-gradient(180deg, rgba(16,16,16,0.95), rgba(8,8,8,0.95));
-  color: #dcdcdc;
-  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6); /* 陰影效果，增加立體感 */
+  border-radius: 8px;                     /* 容器圓角 */
+  border: 1px solid rgba(255,255,255,0.04); /* 淡邊框增加層次感 */
+  overflow: hidden;                        /* 讓內部元素不超出容器 */
+  background: linear-gradient(180deg, rgba(16,16,16,0.95), rgba(8,8,8,0.95)); /* 深色漸層背景 */
+  color: #dcdcdc;                          /* 文字顏色 */
+  font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; /* 主要字型 */
 }
 
 .dol-header {
-  background: linear-gradient(180deg, rgba(38,30,20,0.6), rgba(28,20,12,0.6));
+  background: linear-gradient(180deg, rgba(38,30,20,0.6), rgba(28,20,12,0.6)); /* 標題背景漸層 */
   padding: 10px 14px;           /* 邊框內距 */
-  border: 2px solid #d8b04a;    /* 金色邊框 */
-  border-radius: 6px;            /* 圓角 */
+  border: 2px solid #d8b04a;    /* 金色邊框，凸顯標題 */
+  border-radius: 6px;            /* 標題圓角 */
   text-align: center;            /* 文字置中 */
-  display: block;                /* 邊框包住整個容器 */
+  display: block;                /* 讓邊框包住整個容器 */
   width: 100%;                   /* 讓邊框寬度填滿父容器 */
   box-sizing: border-box;        /* 包含 padding 與 border */
 }
 
 .dol-title {
-  font-weight: 700;
-  color: #d8b04a;
-  font-size: 1.05em;
-  letter-spacing: 0.6px;
-  text-shadow: 0 1px 0 rgba(0,0,0,0.6);
-  
+  font-weight: 700;              /* 字體加粗 */
+  color: #d8b04a;                /* 金色文字 */
+  font-size: 1.05em;             /* 稍微大一點字 */
+  letter-spacing: 0.6px;         /* 字母間距 */
+  text-shadow: 0 1px 0 rgba(0,0,0,0.6); /* 淺黑陰影，增加立體感 */
 }
 
 .dol-body {
-  padding: 12px 14px;
+  padding: 12px 14px;            /* 內距，讓內容不貼邊 */
+}
+
+.dol-border {
+  border: 1px solid #d8b04a;    /* 金色邊框 */
+  border-radius: 6px;            /* 圓角 */
 }
 
 .dol-desc {
-  font-size: 0.95em;
-  margin-bottom: 10px;
-  color: #bfc7d1;
+  font-size: 0.95em;             /* 文字大小略小 */
+  margin-bottom: 10px;           /* 與下一個元素間距 */
+  color: #bfc7d1;                /* 描述文字顏色，淡色系 */
 }
 
 .dol-section {
-  padding: 10px;
-  border: 1px solid rgba(255,255,255,0.03);
-  border-radius: 6px;
-  background: rgba(255,255,255,0.01);
+  padding: 10px;                  /* 內距 */
+  border: 1px solid rgba(255,255,255,0.03); /* 淡邊框 */
+  border-radius: 6px;             /* 圓角 */
+  background: rgba(255,255,255,0.01); /* 半透明背景 */
 }
 
 .dol-section-block {
-  margin-bottom: 8px;
-  padding: 10px;
-  border-radius: 6px;
-  background: linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.01));
-  border: 1px solid rgba(255,255,255,0.02);
+  margin-bottom: 8px;             /* 與下方區塊間距 */
+  padding: 10px;                  /* 內距 */
+  border-radius: 6px;             /* 圓角 */
+  background: linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.01)); /* 淡漸層背景 */
+  border: 1px solid rgba(255,255,255,0.02); /* 淡邊框 */
 }
 
 .dol-label {
-  display: block;
-  font-weight: 600;
-  color: #cfd7e2;
-  margin-bottom: 6px;
-  font-size: 0.92em;
+  display: block;                 /* 單獨換行 */
+  font-weight: 600;               /* 稍微加粗 */
+  color: #cfd7e2;                 /* 輕灰藍文字 */
+  margin-bottom: 6px;             /* 與輸入框間距 */
+  font-size: 0.92em;              /* 稍小字型 */
 }
 
-.mt10 { margin-top: 10px; }
+.mt10 { margin-top: 10px; }       /* 外層間距 */
 .mt12 { margin-top: 12px; }
 .mt15 { margin-top: 15px; }
 .mt8 { margin-top: 8px; }
 
 .dol-actions {
-  margin-top: 10px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
+  margin-top: 10px;               /* 上方間距 */
+  display: flex;                  /* 水平排列按鈕/元素 */
+  gap: 8px;                       /* 元素間距 */
+  align-items: center;            /* 垂直置中 */
 }
 
 .dol-btn {
-  padding: 8px 12px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.03);
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all .12s ease;
-  color: #e6e6e6;
-  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.6);
+  padding: 8px 12px;              /* 按鈕內距 */
+  background: rgba(255,255,255,0.02); /* 淡背景 */
+  border: 1px solid rgba(255,255,255,0.03); /* 淡邊框 */
+  border-radius: 6px;             /* 圓角 */
+  cursor: pointer;                /* 滑鼠變手型 */
+  font-weight: 600;               /* 字體稍粗 */
+  transition: all .12s ease;      /* 懸停過渡動畫 */
+  color: #e6e6e6;                 /* 按鈕文字顏色 */
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,0.6); /* 內凹陰影 */
 }
 
+.dol-btn.small {
+  font-size: 0.85em;              /* 小字 */
+  padding: 0.2em 0.6em;           /* 小內距 */
+  min-height: unset;
+  line-height: 1.2;
+}
+
+.dol-btn.tiny {
+  font-size: 0.75em;              /* 更小字 */
+  padding: 0.1em 0.4em;           /* 超小內距 */
+}
+
+.dol-btn.fit {
+  /* 附加：讓按鈕寬度隨文字內容自適應 */
+  font-size: 0.7em;
+  display: inline-flex;
+  width: auto;
+  min-width: unset;
+  white-space: nowrap;        
+}    
+
 .dol-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(0,0,0,0.45);
+  transform: translateY(-1px);    /* 懸停上移效果 */
+  box-shadow: 0 6px 14px rgba(0,0,0,0.45); /* 懸停陰影 */
 }
 
 .dol-gold-btn {
-  color: #2b1b00;
-  background: linear-gradient(180deg, rgba(255,215,90,0.95), rgba(210,165,60,0.95));
-  border: 1px solid rgba(0,0,0,0.35);
+  color: #2b1b00;                  /* 深色文字 */
+  background: linear-gradient(180deg, rgba(255,215,90,0.95), rgba(210,165,60,0.95)); /* 金色漸層背景 */
+  border: 1px solid rgba(0,0,0,0.35); /* 深邊框 */
 }
 
 .dol-link {
-  color: #cbb56a;
-  text-decoration: underline;
-  cursor: pointer;
-  font-weight: 600;
-  margin-left: 6px;
+  color: #cbb56a;                  /* 金色文字 */
+  text-decoration: underline;      /* 下劃線 */
+  cursor: pointer;                 /* 滑鼠手型 */
+  font-weight: 600;                /* 字體稍粗 */
+  margin-left: 6px;                /* 左間距 */
 }
 
 .dol-status {
-  margin-top: 12px;
-  padding: 10px;
-  border-left: 3px solid rgba(74,163,255,0.12);
-  background: rgba(0,0,0,0.15);
-  border-radius: 4px;
-  color: #dfe9f8;
+  margin-top: 12px;                 /* 上方間距 */
+  padding: 10px;                    /* 內距 */
+  border-left: 3px solid rgba(74,163,255,0.12); /* 左側強調條 */
+  background: rgba(0,0,0,0.15);     /* 半透明背景 */
+  border-radius: 4px;               /* 圓角 */
+  color: #dfe9f8;                   /* 文字顏色 */
 }
 
-.dol-blue { color: #75bdf0; font-weight: 700; }
-.dol-red { color: #ff7070; font-weight: 700; }
-.dol-green { color: #70d070; font-weight: 700; }
-.dol-gold { color: #d8b04a; font-weight: 700; }
+.dol-blue { color: #75bdf0; font-weight: 700; }   /* 藍色強調文字 */
+.dol-red { color: #ff7070; font-weight: 700; }    /* 紅色強調文字 */
+.dol-green { color: #70d070; font-weight: 700; }  /* 綠色強調文字 */
+.dol-gold { color: #d8b04a; font-weight: 700; }   /* 金色強調文字 */
 
 /* Improve listbox / textbox appearance in SugarCube */
 select, input[type="text"], textarea {
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.03);
-  padding: 6px 8px;
-  border-radius: 4px;
-  color: #e6eef8;
-  min-width: 160px;
-  font-size: 0.94em;
+  background: rgba(255,255,255,0.02); /* 淡背景 */
+  border: 1px solid rgba(255,255,255,0.03); /* 淡邊框 */
+  padding: 6px 8px;                  /* 內距 */
+  border-radius: 4px;                /* 圓角 */
+  color: #e6eef8;                     /* 文字顏色 */
+  min-width: 160px;                   /* 最小寬度 */
+  font-size: 0.94em;                  /* 文字大小 */
 }
 
 /* make the UI adapt a little on smaller screens */
 @media (max-width: 640px) {
-  .dol-body { padding: 10px; }
-  select, input[type="text"] { min-width: 120px; }
-  .dol-actions { flex-direction: column; align-items: stretch; }
+  .dol-body { padding: 10px; }       /* 小螢幕時減少內距 */
+  select, input[type="text"] { min-width: 120px; } /* 小螢幕輸入框調整 */
+  .dol-actions { flex-direction: column; align-items: stretch; } /* 按鈕改直排 */
 }
