@@ -3,3 +3,14 @@ function CEiconClicked() {
     $.wiki("<<CEoverlayReplace \"CEcheatMenu\">>");
 }
 window.CEiconClicked = CEiconClicked;
+
+function CEiconSFdetect(){    
+    const simpleMod = window.modUtils.getAnyModByNameNoAlias('Simple Frameworks'); // ⚡ Simple Frameworks
+    const logger = window.modUtils.getLogger();
+    logger.warn(`[cheat Extended][CEiconSFdetect] 🧾 simpleMod = ${simpleMod}`);
+    console.warn(`[cheat Extended][CEiconSFdetect] 🧾 simpleMod = ${simpleMod}`);
+    if (simpleMod) V.SFflag = true;
+    logger.warn(`[cheat Extended][CEiconSFdetect] 🧾 V.SFflag = ${V.SFflag}`);
+    console.warn(`[cheat Extended][CEiconSFdetect] 🧾 V.SFflag = ${V.SFflag}`);
+}
+CEiconSFdetect();

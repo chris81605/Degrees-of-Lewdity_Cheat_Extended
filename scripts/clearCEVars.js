@@ -113,7 +113,18 @@
         "CE_damageMultiplier",
         "CE_forceEnableCheat",
         "CE_sideBarIconEnable",
-        "CE_featBypass"
+        "CE_featBypass",
+        "CE_purityControl",
+        "CE_purityMax",
+        "CE_purityAddMultiplier",
+        "CE_puritySubMultiplier",
+        "CE_parasiteControl",
+        "CE_parasiteMaxAnus",
+        "CE_parasiteMaxVagina",
+        "CE_parasiteUnlimited",
+        "CE_parasiteMultiplierEnable",
+        "CE_parasiteMultiplier"        
+        
     ];
 
     // 封裝成全局函數
