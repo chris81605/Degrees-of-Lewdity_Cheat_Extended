@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.17(DevV251214alpha2)",
+  "version": "1.17(DevV251215alpha1)",
   "styleFileList": [
     "css/CE_CSS.css"
   ],
@@ -14,7 +14,9 @@
     "scripts/CE_MoneyCheat.js",
     "scripts/CE_statControl.js",
     "scripts/CE_timeMultiplier.js",
-    "scripts/CE_featBypass.js"    
+    "scripts/CE_featBypass.js",
+    "scripts/CE_purityControl.js",
+    "scripts/CE_parasiteControl.js"    
   ],
   "tweeFileList": [
     "game/CEoverlayReplace.twee",   
@@ -36,7 +38,9 @@
     "game/CE_violenceControl.twee",
     "game/CE_damageMultiplier.twee",
     "game/CE_Pregnancy.twee",
-    "game/CE_getAllCothes.twee"
+    "game/CE_getAllCothes.twee",
+    "game/CE_purityControl.twee",
+    "game/CE_parasiteControl.twee"
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
@@ -154,7 +158,13 @@
             "from": "if (V.feats.locked || V.cheatsEnabled === true || V.debug || V.gamemode === \"soft\" || V.settings.allureModifier < 1 || V.replayScene) return false;",
             "to": "if (V.gamemode === \"soft\" || V.replayScene) return false;",
             "fileName": "feats.js"
-          }                 
+          },
+          {
+            "TODO": "patch => maxParasites",
+            "from": "switch (V.sexStats[genital].pregnancy.motherStatus)",
+            "to": "if (V.CE_parasiteControl){\n\t\t return CE_parasiteControlLimit(genital)\n\t};\n\tswitch (V.sexStats[genital].pregnancy.motherStatus)",
+            "fileName": "pregnancy-types.js"
+          }                  
         ],
         "twee": [
           {
