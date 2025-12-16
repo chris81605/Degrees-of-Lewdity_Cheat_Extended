@@ -2,11 +2,11 @@
 
 <!--用於顯示於左側狀態-->
 <<widget "CEstatebox">> 
-    <div id="CE_Toggle"><<CE_Toggle>></div>   
+    <div id="CE_Toggle" class="dol-btn fit"><<CE_Toggle>></div>   
     <div id="CEstatebox">	        
-        <div id="CE_UiLists"><<CE_UiLists>></div>
+        <<CE_UiLists>>
 	</div>
-	
+	<br>
 <</widget>>
 
 <<widget "CE_Toggle">>
@@ -23,31 +23,36 @@
 
 <<widget "CE_UiLists">>
     <<if $CE_Toggle>>        
-        <<quick_swich>>
-        <<if $swich_teleportation>><hr><</if>>
-    	<<teleportation>>
-    	<<if $swich_yanling>><hr><</if>>
-    	<<yanling_mini_ui left>>
-        <<if $CE_YL_leftui_enable is true>>
-            <<yanling_ui_hide>>			    
-    		<<if $yanling_ui_hide is 0>>
-    		    <<yanling left>>
-    		    <<yanling_unset left>>
-    		    <<yanling_move>>
-    		<</if>>
-        <</if>>
+        <div id="CE_UiLists" class="dol-body dol-border">
+            
+            <<if !$swich and !$swich_teleportation and !$swich_yanling>>
+                <div class="small-description">
+                    空空的什麼也沒有？
+                    <mouse class="tooltip linkBlue">(?)
+                        <span>
+                           試著去選項裡打開作弊拓展入口後啟用幾個功能看看？                
+                        </span>
+                    </mouse>
+                </div>
+            <</if>>
+                
+            <<quick_swich>>
+            <<if $swich_teleportation>><hr><</if>>
+    	    <<teleportation>>
+    	    <<if $swich_yanling>><hr><</if>>
+    	    <<yanling_mini_ui left>>
+            <<if $CE_YL_leftui_enable is true>>
+                <<yanling_ui_hide>>			    
+    		    <<if $yanling_ui_hide is 0>>
+    		        <<yanling left>>
+    		        <<yanling_unset left>>
+    		        <<yanling_move>>
+    		    <</if>>
+            <</if>>
+        </div>
+        <hr>
     <</if>>  
 <</widget>>
-
-<!--棄用
-<<widget "CEstatebox_hiden">>
-    <<if $swich is 1 or $swich_teleportation is 1 or $swich_yanling is 1>>
-        <<run $("#CEstatebox").removeAttr("hidden")>>
-    <<else>>
-        <<run $("#CEstatebox").attr("hidden", true)>>
-    <</if>>
-<</widget>>
--->
 
 <!--sideBarIcon入口-->
 <<widget "CE_sideBarIcon">>
@@ -196,6 +201,14 @@
             <<replace #CE_settingsDiv>><<CE_statControlPanel>><br><br><</replace>>
         <</button>>  
     </span>
+    
+    <span @class="_selectedOptions is 'CE_purityControl' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+        <<button "純潔永駐">>
+            <<set _selectedOptions to "CE_purityControl">>
+            <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+            <<replace #CE_settingsDiv>><<CE_purityControl>><br><br><</replace>>
+        <</button>>  
+    </span>
 
     <span @class="_selectedOptions is 'CE_damageMultiplier' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "傷害倍數">>
@@ -342,6 +355,14 @@
             <<replace #CE_settingsDiv>><<CE_Pregnancy>><br><br><</replace>>
         <</button>>      
     </span>
+    
+    <span @class="_selectedOptions is 'CE_parasiteControl' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+        <<button "寄生物懷孕控制">>
+            <<set _selectedOptions to "CE_parasiteControl">>
+            <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+            <<replace #CE_settingsDiv>><<CE_parasiteControl>><br><br><</replace>>
+        <</button>>      
+    </span>    
 
     <span @class="_selectedOptions is 'auto_clothes_Warmth' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "自動調溫">>
@@ -390,6 +411,11 @@
         <<button "狀態控制">>
             <<toggleTab>>
             <<replace #customOverlayContent>><div id="CE_settingsDiv"><<CE_statControlPanel>></div><</replace>>
+        <</button>>
+        
+        <<button "純潔永駐">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<CE_purityControl>></div><</replace>>
         <</button>>
         
         <<button "傷害倍數">>
@@ -482,6 +508,11 @@
         <<button "PC懷孕">>
             <<toggleTab>>
             <<replace #customOverlayContent>><div id="CE_settingsDiv"><<CE_Pregnancy>></div><</replace>>
+        <</button>>
+        
+        <<button "寄生物懷孕控制">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<CE_parasiteControl>></div><</replace>>
         <</button>>
 
         <<button "自動調溫">>

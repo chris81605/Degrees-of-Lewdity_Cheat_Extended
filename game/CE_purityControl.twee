@@ -1,0 +1,82 @@
+:: CE_purityControl[widget]
+
+<<widget "CE_purityControl">>
+
+<!-- 外框 -->
+<div class="dol-settings dol-shadow">
+
+    <!-- 標題 -->
+    <div class="dol-header">
+        <span class="dol-title">純潔永駐</span>
+    </div>
+
+    <div class="dol-body">
+
+        <!-- 說明文字 -->
+        <div class="dol-desc">
+            你永遠如同天使般純潔無瑕！
+        </div>
+
+        <br>
+        <<if $CE_purityControl is undefined>>
+            <<set $CE_purityControl = false>>
+            <<set $CE_purityMax = 1000>>             
+            <<set $CE_purityAddMultiplier = 1>>
+            <<set $CE_puritySubMultiplier = 1>>
+        <</if>>
+
+        <!-- 範例按鈕 -->
+        <div class="dol-section-block">
+            <div class="dol-btn">
+                <<set _BtnText = $CE_purityControl ? "關閉純潔控制" : "啟用純潔控制">>
+                <<button _BtnText>>
+                    <<set $CE_purityControl = !$CE_purityControl>>
+                    <<replace #CE_settingsDiv>><<CE_purityControl>><</replace>>
+                <</button>>
+            </div>
+        </div>
+
+        <br>
+
+        <!-- 範例狀態文字 -->
+        <div class="dol-section-block">
+            當前狀態：
+            <<if $CE_purityControl>>
+                <span class="dol-green">開</span>
+            <<else>>    
+                <span class="dol-red">關</span>
+            <</if>>    
+        </div>
+
+        <br>
+
+        <!-- 範例輸入或滑桿 -->
+        <div class="dol-section-block">
+            <label>純潔最大值：</label><br>
+            <<numberslider "$CE_purityMax" $CE_purityMax 0 1000 50>>
+        </div>
+        <hr>
+        <div class="dol-section-block">
+            <label>純潔恢復倍率：</label><br>
+            <<numberslider "$CE_purityAddMultiplier" $CE_purityAddMultiplier 1 10 1>>
+        </div>
+        <br>
+        <div class="dol-section-block">
+            <label>純潔降低倍率：</label><br>
+            <<numberslider "$CE_puritySubMultiplier" $CE_puritySubMultiplier 0 1 0.1>>
+        </div>
+        
+
+        <!-- 提示文字 -->
+        <div class="dol-section-block">
+            <ur>
+                <li>💡 純潔最大值設定為1000時，就算不再是處女也可能成為天使！</li>
+                <li>💡 增加乘數 > 1時恢復純潔速度更快</li>
+                <li>💡 減少乘數 < 1時降低純潔的速度更慢</li>
+            </ur>
+        </div>
+
+    </div> <!-- dol-body end -->
+</div> <!-- dol-settings end -->
+
+<</widget>>

@@ -1,0 +1,133 @@
+:: CE_parasiteControl[widget]
+
+<<widget "CE_parasiteMultiplierLog">>
+
+<<if !$CE_parasiteMultiplierLog || $CE_parasiteMultiplierLog.length === 0>>
+    （尚無寄生懷孕機率紀錄）
+<<else>>
+
+    <<for _i = $CE_parasiteMultiplierLog.length - 1; _i >= 0; _i-->>
+        <<set _log = $CE_parasiteMultiplierLog[_i]>>
+        <<print _log.time>> - <<print _log.macro>> : <<print JSON.stringify(_log.before)>> → <<print JSON.stringify(_log.after)>>
+        <br>
+    <</for>>
+<</if>>
+    
+<</widget>>
+
+<<widget "CE_parasiteControl">>
+
+<!-- 外框 -->
+<div class="dol-settings dol-shadow">
+
+    <!-- 標題 -->
+    <div class="dol-header">
+        <span class="dol-title">寄生物懷孕控制</span>
+    </div>
+
+    <div class="dol-body">
+
+        <!-- 說明文字 -->
+        <div class="dol-desc">
+            控制寄生物懷孕插槽上限，可自訂各部位插槽數量或是採用無限制模式。
+        </div>
+
+        <br>
+        <<if $CE_parasiteControl is undefined>>
+            <<set $CE_parasiteControl = false>>
+            <<set $CE_parasiteUnlimited = false>>
+            <<set $CE_parasiteMultiplierEnable = false>>
+            
+            <<set $CE_parasiteMultiplierLog = []>>
+            
+            <<set $CE_parasiteMaxVagina = 4>>
+            <<set $CE_parasiteMaxAnus = 2>>
+            <<set $CE_parasiteMultiplier = 1>>
+        <</if>>
+
+        <!-- 主開關 -->
+        <div class="dol-section-block">
+            <div class="dol-btn">
+                <<set _BtnText = $CE_parasiteControl ? "關閉寄生控制" : "啟用寄生控制">>
+                <<button _BtnText>>
+                    <<set $CE_parasiteControl = !$CE_parasiteControl>>
+                    <<replace #CE_settingsDiv>><<CE_parasiteControl>><</replace>>
+                <</button>>
+            </div>
+        </div>
+
+        <br>
+
+        <!-- 當前狀態 -->
+        <div class="dol-section-block">
+            當前狀態：
+            <<if $CE_parasiteControl>>
+                <span class="dol-green">開</span>
+            <<else>>
+                <span class="dol-red">關</span>
+            <</if>>
+        </div>
+
+        <hr>
+
+        <!-- 無限模式（checkbox） -->
+        <div class="dol-section-block">
+            <<checkbox "$CE_parasiteUnlimited" false true autocheck>>
+            啟用無限插槽模式
+            <mouse class="tooltip linkBlue">(?)
+                <span>
+                    開啟後不再受原版部位上限限制。<br>
+                    插槽數量將等於目前各部位懷孕插槽的數量 + 1。<br>
+                    關閉時會改用手動設定的上限。
+                </span>
+            </mouse>
+        </div>
+
+        <br>
+
+        <!-- 手動上限設定 -->
+        <div class="dol-section-block">
+            <label>陰道最大插槽數：</label><br>
+            <<numberslider "$CE_parasiteMaxVagina" $CE_parasiteMaxVagina 1 10 1>>
+        </div>
+
+        <div class="dol-section-block">
+            <label>肛門最大插槽數：</label><br>
+            <<numberslider "$CE_parasiteMaxAnus" $CE_parasiteMaxAnus 1 10 1>>
+        </div>
+
+        <br>
+        
+        <div class="dol-section-block">
+            <<checkbox "$CE_parasiteMultiplierEnable" false true autocheck>>
+            啟用懷孕機率加倍
+            <mouse class="tooltip linkBlue">(?)
+                <span>
+                    開啟後不再受原版寄生物懷孕機率控制。<br>
+                    原本設計中，每增加一個插槽再懷孕的機率會相應下降<br>
+                    到了第十個插槽時，懷孕機率可能不到10%（實際可能更低）             
+                </span>
+            </mouse>
+            <br>
+            <label>倍數：</label><br>
+            <<numberslider "$CE_parasiteMultiplier" $CE_parasiteMultiplier 1 10 1>>
+            <hr>
+            
+            <label>最近5筆懷孕機率變化：</label><br>
+            <<CE_parasiteMultiplierLog>>
+        </div>
+
+        <!-- 提示 -->
+        <div class="dol-section-block">
+            <ul>
+                <li>💡 關閉寄生懷孕數量控制時，將使用原版計算方式</li>
+                <li>💡 無限模式 =「動態插槽擴張」</li>
+                <li>💡 手動模式適合想固定上限的玩法</li>
+            </ul>
+        </div>
+
+    </div>
+</div>
+
+<</widget>>
+
