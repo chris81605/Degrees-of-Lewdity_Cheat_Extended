@@ -1,0 +1,40 @@
+/* 整個敵人狀態區 */
+.ce-enemy-state {
+    margin: 0.5em 0;
+}
+
+/* 單條狀態 */
+.ce-enemy-state-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    margin: 0.25em 0;
+}
+
+/* 左邊文字 */
+.ce-enemy-state-label {
+    width: 3em;
+    font-size: 0.9em;
+    color: #eee;
+}
+
+/* 血條背景 */
+.ce-enemy-state-bar {
+    flex: 1;
+    height: 8px;              /* ❗關鍵：一定要有高度 */
+    background: #333;         /* ❗不然你看不到 */
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+/* 填充條 */
+.ce-enemy-state-fill {
+    height: 100%;
+    background: #c33;         /* 預設紅色 */
+    transition: width 0.3s ease;
+}
+/* 類型顏色 */
+.ce-enemy-state--health  .ce-enemy-state-fill { background: #c0392b; }
+.ce-enemy-state--arousal .ce-enemy-state-fill { background: #e056fd; }
+.ce-enemy-state--anger   .ce-enemy-state-fill { background: #f0932b; }
+.ce-enemy-state--trust   .ce-enemy-state-fill { background: #6ab04c; }
