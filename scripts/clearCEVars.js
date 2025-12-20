@@ -14,6 +14,7 @@
         "CE_semen_volume",
         "CE_tattoo",
         "CE_tattoo_index",
+        //舊的 敵人狀態顯示變量（之後會棄用）
         "HP_AP_display_swich",
         //"_maxWarmth",
         //"_minWarmth",
@@ -123,7 +124,11 @@
         "CE_parasiteMaxVagina",
         "CE_parasiteUnlimited",
         "CE_parasiteMultiplierEnable",
-        "CE_parasiteMultiplier"        
+        "CE_parasiteMultiplier",
+        "CE_EnemyStateEnable",
+        "CE_hideUiBarToggleEnable",
+        "CE_autoRepairClothesEnabled",
+        "CE_autoRepairClothesRatio"        
         
     ];
 

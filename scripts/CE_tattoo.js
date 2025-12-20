@@ -71,7 +71,7 @@ function registerCETattoos() {
     if (simpleMod) {
         setup.modTattoos = setup.modTattoos || [];
         setup.modTattoos.push(...tattoos);
-        logger.log(`[Cheat Extended] ✅ Simple Frameworks 已註冊 CE 紋身，總數 ${setup.modTattoos.length}`);
+       // logger.log(`[Cheat Extended] ✅ Simple Frameworks 已註冊 CE 紋身，總數 ${setup.modTattoos.length}`);
         console.log(`[Cheat Extended] ✅ Simple Frameworks 已註冊 CE 紋身，總數 ${setup.modTattoos.length}`);
     }
 

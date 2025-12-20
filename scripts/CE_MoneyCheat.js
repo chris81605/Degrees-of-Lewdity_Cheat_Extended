@@ -45,7 +45,7 @@
                 initialized = true;
             }
             if (typeof V.CE_moneyWatchEnabled !== 'boolean') {
-                V.CE_moneyWatchEnabled = true;
+                V.CE_moneyWatchEnabled = false;
                 initialized = true;
             }
 
@@ -234,12 +234,12 @@ function registerMoneyWatchEvent() {
             priority: 0,
             once: false
         });
-        logger.log('[Cheat Extended] ✅ Maplebirch 已註冊金錢變化監控事件');
+      //  logger.log('[Cheat Extended] ✅ Maplebirch 已註冊金錢變化監控事件');
         console.log('[Cheat Extended] ✅ Maplebirch 已註冊金錢變化監控事件');
 
     } else if (simpleMod) {
         new TimeEvent('onSec', 'CE_money_Watch').Action(moneyWatchAction);
-        logger.log('[Cheat Extended] ✅ Simple Frameworks 已註冊金錢變化監控事件');
+      //  logger.log('[Cheat Extended] ✅ Simple Frameworks 已註冊金錢變化監控事件');
         console.log('[Cheat Extended] ✅ Simple Frameworks 已註冊金錢變化監控事件');
 
     } else {

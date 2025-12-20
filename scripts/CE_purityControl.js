@@ -1,3 +1,36 @@
+(() => {
+    // ===== 控制變數初始化 =====
+    V.purity =
+        (typeof V.purity === "number" && !isNaN(V.purity)) ? V.purity : 1000;
+
+    V.CE_purityControl =
+        (typeof V.CE_purityControl === "boolean") ? V.CE_purityControl : false;
+
+    V.CE_purityMax =
+        (typeof V.CE_purityMax === "number" && !isNaN(V.CE_purityMax))
+            ? V.CE_purityMax
+            : 1000;
+
+    V.CE_purityMin =
+        (typeof V.CE_purityMin === "number" && !isNaN(V.CE_purityMin))
+            ? V.CE_purityMin
+            : 0;
+
+    V.CE_purityAddMultiplier =
+        (typeof V.CE_purityAddMultiplier === "number"
+            && !isNaN(V.CE_purityAddMultiplier)
+            && V.CE_purityAddMultiplier > 0)
+            ? V.CE_purityAddMultiplier
+            : 1;
+
+    V.CE_puritySubMultiplier =
+        (typeof V.CE_puritySubMultiplier === "number"
+            && !isNaN(V.CE_puritySubMultiplier)
+            && V.CE_puritySubMultiplier > 0)
+            ? V.CE_puritySubMultiplier
+            : 1;
+})();
+
 /* =========================================
    Cheat Extended - 通用宏攔截器
    功能: 通用攔截任意宏，修改邏輯，支持阻止原 macro
@@ -53,19 +86,20 @@ function hookMacro(macroName, { cheatVar, modifyFunc, logFunc }) {
    範例: purity 宏 - 強制最大值 1000
    ========================================= */
 
-// ===== 控制變數初始化 =====
-if (typeof V.CE_purityControl === "undefined") V.CE_purityControl = false;
-if (typeof V.CE_purityMax === "undefined") V.CE_purityMax = 1000;
-if (typeof V.CE_purityMin === "undefined") V.CE_purityMin = 0;
-if (typeof V.CE_purityAddMultiplier === "undefined") V.CE_purityAddMultiplier = 1;
-if (typeof V.CE_puritySubMultiplier === "undefined") V.CE_puritySubMultiplier = 1;
-
 // ===== 統一處理函數 =====
 function CE_purityHandler(amount) {
     if (isNaN(amount)) return;
-
+   
     console.log(`[Cheat Extended][CE_purityHandler] 傳入 amount = ${amount}`);
-
+    
+    // ===== 控制變數檢測 =====
+    V.purity = (typeof V.purity === "number" && !isNaN(V.purity)) ? V.purity : 1000;
+    V.CE_purityControl = (typeof V.CE_purityControl === "boolean") ? V.CE_purityControl : false;
+    V.CE_purityMax = (typeof V.CE_purityMax === "number" && !isNaN(V.CE_purityMax)) ? V.CE_purityMax : 1000;
+    V.CE_purityMin = (typeof V.CE_purityMin === "number" && !isNaN(V.CE_purityMin)) ? V.CE_purityMin : 0;
+    V.CE_purityAddMultiplier = (typeof V.CE_purityAddMultiplier === "number" && !isNaN(V.CE_purityAddMultiplier) && V.CE_purityAddMultiplier > 0) ? V.CE_purityAddMultiplier : 1;
+    V.CE_puritySubMultiplier = (typeof V.CE_puritySubMultiplier === "number" && !isNaN(V.CE_puritySubMultiplier) && V.CE_puritySubMultiplier > 0) ? V.CE_puritySubMultiplier : 1;
+        
     // 根據增減使用不同倍率
     if (amount > 0) {
         amount *= V.CE_purityAddMultiplier ?? 1;
@@ -102,6 +136,8 @@ hookMacro("purity", {
         console.log(`[Cheat Extended] ✨ 宏 ${name} 被攔截，傳入參數:`, args);
     }
 });
+
+
 
 // ===== 包裝 statChange.purity（增加） =====
 const originalPurity = statChange.purity;

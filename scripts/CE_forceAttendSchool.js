@@ -49,12 +49,12 @@ function registerCE_forceAttendSchool() {
             once: false,
             //accumulate: { unit: 'sec', target: 1 },
         });
-        logger.log('[Cheat Extended] ✅ Maplebirch 已註冊用功學習事件');
+     //   logger.log('[Cheat Extended] ✅ Maplebirch 已註冊用功學習事件');
         console.log('[Cheat Extended] ✅ Maplebirch 已註冊用功學習事件');
         
     } else if (simpleMod) {
         new TimeEvent('onDay', 'CE_forceAttendSchool').Action(()=>CE_forceAttendSchool());
-        logger.log('[Cheat Extended] ✅ Simple Frameworks 已註冊用功學習');
+     //   logger.log('[Cheat Extended] ✅ Simple Frameworks 已註冊用功學習');
         console.log('[Cheat Extended] ✅ Simple Frameworks 已註冊用功學習');
         
     } else {
