@@ -20,6 +20,7 @@
         <br>
         <<if $CE_purityControl is undefined>>
             <<set $CE_purityControl = false>>
+            <<set $CE_purityMin = 0>>
             <<set $CE_purityMax = 1000>>             
             <<set $CE_purityAddMultiplier = 1>>
             <<set $CE_puritySubMultiplier = 1>>

@@ -62,18 +62,60 @@
             <hr>
 
             <div class="dol-desc">修改🥛量</div>
+           
             <<silently>>
-                <<set $milk_amount = Math.clamp($milk_amount, 0, 60000)>>
-                <<set $milk_volume = Math.clamp($milk_volume, 0, 60000)>>
-                <<set $milk_max = Math.clamp($milk_max, 0, 60000)>>
+                <<set $milk_max = Math.clamp($milk_max, 3000, 60000)>>                
+                <<set $milk_volume = Math.clamp($milk_volume, 0, $milk_max)>> 
+                <<set $milk_amount = Math.clamp($milk_amount, 0, $milk_volume)>>               
             <</silently>>
-
+            
+            <!--
             <div class="dol-desc">當前🥛量最大值：<span class="dol-blue">$milk_max mL</span></div>
             <<numberslider "$milk_max" $milk_max 3000 60000 100 >><br>
             <div class="dol-desc">當前可以儲存多少🥛：<span class="dol-blue">$milk_volume</span>mL</div>
-            <<numberslider "$milk_volume" $milk_volume 0 60000 100>><br>
+            <<numberslider "$milk_volume" $milk_volume 0 $milk_max 1>><br>
             <div class="dol-desc">當前有多少🥛：<span class="dol-blue">$milk_amount</span>mL</div>
-            <<numberslider "$milk_amount" $milk_amount 0 60000 100>><br>
+            <<numberslider "$milk_amount" $milk_amount 0 $milk_volume 1>><br>
+            -->
+            
+            <!-- 母乳最大量 -->
+            <<numberStepper "當前🥛量最大值" $milk_max {
+                callback: value => {
+                    $milk_max = value;
+                    $milk_volume = Math.min($milk_volume, $milk_max);
+                    $milk_amount = Math.min($milk_amount, $milk_volume);
+                    Wikifier.wikifyEval("<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>");
+                },
+                step: 100,
+                valueFormat: value => value + "ml",
+                min: 3000,
+                max: 60000              
+            }>><br>
+
+            <!-- 可儲存量 -->
+            <<numberStepper "當前可以儲存多少🥛" $milk_volume {
+                callback: value => {
+                    $milk_volume = value;
+                    $milk_amount = Math.min($milk_amount, $milk_volume);
+                    Wikifier.wikifyEval("<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>");
+                },
+                step: 10,
+                valueFormat: value => value + "ml",
+                min: 30,
+                max: $milk_max             
+            }>><br>
+
+            <!-- 當前有量 -->
+            <<numberStepper "當前有多少🥛" $milk_amount {
+                callback: value => {
+                    $milk_amount = value;
+                    Wikifier.wikifyEval("<<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>");
+                },
+                step: 10,
+                valueFormat: (value, percentage) => `<b>${Math.round(percentage)}%</b> (${Math.round(value)}ml)`,
+                min: 0,
+                max: $milk_volume            
+            }>><br>
 
             <span class="dol-link"><<link "設定">>
                 <<CE_milk_fix $milk_max $milk_volume>>
@@ -159,17 +201,60 @@
             <div class="dol-desc">修改🍼量</div>
 
             <<silently>>
-                <<set $semen_amount = Math.clamp($semen_amount, 0, 60000)>>
-                <<set $semen_volume = Math.clamp($semen_volume, 0, 60000)>>
-                <<set $semen_max    = Math.clamp($semen_max, 0, 60000)>>
+                <<set $semen_max    = Math.clamp($semen_max, 3000, 60000)>>
+                <<set $semen_volume = Math.clamp($semen_volume, 30, $semen_max)>>                
+                <<set $semen_amount = Math.clamp($semen_amount, 0, $semen_volume)>>               
             <</silently>>
 
+            <!--
             <div class="dol-desc">當前🍼量最大值：<span class="dol-blue">$semen_max mL</span></div>
             <<numberslider "$semen_max" $semen_max 3000 60000 100 >><br>
             <div class="dol-desc">當前可以儲存多少🍼：<span class="dol-blue">$semen_volume</span>mL</div>
-            <<numberslider "$semen_volume" $semen_volume 0 60000 100>><br>
+            <<numberslider "$semen_volume" $semen_volume 30 $semen_max 1>><br>
             <div class="dol-desc">當前有多少🍼：<span class="dol-blue">$semen_amount</span>mL</div>
-            <<numberslider "$semen_amount" $semen_amount 0 60000 100>><br><br>
+            <<numberslider "$semen_amount" $semen_amount 0 $semen_volume 1>><br><br>
+            -->
+            
+            <!-- 精液最大量 -->
+            <<numberStepper "當前🍼量最大值" $semen_max {
+                callback: value => {
+                    $semen_max = value;
+                    $semen_volume = Math.min($semen_volume, $semen_max);
+                    $semen_amount = Math.min($semen_amount, $semen_volume);
+                    Wikifier.wikifyEval("<<replace #CE_settingsDiv>><<semen_released_setting>><br><br><</replace>>");
+                },
+                step: 100,
+                valueFormat: value => value + "ml",
+                min: 3000,
+                max: 60000
+               
+            }>><br>
+
+            <!-- 可儲存量 -->
+            <<numberStepper "當前可以儲存多少🍼" $semen_volume {
+                callback: value => {
+                    $semen_volume = value;
+                    $semen_amount = Math.min($semen_amount, $semen_volume);
+                    Wikifier.wikifyEval("<<replace #CE_settingsDiv>><<semen_released_setting>><br><br><</replace>>");
+                },
+                step: 10,
+                valueFormat: value => value + "ml",
+                min: 30,
+                max: $semen_max
+               
+            }>><br>
+
+            <!-- 當前有量 -->
+            <<numberStepper "當前有多少🍼" $semen_amount {
+                callback: value => {
+                    $semen_amount = value;
+                    Wikifier.wikifyEval("<<replace #CE_settingsDiv>><<semen_released_setting>><br><br><</replace>>");
+                },
+                step: 10,
+                valueFormat: (value, percentage) => `<b>${Math.round(percentage)}%</b> (${Math.round(value)}ml)`,
+                min: 0,
+                max: $semen_volume
+            }>><br>
 
             <<set _semen_released to calculateSemenReleased()>>
             <hr>

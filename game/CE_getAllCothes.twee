@@ -224,3 +224,313 @@
 </div>
 </div>		
 <</widget>>
+
+<<widget "CE_getAllClothes_new">>
+<div class="dol-settings dol-shadow">
+
+	<div class="dol-header">
+		<span class="dol-gold">一鍵添加服裝+</span>
+	</div>
+
+	<div class="dol-body">
+
+		<div class="dol-desc">
+		    
+		    <span class ="red">新版一鍵添加服裝，仍處於測試階段，可能存在問題</span>
+		    
+			虛空創造、憑空煉成新服裝：<br><br>
+			(1) 選擇服裝類型<br>
+			(2)
+			<span class="gold">選擇添加</span> 或
+			<span class="gold">一鍵全添加</span>
+			<span class="blue">(顏色隨機分配)</span><br>
+			(3) 或
+			<span class="dol-link">
+				<<link "關鍵字添加">>
+					<<replace #addClotehesOptions>>
+					    <<CE_addCothesByKeyword>>
+					<</replace>>
+				<</link>>
+			</span><br>			
+		</div>
+
+		<div id="addClotehesOptions" class="dol-desc">
+
+			<div>選擇服裝類型：<br></div>
+
+			<<set _clothes_type_list to [
+				"face","feet","hands","head","legs","lower","neck",
+				"over_head","over_lower","over_upper",
+				"under_lower","under_upper",
+				"upper","handheld","genitals"
+			]>>
+
+			<<listbox "_clothes_type" autoselect>>
+				<<optionsfrom _clothes_type_list>>
+			<</listbox>>
+
+			<span class="dol-link">
+			<<link "確認選擇">>
+
+				<<set _clothes_name to setup.CEaddAllClotehes.getClothesNameList(_clothes_type)>>
+
+				<<replace #clothes_type>>
+					<div class="dol-desc">
+						當前選擇類型為：
+						<span class="green">_clothes_type</span>
+					</div>
+				<</replace>>
+
+				<<replace #clothes_name>>
+					<div class="dol-desc">
+						當前類型的服裝有（選擇後指定添加）：<br>
+					</div>
+					<<listbox "_clothes_name_list" autoselect>>
+						<<option "none">>
+						<<optionsfrom _clothes_name>>
+					<</listbox>><br>
+				<</replace>>
+
+				<<replace #clothes_color>>
+					<span class="dol-desc">顏色選擇：</span>
+
+					<span class="dol-link">
+					<<link "選擇">>
+						<<set _mainColor to _clothes_coloraction_list isnot "none"
+							? _clothes_coloraction_list
+							: setup.CEaddAllClotehes.randomColor()
+						>>
+						<<set _accColor to _clothes_accessorycolouraction_list isnot "none"
+							? _clothes_accessorycolouraction_list
+							: setup.CEaddAllClotehes.randomColor()
+						>>
+
+						<<replace #clothes_color>>
+							<div class="dol-desc">
+								主要顏色：<span class="green">_mainColor</span>
+							</div>
+							<div class="dol-desc">
+								次要顏色：<span class="green">_accColor</span>
+							</div>
+						<</replace>>
+					<</link>>
+					</span><br>
+
+					<div class="dol-desc">主要顏色：</div>
+					<<listbox "_clothes_coloraction_list" autoselect>>
+						<<option "none">>
+						<<optionsfrom setup.CEaddAllClotehes.colors>>
+					<</listbox>><br>
+
+					<div class="dol-desc">次要顏色：</div>
+					<<listbox "_clothes_accessorycolouraction_list" autoselect>>
+						<<option "none">>
+						<<optionsfrom setup.CEaddAllClotehes.colors>>
+					<</listbox>><br>
+				<</replace>>
+
+				<<replace #normal_button>>
+					<span class="dol-btn">
+					<<button "指定添加">>
+						<<if _clothes_name_list isnot "none">>
+							<<set _mainColor to _clothes_coloraction_list is "none"
+								? setup.CEaddAllClotehes.randomColor()
+								: _clothes_coloraction_list
+							>>
+							<<set _accColor to _clothes_accessorycolouraction_list is "none"
+								? setup.CEaddAllClotehes.randomColor()
+								: _clothes_accessorycolouraction_list
+							>>
+							<<run setup.CEaddAllClotehes.addOneByName(
+								_clothes_type,
+								_clothes_name_list,
+								_mainColor,
+								_accColor
+							)>>
+
+							<<replace #result>>
+								<div class="dol-desc">
+									當前狀態：
+									<span class="green">完成，已添加</span>
+						            <span class="blue">_mainColor / _accColor</span>
+						            <span class="blue">的_clothes_name_list</span>
+						            <span class="green">，請至衣櫃查收</span><br>
+						            <span class="red">警告！！！部分服裝可能無法正常穿脫！請謹慎使用，建議先存檔。</span>(通常是遊戲內的特殊服裝)
+									
+								</div>
+							<</replace>>
+						<<else>>
+							<<replace #result>>
+								<span class="red">請先選擇服裝</span>
+							<</replace>>
+						<</if>>
+					<</button>>
+					</span><br>
+
+					<span class="dol-btn">
+					<<button "一鍵全添加">>
+						<<run setup.CEaddAllClotehes.addAll(_clothes_type)>>
+						<<replace #result>>
+							<span class="green">完成，已添加</span>
+					        <span class="blue">所有服裝</span>
+					        <span class="green">，請至衣櫃查收</span><br>
+					        <span class="red">警告！！！部分服裝可能無法正常穿脫！請謹慎使用，建議先存檔。</span>(通常是遊戲內的特殊服裝)
+						<</replace>>
+					<</button>>
+					</span>
+				<</replace>>
+
+				<<if _clothes_type is "genitals">>
+					<<replace #clothes_color>><</replace>>
+					<<replace #clothes_genitals>>
+						<span class="gold">當前服裝類型為 genitals</span><br>
+						<span class="dol-desc">
+							你可以選擇穿上指定 genitals，
+							<span class="red">警告！！！請謹慎操作，可能導致問題。</span>
+						</span><br>
+						<span class="dol-btn">
+						<<button "穿上指定 genitals">>
+							<<if _clothes_name_list isnot "none">>
+							    <<run setup.CEaddAllClotehes.wearGenitalsByName(_clothes_name_list)>>
+							    <<replace #result>>
+							        <div class="dol-desc">
+							            <span class="green">完成，已穿上</span>
+							            <span class="blue">_clothes_name_list</span>
+							            <span class="red">警告！！！隨意穿上genitals可能導致問題。</span>
+							        </div>
+						        <</replace>>
+						    <<else>>
+						        <<replace #result>>
+							        <div class="dol-desc">
+							            當前狀態：
+							            <span class="red">警告！！！請先選擇要添加的genitals</span>
+							        </div>
+						        <</replace>>
+						    <</if>>    
+						<</button>>
+						</span>
+					<</replace>>
+				<<else>>
+					<<replace #clothes_genitals>><</replace>>
+				<</if>>
+
+			<</link>>
+			</span>
+
+			<div id="clothes_type" class="dol-desc"></div>
+			<div id="clothes_name" class="dol-desc"></div>
+			<div id="clothes_genitals" class="no-numberify"></div>
+			<div id="clothes_color"></div>
+			<div id="normal_button" class="no-numberify"></div>
+			<div id="result" class="dol-desc">
+				<span class="blue">待命，請選擇服裝類型。</span>
+			</div>
+
+			<!------------------------- 一鍵脫光光 ------------------------->
+			<div id="undress_ALL">
+				<span class="dol-link">
+				<<link "一鍵脫光光">>
+					<<replace #undress_ALL>>
+						<span class="red">
+							> 警告！！！強制脫下即解除項圈、貞操帶、口球、眼罩等物，
+							可能導致遊戲 Bug，請謹慎使用
+						</span><br>
+
+						<span class="dol-link">
+						<<link [["一鍵脫光光"|$passage]]>>
+							<<set _clothes_type_list to [
+								"face","feet","hands","head","legs","lower","neck",
+								"over_head","over_lower","over_upper",
+								"under_lower","under_upper","upper"
+							]>>
+
+							<<for _i to 0; _i lte 12; _i++>>
+								<<generalUndress "wardrobe" _clothes_type_list[_i]>>
+							<</for>>
+
+							<<set $worn.over_head.type.push("broken")>>
+							<<set $worn.over_head.integrity to 0>>
+							<<overheadruined>>
+
+							<<set $worn.face.type.push("broken")>>
+							<<set $worn.face.integrity to 0>>
+							<<faceruined>>
+
+							<<set $worn.genitals.type.push("broken")>>
+							<<genitalsruined>>
+
+							<<set $worn.feet.type.push("broken")>>
+							<<feetruined>>
+
+							<<set $worn.neck.type.push("broken")>>
+							<<neckruined>>
+
+							<<unbind>>
+							<<exposure>>
+						<</link>>
+						</span>
+					<</replace>>
+				<</link>>
+				</span>
+			</div>
+
+		</div>
+	</div>
+</div>
+<</widget>>
+
+<<widget "CE_addCothesByKeyword">>
+<div class="dol-settings dol-shadow">
+    <div class="dol-header">
+        <span class="dol-gold">關鍵字添加服裝</span>
+    </div>
+    <div class="dol-body">
+
+    <div class="dol-desc">
+        根據關鍵字一鍵添加服裝：<br>
+        (1) 選擇服裝類型<br>
+        (2) 輸入關鍵字<br>
+        (3) 點擊 <span class="gold">添加符合關鍵字服裝</span><br>
+        顏色隨機分配或可自選。
+    </div>
+
+    <<set _clothes_type_list to ["face","feet","hands","head","legs","lower","neck","over_head","over_lower","over_upper","under_lower","under_upper","upper","handheld","genitals"]>>
+    選擇服裝類型：<br>
+    <<listbox "_clothes_type" autoselect>><<optionsfrom _clothes_type_list>><</listbox>><br>
+
+    關鍵字：<br>
+    <<textbox "_clothes_keyword" "">><br>
+
+    <div class="dol-desc">顏色選擇：<br>
+        主要顏色：
+        <<listbox "_clothes_coloraction_list" autoselect>><<option "none">><<optionsfrom setup.CEaddAllClotehes.colors>><</listbox>><br>
+        次要顏色：
+        <<listbox "_clothes_accessorycolouraction_list" autoselect>><<option "none">><<optionsfrom setup.CEaddAllClotehes.colors>><</listbox>><br>
+    </div>
+    
+    <span class="dol-btn">
+    <<button "添加符合關鍵字服裝">>
+        <<set _mainColor to _clothes_coloraction_list is "none" ? setup.CEaddAllClotehes.randomColor() : _clothes_coloraction_list>>
+        <<set _accColor  to _clothes_accessorycolouraction_list is "none" ? setup.CEaddAllClotehes.randomColor() : _clothes_accessorycolouraction_list>>
+
+        <<set _added_count to setup.CEaddAllClotehes.addByKeyword(_clothes_type, _clothes_keyword, _mainColor, _accColor)>>
+
+        <<replace #result>>
+            <<if _added_count gt 0>>
+                <div class="dol-desc">
+                    <span class="green">完成，已添加</span> 
+                    <span class="blue">_added_count</span> 件符合 "<span class="gold">_clothes_keyword</span>" 的服裝<br>
+                    顏色：主要 <span class="green">_mainColor</span> / 次要 <span class="green">_accColor</span>
+                </div>
+            <<else>>
+                <div class="dol-desc"><span class="red">未找到符合的服裝，請檢查關鍵字或類型</span></div>
+            <</if>>
+        <</replace>>
+    <</button>>
+    </span>
+
+    <div id="result" class="dol-desc"><span class="blue">待命，請輸入關鍵字並點擊添加</span></div>
+
+</div>
+</div>
+<</widget>>

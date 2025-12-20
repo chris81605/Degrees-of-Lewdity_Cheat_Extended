@@ -35,6 +35,10 @@
                 <span class="green">開</span>
             <</if>>
         </div>
+        <hr>
+        <div class="dol-section">
+            <<teleportation>>
+        </div>
     </div>
 </div>
 <</widget>>

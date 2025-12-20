@@ -113,6 +113,20 @@
         <hr>
         <div class ="settingsToggleItem">
             <div class="small-description">
+                <span class="red">禁用</span>作弊拓展狀態欄操作介面
+            </div>
+            <label>
+                <<checkbox "$CE_hideCEToggleDisable" false true autocheck>><span class="red">禁用</span>狀態欄操作介面
+            </label>
+            <mouse class="tooltip linkBlue">(?)
+                <span class="red">
+                    左側言靈集面板、左側快捷及空間節點功能勾選後將失去操作介面          
+                </span>
+            </mouse>
+        </div>
+        <hr>
+        <div class ="settingsToggleItem">
+            <div class="small-description">
                 無視遊戲限制，強制啟用成就系統<br>
                 目前無視下列條件：<br>
                 <ur>
@@ -127,6 +141,21 @@
                 <span>
                     啟用後即使開啟作弊模式、曾經使用作弊成就被鎖、開啟調試模式等情況也能獲取成就               
                 </span>
+            </mouse>
+        </div> 
+        <hr>
+        <div class ="settingsToggleItem">
+            <div class="small-description">
+                隱藏特寫頭上的小箭頭按鈕，讓畫面更乾淨<br>
+                （不要問這和作弊有什麼關系，問就是因為開發者懶，
+                不想從頭再打包一個模組）                             
+            </div>
+            <label>
+                <<checkbox "$CE_hideUiBarToggleEnable" false true autocheck>>隱藏左側狀態開啟/關閉按鈕
+            </label>
+            <mouse class="tooltip linkBlue">(?)
+                <span class="red">注意，開啟後手機端只能用滑動的方式開啟左側狀態欄（因為按鈕不見了）</span>
+                 
             </mouse>
         </div>        
         <div>
@@ -150,7 +179,10 @@
 
     <!-- 上方可左右滑動的按鈕列 -->
     <div id = "cheat_extended_options" class="CEbuttonBar no-numberify">
-        <<set _selectedOptions to "swich">>
+        <<if $selectedOptions is undefined>>
+            <<set $selectedOptions to "swich">>
+        <</if>>
+            
         <<cheat_extended_options>>
     </div>
 
@@ -166,27 +198,27 @@
 <</widget>>
 
 <<widget "cheat_extended_options">> 
-    <<if _selectedOptions is undefined>><<set _selectedOptions to "swich">><</if>>
+    <<if $selectedOptions is undefined>><<set $selectedOptions to "swich">><</if>>
 
-    <span @class="_selectedOptions is 'swich' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'swich' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "左側快捷">>
-            <<set _selectedOptions to "swich">>
+            <<set $selectedOptions to "swich">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<swich>><br><br><</replace>>
         <</button>>      
     </span>  
 
-    <span @class="_selectedOptions is 'swich_teleportation' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'swich_teleportation' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "空間節點">>
-            <<set _selectedOptions to "swich_teleportation">>
+            <<set $selectedOptions to "swich_teleportation">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<swich_teleportation>><br><br><</replace>>
         <</button>>  
     </span>
 
-    <span @class="_selectedOptions is 'swich_yanling' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'swich_yanling' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "言靈集">>
-            <<set _selectedOptions to "swich_yanling">>
+            <<set $selectedOptions to "swich_yanling">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<swich_yanling>><br><br><</replace>>
         <</button>>  
@@ -194,187 +226,217 @@
 
     <!-- <div>被註解掉的可忽略 -->
 
-    <span @class="_selectedOptions is 'CE_statControlPanel' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'CE_statControlPanel' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "狀態控制">>
-            <<set _selectedOptions to "CE_statControlPanel">>
+            <<set $selectedOptions to "CE_statControlPanel">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<CE_statControlPanel>><br><br><</replace>>
         <</button>>  
     </span>
     
-    <span @class="_selectedOptions is 'CE_purityControl' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'CE_purityControl' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "純潔永駐">>
-            <<set _selectedOptions to "CE_purityControl">>
+            <<set $selectedOptions to "CE_purityControl">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<CE_purityControl>><br><br><</replace>>
         <</button>>  
     </span>
 
-    <span @class="_selectedOptions is 'CE_damageMultiplier' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'CE_damageMultiplier' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "傷害倍數">>
-            <<set _selectedOptions to "CE_damageMultiplier">>
+            <<set $selectedOptions to "CE_damageMultiplier">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<CE_damageMultiplier>><br><br><</replace>>
         <</button>>
     </span>  
 
-    <span @class="_selectedOptions is 'CE_violenceControl' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'CE_violenceControl' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "疼痛衰減">>
-            <<set _selectedOptions to "CE_violenceControl">>
+            <<set $selectedOptions to "CE_violenceControl">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<CE_violenceControl>><br><br><</replace>>
         <</button>>  
     </span>  
 
-    <span @class="_selectedOptions is 'swich_HP_AP_display' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'swich_HP_AP_display' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "HP、AP顯示">>
-            <<set _selectedOptions to "swich_HP_AP_display">>
+            <<set $selectedOptions to "swich_HP_AP_display">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<swich_HP_AP_display>><br><br><</replace>>
         <</button>>  
     </span>
 
-    <span @class="_selectedOptions is 'milk_released_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'milk_released_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "大量擠🥛模式">>
-            <<set _selectedOptions to "milk_released_setting">>
+            <<set $selectedOptions to "milk_released_setting">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<milk_released_setting>><br><br><</replace>>
         <</button>>  
     </span>
 
     <<if $player.penisExist or $debug>>
-        <span @class="_selectedOptions is 'semen_released_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+        <span @class="$selectedOptions is 'semen_released_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
             <<button "大爆🐍模式">>
-                <<set _selectedOptions to "semen_released_setting">>
+                <<set $selectedOptions to "semen_released_setting">>
                 <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
                 <<replace #CE_settingsDiv>><<semen_released_setting>><br><br><</replace>>
             <</button>>  
         </span>
     <</if>>
 
-    <span @class="_selectedOptions is 'black_stores_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'black_stores_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "黑心商店">>
-            <<set _selectedOptions to "black_stores_setting">>
+            <<set $selectedOptions to "black_stores_setting">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<black_stores_setting>><br><br><</replace>>
         <</button>>  
     </span>
 
-    <span @class="_selectedOptions is 'dance_reward_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'dance_reward_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "跳舞報酬加倍">>
-            <<set _selectedOptions to "dance_reward_setting">>
+            <<set $selectedOptions to "dance_reward_setting">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<dance_reward_setting>><br><br><</replace>>
         <</button>>  
     </span>
 
-    <span @class="_selectedOptions is 'CE_moneyCheat' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'CE_moneyCheat' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "收支調整">>
-            <<set _selectedOptions to "CE_moneyCheat">>
+            <<set $selectedOptions to "CE_moneyCheat">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<CE_moneyCheat>><br><br><</replace>>
         <</button>>  
     </span>
 
-    <span @class="_selectedOptions is 'brothel_basement_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'brothel_basement_setting' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "尋歡洞報酬加倍">>
-            <<set _selectedOptions to "brothel_basement_setting">>
+            <<set $selectedOptions to "brothel_basement_setting">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<brothel_basement_setting>><br><br><</replace>>
         <</button>>  
     </span>
 
-    <span @class="_selectedOptions is 'CE_timeMultiplier' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'CE_timeMultiplier' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "時間流速控制">>
-            <<set _selectedOptions to "CE_timeMultiplier">>
+            <<set $selectedOptions to "CE_timeMultiplier">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<CE_timeMultiplier>><br><br><</replace>>
         <</button>>      
     </span>
 
-    <span @class="_selectedOptions is 'Times_jumps' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'Times_jumps' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "時空穿越">>
-            <<set _selectedOptions to "Times_jumps">>
+            <<set $selectedOptions to "Times_jumps">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<Times_jumps>><br><br><</replace>>
         <</button>>      
     </span>
 
-    <span @class="_selectedOptions is 'swich_DEBUG_MODE' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'swich_DEBUG_MODE' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "DEBUG MODE">>
-            <<set _selectedOptions to "swich_DEBUG_MODE">>
+            <<set $selectedOptions to "swich_DEBUG_MODE">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<swich_DEBUG_MODE>><br><br><</replace>>
         <</button>>  
     </span>
 
-    <span @class="_selectedOptions is 'study_hard_mod' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'study_hard_mod' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "用功學習">>
-            <<set _selectedOptions to "study_hard_mod">>
+            <<set $selectedOptions to "study_hard_mod">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<study_hard_mod>><br><br><</replace>>
         <</button>>  
     </span>
 
-    <span @class="_selectedOptions is 'bigest_wardrobe_mod' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'bigest_wardrobe_mod' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "大容量衣櫃">>
-            <<set _selectedOptions to "bigest_wardrobe_mod">>
+            <<set $selectedOptions to "bigest_wardrobe_mod">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<bigest_wardrobe_mod>><br><br><</replace>>
         <</button>>  
     </span>
+    
+    <span @class="$selectedOptions is 'CE_autoRepairClothesUI' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+        <<button "Pc縫衣中">>
+            <<set $selectedOptions to "CE_autoRepairClothesUI">>
+            <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+            <<replace #CE_settingsDiv>><<CE_autoRepairClothesUI>><br><br><</replace>>
+        <</button>>  
+    </span>
 
-    <span @class="_selectedOptions is 'CE_getAllClothes' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+<!--
+    <<if !$debug>>
+    <span @class="$selectedOptions is 'CE_getAllClothes' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "一鍵添加所有服裝">>
-            <<set _selectedOptions to "CE_getAllClothes">>
+            <<set $selectedOptions to "CE_getAllClothes">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<CE_getAllClothes>><br><br><</replace>>
         <</button>>  
     </span>
+    <</if>>
+    
+    <<if $debug>>
+    <span @class="$selectedOptions is 'CE_getAllClothes' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+        <<button "一鍵添加所有服裝+">>
+            <<set $selectedOptions to "CE_getAllClothes">>
+            <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+            <<replace #CE_settingsDiv>><<CE_getAllClothes_new>><br><br><</replace>>
+        <</button>>  
+    </span>
+    <</if>>
+-->
 
-    <span @class="_selectedOptions is 'CE_item_give' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'CE_getAllClothes' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+        <<button "一鍵添加所有服裝+">>
+            <<set $selectedOptions to "CE_getAllClothes">>
+            <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
+            <<replace #CE_settingsDiv>><<CE_getAllClothes_new>><br><br><</replace>>
+        <</button>>  
+    </span>
+
+    <span @class="$selectedOptions is 'CE_item_give' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "虛空創造">>
-            <<set _selectedOptions to "CE_item_give">>
+            <<set $selectedOptions to "CE_item_give">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<CE_inventory_helper>><br><br><</replace>>
         <</button>>  
     </span>
 
-    <span @class="_selectedOptions is 'CE_tattoo' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'CE_tattoo' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "魔術迴路">>
-            <<set _selectedOptions to "CE_tattoo">>
+            <<set $selectedOptions to "CE_tattoo">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<CE_tattoo>><br><br><</replace>>
         <</button>>  
     </span>
 
-    <span @class="_selectedOptions is 'CE_Pregnancy' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'CE_Pregnancy' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "PC懷孕">>
-            <<set _selectedOptions to "CE_Pregnancy">>
+            <<set $selectedOptions to "CE_Pregnancy">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<CE_Pregnancy>><br><br><</replace>>
         <</button>>      
     </span>
     
-    <span @class="_selectedOptions is 'CE_parasiteControl' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'CE_parasiteControl' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "寄生物懷孕控制">>
-            <<set _selectedOptions to "CE_parasiteControl">>
+            <<set $selectedOptions to "CE_parasiteControl">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<CE_parasiteControl>><br><br><</replace>>
         <</button>>      
     </span>    
 
-    <span @class="_selectedOptions is 'auto_clothes_Warmth' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'auto_clothes_Warmth' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "自動調溫">>
-            <<set _selectedOptions to "auto_clothes_Warmth">>
+            <<set $selectedOptions to "auto_clothes_Warmth">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<auto_clothes_Warmth>><br><br><</replace>>
         <</button>>      
     </span>     
 
-    <span @class="_selectedOptions is 'quick_yanling' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
+    <span @class="$selectedOptions is 'quick_yanling' ? 'gold CEbuttonSettingsSelected' : 'CEbuttonSettings'" >
         <<button "快速言靈">>
-            <<set _selectedOptions to "quick_yanling">>
+            <<set $selectedOptions to "quick_yanling">>
             <<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>
             <<replace #CE_settingsDiv>><<quick_yanling>><br><br><</replace>>
         <</button>>      
@@ -489,12 +551,31 @@
             <<toggleTab>>
             <<replace #customOverlayContent>><div id="CE_settingsDiv"><<bigest_wardrobe_mod>></div><</replace>>
         <</button>>
-
-        <<button "一鍵添加所有服裝">>
+        
+        <<button "Pc縫衣中">>
             <<toggleTab>>
-            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<CE_getAllClothes>></div><</replace>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<CE_autoRepairClothesUI>></div><</replace>>
         <</button>>
-
+        
+       <!--                 
+        <<if $debug>>
+            <<button "一鍵添加所有服裝+">>
+                <<toggleTab>>
+                <<replace #customOverlayContent>><div id="CE_settingsDiv"><<CE_getAllClothes_new>></div><</replace>>
+            <</button>>
+        <<else>>
+            <<button "一鍵添加所有服裝">>
+                <<toggleTab>>
+                <<replace #customOverlayContent>><div id="CE_settingsDiv"><<CE_getAllClothes>></div><</replace>>
+            <</button>>
+        <</if>>
+        -->
+        
+        <<button "一鍵添加所有服裝+">>
+            <<toggleTab>>
+            <<replace #customOverlayContent>><div id="CE_settingsDiv"><<CE_getAllClothes_new>></div><</replace>>
+        <</button>>
+        
         <<button "虛空創造">>
             <<toggleTab>>
             <<replace #customOverlayContent>><div id="CE_settingsDiv"><<CE_inventory_helper>></div><</replace>>

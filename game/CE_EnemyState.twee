@@ -1,0 +1,98 @@
+:: CE_EnemyState[widget]
+
+<<widget "swich_HP_AP_display">>
+
+<div class="dol-settings dol-shadow">
+
+    <!-- 標題 -->
+    <div class="dol-header">
+        <span class="dol-title gold">HP、AP 顯示</span>
+    </div>
+
+    <!-- 內容 -->
+    <div class="dol-body">
+
+        <div class="dol-desc">
+            於戰鬥中顯示對方 HP、AP。
+        </div>
+
+        <br>
+
+        <!-- 初始化變數 -->
+        <<if $CE_EnemyStateEnable is undefined>>
+            <<set $CE_EnemyStateEnable to false>>
+        <</if>>
+
+        <!-- 開關按鈕 -->
+        <div class="dol-btn">
+            <<set _BtnText = $CE_EnemyStateEnable ? "關閉HP、AP顯示" : "啟用HP、AP顯示">>
+            <<button _BtnText>>
+                <<set $CE_EnemyStateEnable = !$CE_EnemyStateEnable>>
+                <<replace #CE_settingsDiv>>
+                    <<swich_HP_AP_display>><br><br>
+                <</replace>>
+            <</button>>
+        </div>
+
+        <br>
+
+        <!-- 顯示狀態 -->
+        <div class="dol-desc">
+            HP、AP 顯示： 
+            <<if $CE_EnemyStateEnable is false>>
+                <span class="red">關</span>
+            <<else>>
+                <span class="green">開</span>
+            <</if>>
+        </div>
+
+    </div> <!-- end dol-body -->
+
+</div> <!-- end dol-settings -->
+
+<</widget>>
+
+<!--已棄用，改用js實現簡易UI，並動態插入
+<<widget "HP_AP_display">>
+	<<if _args[0] is "AP">>
+		<<if $CE_EnemyStateEnable is true>>
+			Ap:<<=Math.round($enemyarousal)>>/<<=Math.round($enemyarousalmax)>>	
+		<</if>>
+	<<else>>
+		<<if $CE_EnemyStateEnable is true>>
+			<<if $enemyhealth gte $enemyhealthmax>>
+				<span class="red">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
+			<<elseif $enemyhealth gte ($enemyhealthmax / 5) * 4>>
+				<span class="pink">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
+			<<elseif $enemyhealth gte ($enemyhealthmax / 5) * 3>>
+				<span class="purple">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
+			<<elseif $enemyhealth gte ($enemyhealthmax / 5) * 2>>
+				<span class="blue">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
+			<<elseif $enemyhealth gte ($enemyhealthmax / 5) * 1>>
+				<span class="lblue">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
+			<<elseif $enemyhealth gt 0>>
+				<span class="teal">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
+			<<elseif $enemyhealth lte 0>>
+				<span class="green">HP: <<= Math.round($enemyhealth) >>/$enemyhealthmax</span>
+		<</if>>
+		<<if $enemynomax isnot 1 >>
+			|<span class="yellow">
+				<<if $enemynomax is 2 >>
+					<<= Math.round($NPCList[0].health) >>/<<= Math.round($NPCList[1].health) >>
+				<<elseif $enemynomax is 3 >>
+					<<= Math.round($NPCList[0].health) >>/<<= Math.round($NPCList[1].health) >>/<<= Math.round($NPCList[2].health) >>
+				<<elseif $enemynomax is 4 >>
+					<<= Math.round($NPCList[0].health) >>/<<= Math.round($NPCList[1].health) >>/<<= Math.round($NPCList[2].health) >>/<<= Math.round($NPCList[3].health) >>
+				<<elseif $enemynomax is 5 >>
+					<<= Math.round($NPCList[0].health) >>/<<= Math.round($NPCList[1].health) >>/<<= Math.round($NPCList[2].health) >>/<<= Math.round($NPCList[3].health) >>/<<= Math.round($NPCList[4].health) >>
+				<<elseif $enemynomax is 6 >>
+					<<= Math.round($NPCList[0].health) >>/<<= Math.round($NPCList[1].health) >>/<<= Math.round($NPCList[2].health) >>/<<= Math.round($NPCList[3].health) >>/<<= Math.round($NPCList[4].health) >>/<<= Math.round($NPCList[5].health) >>
+				<</if>>
+			</span>	
+		<</if>>
+		<</if>>
+	<</if>>	
+	<br/>
+<</widget>>
+-->
+

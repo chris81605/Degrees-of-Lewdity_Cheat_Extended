@@ -1,0 +1,138 @@
+:: CE_autoRepairClothes [widget]
+
+<<widget "CE_autoRepairClothesUI">>
+
+<!-- 初始化變數，避免未定義錯誤 -->
+<<if $CE_autoRepairClothesEnabled is undefined>>
+    <<set $CE_autoRepairClothesEnabled to false>>
+<</if>>
+<<if $CE_autoRepairClothesRatio is undefined>>
+    <<set $CE_autoRepairClothesRatio to 0.5>>
+<</if>>
+
+<div class="dol-settings dol-shadow">
+
+    <!-- 標題 -->
+    <div class="dol-header">
+        <span class="dol-title">Pc縫衣中</span>
+    </div>
+
+    <!-- 說明文字 -->
+    <div class="dol-desc">
+        Pc縫衣中~<br>
+        啟用後每日恢復設定比例的服裝耐久度<br>
+        恢復數值依各部位當前服裝的最大值計算
+    </div>
+
+    <div class="dol-body">
+
+        <!-- 功能開關 -->
+        <div class="dol-section-block">
+            <!-- 設定按鈕文字根據開關狀態 -->
+            <<set _BtnText = $CE_autoRepairClothesEnabled
+                ? "關閉自動恢復"
+                : "啟用自動恢復">>
+            <div class="dol-btn">
+                <<button _BtnText>>
+                    <!-- 點擊切換開關狀態 -->
+                    <<set $CE_autoRepairClothesEnabled = !$CE_autoRepairClothesEnabled>>
+                    <!-- 重新渲染 Widget -->
+                    <<replace "#CE_settingsDiv">><<CE_autoRepairClothesUI>><</replace>>
+                <</button>>
+            </div>
+        </div>
+
+        <br>
+
+        <!-- 功能狀態顯示 -->
+        <div class="dol-section-block">
+            當前狀態：
+            <span id="CE_statusText">
+                <<if $CE_autoRepairClothesEnabled>>
+                    <span class="dol-green">開</span>
+                <<else>>
+                    <span class="dol-red">關</span>
+                <</if>>
+            </span>
+        </div>
+
+        <br>
+
+        <!-- 恢復比例滑桿 -->
+        <div class="dol-section-block">
+            <label>恢復比例：</label><br>
+            <!-- 數值範圍 0.05 ~ 1，步進 0.05 -->
+            <<numberslider "$CE_autoRepairClothesRatio" $CE_autoRepairClothesRatio 0.05 1 0.05>>
+        </div>
+
+        <hr>
+
+        <!-- 耐久表格 -->
+        <div class="dol-section-block">
+            <span class="dol-desc">各部位耐久：</span>
+            <table class="dol-table" style="width:100%; border-collapse: collapse; text-align: left;">
+                <thead>
+                    <tr>
+                        <th style="border-bottom:1px solid #999;">部位</th>
+                        <th style="border-bottom:1px solid #999;">服裝名稱</th>
+                        <th style="border-bottom:1px solid #999;">當前耐久</th>
+                        <th style="border-bottom:1px solid #999;">最大耐久</th>
+                        <th style="border-bottom:1px solid #999;">恢復量</th>
+                        <th style="border-bottom:1px solid #999;">耐久%</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 遍歷所有部位 -->
+                    <<for _slot range Object.keys(V.worn)>>
+                        <<set _w = V.worn[_slot]>>
+                        <<set _list = setup.clothes[_slot]>>
+
+                        <!-- 確保有穿的服裝且非赤裸 -->
+                        <<if _w && _list && _w.variable !== "naked">>
+                            <!-- 找到對應的原始服裝數據 -->
+                            <<set _proto = _list.find(c => c.variable === _w.variable)>>
+
+                            <<if _proto && _proto.integrity is not null>>
+                                <!-- 當前耐久 -->
+                                <<set _cur = _w.integrity>>
+                                <!-- 最大耐久 -->
+                                <<set _max = _proto.integrity>>
+                                <!-- 計算恢復量 -->
+                                <<set _gain = Math.ceil(_max * $CE_autoRepairClothesRatio)>>
+                                <!-- 防止超過最大值 -->
+                                <<set _realGain = Math.min(_gain, _max - _cur)>>
+                                <!-- 計算耐久百分比 -->
+                                <<set _percent = Math.round((_cur / _max) * 100)>>
+
+                                <!-- 根據百分比設定顏色 -->
+                                <<set _color = _percent < 30 ? "dol-red" : (_percent < 70 ? "dol-orange" : "dol-green")>>
+
+                                <tr>
+                                    <td><<print _slot>></td>
+                                    <td>
+                                        <<print _w.cn_name_cap
+                                            ? _w.cn_name_cap
+                                            : (_w.name ? _w.name : "未知")>>
+                                    </td>
+                                    <td><<print _cur>></td>
+                                    <td><<print _max>></td>
+                                    <td>
+                                        <<if _realGain gt 0>>
+                                            <span class="dol-green">+<<print _realGain>></span>
+                                        <<else>>
+                                            —
+                                        <</if>>
+                                    </td>
+                                    <td><span class=<<print _color>>><<print _percent>>%</span></td>
+                                </tr>
+                            <</if>>
+                        <</if>>
+                    <</for>>
+                </tbody>
+            </table>
+        </div>
+
+    </div> <!-- dol-body end -->
+</div> <!-- dol-settings end -->
+
+<</widget>>
