@@ -36,7 +36,7 @@
 
 ### ~~🏗 場景創建~~
 - ~~遊戲內自定義場景，言靈作入口~~  
-- ~~核心代碼 By Tony70124 ~~[bccme]  
+- ~~核心代碼 By Tony70124[bccme]~~  
 - 已移除
 
 ### ⚔ 戰鬥 / 屬性控制
@@ -111,7 +111,7 @@
 
 # 更新日誌 
 ## 1.17(DevV251220bulild2)
-1. 重構 一鍵添加服裝故能
+1. 重構 一鍵添加服裝功能
     * UI與邏輯解耦合，增加可維護性
         - 早期透過Twee編寫成一大坨，能跑起來堪稱奇蹟
           
@@ -490,4 +490,5 @@
 [DOL_EEE]:https://github.com/MissedHeart/Degrees-of-Lewdity-Exposed-Event-Extended
 [SF]:https://github.com/emicoto/DOLMods
 [MF]:https://github.com/MaplebirchLeaf/SCML-DOL-maplebirchframework
+
 [bccme]:https://github.com/Tony70124/BetterCheatCommandManagement-for-DOL
