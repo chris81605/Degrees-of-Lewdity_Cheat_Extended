@@ -1,2 +1,0 @@
-			<<HP_AP_display AP>>
-			<<if $enemyanger gte $enemyangermax>>
