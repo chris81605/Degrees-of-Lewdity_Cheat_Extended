@@ -1,8 +1,9 @@
 {
   "name": "cheat extended",
-  "version": "1.17(DevV251215alpha1)",
+  "version": "1.17(DevV251220build2)",
   "styleFileList": [
-    "css/CE_CSS.css"
+    "css/CE_CSS.css",
+    "css/CE_EnemyStateCss.css"
   ],
   "scriptFileList": [
     "scripts/CE_getTargetWarmth2.js",
@@ -16,12 +17,15 @@
     "scripts/CE_timeMultiplier.js",
     "scripts/CE_featBypass.js",
     "scripts/CE_purityControl.js",
-    "scripts/CE_parasiteControl.js"    
+    "scripts/CE_parasiteControl.js",
+    "scripts/CE_EnemyState.js",
+    "scripts/CE_hideUiBarToggle.js",
+    "scripts/CE_addAllClothes.js",
+    "scripts/CE_autoRepairClothes.js"   
   ],
   "tweeFileList": [
     "game/CEoverlayReplace.twee",   
     "game/CE_teleportation.twee",
-    "game/CE_passage_editor.twee",
     "game/CE_yanling.twee",
     "game/CE_auto_clothes_Warmth.twee",
     "game/CE_cheatExtendedMenu.twee",
@@ -40,7 +44,9 @@
     "game/CE_Pregnancy.twee",
     "game/CE_getAllCothes.twee",
     "game/CE_purityControl.twee",
-    "game/CE_parasiteControl.twee"
+    "game/CE_parasiteControl.twee",
+    "game/CE_EnemyState.twee",
+    "game/CE_autoRepairClothes.twee"
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
@@ -110,18 +116,6 @@
           "comments": "大量產奶"
         },
         {
-          "passage": "Widgets State Man",
-          "findString": "\t\t\t\t<span class=\"green\"><<He>>吃痛退开。</span>\n\t\t\t\t<<combatcontrol 15>><<def 10>>\n\t\t\t<</if>>",
-          "replaceFile": "addon-replace/Widgets State Man_1.txt",
-          "comments": "顯示HPAP"
-        },
-        {
-          "passage": "Widgets State Man",
-          "findString": "\t\t\t<<if $enemyanger gte $enemyangermax>>",
-          "replaceFile": "addon-replace/Widgets State Man_2.txt",
-          "comments": "顯示HPAP"
-        },
-        {
           "passage": "Widgets Dance Audience",
           "findString": "\t\t\t\t<<set $dancetip *= 1 + ($mathstrait / 4)>>",
           "replaceFile": "addon-replace/Widgets Dance Audience.txt",
@@ -132,6 +126,19 @@
           "findString": "<<if $options.sidebarStats isnot \"disabled\">>",
           "replaceFile": "addon-replace/StoryCaption.txt",
           "comments": "作弊拓展入口"
+        },
+        {
+          "passage": "Pregnancy",
+          "findString": "<<case 0 1 2 3>>",
+          "replace": "<<case _args[0] is a number>>",
+          "all": true,
+          "comments": "寄生物插槽擴充分娩相關代碼patch"
+        },
+        {
+          "passage": "Pregnancy",
+          "findString": "_args[0] lte 3",
+          "replace": "$_pregnancy.fetus[_args[0]] isnot undefined",         
+          "comments": "寄生物插槽擴充分娩相關代碼patch"
         }
       ]
     },
@@ -167,12 +174,6 @@
           }                  
         ],
         "twee": [
-          {
-            "TODO": "cheat button（不修改，改用別的方案）",
-            "passageName": "StoryCaption",
-            "from": "<<if $dancing is 0 and $combat is 0 and $passage isnot \"Start2\" and $cheatsEnabled is true or $debug is 1>>",
-            "to": "<<if $dancing is 0 and $combat is 0 and $passage isnot \"Start2\" and $cheatsEnabled is true or $debug is 1>>"
-          },
           {
             "TODO": "作弊模式解鎖成就系統",
             "passageName": "FeatsUI",
