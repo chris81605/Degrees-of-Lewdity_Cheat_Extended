@@ -34,17 +34,17 @@ simpleFrameworks.addto('iModOptions', 'swich_DEBUG_MODE')
                 if (maplebirchMod) {
                     if (compareVersions(maplebirchMod.version, "2.5.2") === 1) {
                         logger.log(`[Cheat Extended] 检测到 maplebirch 框架 v${maplebirchMod.version}`);
-
+                        
+                        maplebirch.modList.pushUnique("cheat extended");
                         // Maplebirch 註冊對應 Cheat Extended
-                        maplebirchFrameworks.addto('Cheats', 'cheat_extended');
-                        //maplebirchFrameworks.addto('MenuBig', 'bccmeditor_button');
+                        maplebirchFrameworks.addto('Cheats', 'cheat_extended');                        
                        // maplebirchFrameworks.addto('MenuBig', 'CE_buttom');
                        //maplebirchFrameworks.addto('MenuSmall', 'CE_originalCheatButton');
-                       maplebirchFrameworks.addto('MenuBig', 'CE_originalCheatButton');
-                       // maplebirchFrameworks.addto('CaptionAfterDescription', 'bccmeditor_init');
+                       maplebirchFrameworks.addto('MenuBig', 'CE_originalCheatButton');                      
                         maplebirchFrameworks.addto('CaptionAfterDescription', 'CEstatebox');
                         maplebirchFrameworks.addto('Options', 'CE_options');
                         maplebirchFrameworks.addto('HintMobile', 'CE_sideBarIcon');
+                        maplebirchFrameworks.addto('Footer', 'CE_CheatExtendedVersion');
 
                     } else {
                         logger.error(`[Cheat Extended] maplebirch 版本過低，至少需要 v2.5.2，當前 v${maplebirchMod.version}`);
@@ -59,14 +59,13 @@ simpleFrameworks.addto('iModOptions', 'swich_DEBUG_MODE')
                         logger.log(`[Cheat Extended] 检测到 Simple Frameworks 框架 v${simpleMod.version}`);
 
                         // Simple Frameworks 註冊 Cheat Extended
-                        simpleFrameworks.addto('iModCheats', 'cheat_extended');
-                     //   simpleFrameworks.addto('ModMenuBig', 'bccmeditor_button');
+                        simpleFrameworks.addto('iModCheats', 'cheat_extended');                     
                         simpleFrameworks.addto('ModMenuBig', 'CE_originalCheatButton');
-                      //  simpleFrameworks.addto('ModMenuBig', 'CE_buttom');
-                      //  simpleFrameworks.addto('ModCaptionAfterDescription', 'bccmeditor_init');
+                      //  simpleFrameworks.addto('ModMenuBig', 'CE_buttom');                      
                         simpleFrameworks.addto('ModCaptionAfterDescription', 'CEstatebox');
                         simpleFrameworks.addto('iModOptions', 'CE_options');
-                        V.CE_SFflag = true;
+                        simpleFrameworks.addto('iModFooter', 'CE_CheatExtendedVersion');
+                       // V.CE_SFflag = true;
 
                     } else {
                         logger.error(`[Cheat Extended] Simple Frameworks 版本過低，至少需要 v2.0.5，當前 v${simpleMod.version}`);
