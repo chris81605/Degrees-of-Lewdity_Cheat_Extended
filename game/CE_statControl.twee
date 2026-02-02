@@ -41,6 +41,10 @@
         <div id="CE_tabContent">
             <<CE_painCheat>>
         </div>
+        <hr>
+        <div class="dol-desc">
+            💡<span class = "red">注意，狀態控制只會影響事件觸發時的變化，隨著遊戲時間自動減少或增加的狀態不會被修改。</span>
+        </div>
     </div>
 </div>
 <</widget>>
@@ -80,8 +84,8 @@
             <br><br>
             增加倍率 (0~1，越小越減少增加量)：<br>
             <<numberslider "$CE_painMultiplier" $CE_painMultiplier 0 1 0.05>><br><br>
-            減少倍率 (1~5，越大越放大減少量)：<br>
-            <<numberslider "$CE_painNegativeMultiplier" $CE_painNegativeMultiplier 1 5 0.05>><br><br>
+            減少倍率 (1~50，越大越放大減少量)：<br>
+            <<numberslider "$CE_painNegativeMultiplier" $CE_painNegativeMultiplier 1 50 1>><br><br>
             💡 0.5 為減半增加量，2 為雙倍減少量
         </div>
     </div>
@@ -123,8 +127,8 @@
             <br><br>
             增加倍率 (0~1，越小越減少增加量)：<br>
             <<numberslider "$CE_traumaMultiplier" $CE_traumaMultiplier 0 1 0.05>><br><br>
-            減少倍率 (1~5，越大越放大減少量)：<br>
-            <<numberslider "$CE_traumaNegativeMultiplier" $CE_traumaNegativeMultiplier 1 5 0.05>><br><br>
+            減少倍率 (1~50，越大越放大減少量)：<br>
+            <<numberslider "$CE_traumaNegativeMultiplier" $CE_traumaNegativeMultiplier 1 50 1>><br><br>
             💡 0.5 為減半增加量，2 為雙倍減少量
         </div>
     </div>
@@ -164,8 +168,8 @@
                 <span class="red">關</span>
             <</if>>
             <br><br>
-            增加倍率 (正面效果放大，1~5)：<br>
-            <<numberslider "$CE_controlMultiplier" $CE_controlMultiplier 1 5 0.05>><br><br>
+            增加倍率 (正面效果放大，1~50)：<br>
+            <<numberslider "$CE_controlMultiplier" $CE_controlMultiplier 1 50 1>><br><br>
             減少倍率 (負面效果縮小，0~1)：<br>
             <<numberslider "$CE_controlNegativeMultiplier" $CE_controlNegativeMultiplier 0 1 0.05>><br><br>
             💡 正數倍率放大增加量，負數倍率縮小減少量
@@ -209,8 +213,8 @@
             <br><br>
             增加倍率 (0~1，越小越削弱增加量)：<br>
             <<numberslider "$CE_stressMultiplier" $CE_stressMultiplier 0 1 0.05>><br><br>
-            減少倍率 (1~5，越大越放大減少量)：<br>
-            <<numberslider "$CE_stressNegativeMultiplier" $CE_stressNegativeMultiplier 1 5 0.05>><br><br>
+            減少倍率 (1~50，越大越放大減少量)：<br>
+            <<numberslider "$CE_stressNegativeMultiplier" $CE_stressNegativeMultiplier 1 50 1>><br><br>
             💡 正數倍率縮小壓力增加，負數倍率放大壓力減少
         </div>
     </div>
@@ -295,8 +299,8 @@
             <br><br>
             增加倍率 (0~1，越小越削弱增加量)：<br>
             <<numberslider "$CE_arousalMultiplier" $CE_arousalMultiplier 0 1 0.05>><br><br>
-            減少倍率 (1~5，越大越放大減少量)：<br>
-            <<numberslider "$CE_arousalNegativeMultiplier" $CE_arousalNegativeMultiplier 1 5 0.05>><br><br>
+            減少倍率 (1~10，越大越放大減少量)：<br>
+            <<numberslider "$CE_arousalNegativeMultiplier" $CE_arousalNegativeMultiplier 1 10 0.05>><br><br>
             💡 正數倍率縮小興奮增加，負數倍率放大興奮下降
         </div>
     </div>
@@ -338,8 +342,8 @@
             <br><br>
             增加倍率 (0~1，越小越削弱疲勞增加)：<br>
             <<numberslider "$CE_tiredMultiplier" $CE_tiredMultiplier 0 1 0.05>><br><br>
-            減少倍率 (1~5，越大越放大疲勞下降)：<br>
-            <<numberslider "$CE_tiredNegativeMultiplier" $CE_tiredNegativeMultiplier 1 5 0.05>><br><br>
+            減少倍率 (1~50，越大越放大疲勞下降)：<br>
+            <<numberslider "$CE_tiredNegativeMultiplier" $CE_tiredNegativeMultiplier 1 50 1>><br><br>
             💡 正數倍率縮小疲勞增加，負數倍率放大疲勞下降
         </div>
     </div>
@@ -375,7 +379,7 @@
             <</if>>
             <br><br>
             技能倍率：<br>
-            <<numberslider "$CE_skillMultiplier" $CE_skillMultiplier 1 5 0.1>><br><br>
+            <<numberslider "$CE_skillMultiplier" $CE_skillMultiplier 1 20 1>><br><br>
             💡 1 為原始增加量，2 為雙倍，5 為五倍增長
         </div>
     </div>

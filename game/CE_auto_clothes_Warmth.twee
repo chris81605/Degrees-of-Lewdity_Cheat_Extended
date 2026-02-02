@@ -39,41 +39,7 @@
 
             <br>
 
-            <!-- Debug 模式 -->
-            <<if $debug is 1>>
-                <div class="dol-section-block">
-                    <span class="dol-link">
-                        <<link "溫度自動校正測試">>
-                            <<set $_minWarmth to getTargetWarmth(36.5)>> <!--獲取原版舒適溫度下限-->	
-                            <<set $_maxWarmth to getTargetWarmth(37.5)>> <!--獲取原版舒適溫度上限-->
-                            <<set Weather.tempSettings.baseInsulation to 0>>
-                            <<if $_minWarmth isnot null and $_maxWarmth isnot null>>
-                                <<if Weather.BodyTemperature.getWarmth() lte $_minWarmth>>
-                                    <<set _temp to $_minWarmth - Weather.BodyTemperature.getWarmth()>>
-                                    <<set Weather.tempSettings.baseInsulation to _temp +1>>
-                                    <<set _temp to "當前校正值" + (_temp + 1)>> 
-                                <<elseif Weather.BodyTemperature.getWarmth() gte $_maxWarmth>> 
-                                    <<set _temp to $_maxWarmth - Weather.BodyTemperature.getWarmth()>>
-                                    <<set Weather.tempSettings.baseInsulation to _temp -1>>
-                                    <<set _temp to "當前校正值" + (_temp - 1)>> 
-                                <<else>>
-                                    <<set Weather.tempSettings.baseInsulation to 0>> 
-                                    <<set _temp to "現在正在溫度範圍內無須調整">>          
-                                <</if>> 
-                            <<else>>
-                                <<set Weather.tempSettings.baseInsulation to 200>>
-                                <<set _temp to "出現低溫null，保暖值直接拉給他爆">>           
-                            <</if>> 
-                        <</link>>
-                    </span>
-                    <br><br>
-                    舒適溫度下限 <<print getTargetWarmth(36.5)>><br>
-                    舒適溫度上限 <<print getTargetWarmth(37.5)>><br>
-                    當前服裝溫度 <<print Weather.BodyTemperature.getWarmth()>><br>
-                    當前溫度修正值：<<print Weather.tempSettings.baseInsulation>><br>
-                    debug: _temp<br>
-                </div>
-            <</if>>
+            
 
         </div> <!-- dol-body end -->
     </div> <!-- dol-settings end -->

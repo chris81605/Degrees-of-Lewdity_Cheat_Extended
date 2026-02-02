@@ -61,8 +61,84 @@
         <!-- 恢復比例滑桿 -->
         <div class="dol-section-block">
             <label>恢復比例：</label><br>
-            <!-- 數值範圍 0.05 ~ 1，步進 0.05 -->
-            <<numberslider "$CE_autoRepairClothesRatio" $CE_autoRepairClothesRatio 0.05 1 0.05>>
+            <!-- 數值範圍 0 ~ 1，步進 0.05 -->
+            <<numberslider "$CE_autoRepairClothesRatio" $CE_autoRepairClothesRatio 0 1 0.05>>
+        </div>
+
+        <hr>
+
+        <!-- 各部位耐久鎖定 -->
+        <div class="dol-section-block">
+            <div class="small-description">
+                啟用部位服裝耐久鎖定
+            </div>
+            <label>
+                <<checkbox "$CE_autoRepairLockEnabled" false true autocheck>>各部位耐久鎖定
+            </label>
+            <mouse class="tooltip linkBlue">(?)
+                <span>
+                   下方各部位按鈕開啟時，對應部位：<br>
+                   (1)耐久度鎖定最大值<br>
+                   (2)不受每日恢復控制  
+                </span>
+            </mouse>
+            <br>
+            <div class="small-description">
+                逆向鎖定
+            </div>
+            <label>
+                <<checkbox "$CE_autoRepairClothesInverseLock" false true autocheck>>逆向鎖定
+            </label>
+            <mouse class="tooltip linkBlue">(?)
+                <span class ="red">
+                   下方部位按鈕開啟時，耐久度將：<br>
+                   (1)不受每日恢復功能控制<br>
+                   (2)不能與耐久度鎖定一起使用                                                       
+                </span>
+            </mouse>
+            
+            <hr>
+            
+            <span class="dol-desc">各部位服裝鎖定：</span><br>
+
+                <<if $CE_autoRepairClothesLockSlots is undefined>>
+                    <<set $CE_autoRepairClothesLockSlots to {}>>
+                    <<for _slot range Object.keys(V.worn)>>
+                        <<set $CE_autoRepairClothesLockSlots[_slot] = false>>
+                    <</for>>
+                <</if>>
+                
+                <div class="dol-desc" style="display:flex; flex-wrap:wrap; gap:4px;">
+                <<for _slot range Object.keys(V.worn)>>
+                    <<set _locked = $CE_autoRepairClothesLockSlots[_slot]>>
+                    <div class="dol-btn tiny" style="flex:0 0 calc(33.33% - 4px)">
+                        <<set _btnText = _locked ? "解除" : "鎖定">>
+                        
+                        <<capture _slot>>
+                            <<button _btnText>>
+                                <<set $CE_autoRepairClothesLockSlots[_slot] = !$CE_autoRepairClothesLockSlots[_slot]>>
+                                <<replace "#CE_settingsDiv">><<CE_autoRepairClothesUI>><</replace>>
+                            <</button>>
+                        <</capture>>
+                        
+                        <<print _slot>>
+                    </div>
+                <</for>>
+                </div>
+        </div>
+
+        <br>
+
+        <!-- 狀態顯示 -->
+        <div class="dol-section-block">
+            當前鎖定狀態：<br>
+                <<for _slot range Object.keys(V.worn)>>
+                    <<if $CE_autoRepairClothesLockSlots[_slot]>>
+                        <span class="dol-green"><<print _slot>>已鎖定</span><br>
+                    <<else>>
+                        <span class="dol-red"><<print _slot>>未鎖定</span><br>
+                    <</if>>
+                <</for>>
         </div>
 
         <hr>
@@ -123,7 +199,7 @@
                                             —
                                         <</if>>
                                     </td>
-                                    <td><span class=<<print _color>>><<print _percent>>%</span></td>
+                                    <td><span><<print _percent>>%</span></td>
                                 </tr>
                             <</if>>
                         <</if>>
@@ -131,6 +207,7 @@
                 </tbody>
             </table>
         </div>
+                
 
     </div> <!-- dol-body end -->
 </div> <!-- dol-settings end -->

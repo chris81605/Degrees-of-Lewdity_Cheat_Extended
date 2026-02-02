@@ -75,36 +75,6 @@
 
 <</widget>>
 
-
-
-<<widget "swich_bccmeditor">>
-    <div class="settingsHeader options"><span class="gold">場景建造</span></div>	
-	<br>
-	在左側顯示場景建造按鈕
-	<br>
-	場景建造可自定義場景（劇本）
-	<br>
-	<<if $swich_bccmeditor is undefined>><<set $swich_bccmeditor to 0>><</if>>
-	<<button "場景建造開關">>
-		<<set $swich_bccmeditor = $swich_bccmeditor == 0 ? 1: 0>>
-		<!--<<replace #cheat_extended_options>><<cheat_extended_options>><</replace>>-->
-		<<replace #CE_settingsDiv>><<swich_bccmeditor>><br><br><</replace>>
-		<<replace #CE_bccmeditor>>
-			<<bccmeditor_button>>
-		<</replace>>
-	<</button>>
-	<br>
-	場景建造開關：
-	<<if $swich_bccmeditor is 0>>
-		<span class="red">關</span>
-		<br>
-	<</if>>
-	<<if $swich_bccmeditor is 1>>
-		<span class="green">開</span>
-		<br>
-	<</if>>
-<</widget>>	
-
 <<widget "black_stores_setting">>
 
 <div class="dol-settings dol-shadow">
@@ -566,129 +536,196 @@
 <</widget>>
 
 <<widget "quick_yanling">>
-
 <div class="dol-settings dol-shadow">
 
     <!-- 標題 -->
     <div class="dol-header">
-        <span class="dol-title gold">快速言靈</span>
+        <span class="dol-title gold">快速言靈/其他</span>
     </div>
-
+    
     <!-- 主體 -->
     <div class="dol-body">
-
-        <div class="dol-desc">一鍵執行各種言靈功能：</div>
+        <div class="dol-title gold">其他功能：</div>
+        <div class ="settingsToggleItem">
+            <div class="small-description">
+                蜜癮者/植物愛好者特質鎖定
+            </div>
+            <label>
+                <<checkbox "$CE_nectarKeeperEnabled" false true autocheck>>蜜癮者/植物愛好者特質鎖定
+            </label>
+            <mouse class="tooltip linkBlue">(?)
+                <span>
+                   需先獲得植物愛好者特質，否則功能無效，可從原版作弊選單快速獲得         
+                </span>
+            </mouse>
+        </div>
+        <hr>
+        <div class ="settingsToggleItem">
+            <div class="small-description">                
+                戰鬥場景&水下場景氧氣值將鎖定在最大值
+            </div>
+            <label>
+                <<checkbox "$CE_lockOxygenEnabled" false true autocheck>>永不耗氧
+            </label>
+            <mouse class="tooltip linkBlue">(?)
+                <span>
+                    戰鬥（敵人嘗試掐Pc脖子）及潛水場景不再消耗氧氣       
+                </span>
+            </mouse>
+        </div>
+        <hr>
+        
+        <div class="settingsToggleItem">
+            <div class="small-description">
+                每日自動恢復額外狀態（疼痛、疲勞、壓力、自控等）
+            </div>
+            <label>
+                <<checkbox "$swich_extraStatusRestore" false true autocheck>>啟用每日額外恢復
+            </label>
+            <mouse class="tooltip linkBlue">(?)
+                <span>
+                    開啟後，每天遊戲時間將額外恢復各項狀態數值。<br>
+                    💡 注意：此恢復僅限額外狀態，不影響遊戲原本時間流逝造成的變化。
+                </span>
+            </mouse>
+        </div>
+        <hr>
+        
+        <div class="dol-title gold">一鍵執行各種言靈：</div>
         <br>
 
-        <span class="dol-link">
-            [[一键烘干衣服|$passage][$upperwet to 0, $lowerwet to 0, $underlowerwet to 0, $underupperwet to 0]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[pc缝衣服中…|$passage][$worn.upper.integrity += 1000,$worn.lower.integrity += 1000,$worn.under_lower.integrity += 1000,$worn.under_upper.integrity += 1000]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[状态全恢复|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[PC立马高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[防狼噴霧+1|$passage][$spray +=1]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[防狼噴霧上限+1|$passage][$spraymax +=1]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[防狼噴霧上限-1|$passage][$spraymax +=-1]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[防狼噴霧補滿|$passage][$spray = $spraymax]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[pc长翅膀|$passage][$harpy to 100,$birdFly to 1]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[去踏🐴的神殿 一键恢复贞洁誓言特质|$passage][$player.virginity.temple to true]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[去除催眠暗示|$passage][$hypnosis to undefined]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[去除渴望特质|$passage][$hypnosis_traits.scream to undefined]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[去除炫耀特质|$passage][$hypnosis_traits.cover to undefined]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[去除异种癖特质|$passage][$hypnosis_traits.deviancy to undefined]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[一键恢复全童真|$passage][$player.virginity.vaginal to true,$player.virginity.penile to true,$player.virginity.anal to true,$player.virginity.oral to true,$player.virginity.handholding to true,$player.virginity.kiss to true]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[增加🥛量+50000|$passage][$milk_volume to 50000]] 
-        </span>
-        <br>
-        <span class="dol-link">
-            [[🥛量上限+50000|$passage][$milk_max to 50000]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[吃媚药|$passage][$drugged += 1000]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[金贞操带|Lake Ruin Box][$rng = 96]]
-        </span>
-        <br>
-        <span class="dol-link">
-            <<link [[贝利跟踪|Named NPC Stalk Select]]>><<set $stalkTestNPC to "Bailey">><</link>>
-        </span>
-        <br>
+        <!-- 衣物與身體 -->
+        <details>
+            <summary>衣物 / 身體</summary>
+            <br>
+            <span class="dol-link">
+                [[一键烘干衣服|$passage][$upperwet to 0, $lowerwet to 0, $underlowerwet to 0, $underupperwet to 0]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[pc缝衣服中…|$passage][$worn.upper.integrity += 1000,$worn.lower.integrity += 1000,$worn.under_lower.integrity += 1000,$worn.under_upper.integrity += 1000]]
+            </span>
+            <br>
+        </details>
 
-        <div class="dol-desc">轉化特性：</div>
-        <br>
-        <span class="dol-link">
-            [[猫化特性|$passage][$cat = 6]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[牛化特性|$passage][$cow = 6]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[鸟化特性|$passage][$harpy = 6, $birdFly=1]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[狼化特性|$passage][$wolfgirl = 6]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[狐化特性|$passage][$fox = 6]]
-        </span>
-        <br>
-        <span class="dol-link">
-            [[长獠牙|$passage][$transformationParts.traits.fangs to String.fromCharCode (105,115,110,111,32,116,100,101,102,97,117,108,116)]]
-        </span>
+        <!-- 狀態 / 性 -->
+        <details>
+            <summary>狀態 / 性</summary>
+            <br>
+            <span class="dol-link">
+                [[状态全恢复|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[PC立马高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
+            </span>
+            <br>
+        </details>
+
+        <!-- 噴霧與道具 -->
+        <details>
+            <summary>防狼噴霧 / 道具</summary>
+            <br>
+            <span class="dol-link">
+                [[防狼噴霧+1|$passage][$spray +=1]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[防狼噴霧上限+1|$passage][$spraymax +=1]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[防狼噴霧上限-1|$passage][$spraymax +=-1]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[防狼噴霧補滿|$passage][$spray = $spraymax]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[金贞操带|Lake Ruin Box][$rng = 96]]
+            </span>
+            <br>
+        </details>
+
+        <!-- 變化 / 轉化 -->
+        <details>
+            <summary>變化 / 轉化特性</summary>
+            <br>
+            <span class="dol-link">
+                [[pc长翅膀|$passage][$harpy to 100,$birdFly to 1]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[去踏🐴的神殿 一键恢复贞洁誓言特质|$passage][$player.virginity.temple to true]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[去除催眠暗示|$passage][$hypnosis to undefined]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[去除渴望特质|$passage][$hypnosis_traits.scream to undefined]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[去除炫耀特质|$passage][$hypnosis_traits.cover to undefined]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[去除异种癖特质|$passage][$hypnosis_traits.deviancy to undefined]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[一键恢复全童真|$passage][$player.virginity.vaginal to true,$player.virginity.penile to true,$player.virginity.anal to true,$player.virginity.oral to true,$player.virginity.handholding to true,$player.virginity.kiss to true]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[增加🥛量+50000|$passage][$milk_volume to 50000]] 
+            </span>
+            <br>
+            <span class="dol-link">
+                [[🥛量上限+50000|$passage][$milk_max to 50000]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[吃媚药|$passage][$drugged += 1000]]
+            </span>
+            <br>
+        </details>
+
+        <!-- 動物 / 轉化 -->
+        <details>
+            <summary>動物化特性</summary>
+            <br>
+            <span class="dol-link">
+                [[猫化特性|$passage][$cat = 6]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[牛化特性|$passage][$cow = 6]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[鸟化特性|$passage][$harpy = 6, $birdFly=1]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[狼化特性|$passage][$wolfgirl = 6]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[狐化特性|$passage][$fox = 6]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[长獠牙|$passage][$transformationParts.traits.fangs to String.fromCharCode (105,115,110,111,32,116,100,101,102,97,117,108,116)]]
+            </span>
+            <br>
+        </details>
+
     </div>
 </div>
-
 <</widget>>
 
 <<widget "Times_jumps">>

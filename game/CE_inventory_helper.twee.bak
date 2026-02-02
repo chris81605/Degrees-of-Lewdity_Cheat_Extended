@@ -22,7 +22,7 @@
         <div style="display: flex; flex-direction: column; align-items: center; gap: 12px;">
 
             <!-- 操作面板 -->
-            <div class="dol-section" style="display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: 6px; width: 100%;">
+            <div class="dol-section" style="display: flex; flex-direction: column; gap: 6px; padding: 8px; border-radius: 6px; max-width: 300px; width: 100%;">
                 
                 <!-- 標題 -->
                 <div style="font-weight: bold; color: gold; margin-bottom: 4px;">
