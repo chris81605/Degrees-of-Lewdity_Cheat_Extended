@@ -28,33 +28,31 @@
     white-space: nowrap !important;
 }
 
-/* 按鈕容器（支援多個樣式） */
-.CEbuttonSettings {
-    flex: 0 0 auto;          /* 固定大小，不換行 */
-    display: flex;
-    align-items: center;
-}
-
 /* 按鈕樣式 */
-.CEbuttonSettings button {
-    flex: 0 0 auto;          /* 固定大小，不會換行 */
-    width: 100px;             /* 按鈕寬度，可視需求調整 */
-    height: 36px;             /* 調整高度，保持比例 */
-    padding: 0 8px;           /* 內距縮小，避免過大間距 */
+.CEbuttonBar button {
+    flex: 0 0 auto;          
+    width: 100px;             
+    height: 36px;             
+    padding: 0 8px;           
     font-size: clamp(12px, 1.5vw, 16px);
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    border: 1px solid var(--gold);
-    border-radius: 5px;
-    background-color: var(--button-bg, #222);
-    color: var(--button-color, #fff);
-    cursor: pointer;
+    white-space: nowrap;      
+    text-overflow: ellipsis;  
+    overflow: hidden;         
+    border: 1px solid var(--gold); 
+    border-radius: 5px;       
+    background-color: var(--button-bg, #222); 
+    color: var(--button-color, #fff); 
+    cursor: pointer;          
     transition: all 0.2s ease;
+
+    display: flex;            /* 讓按鈕內部變成彈性容器 */
+    justify-content: center;  /* 水平置中 */
+    align-items: center;      /* 垂直置中 */
+    text-align: center;       /* 防止文字被忽略的水平置中 */
 }
 
-/* 選中按鈕樣式 */
-.CEbuttonSettingsSelected button {
+/* 選中按鈕樣式，套在按鈕本身 */
+.CEbuttonBar button.CEbuttonBarSelected {    
     width: 100px;             /* 按鈕寬度，可視需求調整 */
     padding: 0 8px;           /* 內距縮小，避免過大間距 */
     font-size: clamp(12px, 1.5vw, 16px);
@@ -64,7 +62,7 @@
 }
 
 /* 按鈕懸停效果 */
-.CEbuttonSettings button:hover {
+.CEbuttonBar button:hover {
     background-color: var(--button-hover-bg, #333);
     color: var(--button-hover-color, #fff);
 }
@@ -80,11 +78,6 @@
     box-sizing: border-box;
 }
 
-/*用途不明，忘了*/
-.CEinCheatMenuBotton button {
-		border-style:solid;
-		border-width:2px;
-}
 /*用於言靈輸入框*/
 .CEtextarea {
 		width:100%;
@@ -104,14 +97,38 @@
  /* background-color: #f9f9f9;*/
   border-radius: 4px;
 }
+/*用於顯示上方作弊拓展上方按鈕ui分區的分割線*/
+.ce-tab-separator {
+    color: #777;
+    font-weight: 600;
+    margin: 0 4px;
+    align-self: center; /* flex container 下垂直居中 */
+    pointer-events: none;
+}
+/*用於加入最愛按鈕的背景特殊樣式*/
+.ce-tab-favorite {
+    background: rgba(255, 215, 0, 0.35);  /* 背景加深 */
+    font-weight: 600;                     /* 文字加粗 */
+    border-radius: 5px;                   /* 保持與父按鈕一致圓角 */
+
+}
+.ce-tab-favorite:hover {
+    background: rgba(255, 215, 0, 0.45);  /* hover 稍亮 */
+}
+button.active.ce-tab-favorite {
+    background: rgba(255, 215, 0, 0.5);   /* active 更亮 */
+}
 
 /*用於顯示彈窗式ui上方按鈕*/
 .CEtab {
+    border: 1px solid rgba(204,204,204,1);    
+    border-radius: 5px;      /* 和按鈕圓角一致 */
+    background: rgba(68,68,68,0.8); 
     display: flex;
     flex-wrap: nowrap;
     overflow-x: auto;
     gap: 2px;               /* 按鈕間距稍微大一點但不誇張 */
-    padding: 2px 0;         /* 上下間距 */
+    padding: 1px 1px;         /* 上下左右間距 */
     scrollbar-width: thin;
     scrollbar-color: var(--500) transparent;
 }
@@ -132,6 +149,16 @@ font-size: 0.85rem;       /* 字體稍微小一點 */
 border-radius: 5px;       /*圓角按鈕 */
 white-space: nowrap;      /* 不換行文字 */
 margin: 0;                /* 消除額外 margin */
+}
+
+/* 選中按鈕樣式，不改背景色 */
+.CEtab button.CEtabSelected {
+    border: 2px solid var(--gold, #ffd700); /* 使用原有金色邊框 */
+    color: var(--gold, #ffd700);            /* 文字也可用金色突出 */
+    font-weight: bold;                       /* 文字加粗 */
+    box-shadow: 0 0 5px rgba(255,215,0,0.5); /* 輕微金色陰影 */
+    transform: scale(1.03);                  /* 略微放大 */
+    transition: all 0.15s ease-in-out;       /* 過渡動畫 */
 }
 
 /*
