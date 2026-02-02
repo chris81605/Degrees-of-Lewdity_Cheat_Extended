@@ -28,10 +28,11 @@ function CE_forceAttendSchool() {
     V.english_star = 3;
     V.history_star = 3;
     //設定考試成功率
-    V.science_exam = 120;
-    V.maths_exam = 120;
-    V.english_exam = 120;
-    V.history_exam = 120;
+    const exams = ['science_exam', 'maths_exam', 'english_exam', 'history_exam'];
+
+    exams.forEach(subject => {
+        if (V[subject] < 120) V[subject] = 120;
+    });
 }
 window.CE_forceAttendSchool = CE_forceAttendSchool;
 

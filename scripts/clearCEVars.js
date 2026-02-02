@@ -1,7 +1,3 @@
-// clearCEVars.js
-// 用途：清除 CE 相關變數清單
-// 調用方式：clearCEVars();
-
 (function() {
     // 清單中所有變數名稱
     const varsToClear = [
@@ -15,13 +11,7 @@
         "CE_tattoo",
         "CE_tattoo_index",
         //舊的 敵人狀態顯示變量（之後會棄用）
-        "HP_AP_display_swich",
-        //"_maxWarmth",
-        //"_minWarmth",
-        //"_type",
-        "bccm",
-        "bccmplot",
-        "bccmpreviouspassage",
+        "HP_AP_display_swich",               
         "bigest_wardrobe_fix",
         "bigest_wardrobe_swich",
         "black_store_FIX_MAX",
@@ -41,33 +31,22 @@
         "damage_oringinal",
         //舊版傷害加倍變數 End
         "dance_reward_swich",
-        "dancetip_FIX",
-        //"debug",
-        //"degree",
-        //"english_exam",
+        "dancetip_FIX",        
         "fromIndex",
         "history_exam",
         "incompletePregnancyDisable",
         "index_max",
-        "index_min",
-        //"maths_exam",
-        //"milk_amount",
-        //"milk_max",
+        "index_min",        
         "milk_releasedFIX",
         "milk_releasedFIX_MAX",
         "milk_releasedFIX_MIN",
         "milk_releasedswich",
-        //"milk_volume",
         //舊的疼痛衰減變數⬇️
         "painfix", 
         "painfixset",
-        //舊版疼痛衰減變數 End
-        //"science_exam",
-        //"semen_max",
+        //舊版疼痛衰減變數 End        
         "semen_releasedFIX",
-        "semen_releasedswich",
-        //"semen_volume",
-        //"stalkTestNPC",
+        "semen_releasedswich",        
         "stall_cost_FIX",
         "study_hard",
         "swich",
@@ -78,7 +57,6 @@
         "teleportation",
         "teleportation_name",
         "toIndex",
-        //"wardrobe_location",
         "yanling_ui_hide",
         "CE_SFflag",
         "CE_forceAttendSchool",
@@ -128,8 +106,33 @@
         "CE_EnemyStateEnable",
         "CE_hideUiBarToggleEnable",
         "CE_autoRepairClothesEnabled",
-        "CE_autoRepairClothesRatio"        
+        "CE_autoRepairClothesRatio",
+        "CE_autoRepairClothesLockSlots",
+        "CE_nectarKeeperEnabled",
+        "CE_LastTab",
+        "CE_TabHidden",
+        "CE_TabFavorite",
         
+        // ===========================
+        // CE 轉化每日增加模組變數
+        // ===========================
+        "CE_angelBuildDailyGainEnabled",
+        "CE_angelBuildDailyGainAmount",
+        "CE_fallenangelBuildDailyGainEnabled",
+        "CE_fallenangelBuildDailyGainAmount",
+        "CE_demonBuildDailyGainEnabled",
+        "CE_demonBuildDailyGainAmount",
+        "CE_wolfBuildDailyGainEnabled",
+        "CE_wolfBuildDailyGainAmount",
+        "CE_catBuildDailyGainEnabled",
+        "CE_catBuildDailyGainAmount",
+        "CE_cowBuildDailyGainEnabled",
+        "CE_cowBuildDailyGainAmount",
+        "CE_birdBuildDailyGainEnabled",
+        "CE_birdBuildDailyGainAmount",
+        "CE_foxBuildDailyGainEnabled",
+        "CE_foxBuildDailyGainAmount",
+        "CE_lockOxygenEnabled"
     ];
 
     // 封裝成全局函數

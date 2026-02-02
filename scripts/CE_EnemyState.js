@@ -3,79 +3,196 @@
 // ================================
 // CE_EnemyState Macro（四捨五入版本）
 // ================================
+/*
+ * Macro：CE_EnemyState
+ * 用途：
+ *  - 顯示敵方當前各項狀態的條狀 UI
+ *  - 包含生命、性奋、愤怒、信任
+ *
+ * 設計重點：
+ *  - 所有數值 → 先計算 → 再建立 DOM
+ *  - 信任為「軟上限」：100 以上視覺上滿條，但數值仍可繼續成長
+ */
 Macro.add('CE_EnemyState', {
     handler() {
-        // 各狀態定義
+
+        /* ===== 狀態資料定義 =====
+         * key   ：內部識別用（同時用於 class）
+         * label ：UI 顯示名稱
+         * value ：當前數值（來自 SugarCube 變數 V.）
+         * max   ：顯示用最大值（信任為軟上限）
+         */
         const states = [
             { key: 'health', label: '生命值', value: V.enemyhealth, max: V.enemyhealthmax },
             { key: 'arousal', label: '性奋', value: V.enemyarousal, max: V.enemyarousalmax },
-            { key: 'anger', label: '愤怒', value: V.enemyanger, max: V.enemyangermax },
-            { key: 'trust', label: '信任', value: V.enemytrust, max: 250 }, // 信任最大值 250
+            { key: 'anger',  label: '愤怒', value: V.enemyanger,  max: V.enemyangermax },
+            { key: 'trust',  label: '信任', value: V.enemytrust,  max: 100 }, // 信任軟上限
         ];
 
+        /* ===== 外層容器 ===== */
         const container = document.createElement('div');
         container.className = 'ce-enemy-state';
 
+        /* ===== 逐一處理每個狀態 ===== */
         states.forEach(state => {
-            // 四捨五入並避免負值
+
+            /* --- 數值安全處理 ---
+             *  - 四捨五入
+             *  - 防止出現負值
+             */
             let value = Math.max(Math.round(state.value), 0);
             let max   = Math.round(state.max);
-            let percent = Math.min(Math.round((value / max) * 100), 100);
 
-            // 顏色邏輯
-            let color;
-            switch(state.key) {
+            /* --- 條狀百分比計算 ---
+             *  - 最大不超過 100%
+             */
+            let percent = Math.min(
+                Math.round((value / max) * 100),
+                100
+            );
+
+            /* --- 視覺相關變數 ---
+             * color    ：填充顏色
+             * trustLevel ：是否進入「爆表 / 軟上限」狀態
+             * （注意：這裡只記錄狀態，不操作 DOM）
+             */
+            let color = '#888';
+            let trustLevel = 0;
+            let angerLevel = 0;
+
+            /* ===== 狀態判斷與顏色邏輯 ===== */
+            switch (state.key) {
+
                 case 'health':
-                // 滿血綠色，半血黃色，低血紅色
-                color = percent > 70 ? '#2ecc71' : percent > 40 ? '#f1c40f' : '#e74c3c';
-                break;
-                
-                case 'arousal':
-                // 高性奋紅紫色，低性奋淡紫色
-                color = percent > 70 ? '#e056fd' : percent > 40 ? '#be2edd' : '#9b59b6';
-                break;
-                
-                case 'anger':
-                 // 高怒橘紅，低怒橘色
-                color = percent > 70 ? '#e74c3c' : percent > 40 ? '#f0932b' : '#f5b041';
-                break;
-                
-                case 'trust':
-                // 高信任綠色，低信任黃橙
-                color = percent > 70 ? '#2ecc71' : percent > 40 ? '#f1c40f' : '#e67e22';
-                break;
-                
-                default:
-                color = '#888';
-}
+                    // 滿血綠 → 半血黃 → 低血紅
+                    color = percent > 70 ? '#2ecc71'
+                          : percent > 40 ? '#f1c40f'
+                          : '#e74c3c';
+                    break;
 
-            // DOM 建立
+                case 'arousal':
+                    // 高性奋深紫 → 低性奋淡紫
+                    color = percent > 70 ? '#e056fd'
+                          : percent > 40 ? '#be2edd'
+                          : '#9b59b6';
+                    break;
+/*
+                case 'anger':
+                    // 高怒紅 → 中怒橘紅 → 低怒橘
+                    color = percent > 70 ? '#e74c3c'
+                          : percent > 40 ? '#f0932b'
+                          : '#f5b041';
+                    break;
+*/
+                case 'anger': {
+                    const softMax = 100;
+                    percent = Math.min(
+                        Math.round((value / softMax) * 100),
+                        100
+                    );
+
+                    
+
+                    // 0 = 正常
+                    // 1 = 爆怒（閃爍）
+                    // 2 = 極怒（閃爍 + 脈衝）
+                    if (value >= 200) {
+                        angerLevel = 2;
+                        color = '#c0392b'; // 深紅
+                    } else if (value >= 100) {
+                        angerLevel = 1;
+                        color = '#e74c3c'; // 紅
+                    } else {
+                        color = percent > 70 ? '#e74c3c'
+                        : percent > 40 ? '#f0932b'
+                        : '#f5b041';
+                    }
+                    break;
+                }
+                
+                case 'trust': {
+                    /* 信任特殊處理：
+                     *  - 沒有實際上限
+                     *  - UI 使用 100 作為軟上限
+                     */
+                    const softMax = 100;
+                    percent = Math.min(
+                        Math.round((value / softMax) * 100),
+                        100
+                    );
+
+                    
+                    // 0 = 正常
+                    // 1 = 滿信任（流動高光）
+                    // 2 = 深度信任（高光 + 脈衝）
+                    
+                    if (value >= 200) {
+                        trustLevel = 2;
+                        color = '#1abc9c';
+                    } else if (value >= 100) {
+                        trustLevel = 1;
+                        color = '#27ae60';
+                    } else {
+                        color = percent > 70 ? '#2ecc71'
+                          : percent > 40 ? '#f1c40f'
+                          : '#e67e22';
+                    }
+                    break;
+                }
+            }
+
+            /* ===== DOM 建立區（此時才開始碰 DOM） ===== */
+
+            // 每一行狀態的容器
             const row = document.createElement('div');
             row.className = `ce-enemy-state-row ce-enemy-state--${state.key}`;
 
+            // 狀態名稱文字
             const labelSpan = document.createElement('span');
             labelSpan.className = 'ce-enemy-state-label';
             labelSpan.textContent = state.label;
             row.appendChild(labelSpan);
 
+            // 條狀背景
             const barDiv = document.createElement('div');
             barDiv.className = 'ce-enemy-state-bar';
 
+            // 條狀填充
             const fillDiv = document.createElement('div');
             fillDiv.className = 'ce-enemy-state-fill';
             fillDiv.style.width = percent + '%';
             fillDiv.style.background = color;
 
+            // 若為信任爆表，追加特效 class
+            if (trustLevel >= 1) {
+                fillDiv.classList.add('trust-shine');
+            }
+            if (trustLevel >= 2) {
+                fillDiv.classList.add('trust-pulse');
+            }
+            
+            // 若為憤怒爆表，追加特效 class
+            if (angerLevel >= 1) {
+                fillDiv.classList.add('anger-shine');
+            }
+            if (angerLevel >= 2) {
+                fillDiv.classList.add('anger-pulse');
+            }
+
             barDiv.appendChild(fillDiv);
             row.appendChild(barDiv);
 
+            // 除錯 / 數值顯示（可日後關閉）
             const debugDiv = document.createElement('div');
+            debugDiv.className = 'ce-enemy-state-debug';
             debugDiv.textContent = `: ${value} / ${max}`;
             row.appendChild(debugDiv);
 
+            // 將整行加入容器
             container.appendChild(row);
         });
 
+        /* ===== 將整個狀態 UI 輸出到當前 passage ===== */
         this.output.appendChild(container);
     }
 });
@@ -140,6 +257,7 @@ Macro.add('CE_NPCHealthBars', {
 
             // 可選：顯示 DEBUG 值
             const debugDiv = document.createElement('div');
+            debugDiv.className = 'ce-enemy-state-debug';
             debugDiv.textContent = `: ${value} / ${max}`;
             row.appendChild(debugDiv);
 

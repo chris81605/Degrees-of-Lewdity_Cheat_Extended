@@ -2,7 +2,7 @@ function patchEarnFeatMacro() {
     const macro = Macro.get('earnFeat');
     if (!macro || macro._CE_patched) return;
 
-    console.log('[cheat Extended] 🧩 宏 earnFeat 已hook');
+    console.log('[cheat Extended] 🧩 宏 earnFeat 已Hook');
 
     const originalHandler = macro.handler;
     

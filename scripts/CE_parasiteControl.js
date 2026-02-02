@@ -116,7 +116,7 @@
                 this.args[i] = args[i];
             }
 
-            if (typeof logFunc === 'function') {
+            if (V[cheatVar] && typeof logFunc === 'function') {
                 logFunc(macroName, oldArgs, args);
             }
 
@@ -144,16 +144,17 @@
                     typeof args[1] === 'number'
                 ) {
                     args[1] *= Math.max(1, V.CE_parasiteMultiplier);
-                }
-                
-                if (!Array.isArray(V.CE_parasiteMultiplierLog)) {
-                    V.CE_parasiteMultiplierLog = [];
-                }
+                }                              
                 
                 return args;
             },            
 
             logFunc: (name, oldArgs, newArgs) => {
+                
+                if (!Array.isArray(V.CE_parasiteMultiplierLog)) {
+                    V.CE_parasiteMultiplierLog = [];
+                }
+                
                 V.CE_parasiteMultiplierLog.push({
                     time: `第${Time.days}天`,
                     macro: name,

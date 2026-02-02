@@ -1,62 +1,110 @@
-
-// 1. 定義自動恆溫邏輯
-function autoWarmthAction() {
-    if (V.swich_auto_clothes_Warmth !== 1) return;
-
-    const minWarmth = getTargetWarmth(36.5);
-    const maxWarmth = getTargetWarmth(37.5);
-    let baseInsulation = 0;
-    let temp;
-
-    if (minWarmth !== null && maxWarmth !== null) {
-        const currentWarmth = Weather.BodyTemperature.getWarmth();
-
-        if (currentWarmth <= minWarmth) {
-            temp = minWarmth - currentWarmth;
-            baseInsulation = temp + 1;
-            console.log('作弊拓展-自動恆溫：當前修正值', temp);
-        } else if (currentWarmth >= maxWarmth) {
-            temp = maxWarmth - currentWarmth;
-            baseInsulation = temp - 1;
-            console.log('作弊拓展-自動恆溫：當前修正值', temp);
-        } else {
-            console.log('作弊拓展-自動恆溫：在溫度範圍內無須調整', temp);
-        }
-    } else {
-        baseInsulation = 20;
-        console.log('作弊拓展-自動恆溫：出現低溫null，保暖值直接拉爆', temp);
-    }
-
-    Weather.tempSettings.baseInsulation = baseInsulation;
-}
-window.autoWarmthAction = autoWarmthAction;
-
-// 2. 註冊事件（已移除框架初始化驗證）
-function registerAutoClothesWarmth() {
+// 通用時間事件註冊函數
+function registerCE_genericTimeEvent(eventType, eventName, callback) {
     const logger = window.modUtils.getLogger();
     const maplebirchMod = window.modUtils.getMod('maplebirch');
     const simpleMod = window.modUtils.getMod('Simple Frameworks');
 
     if (maplebirchMod) {
-        maplebirchFrameworks.addTimeEvent('onBefore', 'auto_clothes_Warmth', {
-            action: ()=>autoWarmthAction(),
+        maplebirchFrameworks.addTimeEvent(eventType, eventName, {
+            action: callback,
             priority: 0,
-            once: false,
-            //accumulate: { unit: 'sec', target: 1 },
+            once: false
         });
-      //  logger.log('[Cheat Extended] ✅ Maplebirch 已註冊自動恆溫事件');
-        console.log('[Cheat Extended] ✅ Maplebirch 已註冊自動恆溫事件');
-        
+        console.log(`[Cheat Extended] ✅ Maplebirch 已註冊事件: ${eventName} (${eventType})`);
+
     } else if (simpleMod) {
-        new TimeEvent('onSec', 'auto_clothes_Warmth').Action(()=>autoWarmthAction());
-      //  logger.log('[Cheat Extended] ✅ Simple Frameworks 已註冊自動恆溫事件');
-        console.log('[Cheat Extended] ✅ Simple Frameworks 已註冊自動恆溫事件');
-        
+        new TimeEvent(eventType, eventName).Action(callback);
+        console.log(`[Cheat Extended] ✅ Simple Frameworks 已註冊事件: ${eventName} (${eventType})`);
+
     } else {
-        logger.error('[Cheat Extended] ❌ 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊自動恆溫事件');
-        console.error('[Cheat Extended] ❌ 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊自動恆溫事件');
+        logger.error('[Cheat Extended] ❌ 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊事件');
+        console.error('[Cheat Extended] ❌ 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊事件');
     }
 }
 
-// 3. 初始化
-registerAutoClothesWarmth();
+window.registerCE_genericTimeEvent = registerCE_genericTimeEvent;
+
+// 範例使用：
+registerCE_genericTimeEvent(
+    'onAfter',
+    'CE_自動調溫',
+    () => {
+        if (V.swich_auto_clothes_Warmth !== 1) return;
+
+        const min = 36.5;
+        const max = 37.5;
+
+        const now = Weather.BodyTemperature.get();
+        let corrected = now;
+
+        if (now < min) {
+            corrected = min;
+            
+        } else if (now > max) {
+            corrected = max;
+            
+        }
+
+        if (corrected !== now) {
+            Weather.BodyTemperature.set(corrected);
+
+            console.warn(
+                `[Cheat Extended][AutoThermo] 被動恆溫修正: ` +
+                `${now.toFixed(2)} → ${corrected.toFixed(2)}`
+            );
+        }
+    }
+);
+
+registerCE_genericTimeEvent(
+    'onDay',
+    'CE_額外狀態恢復',
+    () => {
+        if (!V.swich_extraStatusRestore) return; // 開關檢查
+
+        const restoreTargets = {
+            pain: 0,
+            arousal: 0,
+            tiredness: 0,
+            stress: 0,
+            trauma: 0,
+            control: 1000,
+            drunk: 0,
+            drugged: 0,
+            hallucinogen: 0
+        };
+
+        const restoreRates = {
+            pain: 50,
+            arousal: 30,
+            tiredness: 20,
+            stress: 15,
+            trauma: 10,
+            control: 50,
+            drunk: 50,
+            drugged: 50,
+            hallucinogen: 50
+        };
+
+        Object.keys(restoreTargets).forEach(key => {
+            if (typeof V[key] === "number") {
+                const target = restoreTargets[key];
+                const current = V[key];
+                const distance = target - current;
+                const rate = restoreRates[key];
+                const change = distance * 0.01 * rate;
+
+                if (Math.abs(change) < 0.01) {
+                    V[key] = target;
+                } else {
+                    V[key] += change;
+                }
+
+                // 輸出控制台
+                if (change !== 0) {
+                    console.log(`[cheat Extended][extraStatusRestore] ${key}: ${current.toFixed(2)} → ${V[key].toFixed(2)}`);
+                }
+            }
+        });
+    }
+);

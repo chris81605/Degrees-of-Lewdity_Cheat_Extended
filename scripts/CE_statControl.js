@@ -159,7 +159,8 @@
                 let amount = Number(args[0] ?? 0);
                 args[0] = amount > 0 ? amount * V.CE_sensMultiplier : amount * V.CE_sensNegativeMultiplier;
                 return args;
-            }
+            },
+            logFunc: (name, oldArgs, newArgs) => console.log(`[Cheat Extended] 🥵 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
         });
     });
 
@@ -187,7 +188,8 @@
             let amount = Number(args[0] ?? 0);
             args[0] = amount > 0 ? amount * V.CE_tiredMultiplier : amount * V.CE_tiredNegativeMultiplier;
             return args;
-        }
+        },
+        logFunc: (name, oldArgs, newArgs) => console.log(`[Cheat Extended] 😴 ${name} ${oldArgs[0]} → ${newArgs[0]}`)
     });
 
     // ------------------- SexSkill -------------------
