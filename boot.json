@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.17(DevV251220build2)",
+  "version": "1.17",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css"
@@ -8,9 +8,9 @@
   "scriptFileList": [
     "scripts/CE_getTargetWarmth2.js",
     "scripts/CE_Time_Event.js",
-    "scripts/CE_forceAttendSchool.js",
-    "scripts/clearCEVars.js",
     "scripts/CE_sideBarIcon.js",
+    "scripts/CE_forceAttendSchool.js",
+    "scripts/clearCEVars.js",    
     "scripts/CE_tattoo.js",
     "scripts/CE_MoneyCheat.js",
     "scripts/CE_statControl.js",
@@ -21,7 +21,12 @@
     "scripts/CE_EnemyState.js",
     "scripts/CE_hideUiBarToggle.js",
     "scripts/CE_addAllClothes.js",
-    "scripts/CE_autoRepairClothes.js"   
+    "scripts/CE_autoRepairClothes.js",
+    "scripts/CE_nectarKeeper.js",
+    "scripts/CE_TimeTravelPlus.js",
+    "scripts/CE_TransformationDG.js",
+    "scripts/CE_clothTypeManager.js",
+    "scripts/CE_lockOxygen.js"
   ],
   "tweeFileList": [
     "game/CEoverlayReplace.twee",   
@@ -171,7 +176,7 @@
             "from": "switch (V.sexStats[genital].pregnancy.motherStatus)",
             "to": "if (V.CE_parasiteControl){\n\t\t return CE_parasiteControlLimit(genital)\n\t};\n\tswitch (V.sexStats[genital].pregnancy.motherStatus)",
             "fileName": "pregnancy-types.js"
-          }                  
+          }                          
         ],
         "twee": [
           {
