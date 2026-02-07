@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.17",
+  "version": "1.18(Dev20260206)",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css"
@@ -26,7 +26,8 @@
     "scripts/CE_TimeTravelPlus.js",
     "scripts/CE_TransformationDG.js",
     "scripts/CE_clothTypeManager.js",
-    "scripts/CE_lockOxygen.js"
+    "scripts/CE_lockOxygen.js",
+    "scripts/CE_customerSkinColor.js"
   ],
   "tweeFileList": [
     "game/CEoverlayReplace.twee",   
