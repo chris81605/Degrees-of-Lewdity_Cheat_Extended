@@ -1,14 +1,16 @@
 {
   "name": "cheat extended",
-  "version": "1.18(Dev20260206)",
+  "version": "1.18(Dev260325)",
   "styleFileList": [
     "css/CE_CSS.css",
-    "css/CE_EnemyStateCss.css"
+    "css/CE_EnemyStateCss.css",
+    "scriptEarly/Utils/spectrum.css"
   ],
   "scriptFileList": [
     "scripts/CE_getTargetWarmth2.js",
     "scripts/CE_Time_Event.js",
     "scripts/CE_sideBarIcon.js",
+    "scripts/CE_brothelBasementManager.js",
     "scripts/CE_forceAttendSchool.js",
     "scripts/clearCEVars.js",    
     "scripts/CE_tattoo.js",
@@ -26,8 +28,8 @@
     "scripts/CE_TimeTravelPlus.js",
     "scripts/CE_TransformationDG.js",
     "scripts/CE_clothTypeManager.js",
-    "scripts/CE_lockOxygen.js",
-    "scripts/CE_customerSkinColor.js"
+    "scripts/CE_customerSkinColor.js",
+    "scripts/CE_customerEyesColor.js"
   ],
   "tweeFileList": [
     "game/CEoverlayReplace.twee",   
@@ -57,7 +59,8 @@
   "imgFileList": [],
   "scriptFileList_inject_early": [
     "scriptEarly/CERegist.js",
-    "scriptEarly/framework_detector.js"
+    "scriptEarly/framework_detector.js",
+    "scriptEarly/Utils/spectrum.js"
   ],
   "additionFile": [
     "addon-replace/Widgets Dance Audience.txt",
@@ -92,8 +95,14 @@
         },
         {
           "passage": "Widgets",
-          "findString": "\t\t<<set $enemyhealth -= _thedamage>>",
+          "findString": "\t\t<<set _thedamage to (2 * _defiance * ($physique / 4000))>>",
           "replaceFile": "addon-replace/Widgets_5.txt",
+          "comments": "小鎮拳皇"
+        },
+        {
+          "passage": "Widgets",
+          "findString": "\t\t<<set $enemyhealth -= _thedamage>>",
+          "replaceFile": "addon-replace/Widgets_6.txt",
           "comments": "小鎮拳皇"
         },
         {
@@ -145,6 +154,12 @@
           "findString": "_args[0] lte 3",
           "replace": "$_pregnancy.fetus[_args[0]] isnot undefined",         
           "comments": "寄生物插槽擴充分娩相關代碼patch"
+        },
+        {
+          "passage": "Widgets Text",
+          "findString": "<<switch Skin.color.natural>>",
+          "replace": "<<skinColourFallback>><<switch Skin.color.natural>>",         
+          "comments": "針對自定義膚色輸出對應文字patch"
         }
       ]
     },
