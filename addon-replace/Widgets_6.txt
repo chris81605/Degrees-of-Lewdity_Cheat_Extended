@@ -1,0 +1,12 @@
+        
+        <<set _thedamage to _actualdamage>>
+        
+        <<if $enemyno lt 2>>
+            <<set _d to _args[1]>>
+            <<if $NPCList[_d]>>
+                <<set $NPCList[_d].health -= _thedamage>>
+            <</if>>    
+        <</if>>
+        
+        <<set $enemyhealth -= _thedamage>>
+        

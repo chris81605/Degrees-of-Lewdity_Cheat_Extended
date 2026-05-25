@@ -1,4 +1,22 @@
-		<<if $CE_damageEnabled is undefined>>
+		<<set _thedamage to (2 * _defiance * ($physique / 4000))>>
+		<<if !$CE_damageEnabled >>
 			<<set $CE_damageMultiplier to 1>>
 		<</if>>
-		<<set $enemyhealth -= _thedamage * $CE_damageMultiplier>>
+		<<set _thedamage *= $CE_damageMultiplier>>
+		
+		<<set _actualdamage to _thedamage>>
+
+        <<if $enemyno gte 2 and _args[1] isnot undefined and $NPCList[_args[1]]>>
+	        <<if _actualdamage gt $NPCList[_args[1]].health>>
+		        <<set _actualdamage to $NPCList[_args[1]].health>>
+	        <</if>>
+        <</if>>
+        
+        <!--
+        <<if _actualdamage gt $enemyhealth>>
+	        <<set _actualdamage to $enemyhealth>>
+        <</if>>
+        
+        <<set _thedamage to _actualdamage>>
+        -->
+        
