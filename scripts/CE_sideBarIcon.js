@@ -363,7 +363,7 @@ Macro.add('CE_CheatExtendedVersion', {
         { id: 'blackStore', title: '黑心商店', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<black_stores_setting>><</replace>>`) },
         { id: 'money', title: '收支倍率調整', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_moneyCheat>><</replace>>`) },
         { id: 'danceReward', title: '跳舞報酬加倍', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<dance_reward_setting>><</replace>>`) },
-        { id: 'brothelReward', title: '尋歡洞報酬加倍', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<brothel_basement_setting>><</replace>>`) },
+        { id: 'brothelReward', title: '尋歡洞報酬加倍', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<brothelBasementManager>><</replace>>`) },
         { id: 'timeMultiplier', title: '時間流速控制', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_timeMultiplier>><</replace>>`) },
         { id: 'timeTravel', title: '時空穿越', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_TimeTravelPlus>><</replace>>`) },
         { id: 'debugMode', title: 'DEBUG MODE', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<swich_DEBUG_MODE>><</replace>>`) },

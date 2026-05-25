@@ -59,7 +59,9 @@ Macro.add('CE_EnemyState', {
             let color = '#888';
             let trustLevel = 0;
             let angerLevel = 0;
-
+            let healthLevel = 0;
+            let arousalLevel = 0;
+            
             /* ===== 狀態判斷與顏色邏輯 ===== */
             switch (state.key) {
 
@@ -68,6 +70,12 @@ Macro.add('CE_EnemyState', {
                     color = percent > 70 ? '#2ecc71'
                           : percent > 40 ? '#f1c40f'
                           : '#e74c3c';
+                          
+                    // 低血特效：百分比 <= 30 → 閃爍, <=10 → 脈衝
+                    
+                    if (percent <= 30) healthLevel = 1;
+                    if (percent <= 10) healthLevel = 2;
+      
                     break;
 
                 case 'arousal':
@@ -75,6 +83,10 @@ Macro.add('CE_EnemyState', {
                     color = percent > 70 ? '#e056fd'
                           : percent > 40 ? '#be2edd'
                           : '#9b59b6';
+                    // 高性奋特效：百分比 >=70 → 閃爍, >=100 → 脈衝
+                    
+                    if (percent >= 70) arousalLevel = 1;
+                    if (percent >= 90) arousalLevel = 2;
                     break;
 /*
                 case 'anger':
@@ -85,7 +97,7 @@ Macro.add('CE_EnemyState', {
                     break;
 */
                 case 'anger': {
-                    const softMax = 100;
+                    const softMax = 200;
                     percent = Math.min(
                         Math.round((value / softMax) * 100),
                         100
@@ -163,6 +175,14 @@ Macro.add('CE_EnemyState', {
             fillDiv.style.width = percent + '%';
             fillDiv.style.background = color;
 
+            // 生命值低血特效
+            if (healthLevel >= 1) fillDiv.classList.add('health-shine');
+            if (healthLevel >= 2) fillDiv.classList.add('health-pulse');
+
+            // 性奋高特效
+            if (arousalLevel >= 1) fillDiv.classList.add('arousal-shine');
+            if (arousalLevel >= 2) fillDiv.classList.add('arousal-pulse');
+            
             // 若為信任爆表，追加特效 class
             if (trustLevel >= 1) {
                 fillDiv.classList.add('trust-shine');

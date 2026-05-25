@@ -121,10 +121,10 @@ $(document).on(':passagedisplay', () => {
     Object.keys(V.worn).forEach(slot => {
         // 檢查該部位是否在鎖定列表中
         const isLocked = V.CE_autoRepairClothesLockSlots?.[slot];
-        const isInverseLock = V.CE_autoRepairClothesInverseLock;
+        //const isInverseLock = V.CE_autoRepairClothesInverseLock;
         const ratio = 1;
         
-        if (isLocked && !isInverseLock && V.worn[slot]) {
+        if (isLocked && /*!isInverseLock &&*/ V.worn[slot]) {
             console.log(`[cheat Extended] ${slot}服裝鎖定耐久度`);
             Wikifier.wikifyEval(
                 `<<CE_autoRepairClothes ${ratio} ${slot}>>`

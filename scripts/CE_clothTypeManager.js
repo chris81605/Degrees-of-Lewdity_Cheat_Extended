@@ -1,69 +1,29 @@
-setup.clothTypeList = [
-    "normal","formal","school","glasses","cool","swim","diving","dance","costume","serving",
-    "fetish","sleep","mask","holy","dark","binding","stealthy","sticky_fingers","rainproof",
-    "tanLines","bimbo","pimp","heels","rugged","chest_bind","eerie","shade","asylum","prison",
-    "sticky","strap-on","covered","naked","athletic","riding","maid","chastity","cage","hidden",
-    "gag","leash","event","pushup","bellyHide","bellyShow","constricting","bookbag","waterproof",
-    "esoteric","unstealthy","heavy","curious","enchanting","hat"
-];
+// 獲取原版特質
+// setup.clothTypeList = Object.keys(setup.shopDetails);
+Object.defineProperty(setup, "clothTypeList", {
+    get() {
+        return Object.keys(setup.shopDetails || {});
+    }
+});
 
-// 对应中文名称
-setup.clothTypeNameMap = {
-    normal: "便装",
-    formal: "正装",
-    school: "校服",
-    glasses: "眼镜",
-    cool: "潮流",
-    swim: "游泳",
-    diving: "潜水",
-    dance: "舞蹈",
-    costume: "化装",
-    serving: "服务",
-    fetish: "情趣",
-    sleep: "睡眠",
-    mask: "假面",
-    holy: "神圣",
-    dark: "淫邪",
-    binding: "捆绑",
-    stealthy: "隐蔽",
-    sticky_fingers: "助偷",
-    rainproof: "防雨",
-    tanLines: "助晒",
-    bimbo: "特别",
-    pimp: "特别",
-    heels: "高跟",
-    rugged: "防滑",
-    chest_bind: "裹胸",
-    eerie: "诡异",
-    shade: "遮阳",
-    asylum: "精神病服",
-    prison: "狱衣",
-    sticky: "黏性",
-    "strap-on": "穿戴式假阳具",
-    covered: "遮口",
-    naked: "裸露",
-    athletic: "运动",
-    riding: "马术",
-    maid: "女仆",
-    chastity: "贞洁",
-    cage: "笼子",
-    hidden: "隐私",
-    gag: "口球",
-    leash: "拴链",
-    event: "特殊",
-    pushup: "胸垫",
-    bellyHide: "遮腹",
-    bellyShow: "露腹",
-    constricting: "压缩",
-    bookbag: "书包",
-    waterproof: "防水",
-    esoteric: "深奥",
-    unstealthy: "暴露",
-    heavy: "沉重",
-    curious: "好奇心",
-    enchanting: "附魔",
-    hat: "帽子"
-};
+// 獲取对应中文名称
+/*
+setup.clothTypeNameMap = Object.fromEntries(
+    Object.entries(setup.shopDetails).map(([key, data]) => [
+        key,
+        data.name || key
+    ])
+);
+*/
+Object.defineProperty(setup, "clothTypeNameMap", {
+    get() {
+        const result = {};
+        for (const key in setup.shopDetails) {
+            result[key] = setup.shopDetails[key]?.name ?? key;
+        }
+        return result;
+    }
+});
 
 /* === DOL 風格：服裝 Type 管理器 === */
 Macro.add('clothTypeManager', {
@@ -144,7 +104,7 @@ Macro.add('clothTypeManager', {
 
         Object.keys(V.worn).forEach(part => {
             const cloth = V.worn[part];
-            if (!cloth || cloth.name === 'naked') return;
+            if (!cloth || (cloth.name === 'naked' && !V.debug)) return;
 
             selections[part] = new Set();
             checkboxes[part] = {};
@@ -400,7 +360,7 @@ setup.autoApplyClothTypePreset = function () {
 
     Object.keys(V.worn).forEach(part => {
         const cloth = V.worn[part];
-        if (!cloth || cloth.name === 'naked') return;
+        if (!cloth || (cloth.name === 'naked' && !V.debug)) return;
 
         const types = preset[part];
         if (!Array.isArray(types)) return;
@@ -422,7 +382,7 @@ $(document).on(':passagedisplay', () => {
 
 // 自动补全 setup.shopDetails 的函数
 
-$(document).on(':passagedisplay', () => {
+$(document).one(':passagedisplay', () => {
     console.log("[clothesTraitFix] === autoCompleteShopDetails 开始 ===");
 
     if (!setup.clothes || typeof setup.clothes !== "object") {

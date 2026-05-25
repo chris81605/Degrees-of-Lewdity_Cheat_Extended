@@ -14,6 +14,18 @@ const TimeTravelAdapter = (() => {
         `${LOG_PREFIX} Adapter 初始化，框架模式：`,
         hasSimpleFramework ? 'Simple Framework' : 'MapleBirch'
     );
+    
+    /* =====================================================
+     *  detectTimeTravelAPI
+     *  MapleBirch時空穿越api呼叫方式新版與舊版不同
+     *  此為兼容函數
+     *  功能為返回需要呼叫的方式(返回字串以供條件判斷)
+     * ===================================================== */
+    function detectTimeTravelAPI() {
+        if (typeof maplebirch?.dynamic?.timeTravel === "function") return "dynamic";
+        if (typeof maplebirch?.state?.timeTravel === "function") return "state";
+    return "none";
+    }
 
     /* =====================================================
      * travelAbsolute
@@ -28,7 +40,15 @@ const TimeTravelAdapter = (() => {
 
         if (!hasSimpleFramework) {
             // MapleBirch / DoL 原生呼叫
-            maplebirch.state.timeTravel({ year, month, day, hour, minute, second });
+            //maplebirch.state.timeTravel({ year, month, day, hour, minute, second });
+            //maplebirch.dynamic.timeTravel({ year, month, day, hour, minute, second });
+            
+            const timeTravelMethod = detectTimeTravelAPI();
+            ({
+                dynamic: () => maplebirch.dynamic?.timeTravel({ year, month, day, hour, minute, second }),
+                state:   () => maplebirch.state?.timeTravel({ year, month, day, hour, minute, second }),
+                none:    () => console.warn("[cheat extended ]timeTravel 函式不存在於當前框架版本")
+            })[timeTravelMethod]();
             Engine.play(V.passage);
             return;
         }
@@ -102,7 +122,16 @@ const TimeTravelAdapter = (() => {
 
         if (!hasSimpleFramework) {
             // MapleBirch 直接傳入
-            maplebirch.state.timeTravel(opts);
+            //maplebirch.state.timeTravel(opts);
+            //maplebirch.dynamic.timeTravel(opts);
+            const timeTravelMethod = detectTimeTravelAPI();
+
+            ({
+                dynamic: () => maplebirch.dynamic?.timeTravel(opts),
+                state:   () => maplebirch.state?.timeTravel(opts),
+                none:    () => console.warn("timeTravel 函式不存在於當前框架版本")
+            })[timeTravelMethod]();
+            
             Engine.play(V.passage);
             return;
         }
@@ -304,7 +333,7 @@ Macro.add('CE_TimeTravelPlus', {
             const l=document.createElement('label');
             l.textContent = label+': ';
             const input=document.createElement('input');
-            input.type='number'; input.id=ids[i]; input.value=defaults[i]; input.style.width='3em';
+            input.type='number'; input.id=ids[i]; input.value=defaults[i]; input.style.width='3em';           
             l.appendChild(input);
             ui.targetDiv.appendChild(l);
         });
@@ -323,7 +352,7 @@ Macro.add('CE_TimeTravelPlus', {
         const relLabels=['增加年','增加月','增加天','增加時','增加分','增加秒'];
         relIds.forEach((id,i)=>{
             const l=document.createElement('label'); l.textContent=relLabels[i]+': ';
-            const input=document.createElement('input'); input.type='number'; input.id=id; input.value=0; input.style.width='3em';
+            const input=document.createElement('input'); input.type = 'text'; input.inputMode = 'numeric'; input.pattern = "-?[0-9]*"; input.id=id; input.value=0; input.style.width='3em';
             l.appendChild(input); ui.relativeDiv.appendChild(l);
         });
 

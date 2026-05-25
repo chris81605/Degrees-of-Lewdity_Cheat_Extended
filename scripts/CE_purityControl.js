@@ -68,7 +68,7 @@ function hookMacro(macroName, { cheatVar, modifyFunc, logFunc }) {
             const handled = modifyFunc.call(this, args);
 
             if (handled === true) {
-                // true = 我已處理，阻止原 macro
+                // true = 阻止執行原 macro
                 if (logFunc) logFunc(macroName, args);
                 return;
             }
@@ -130,7 +130,7 @@ hookMacro("purity", {
 
         CE_purityHandler(amount);
 
-        return true; // ⭐ 明確告訴 hook：我已處理，別跑原 macro
+        return true; // ⭐ 返回 true 不執行原macro邏輯
     },
     logFunc(name, args) {
         console.log(`[Cheat Extended] ✨ 宏 ${name} 被攔截，傳入參數:`, args);
