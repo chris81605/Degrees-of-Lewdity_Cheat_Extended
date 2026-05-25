@@ -167,7 +167,7 @@
         
         <div class ="settingsToggleItem">
             <div class="small-description">
-                隱藏特寫頭上的小箭頭按鈕，讓畫面更乾淨<br>
+                隱藏畫布上的小箭頭、溫度計、防狼噴霧及避孕套icon，讓畫面更乾淨<br>
                 （不要問這和作弊有什麼關系，問就是因為開發者懶，
                 不想從頭再打包一個模組）                             
             </div>

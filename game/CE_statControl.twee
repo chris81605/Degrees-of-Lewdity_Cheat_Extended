@@ -43,7 +43,9 @@
         </div>
         <hr>
         <div class="dol-desc">
-            💡<span class = "red">注意，狀態控制只會影響事件觸發時的變化，隨著遊戲時間自動減少或增加的狀態不會被修改。</span>
+            💡<span class = "red">注意，狀態控制只會影響事件觸發時的變化，隨著遊戲時間自動減少或增加的狀態不會被修改。</span><br>
+            ⚠️<span class = "red">可啟用<<link "狀態變數hook">><<replace #CE_settingsDiv>><<quick_yanling>><</replace>><</link>>功能全面接管狀態。</span>
+                                                                    
         </div>
     </div>
 </div>

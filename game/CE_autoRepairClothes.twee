@@ -82,6 +82,7 @@
                    (2)不受每日恢復控制  
                 </span>
             </mouse>
+            <!--
             <br>
             <div class="small-description">
                 逆向鎖定
@@ -96,7 +97,7 @@
                    (2)不能與耐久度鎖定一起使用                                                       
                 </span>
             </mouse>
-            
+            -->
             <hr>
             
             <span class="dol-desc">各部位服裝鎖定：</span><br>
@@ -121,25 +122,15 @@
                             <</button>>
                         <</capture>>
                         
-                        <<print _slot>>
+                        <<if $CE_autoRepairClothesLockSlots[_slot]>>
+                            <span class="dol-green"><<print _slot>>已鎖定</span>
+                        <<else>>
+                            <span class="dol-red"><<print _slot>>未鎖定</span>
+                        <</if>>
                     </div>
                 <</for>>
                 </div>
-        </div>
-
-        <br>
-
-        <!-- 狀態顯示 -->
-        <div class="dol-section-block">
-            當前鎖定狀態：<br>
-                <<for _slot range Object.keys(V.worn)>>
-                    <<if $CE_autoRepairClothesLockSlots[_slot]>>
-                        <span class="dol-green"><<print _slot>>已鎖定</span><br>
-                    <<else>>
-                        <span class="dol-red"><<print _slot>>未鎖定</span><br>
-                    <</if>>
-                <</for>>
-        </div>
+        </div>       
 
         <hr>
 

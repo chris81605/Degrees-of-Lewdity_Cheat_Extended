@@ -269,6 +269,7 @@
 
 <</widget>>
 
+<!--brothel_basement_setting已棄用-->
 <<widget "brothel_basement_setting">>
 
 <div class="dol-settings dol-shadow">
@@ -374,6 +375,7 @@
 </div> <!-- end dol-settings -->
 
 <</widget>>
+
 
 <<widget "swich_DEBUG_MODE">>
 
@@ -559,21 +561,7 @@
                 </span>
             </mouse>
         </div>
-        <hr>
-        <div class ="settingsToggleItem">
-            <div class="small-description">                
-                戰鬥場景&水下場景氧氣值將鎖定在最大值
-            </div>
-            <label>
-                <<checkbox "$CE_lockOxygenEnabled" false true autocheck>>永不耗氧
-            </label>
-            <mouse class="tooltip linkBlue">(?)
-                <span>
-                    戰鬥（敵人嘗試掐Pc脖子）及潛水場景不再消耗氧氣       
-                </span>
-            </mouse>
-        </div>
-        <hr>
+        <hr>        
         
         <div class="settingsToggleItem">
             <div class="small-description">
@@ -588,6 +576,49 @@
                     💡 注意：此恢復僅限額外狀態，不影響遊戲原本時間流逝造成的變化。
                 </span>
             </mouse>
+        </div>
+        <hr>
+        
+        <div class="settingsToggleItem">
+            <div class="small-description">
+                啟用後，系統會統一管理以下狀態變數的變化：疼痛、興奮、疲勞、壓力、創傷以及自控。
+                可以透過 <<link "狀態控制">><<replace #CE_settingsDiv>><<CE_statControlPanel>><</replace>><</link>>來設定相關參數。
+            </div>
+            <label>
+                <<checkbox "$CE_VarHook_enable" false true autocheck>>
+                ⚠️狀態變數hook                    
+            </label>                    
+            <mouse class="tooltip linkBlue">(?)<span>
+               實驗性功能，可能存在非預期的作用。<br>              
+            </span></mouse><br>
+            <hr>
+            
+            <div class="small-description">
+                天使化Pc放逐觸手次數不再減少，<br>
+                需啟用狀態變數hook。
+            </div>            
+            <label>    
+                <<checkbox "$CE_noAngelBanishLoss" false true autocheck>>
+                天使無限放逐                     
+            </label>
+            <mouse class="tooltip linkBlue">(?)<span>
+                實驗性功能，可能存在非預期的作用。  
+            </span></mouse><br>
+            <hr>
+            
+            <div class="small-description">                
+                戰鬥場景&水下場景氧氣值將鎖定在最大值。<br>
+                需啟用狀態變數hook。
+            </div>
+            <label>
+                <<checkbox "$CE_lockOxygenEnabled" false true autocheck>>永不耗氧
+            </label>
+            <mouse class="tooltip linkBlue">(?)
+                <span>
+                    戰鬥（敵人嘗試掐Pc脖子）及潛水場景不再消耗氧氣       
+                </span>
+            </mouse><br>
+            
         </div>
         <hr>
         
@@ -686,6 +717,10 @@
             <br>
             <span class="dol-link">
                 [[🥛量上限+50000|$passage][$milk_max to 50000]]
+            </span>
+            <br>
+            <span class="dol-link">
+                [[天使放逐次數上限(50)|$passage][$angelBanishMax to 50, $angelBanish to 50]]
             </span>
             <br>
             <span class="dol-link">
