@@ -119,6 +119,22 @@ button.active.ce-tab-favorite {
     background: rgba(255, 215, 0, 0.5);   /* active 更亮 */
 }
 
+#storyCaptionContent {
+    pointer-events: none;
+}
+
+#storyCaptionContent a,
+#storyCaptionContent button,
+#storyCaptionContent input,
+#storyCaptionContent select,
+#storyCaptionContent textarea,
+#storyCaptionContent label,
+#storyCaptionContent [onclick],
+#storyCaptionContent .link-internal,
+#storyCaptionContent .link-external {
+    pointer-events: auto;
+}
+
 /*用於顯示彈窗式ui上方按鈕*/
 .CEtab {
     border: 1px solid rgba(204,204,204,1);    

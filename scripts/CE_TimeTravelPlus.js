@@ -6,14 +6,27 @@ const TimeTravelAdapter = (() => {
 
     const LOG_PREFIX = '[cheat Extended][timeTrevel] ⏱️';
 
-    // 判斷遊戲是否有 Simple Framework
-    const hasSimpleFramework =
-        !!window.modUtils?.getAnyModByNameNoAlias?.('Simple Frameworks');
+    function hasSimpleFramework() {
+        return typeof TimeHandle !== 'undefined'
+            && typeof TimeHandle.timeTravel === 'function'
+            && !!window.modUtils?.getAnyModByNameNoAlias?.('Simple Frameworks');
+    }
 
-    console.info(
-        `${LOG_PREFIX} Adapter 初始化，框架模式：`,
-        hasSimpleFramework ? 'Simple Framework' : 'MapleBirch'
-    );
+    function mapleBirchTimeTravel(options) {
+        if (typeof window.maplebirchFrameworks?.timeTravel === 'function') {
+            return window.maplebirchFrameworks.timeTravel(options);
+        }
+        if (typeof window.maplebirch?.dynamic?.timeTravel === 'function') {
+            return window.maplebirch.dynamic.timeTravel(options);
+        }
+        if (typeof window.maplebirch?.state?.timeTravel === 'function') {
+            return window.maplebirch.state.timeTravel(options);
+        }
+
+        throw new Error('MapleBirch timeTravel API not found');
+    }
+
+    console.info(`${LOG_PREFIX} Adapter 初始化`);
 
     /* =====================================================
      * travelAbsolute
@@ -26,9 +39,9 @@ const TimeTravelAdapter = (() => {
             { year, month, day, hour, minute, second }
         );
 
-        if (!hasSimpleFramework) {
+        if (!hasSimpleFramework()) {
             // MapleBirch / DoL 原生呼叫
-            maplebirch.state.timeTravel({ year, month, day, hour, minute, second });
+            mapleBirchTimeTravel({ year, month, day, hour, minute, second });
             Engine.play(V.passage);
             return;
         }
@@ -100,9 +113,9 @@ const TimeTravelAdapter = (() => {
 
         console.info(`${LOG_PREFIX} 相對時間請求`, opts);
 
-        if (!hasSimpleFramework) {
+        if (!hasSimpleFramework()) {
             // MapleBirch 直接傳入
-            maplebirch.state.timeTravel(opts);
+            mapleBirchTimeTravel(opts);
             Engine.play(V.passage);
             return;
         }
@@ -116,7 +129,8 @@ const TimeTravelAdapter = (() => {
             month: Math.abs(Number(opts.addMonths) || 0),
             day:   Math.abs(Number(opts.addDays)   || 0),
             hour:  Math.abs(Number(opts.addHours)  || 0),
-            min:   Math.abs(Number(opts.addMinutes)|| 0)
+            min:   Math.abs(Number(opts.addMinutes)|| 0),
+            sec:   Math.abs(Number(opts.addSeconds)|| 0)
         };
 
         console.info(`${LOG_PREFIX} Simple Framework 相對時間呼叫`, { payload, backward });

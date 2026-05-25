@@ -2,9 +2,16 @@
 
 <!--用於顯示於左側狀態-->
 <<widget "CEstatebox">> 
-    <div id="CE_Toggle" class="dol-btn fit"><<CE_Toggle>></div>   
-    <div id="CEstatebox">	        
-        <<CE_UiLists>>
+    <<if $CE_hideCEToggleDisable is undefined>>
+        <<set $CE_hideCEToggleDisable to true>>
+    <</if>>
+    <<if !$CE_hideCEToggleDisable>>
+        <div id="CE_Toggle" class="dol-btn fit"><<CE_Toggle>></div>
+    <</if>>
+    <div id="CEstatebox" @style="$CE_hideCEToggleDisable ? 'display:none' : ''">
+        <<if !$CE_hideCEToggleDisable>>
+            <<CE_UiLists>>
+        <</if>>
 	</div>
 	<br>
 <</widget>>
@@ -188,4 +195,3 @@
     </div>    
     
 <</widget>>
-
