@@ -136,6 +136,87 @@
     }
 }
 
+/* 生命值低於百分比閃爍 / 脈衝特效 */
+.ce-enemy-state-fill.health-shine {
+    position: relative;
+    overflow: hidden;
+}
+
+.ce-enemy-state-fill.health-shine::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -40%;
+    width: 40%;
+    height: 100%;
+
+    background: linear-gradient(
+        120deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,200,200,0.55) 50%,
+        rgba(255,255,255,0) 100%
+    );
+
+    animation: healthShine 1.5s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes healthShine {
+    from { left: -40%; }
+    to   { left: 120%; }
+}
+
+.ce-enemy-state-fill.health-pulse {
+    animation: healthPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes healthPulse {
+    0%   { background-color: #e74c3c; }
+    50%  { background-color: #ff8b7b; }
+    100% { background-color: #e74c3c; }
+}
+
+
+/* 性奋高於百分比閃爍 / 脈衝特效 */
+.ce-enemy-state-fill.arousal-shine {
+    position: relative;
+    overflow: hidden;
+}
+
+.ce-enemy-state-fill.arousal-shine::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -40%;
+    width: 40%;
+    height: 100%;
+
+    background: linear-gradient(
+        120deg,
+        rgba(255,255,255,0) 0%,
+        rgba(200,150,255,0.55) 50%,
+        rgba(255,255,255,0) 100%
+    );
+
+    animation: arousalShine 1.6s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes arousalShine {
+    from { left: -40%; }
+    to   { left: 120%; }
+}
+
+.ce-enemy-state-fill.arousal-pulse {
+    animation: arousalPulse 1.3s ease-in-out infinite;
+}
+
+@keyframes arousalPulse {
+    0%   { background-color: #9b59b6; }
+    50%  { background-color: #d38fff; }
+    100% { background-color: #9b59b6; }
+}
+
 /* 類型顏色 */
 .ce-enemy-state--health  .ce-enemy-state-fill { background: #c0392b; }
 .ce-enemy-state--arousal .ce-enemy-state-fill { background: #e056fd; }
