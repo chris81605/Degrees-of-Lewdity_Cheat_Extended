@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.18(Dev260325)",
+  "version": "1.18(Dev260607)",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
@@ -54,7 +54,8 @@
     "game/CE_purityControl.twee",
     "game/CE_parasiteControl.twee",
     "game/CE_EnemyState.twee",
-    "game/CE_autoRepairClothes.twee"
+    "game/CE_autoRepairClothes.twee",
+    "game/CE_farmCheat.twee"
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
