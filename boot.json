@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.18(Dev260607)",
+  "version": "1.18(Dev260607-1)",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
@@ -18,6 +18,7 @@
     "scripts/CE_statControl.js",
     "scripts/CE_timeMultiplier.js",
     "scripts/CE_featBypass.js",
+    "scripts/CE_featUnlocker.js",
     "scripts/CE_purityControl.js",
     "scripts/CE_parasiteControl.js",
     "scripts/CE_EnemyState.js",
@@ -37,6 +38,7 @@
     "game/CE_yanling.twee",
     "game/CE_auto_clothes_Warmth.twee",
     "game/CE_cheatExtendedMenu.twee",
+    "game/CE_featUnlocker.twee",
     "game/CE_milk_mod.twee",
     "game/CE_test_widget.twee",
     "game/CE_inventory_helper.twee",
