@@ -1066,7 +1066,8 @@ Dev20260604
 - **Simple Framework 開發者 emicoto**  
 - **Degrees of Lewdity 漢化組成員**  
 - **QQ群 污度孤儿中国模组交流群**  
-- **貼吧 用户_aeVUUeW / Tony70124 / 北极星勾陈一 / 丧心病**  
+- **貼吧 用户_aeVUUeW / Tony70124 / 北极星勾陈一 / 丧心病**
+- **Github Ayndpa Ji Fuyao提供全成就解鎖及農場助手相關代碼**
 
 ---
 
