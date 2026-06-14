@@ -377,6 +377,8 @@ Macro.add('CE_CheatExtendedVersion', {
         { id: 'parasitePreg', title: '寄生物懷孕控制', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_parasiteControl>><</replace>>`) },
         { id: 'autoWarm', title: '自動調溫', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<auto_clothes_Warmth>><</replace>>`) },
         { id: 'quickYanling', title: '快速言靈', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<quick_yanling>><</replace>>`) },
+        { id: 'farmCheat', title: '农场助手', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_farmCheatPanel>><</replace>>`) },
+        { id: 'featUnlocker', title: '成就解锁器', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_featUnlockerPanel>><</replace>>`) },
 
         // 排序 UI 按鈕，不參與排序，只用於打開排序對話框
         { id: 'tabSort', title: '⚙️標籤頁管理', condition: () => V.CE_menuSortEnable || V.debug, onClick: () => CE_TabManager.openSortUI() }

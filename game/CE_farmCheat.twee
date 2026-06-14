@@ -1,0 +1,292 @@
+:: CE_farmCheatPanel [widget]
+
+<<widget "CE_farmCheatPanel">>
+<div class="dol-settings dol-shadow">
+
+    <div class="dol-header">
+        <span class="dol-title">农场作弊助手 (Farm Cheat Helper)</span>
+    </div>
+    <div class="dol-body">
+
+        <div class="dol-desc">
+            快速完成农场升级，瞬间解锁全建筑，拉满牲畜或自动收获。
+        </div>
+        <br>
+
+        <!-- 初始化所有农场变量，防止新存档由于变量未定义而报错 -->
+        <<if $farm is undefined>>
+            <<set $farm to {
+                wall: 0,
+                tower: 0,
+                woodland: 0,
+                kennel: 0,
+                barn: 0,
+                stable: 0,
+                coop: 0,
+                parasitebarn: 0,
+                irrigation: 0,
+                build: 0,
+                build_timer: 0,
+                clearing: 100,
+                aggro: 0,
+                beasts: {
+                    pigs: 0,
+                    horses: 0,
+                    cattle: 0,
+                    dogs: 0
+                },
+                milking: {
+                    caught: false,
+                    alexNightEvent: false,
+                    catchChance: 0,
+                    dayMilking: false
+                },
+                build_finished: []
+            }>>
+        <</if>>
+        <<if $farm.wall is undefined>><<set $farm.wall to 0>><</if>>
+        <<if $farm.tower is undefined>><<set $farm.tower to 0>><</if>>
+        <<if $farm.woodland is undefined>><<set $farm.woodland to 0>><</if>>
+        <<if $farm.kennel is undefined>><<set $farm.kennel to 0>><</if>>
+        <<if $farm.barn is undefined>><<set $farm.barn to 0>><</if>>
+        <<if $farm.stable is undefined>><<set $farm.stable to 0>><</if>>
+        <<if $farm.coop is undefined>><<set $farm.coop to 0>><</if>>
+        <<if $farm.parasitebarn is undefined>><<set $farm.parasitebarn to 0>><</if>>
+        <<if $farm.irrigation is undefined>><<set $farm.irrigation to 0>><</if>>
+        <<if $farm.aggro is undefined>><<set $farm.aggro to 0>><</if>>
+        <<if $farm.build is undefined>><<set $farm.build to 0>><</if>>
+        <<if $farm.build_timer is undefined>><<set $farm.build_timer to 0>><</if>>
+        <<if $farm.beasts is undefined>><<set $farm.beasts to { pigs: 0, horses: 0, cattle: 0, dogs: 0 }>><</if>>
+        <<if $farm.beasts.pigs is undefined>><<set $farm.beasts.pigs to 0>><</if>>
+        <<if $farm.beasts.horses is undefined>><<set $farm.beasts.horses to 0>><</if>>
+        <<if $farm.beasts.cattle is undefined>><<set $farm.beasts.cattle to 0>><</if>>
+        <<if $farm.beasts.dogs is undefined>><<set $farm.beasts.dogs to 0>><</if>>
+
+        <<if $farm_work is undefined>>
+            <<set $farm_work to {
+                fence_damage: 0
+            }>>
+        <</if>>
+        <<if $farm_work.fence_damage is undefined>><<set $farm_work.fence_damage to 0>><</if>>
+        <<if $farm_stage is undefined>><<set $farm_stage to 0>><</if>>
+        <<if $alex_greenhouse is undefined>><<set $alex_greenhouse to 0>><</if>>
+
+        <!-- ================= 一键快捷操作 ================= -->
+        <div class="dol-header">
+            <span class="dol-title">一键快捷操作 (Quick Actions)</span>
+        </div>
+        <br>
+        <div class="dol-btn">
+            <<button "一键完美升级农场">>
+                <<set $farm_stage to 12>>
+                <<set $farm.wall to 4>>
+                <<set $farm.tower to 2>>
+                <<set $farm.woodland to 3>>
+                <<set $farm.kennel to 1>>
+                <<set $farm.barn to 2>>
+                <<set $farm.stable to 1>>
+                <<set $farm.coop to 2>>
+                <<set $farm.parasitebarn to 2>>
+                <<set $farm.irrigation to 9>>
+                <<set $farm.build to 0>>
+                <<set $farm.build_timer to 0>>
+                <<set $farm.clearing to 0>>
+                <<set $farm.aggro to 0>>
+                <<set $farm.beasts.pigs to 30>>
+                <<set $farm.beasts.horses to 30>>
+                <<set $farm.beasts.cattle to 30>>
+                <<set $farm.beasts.dogs to 30>>
+                <<set $alex_greenhouse to 3>>
+                <<set $alex_greenhouse_timer to 0>>
+                <<set $cottage_nursery_prep to undefined>>
+                <<set C.npc.Alex.pregnancy.nursery to true>>
+                <<if $wardrobes.alexFarm is undefined>><<set $wardrobes.alexFarm to {}>><</if>>
+                <<set $wardrobes.alexFarm.unlocked to true>>
+                
+                <!-- 重新配置并开垦全部 9 块大型优质农田 -->
+                <<set $plots.farm to []>>
+                <<for _i to 0; _i lt 9; _i++>>
+                    <<set $plots.farm[_i] to {
+                        plant: "none",
+                        stage: 0,
+                        days: 0,
+                        water: 1,
+                        till: 1,
+                        bed: "earth",
+                        quality: 4,
+                        size: "large"
+                    }>>
+                <</for>>
+                <<replace #CE_settingsDiv>><<CE_farmCheatPanel>><</replace>>
+            <</button>>
+        </div>
+        <div class="dol-desc" style="font-size: 0.85em; color: gray; margin-top: 4px;">
+            ※ 将故事线拉到第 12 阶段，所有建筑升至满级，解锁农场育儿室与更衣室，拥有 9 块已松土的特级大型自动灌溉农田，并将所有牲畜补满到 30 只上限。
+        </div>
+        <br>
+
+        <div class="dol-btn">
+            <<button "立刻完成当前建造项目">>
+                <<if $farm.build isnot 0 and $farm.build isnot undefined>>
+                    <<switch $farm.build>>
+                        <<case "wall 1">><<set $farm.wall to 1>>
+                        <<case "wall 2">><<set $farm.wall to 2>>
+                        <<case "wall 3">><<set $farm.wall to 3>>
+                        <<case "wall 4">><<set $farm.wall to 4>>
+                        <<case "tower 1">><<set $farm.tower to 1>>
+                        <<case "tower 2">><<set $farm.tower to 2>>
+                        <<case "woodland 1">><<set $farm.woodland to 1>>
+                        <<case "woodland 2">><<set $farm.woodland to 2>>
+                        <<case "woodland 3">><<set $farm.woodland to 3>>
+                        <<case "kennel 1">><<set $farm.kennel to 1>>
+                        <<case "barn 1">><<set $farm.barn to 1>>
+                        <<case "barn 2">><<set $farm.barn to 2>>
+                        <<case "stable 1">><<set $farm.stable to 1>>
+                        <<case "coop 1">><<set $farm.coop to 1>>
+                        <<case "coop 2">><<set $farm.coop to 2>>
+                        <<case "parasites 1">><<set $farm.parasitebarn to 1>>
+                        <<case "parasites 2">>
+                            <<set $farm.parasitebarn to 2>>
+                            <<if $container and $container.farm>>
+                                <<set $container.farm.upgrades.capacity to 1>>
+                                <<set $container.farm.maxCount to 7>>
+                                <<set $container.farm.upgrades.foodStorage to 1>>
+                                <<set $container.farm.maxDaysWithoutFood to 31>>
+                                <<set $container.farm.upgrades.luxury to 3>>
+                            <</if>>
+                        <<case "irrigation">>
+                            <<if $farm.irrigation is undefined>>
+                                <<set $farm.irrigation to 1>>
+                            <<elseif $farm.irrigation lt 9>>
+                                <<set $farm.irrigation++>>
+                            <</if>>
+                        <<case "nursery">>
+                            <<set C.npc.Alex.pregnancy.nursery to true>>
+                            <<unset $cottage_nursery_prep>>
+                    <</switch>>
+                    <<if $farm.build_finished is undefined or $farm.build_finished is 0>>
+                        <<set $farm.build_finished to []>>
+                    <</if>>
+                    <<run $farm.build_finished.pushUnique($farm.build)>>
+                    <<set $farm.build to 0>>
+                    <<set $farm.build_timer to 0>>
+                <</if>>
+                <<replace #CE_settingsDiv>><<CE_farmCheatPanel>><</replace>>
+            <</button>>
+        </div>
+        <div class="dol-desc" style="font-size: 0.85em; color: gray; margin-top: 4px;">
+            <<if $farm.build isnot 0 and $farm.build isnot undefined>>
+                当前正在建造: <span class="gold"><<print $farm.build>></span> (剩余天数: <<print $farm.build_timer>> 天)
+            <<else>>
+                当前没有正在进行的建造项目。
+            <</if>>
+        </div>
+        <br>
+
+        <div class="dol-btn">
+            <<button "农作物瞬间成熟">>
+                <<run tendingInstaGrow("farm")>>
+                <<replace #CE_settingsDiv>><<CE_farmCheatPanel>><</replace>>
+            <</button>>
+        </div>
+        <div class="dol-desc" style="font-size: 0.85em; color: gray; margin-top: 4px;">
+            ※ 立刻让农场所有已播种的农田内的作物成熟。
+        </div>
+        <br><br>
+
+        <!-- ================= 细项升级控制 ================= -->
+        <div class="dol-header">
+            <span class="dol-title">细项升级控制 (Detailed Upgrades)</span>
+        </div>
+        <br>
+        <div class="dol-section">
+            <div class="dol-desc">农场主线阶段 (0 - 12):</div>
+            <<numberslider "$farm_stage" $farm_stage 0 12 1>><br>
+
+            <div class="dol-desc">石墙/围栏等级 (0 - 4):</div>
+            <<numberslider "$farm.wall" $farm.wall 0 4 1>><br>
+
+            <div class="dol-desc">瞭望塔等级 (0 - 2):</div>
+            <<numberslider "$farm.tower" $farm.tower 0 2 1>><br>
+
+            <div class="dol-desc">林地吞并等级 (0 - 3):</div>
+            <<numberslider "$farm.woodland" $farm.woodland 0 3 1>><br>
+
+            <div class="dol-desc">猎犬舍防卫训练 (0 - 1):</div>
+            <<numberslider "$farm.kennel" $farm.kennel 0 1 1>><br>
+
+            <div class="dol-desc">谷仓与自动挤奶等级 (0 - 2):</div>
+            <<numberslider "$farm.barn" $farm.barn 0 2 1>><br>
+
+            <div class="dol-desc">马厩扩建等级 (0 - 1):</div>
+            <<numberslider "$farm.stable" $farm.stable 0 1 1>><br>
+
+            <div class="dol-desc">鸡舍扩建等级 (0 - 2):</div>
+            <<numberslider "$farm.coop" $farm.coop 0 2 1>><br>
+
+            <div class="dol-desc">寄生虫谷仓等级 (0 - 2):</div>
+            <<numberslider "$farm.parasitebarn" $farm.parasitebarn 0 2 1>><br>
+
+            <div class="dol-desc">已安装灌溉的土地数 (0 - 9):</div>
+            <<numberslider "$farm.irrigation" $farm.irrigation 0 9 1>><br>
+
+            <div class="dol-desc">Remy 敌对骚扰值 (0 - 100):</div>
+            <<numberslider "$farm.aggro" $farm.aggro 0 100 5>><br>
+
+            <div class="dol-desc">围栏受损程度 (0 - 100):</div>
+            <<numberslider "$farm_work.fence_damage" $farm_work.fence_damage 0 100 5>><br>
+
+            <div class="dol-desc">孤儿院 Alex 温室等级 (0 - 3):</div>
+            <<numberslider "$alex_greenhouse" $alex_greenhouse 0 3 1>><br>
+        </div>
+        <br>
+
+        <!-- ================= 牲畜与育儿室设置 ================= -->
+        <div class="dol-header">
+            <span class="dol-title">牲畜与育儿室设置 (Livestock & Nursery)</span>
+        </div>
+        <br>
+        <div class="dol-section">
+            <div class="dol-desc">猪只数量 (0 - 30):</div>
+            <<numberslider "$farm.beasts.pigs" $farm.beasts.pigs 0 30 1>><br>
+
+            <div class="dol-desc">马匹数量 (0 - 30):</div>
+            <<numberslider "$farm.beasts.horses" $farm.beasts.horses 0 30 1>><br>
+
+            <div class="dol-desc">牛只数量 (0 - 30):</div>
+            <<numberslider "$farm.beasts.cattle" $farm.beasts.cattle 0 30 1>><br>
+
+            <div class="dol-desc">牧羊犬数量 (0 - 30):</div>
+            <<numberslider "$farm.beasts.dogs" $farm.beasts.dogs 0 30 1>><br>
+            
+            <div class="dol-desc">农场小屋育儿室解锁状态:</div>
+            <div class="dol-btn">
+                <<button "切换育儿室解锁状态">>
+                    <<if C.npc.Alex.pregnancy.nursery is true>>
+                        <<set C.npc.Alex.pregnancy.nursery to false>>
+                    <<else>>
+                        <<set C.npc.Alex.pregnancy.nursery to true>>
+                    <</if>>
+                    <<replace #CE_settingsDiv>><<CE_farmCheatPanel>><</replace>>
+                <</button>>
+            </div>
+            <div class="dol-desc" style="font-size: 0.85em; color: gray; margin-top: 4px;">
+                当前状态: 
+                <<if C.npc.Alex.pregnancy.nursery is true>>
+                    <span class="dol-green">已解锁 (Unlocked)</span>
+                <<else>>
+                    <span class="dol-red">未解锁 (Locked)</span>
+                <</if>>
+            </div>
+        </div>
+        <br><br>
+
+        <div class="dol-btn">
+            <<button "保存并刷新面板">>
+                <<replace #CE_settingsDiv>><<CE_farmCheatPanel>><</replace>>
+            <</button>>
+        </div>
+
+    </div>
+</div>
+<</widget>>

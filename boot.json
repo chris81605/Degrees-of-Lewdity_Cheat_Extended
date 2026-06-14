@@ -18,6 +18,7 @@
     "scripts/CE_statControl.js",
     "scripts/CE_timeMultiplier.js",
     "scripts/CE_featBypass.js",
+    "scripts/CE_featUnlocker.js",
     "scripts/CE_purityControl.js",
     "scripts/CE_parasiteControl.js",
     "scripts/CE_EnemyState.js",
@@ -38,6 +39,7 @@
     "game/CE_yanling.twee",
     "game/CE_auto_clothes_Warmth.twee",
     "game/CE_cheatExtendedMenu.twee",
+    "game/CE_featUnlocker.twee",
     "game/CE_milk_mod.twee",
     "game/CE_test_widget.twee",
     "game/CE_inventory_helper.twee",
@@ -55,7 +57,8 @@
     "game/CE_purityControl.twee",
     "game/CE_parasiteControl.twee",
     "game/CE_EnemyState.twee",
-    "game/CE_autoRepairClothes.twee"
+    "game/CE_autoRepairClothes.twee",
+    "game/CE_farmCheat.twee"
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
