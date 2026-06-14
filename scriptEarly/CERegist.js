@@ -32,22 +32,22 @@ simpleFrameworks.addto('iModOptions', 'swich_DEBUG_MODE')
                 // Maplebirch 框架檢測
                 const maplebirchMod = window.modUtils.getMod('maplebirch');
                 if (maplebirchMod) {
-                    if (compareVersions(maplebirchMod.version, "3.0.0") === 1) {
+                    if (compareVersions(maplebirchMod.version, "3.2.5") === 1) {
                         logger.log(`[Cheat Extended] 检测到 maplebirch 框架 v${maplebirchMod.version}`);
                         
                         maplebirch.modList.pushUnique("cheat extended");
                         // Maplebirch 註冊對應 Cheat Extended
-                        maplebirchFrameworks.addto('Cheats', 'cheat_extended');                        
-                       // maplebirchFrameworks.addto('MenuBig', 'CE_buttom');
-                       //maplebirchFrameworks.addto('MenuSmall', 'CE_originalCheatButton');
-                       maplebirchFrameworks.addto('MenuBig', 'CE_originalCheatButton');                      
-                        maplebirchFrameworks.addto('CaptionAfterDescription', 'CEstatebox');
-                        maplebirchFrameworks.addto('Options', 'CE_options');
-                        maplebirchFrameworks.addto('HintMobile', 'CE_sideBarIcon');
-                        maplebirchFrameworks.addto('Footer', 'CE_CheatExtendedVersion');
-
+                        maplebirch.tool.addTo('Cheats', 'cheat_extended');                        
+                       // maplebirch.tool.addTo('MenuBig', 'CE_buttom');
+                       //maplebirch.tool.addTo('MenuSmall', 'CE_originalCheatButton');
+                       maplebirch.tool.addTo('MenuBig', 'CE_originalCheatButton');                      
+                        maplebirch.tool.addTo('CaptionAfterDescription', 'CEstatebox');
+                        maplebirch.tool.addTo('Options', 'CE_options');
+                        maplebirch.tool.addTo('HintMobile', 'CE_sideBarIcon');
+                        maplebirch.tool.addTo('Footer', 'CE_CheatExtendedVersion');
+                        
                     } else {
-                        logger.error(`[Cheat Extended] maplebirch 版本過低，至少需要 v3.0.0，當前 v${maplebirchMod.version}`);
+                        logger.error(`[Cheat Extended] maplebirch 版本過低，至少需要 v3.2.5，當前 v${maplebirchMod.version}`);
                     }
                     return;
                 }

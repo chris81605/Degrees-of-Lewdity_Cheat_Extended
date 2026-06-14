@@ -21,17 +21,50 @@
 /* 血條背景 */
 .ce-enemy-state-bar {
     flex: 1;
-    height: 8px;              /* ❗關鍵：一定要有高度 */
-    background: #333;         /* ❗不然你看不到 */
+    height: 8px;
+    background: #333;
     border-radius: 4px;
     overflow: hidden;
+    position: relative;
 }
 
 /* 填充條 */
-.ce-enemy-state-fill {
+.ce-enemy-state-fill,
+.ce-enemy-state-fill-lag {
+    position: absolute;
+    left: 0;
+    top: 0;
     height: 100%;
-    background: #c33;         /* 預設紅色 */
-    transition: width 0.3s ease;
+    width: 0%;
+}
+
+/* 前景填充條 */
+.ce-enemy-state-fill {
+    z-index: 2;
+    background: #c33;
+
+    transition-property:
+        width,
+        background-color;
+
+    transition-duration:
+        1s,
+        0.35s;
+
+    transition-timing-function:
+        ease,
+        ease;
+}
+
+/* 延遲背景條 */
+.ce-enemy-state-fill-lag {
+    z-index: 1;
+    opacity: 0.25;
+
+    transition-property: width;
+    transition-duration: 1.4s;
+    transition-timing-function: ease;
+    transition-delay: 0.15s;
 }
 
 
@@ -47,9 +80,8 @@
     font-variant-numeric: tabular-nums;
 }
 
-/* 信任值超過100附加報表特效*/
+/* 信任值超過 100：柔和流光 */
 .ce-enemy-state-fill.trust-shine {
-    position: relative;
     overflow: hidden;
 }
 
@@ -64,11 +96,11 @@
     background: linear-gradient(
         120deg,
         rgba(255,255,255,0) 0%,
-        rgba(255,255,255,0.55) 50%,
+        rgba(210,255,240,0.45) 50%,
         rgba(255,255,255,0) 100%
     );
 
-    animation: trustShine 1.8s linear infinite;
+    animation: trustShine 2.2s linear infinite;
     pointer-events: none;
 }
 
@@ -77,109 +109,108 @@
     to   { left: 120%; }
 }
 
+/* 信任值超過 200：慢速穩定脈衝 */
 .ce-enemy-state-fill.trust-pulse {
-    animation: trustPulse 1.4s ease-in-out infinite;
+    animation: trustPulse 2s ease-in-out infinite;
 }
 
 @keyframes trustPulse {
-    0%   { background-color: #1abc9c; }
-    50%  { background-color: #8ffff0; }
-    100% { background-color: #1abc9c; }
+    0% {
+        filter: brightness(1) saturate(1);
+    }
+
+    50% {
+        filter: brightness(1.35) saturate(1.25);
+    }
+
+    100% {
+        filter: brightness(1) saturate(1);
+    }
 }
 
-/* 憤怒值超過100附加爆怒閃爍特效 */
+
+/* 憤怒值超過 100：紅色警告閃爍 */
 .ce-enemy-state-fill.anger-shine {
-    position: relative;
     overflow: hidden;
+    animation: angerWarning 0.95s ease-in-out infinite;
 }
 
-.ce-enemy-state-fill.anger-shine::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -50%;
-    width: 50%;
-    height: 100%;
+@keyframes angerWarning {
+    0% {
+        filter: brightness(0.95) saturate(1);
+    }
 
-    background: linear-gradient(
-        110deg,
-        rgba(255,255,255,0) 0%,
-        rgba(255,120,120,0.65) 50%,
-        rgba(255,255,255,0) 100%
-    );
+    50% {
+        filter: brightness(1.45) saturate(1.35);
+    }
 
-    animation: angerShine 1.1s linear infinite;
-    pointer-events: none;
+    100% {
+        filter: brightness(0.95) saturate(1);
+    }
 }
 
-@keyframes angerShine {
-    from { left: -50%; }
-    to   { left: 130%; }
-}
-
+/* 憤怒值超過 200：急促爆怒脈衝 */
 .ce-enemy-state-fill.anger-pulse {
-    animation: angerPulse 0.75s ease-in-out infinite;
+    animation: angerPulse 0.65s ease-in-out infinite;
 }
 
 @keyframes angerPulse {
     0% {
-        background-color: #c0392b;
-        filter: brightness(1);
+        filter: brightness(0.85) saturate(1.2);
     }
-    50% {
-        background-color: #ff6b6b;
-        filter: brightness(1.4);
+
+    45% {
+        filter: brightness(1.8) saturate(1.7);
     }
+
     100% {
-        background-color: #c0392b;
-        filter: brightness(1);
+        filter: brightness(0.85) saturate(1.2);
     }
 }
 
-/* 生命值低於百分比閃爍 / 脈衝特效 */
+
+/* 生命值低於 30%：低血警告，微弱呼吸閃爍 */
 .ce-enemy-state-fill.health-shine {
-    position: relative;
     overflow: hidden;
+    animation: healthWarning 1.4s ease-in-out infinite;
 }
 
-.ce-enemy-state-fill.health-shine::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -40%;
-    width: 40%;
-    height: 100%;
+@keyframes healthWarning {
+    0% {
+        filter: brightness(0.9) saturate(1);
+    }
 
-    background: linear-gradient(
-        120deg,
-        rgba(255,255,255,0) 0%,
-        rgba(255,200,200,0.55) 50%,
-        rgba(255,255,255,0) 100%
-    );
+    50% {
+        filter: brightness(1.35) saturate(1.25);
+    }
 
-    animation: healthShine 1.5s linear infinite;
-    pointer-events: none;
+    100% {
+        filter: brightness(0.9) saturate(1);
+    }
 }
 
-@keyframes healthShine {
-    from { left: -40%; }
-    to   { left: 120%; }
-}
-
+/* 生命值低於 10%：瀕死急促脈衝 */
 .ce-enemy-state-fill.health-pulse {
-    animation: healthPulse 1.2s ease-in-out infinite;
+    animation: healthCritical 0.65s ease-in-out infinite;
 }
 
-@keyframes healthPulse {
-    0%   { background-color: #e74c3c; }
-    50%  { background-color: #ff8b7b; }
-    100% { background-color: #e74c3c; }
+@keyframes healthCritical {
+    0% {
+        filter: brightness(0.85) saturate(1.1);
+    }
+
+    45% {
+        filter: brightness(1.75) saturate(1.6);
+    }
+
+    100% {
+        filter: brightness(0.85) saturate(1.1);
+    }
 }
 
 
-/* 性奋高於百分比閃爍 / 脈衝特效 */
+/* 性奮高於 70%：柔和流光 */
 .ce-enemy-state-fill.arousal-shine {
-    position: relative;
     overflow: hidden;
 }
 
@@ -194,11 +225,11 @@
     background: linear-gradient(
         120deg,
         rgba(255,255,255,0) 0%,
-        rgba(200,150,255,0.55) 50%,
+        rgba(220,170,255,0.5) 50%,
         rgba(255,255,255,0) 100%
     );
 
-    animation: arousalShine 1.6s linear infinite;
+    animation: arousalShine 1.8s linear infinite;
     pointer-events: none;
 }
 
@@ -207,14 +238,23 @@
     to   { left: 120%; }
 }
 
+/* 性奮高於 90%：柔和脈衝 */
 .ce-enemy-state-fill.arousal-pulse {
-    animation: arousalPulse 1.3s ease-in-out infinite;
+    animation: arousalPulse 1.6s ease-in-out infinite;
 }
 
 @keyframes arousalPulse {
-    0%   { background-color: #9b59b6; }
-    50%  { background-color: #d38fff; }
-    100% { background-color: #9b59b6; }
+    0% {
+        filter: brightness(1) saturate(1);
+    }
+
+    50% {
+        filter: brightness(1.45) saturate(1.35);
+    }
+
+    100% {
+        filter: brightness(1) saturate(1);
+    }
 }
 
 /* 類型顏色 */

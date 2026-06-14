@@ -44,7 +44,7 @@ function registerCE_forceAttendSchool() {
     const simpleMod = window.modUtils.getMod('Simple Frameworks');
 
     if (maplebirchMod) {
-        maplebirchFrameworks.addTimeEvent('onDay', 'CE_forceAttendSchool', {
+        maplebirch.dynamic.regTimeEvent('onDay', 'CE_forceAttendSchool', {
             action: ()=>CE_forceAttendSchool(),
             priority: 0,
             once: false,
