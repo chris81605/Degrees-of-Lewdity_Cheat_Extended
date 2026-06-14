@@ -229,7 +229,7 @@ function registerMoneyWatchEvent() {
 
 
     if (maplebirchMod) {
-        maplebirchFrameworks.addTimeEvent('onSec', 'CE_money_Watch', {
+        maplebirch.dynamic.regTimeEvent('onSec', 'CE_money_Watch', {
             action: moneyWatchAction,
             priority: 0,
             once: false

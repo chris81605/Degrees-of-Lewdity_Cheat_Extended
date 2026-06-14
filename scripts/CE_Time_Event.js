@@ -5,7 +5,7 @@ function registerCE_genericTimeEvent(eventType, eventName, callback) {
     const simpleMod = window.modUtils.getMod('Simple Frameworks');
 
     if (maplebirchMod) {
-        maplebirchFrameworks.addTimeEvent(eventType, eventName, {
+        maplebirch.dynamic.regTimeEvent(eventType, eventName, {
             action: callback,
             priority: 0,
             once: false
