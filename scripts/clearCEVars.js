@@ -127,7 +127,7 @@
         "CE_LastTab",
         "CE_TabHidden",
         "CE_TabFavorite",
-        "CE_lockOxygenEnabled"
+        "CE_lockOxygenEnabled",
         
         "CE_angelBuildDailyGainEnabled",
         "CE_angelBuildDailyGainAmount",
@@ -144,7 +144,7 @@
         "CE_birdBuildDailyGainEnabled",
         "CE_birdBuildDailyGainAmount",
         "CE_foxBuildDailyGainEnabled",
-        "CE_foxBuildDailyGainAmount"
+        "CE_foxBuildDailyGainAmount",
         
         "CE_TabOrder",
         "CE_VarHook_enable",
