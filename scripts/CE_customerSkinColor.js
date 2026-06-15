@@ -582,52 +582,77 @@ Macro.add('skinCustomManager', {
 
             // ===== 原版膚色區 =====
             const originalSkins = Object.keys(setup.colours.skin_options)
-                .filter(name=>!V.customSkin.some(s=>s.name===name));
+                .filter(name => !V.customSkin.some(s => s.name === name));
 
             if(originalSkins.length){
-                const origHeader = document.createElement('div');
-                origHeader.style.fontWeight='bold';
-                origHeader.style.marginTop='12px';
-                origHeader.style.marginBottom='6px';
-                origHeader.textContent='原版膚色';
-                body.appendChild(origHeader);
+                // 折疊容器
+                const container = document.createElement('div');
+                container.style.marginTop = '12px';
 
-                originalSkins.forEach(name=>{
+                // 標題 + 摺疊按鈕
+                const header = document.createElement('div');
+                header.style.fontWeight = 'bold';
+                header.style.cursor = 'pointer';
+                header.style.userSelect = 'none';
+                header.style.marginBottom = '6px';
+                header.textContent = '原版膚色 ▸'; // ▸ 收合， ▾ 展開
+                container.appendChild(header);
+
+                // 內容區塊
+                const content = document.createElement('div');
+                content.style.display = 'none'; // 預設摺疊
+                container.appendChild(content);
+
+                // 點擊標題切換顯示
+                header.onclick = () => {
+                    if(content.style.display === 'none'){
+                        content.style.display = 'block';
+                        header.textContent = '原版膚色 ▾';
+                    } else {
+                        content.style.display = 'none';
+                        header.textContent = '原版膚色 ▸';
+                    }
+                };
+
+                // 寫入每個膚色
+                originalSkins.forEach(name => {
                     const row = document.createElement('div');
-                    row.className='dol-section-block';
-                    row.style.display='flex';
-                    row.style.alignItems='center';
-                    row.style.marginBottom='4px';
+                    row.className = 'dol-section-block';
+                    row.style.display = 'flex';
+                    row.style.alignItems = 'center';
+                    row.style.marginBottom = '4px';
 
                     const label = document.createElement('span');
-                    label.style.width='120px';
-                    label.textContent=name;
+                    label.style.width = '120px';
+                    label.textContent = name;
                     row.appendChild(label);
 
                     const gradient = setup.colours.skin_options[name].gradient || [];
-                    gradient.forEach(color=>{
+                    gradient.forEach(color => {
                         const colorBox = document.createElement('div');
-                        colorBox.style.width='20px';
-                        colorBox.style.height='20px';
-                        colorBox.style.backgroundColor=color;
-                        colorBox.style.border='1px solid #888';
-                        colorBox.style.marginRight='2px';
-                        colorBox.title=color;
+                        colorBox.style.width = '20px';
+                        colorBox.style.height = '20px';
+                        colorBox.style.backgroundColor = color;
+                        colorBox.style.border = '1px solid #888';
+                        colorBox.style.marginRight = '2px';
+                        colorBox.title = color;
                         row.appendChild(colorBox);
                     });
 
                     const useBtn = document.createElement('span');
-                    useBtn.className='dol-btn';
-                    useBtn.style.marginLeft='4px';
-                    useBtn.textContent='使用';
-                    useBtn.onclick=function(){
+                    useBtn.className = 'dol-btn';
+                    useBtn.style.marginLeft = '4px';
+                    useBtn.textContent = '使用';
+                    useBtn.onclick = function(){
                         V.player.skin.color = name;
                         refreshSkinSidebar();
                     };
                     row.appendChild(useBtn);
 
-                    body.appendChild(row);
+                    content.appendChild(row);
                 });
+
+                body.appendChild(container);
             }
         }
 
@@ -640,7 +665,7 @@ CE_TabManager.register({
     id: 'skinCustomManager',
     title: '膚色自定義',
     //condition: () => V.debug
-    onClick: () => Wikifier.wikifyEval('<<replace #CE_settingsDiv>><<skinCustomManager>><</replace>>')
+    onClick: () => CE_renderSettings('<<skinCustomManager>>')
 });
 
 //針對自定義膚色輸出對應文字
