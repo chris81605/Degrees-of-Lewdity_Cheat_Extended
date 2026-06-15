@@ -1,74 +1,109 @@
+<!--舊版UI,僅保留代碼-->
 :: CE_featUnlockerPanel [widget]
-<<widget "CE_featUnlockerPanel">>
-	<div class="settingsHeader options">
-		<span class="gold">🏆 成就解锁器 (Achievement Unlocker)</span>
+<<widget "CE_featUnlockerPanel_unused">>
+<div class="dol-settings dol-shadow">
+
+	<div class="dol-header">
+		<span class="dol-title">🏆 成就解锁器 (Achievement Unlocker)</span>
 	</div>
-	
-	<div class="settingsToggleItemWide">
-		<span class="gold">全局操作 / Bulk Operations:</span>
-		<br><br>
-		<div style="display: flex; gap: 10px;">
-			<<button "一键解锁全部成就 (Unlock All)">>
-				<<run unlockAllFeats()>>
-				<<replace #CE_settingsDiv>><<CE_featUnlockerPanel>><</replace>>
-			<</button>>
-			
-			<<button "一键重置全部成就 (Reset All)">>
-				<<run resetAllFeats()>>
-				<<replace #CE_settingsDiv>><<CE_featUnlockerPanel>><</replace>>
-			<</button>>
+
+	<div class="dol-body">
+
+		<div class="dol-desc">
+			管理当前存档与浏览器本地全局成就，可单独解锁、上锁，或一键批量处理。
 		</div>
 		<br>
-		<span class="black small-description">提示：解锁或重置会直接同步修改当前存档及浏览器的本地全局成就（localStorage）。</span>
-	</div>
-	
-	<hr>
-	
-	<div class="settingsGrid">
-		<<set _keysSetup to Object.keys(setup.feats)>>
-		<<set _keysSave to Object.keys($feats.currentSave)>>
-		<<for _i to 0; _i lt _keysSetup.length; _i++>>
-			<<set _featName to _keysSetup[_i]>>
-			<<capture _featName>>
-				<<set _setup to setup.feats[_featName]>>
-				<<set _isUnlocked to _keysSave.includes(_featName)>>
-				
-				<div class="settingsToggleItem" style="padding: 8px; border: 1px solid #444; border-radius: 4px; margin-bottom: 5px;">
-					<div style="display: flex; justify-content: space-between; align-items: center;">
-						<div>
-							<span @class="_isUnlocked ? 'green' : 'red'">
+
+		<!-- ================= 全局操作 ================= -->
+		<div class="dol-header">
+			<span class="dol-title">全局操作 (Bulk Operations)</span>
+		</div>
+		<br>
+
+		<div class="dol-section">
+			<div class="dol-btn" style="display: flex; gap: 10px; flex-wrap: wrap;">
+				<<button "一键解锁全部成就 (Unlock All)">>
+					<<run unlockAllFeats()>>
+					<<replace #CE_settingsDiv>><<CE_featUnlockerPanel>><</replace>>
+				<</button>>
+
+				<<button "一键重置全部成就 (Reset All)">>
+					<<run resetAllFeats()>>
+					<<replace #CE_settingsDiv>><<CE_featUnlockerPanel>><</replace>>
+				<</button>>
+			</div>
+
+			<div class="dol-desc" style="font-size: 0.85em; color: gray; margin-top: 6px;">
+				※ 解锁或重置会直接同步修改当前存档及浏览器的本地全局成就 localStorage。
+			</div>
+		</div>
+
+		<br><br>
+
+		<!-- ================= 成就列表 ================= -->
+		<div class="dol-header">
+			<span class="dol-title">成就列表 (Achievement List)</span>
+		</div>
+		<br>
+
+		<div class="dol-section">
+			<<set _keysSetup to Object.keys(setup.feats)>>
+			<<set _keysSave to Object.keys($feats.currentSave)>>
+
+			<<for _i to 0; _i lt _keysSetup.length; _i++>>
+				<<set _featName to _keysSetup[_i]>>
+
+				<<capture _featName>>
+					<<set _setup to setup.feats[_featName]>>
+					<<set _isUnlocked to _keysSave.includes(_featName)>>
+
+					<div class="dol-settings dol-shadow" style="padding: 8px; margin-bottom: 8px;">
+						<div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+
+							<div style="flex: 1;">
+								<span @class="_isUnlocked ? 'dol-green' : 'dol-red'">
+									<<if _isUnlocked>>
+										★ [已解锁 / Unlocked]
+									<<else>>
+										☆ [未解锁 / Locked]
+									<</if>>
+								</span>
+
+								<span class="gold bold" style="margin-left: 5px;">
+									<<print _setup.title>>
+								</span>
+
+								<br>
+
+								<span class="dol-desc" style="font-size: 0.85em; color: gray;">
+									<<if _isUnlocked or _setup.hint is undefined>>
+										<<print _setup.desc>>
+									<<else>>
+										<<print _setup.hint>>
+									<</if>>
+								</span>
+							</div>
+
+							<div class="dol-btn" style="white-space: nowrap;">
 								<<if _isUnlocked>>
-									★ [已解锁 / Unlocked]
+									<<link "上锁 (Lock)">>
+										<<run toggleFeat(_featName, false)>>
+										<<replace #CE_settingsDiv>><<CE_featUnlockerPanel>><</replace>>
+									<</link>>
 								<<else>>
-									☆ [未解锁 / Locked]
+									<<link "解锁 (Unlock)">>
+										<<run toggleFeat(_featName, true)>>
+										<<replace #CE_settingsDiv>><<CE_featUnlockerPanel>><</replace>>
+									<</link>>
 								<</if>>
-							</span>
-							<span class="gold bold" style="margin-left: 5px;"><<print _setup.title>></span>
-							<br>
-							<span class="text small-description" style="font-size: 85%; color: #aaa;">
-								<<if _isUnlocked or _setup.hint is undefined>>
-									<<print _setup.desc>>
-								<<else>>
-									<<print _setup.hint>>
-								<</if>>
-							</span>
-						</div>
-						<div>
-							<<if _isUnlocked>>
-								<<link "上锁 (Lock)">>
-									<<run toggleFeat(_featName, false)>>
-									<<replace #CE_settingsDiv>><<CE_featUnlockerPanel>><</replace>>
-								<</link>>
-							<<else>>
-								<<link "解锁 (Unlock)">>
-									<<run toggleFeat(_featName, true)>>
-									<<replace #CE_settingsDiv>><<CE_featUnlockerPanel>><</replace>>
-								<</link>>
-							<</if>>
+							</div>
+
 						</div>
 					</div>
-				</div>
-			<</capture>>
-		<</for>>
+				<</capture>>
+			<</for>>
+		</div>
+
 	</div>
+</div>
 <</widget>>

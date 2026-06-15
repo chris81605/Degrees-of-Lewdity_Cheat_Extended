@@ -121,7 +121,7 @@
                                 <<replace "#CE_settingsDiv">><<CE_autoRepairClothesUI>><</replace>>
                             <</button>>
                         <</capture>>
-                        
+                        <br>
                         <<if $CE_autoRepairClothesLockSlots[_slot]>>
                             <span class="dol-green"><<print _slot>>已鎖定</span>
                         <<else>>
