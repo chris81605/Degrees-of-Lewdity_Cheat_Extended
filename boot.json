@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.19(Dev260604)",
+  "version": "1.19",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
