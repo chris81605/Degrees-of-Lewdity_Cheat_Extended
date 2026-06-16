@@ -1,0 +1,69 @@
+    <<set _pageSize to 20>>
+
+    /* 用 JS 建立真正可顯示的衣服索引清單，避免 Twee for 超過 999 */
+    <<run
+	    T.visibleWardrobeIds = [];
+	    T.selectedWardrobe = T.selectedWardrobe || _selectedWardrobe;
+	    T.wardrobeListSlot = _wardrobe_list;
+
+	    T.selectedWardrobe[T.wardrobeListSlot].forEach((item, index) => {
+		    if (
+			    item.outfitSecondary &&
+			    item.outfitSecondary[1] !== "broken" &&
+			    item.outfitSecondary[1] !== "split"
+		    ) {
+			    return;
+		    }
+
+		    T.visibleWardrobeIds.push(index);
+	    });
+    >>
+
+    <<set _visibleWardrobeIds to T.visibleWardrobeIds>>
+    <<set _totalItems to _visibleWardrobeIds.length>>
+
+    <<if $wardrobePage is undefined>>
+	    <<set $wardrobePage to {}>>
+    <</if>>
+
+    <<if $wardrobePage[_wardrobe_list] is undefined>>
+	    <<set $wardrobePage[_wardrobe_list] to 0>>
+    <</if>>
+
+    <<set _maxPage to Math.max(0, Math.ceil(_totalItems / _pageSize) - 1)>>
+
+    <<if $wardrobePage[_wardrobe_list] gt _maxPage>>
+	    <<set $wardrobePage[_wardrobe_list] to _maxPage>>
+    <</if>>
+
+    <<if $wardrobePage[_wardrobe_list] lt 0>>
+	    <<set $wardrobePage[_wardrobe_list] to 0>>
+    <</if>>
+
+    <<set _pageStart to $wardrobePage[_wardrobe_list] * _pageSize>>
+    <<set _pageEnd to Math.min(_pageStart + _pageSize, _totalItems)>>
+
+    <<if _totalItems gt _pageSize>>
+	    <div class="wardrobe-action no-numberify">
+		    <<if $wardrobePage[_wardrobe_list] gt 0>>
+			    <<link "◀ 上一页">>
+				    <<set $wardrobePage[_wardrobe_list] -= 1>>
+				    <<updatewardrobe>>
+			    <</link>>
+		    <</if>>
+
+		    第 <<print $wardrobePage[_wardrobe_list] + 1>> / <<print _maxPage + 1>> 页
+		    （显示 <<print _pageStart + 1>> - <<print _pageEnd>> / <<print _totalItems>>）
+
+		    <<if $wardrobePage[_wardrobe_list] lt _maxPage>>
+			    <<link "下一页 ▶">>
+				    <<set $wardrobePage[_wardrobe_list] += 1>>
+				    <<updatewardrobe>>
+			    <</link>>
+		    <</if>>
+	    </div>
+	    <br>
+    <</if>>
+
+    <<for _pageI to _pageStart; _pageI lt _pageEnd; _pageI++>>
+	    <<set _i to _visibleWardrobeIds[_pageI]>>
