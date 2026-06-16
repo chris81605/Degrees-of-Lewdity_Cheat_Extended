@@ -15,6 +15,19 @@ function CEiconSFdetect(){
 }
 CEiconSFdetect();
 
+function CE_renderSettings(wikiText) {
+    const target = document.getElementById('CE_settingsDiv') || window.CE_activeSettingsDiv;
+    if (!target) {
+        console.warn('[Cheat Extended] #CE_settingsDiv not found, skip render:', wikiText);
+        return false;
+    }
+
+    target.innerHTML = '';
+    new Wikifier(target, wikiText);
+    return true;
+}
+window.CE_renderSettings = CE_renderSettings;
+
 /* =========================================
  * <<CE_CheatExtendedVersion>>
  * 專門顯示 cheat Extended 模組版本
@@ -178,7 +191,7 @@ Macro.add('CE_CheatExtendedVersion', {
         restore() {
             let tabId = V.CE_LastTab;
             if (!tabId || !this._btnMap[tabId]) {
-                const firstTab = this.tabs.find(t => !t.condition || t.condition());
+                const firstTab = this.tabs.find(t => (!t.condition || t.condition()) && !V.CE_TabHidden?.[t.id]);
                 if (!firstTab) return;
                 tabId = firstTab.id;
             }
@@ -350,35 +363,35 @@ Macro.add('CE_CheatExtendedVersion', {
 
     // 註冊所有 tab
     const tabs = [
-        { id: 'quickTab', title: '左側快捷', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<swich>><</replace>>`) },
-        { id: 'teleport', title: '空間節點', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<swich_teleportation>><</replace>>`) },
-        { id: 'yanling', title: '言靈集', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<swich_yanling>><</replace>>`) },
-        { id: 'statControl', title: '狀態控制', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_statControlPanel>><</replace>>`) },
-        { id: 'purity', title: '純潔永駐', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_purityControl>><</replace>>`) },
-        { id: 'damage', title: '傷害倍數', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_damageMultiplier>><</replace>>`) },
-        { id: 'violence', title: '疼痛衰減', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_violenceControl>><</replace>>`) },
-        { id: 'hpap', title: 'HP、AP顯示', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<swich_HP_AP_display>><</replace>>`) },
-        { id: 'milk', title: '大量擠🥛模式', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<milk_released_setting>><</replace>>`) },
-        { id: 'semen', title: '大爆🐍模式', condition: () => V.player?.penisExist || V.debug, onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<semen_released_setting>><</replace>>`) },
-        { id: 'blackStore', title: '黑心商店', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<black_stores_setting>><</replace>>`) },
-        { id: 'money', title: '收支倍率調整', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_moneyCheat>><</replace>>`) },
-        { id: 'danceReward', title: '跳舞報酬加倍', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<dance_reward_setting>><</replace>>`) },
-        { id: 'brothelReward', title: '尋歡洞報酬加倍', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<brothelBasementManager>><</replace>>`) },
-        { id: 'timeMultiplier', title: '時間流速控制', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_timeMultiplier>><</replace>>`) },
-        { id: 'timeTravel', title: '時空穿越', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_TimeTravelPlus>><</replace>>`) },
-        { id: 'debugMode', title: 'DEBUG MODE', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<swich_DEBUG_MODE>><</replace>>`) },
-        { id: 'study', title: '用功學習', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<study_hard_mod>><</replace>>`) },
-        { id: 'wardrobe', title: '大容量衣櫃', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<bigest_wardrobe_mod>><</replace>>`) },
-        { id: 'pcRepair', title: 'Pc縫衣中', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_autoRepairClothesUI>><</replace>>`) },
-        { id: 'allClothes', title: '一鍵添加所有服裝+', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_getAllClothes_new>><</replace>>`) },
-        { id: 'voidCreate', title: '虛空創造', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_inventory_helper>><</replace>>`) },
-        { id: 'magicCircuit', title: '魔術迴路', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_tattoo>><</replace>>`) },
-        { id: 'pcPreg', title: 'PC懷孕', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_Pregnancy>><</replace>>`) },
-        { id: 'parasitePreg', title: '寄生物懷孕控制', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_parasiteControl>><</replace>>`) },
-        { id: 'autoWarm', title: '自動調溫', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<auto_clothes_Warmth>><</replace>>`) },
-        { id: 'quickYanling', title: '快速言靈', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<quick_yanling>><</replace>>`) },
-        { id: 'farmCheat', title: '农场助手', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_farmCheatPanel>><</replace>>`) },
-        { id: 'featUnlocker', title: '成就解锁器', onClick: () => Wikifier.wikifyEval(`<<replace #CE_settingsDiv>><<CE_featUnlockerPanel>><</replace>>`) },
+        { id: 'quickTab', title: '左側快捷', onClick: () => CE_renderSettings('<<swich>>') },
+        { id: 'teleport', title: '空間節點', onClick: () => CE_renderSettings('<<swich_teleportation>>') },
+        { id: 'yanling', title: '言靈集', onClick: () => CE_renderSettings('<<swich_yanling>>') },
+        { id: 'statControl', title: '狀態控制', onClick: () => CE_renderSettings('<<CE_statControlPanel>>') },
+        { id: 'purity', title: '純潔永駐', onClick: () => CE_renderSettings('<<CE_purityControl>>') },
+        { id: 'damage', title: '傷害倍數', onClick: () => CE_renderSettings('<<CE_damageMultiplier>>') },
+        { id: 'violence', title: '疼痛衰減', onClick: () => CE_renderSettings('<<CE_violenceControl>>') },
+        { id: 'hpap', title: 'HP、AP顯示', onClick: () => CE_renderSettings('<<swich_HP_AP_display>>') },
+        { id: 'milk', title: '大量擠🥛模式', onClick: () => CE_renderSettings('<<milk_released_setting>>') },
+        { id: 'semen', title: '大爆🐍模式', condition: () => V.player?.penisExist || V.debug, onClick: () => CE_renderSettings('<<semen_released_setting>>') },
+        { id: 'blackStore', title: '黑心商店', onClick: () => CE_renderSettings('<<black_stores_setting>>') },
+        { id: 'money', title: '收支倍率調整', onClick: () => CE_renderSettings('<<CE_moneyCheat>>') },
+        { id: 'danceReward', title: '跳舞報酬加倍', onClick: () => CE_renderSettings('<<dance_reward_setting>>') },
+        { id: 'brothelReward', title: '尋歡洞報酬加倍', onClick: () => CE_renderSettings('<<brothel_basement_setting>>') },
+        { id: 'timeMultiplier', title: '時間流速控制', onClick: () => CE_renderSettings('<<CE_timeMultiplier>>') },
+        { id: 'timeTravel', title: '時空穿越', onClick: () => CE_renderSettings('<<CE_TimeTravelPlus>>') },
+        { id: 'debugMode', title: 'DEBUG MODE', onClick: () => CE_renderSettings('<<swich_DEBUG_MODE>>') },
+        { id: 'study', title: '用功學習', onClick: () => CE_renderSettings('<<study_hard_mod>>') },
+        { id: 'wardrobe', title: '大容量衣櫃', onClick: () => CE_renderSettings('<<bigest_wardrobe_mod>>') },
+        { id: 'pcRepair', title: 'Pc縫衣中', onClick: () => CE_renderSettings('<<CE_autoRepairClothesUI>>') },
+        { id: 'allClothes', title: '一鍵添加所有服裝+', onClick: () => CE_renderSettings('<<CE_getAllClothes_new>>') },
+        { id: 'voidCreate', title: '虛空創造', onClick: () => CE_renderSettings('<<CE_inventory_helper>>') },
+        { id: 'magicCircuit', title: '魔術迴路', onClick: () => CE_renderSettings('<<CE_tattoo>>') },
+        { id: 'pcPreg', title: 'PC懷孕', onClick: () => CE_renderSettings('<<CE_Pregnancy>>') },
+        { id: 'parasitePreg', title: '寄生物懷孕控制', onClick: () => CE_renderSettings('<<CE_parasiteControl>>') },
+        { id: 'autoWarm', title: '自動調溫', onClick: () => CE_renderSettings('<<auto_clothes_Warmth>>') },
+        { id: 'quickYanling', title: '快速言靈', onClick: () => CE_renderSettings('<<quick_yanling>>') },
+        { id: 'farmCheat', title: '农场助手', onClick: () => CE_renderSettings(`<<CE_farmCheatPanel>>`) },
+        { id: 'featUnlocker', title: '成就解锁器', onClick: () => CE_renderSettings(`<<CE_FeatUnlockerPanel>>`) },
 
         // 排序 UI 按鈕，不參與排序，只用於打開排序對話框
         { id: 'tabSort', title: '⚙️標籤頁管理', condition: () => V.CE_menuSortEnable || V.debug, onClick: () => CE_TabManager.openSortUI() }
