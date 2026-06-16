@@ -209,7 +209,7 @@ const CE_TransformationDailyGain = (() => {
     CE_TabManager.register({
        id: 'transformationDailyGain',
        title: '額外轉化點數',
-       onClick: () => Wikifier.wikifyEval('<<replace #CE_settingsDiv>><<CE_TransformationDailyGainSettings>><</replace>>')
+       onClick: () => CE_renderSettings('<<CE_TransformationDailyGainSettings>>')
     });
 
     // 將內部物件公開給外部調用

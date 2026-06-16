@@ -3,31 +3,109 @@
 Cheat Extended - VarHook 變數監聽框架
 ---------------------------------------------------------
 功能：
+
 - 監聽指定的 V.xxx 變數
 - 攔截變數修改
 - 計算變數差值
-- 依註冊乘數轉換差值
-- 將轉換後結果寫回變數
+- 依註冊倍率轉換差值
+- 支援自訂變數處理邏輯
+- 支援變數變化事件監聽
+- 將最終結果寫回變數
 
-支援乘數類型：
-1. 數字
-2. 變數名稱 (自動從 V 讀取)
-3. 函數 (動態計算)
+---------------------------------------------------------
+支援倍率類型：
 
-格式：
-    VarHook.register("stress",1,1)
-    VarHook.register("stats.stress",1,1)
+1. number
+2. string (變數名稱，自動從 V 讀取)
+3. function (動態計算)
 
-流程：
-    V.stress += 5
-        ↓
-    setter 攔截
-        ↓
-    計算 diff
-        ↓
-    依註冊乘數轉換差值
-        ↓
-    將計算後結果加回原變數
+---------------------------------------------------------
+支援 Hook 階段：
+
+before(ctx)
+    差值計算完成後執行
+    可用於紀錄、預處理
+
+transform(ctx)
+    自訂最終值計算
+    若未提供則使用預設倍率邏輯
+
+after(oldValue, finalValue, diff, adjustedDiff, ctx)
+    寫回變數後執行
+    可用於同步資料、刷新UI等
+
+---------------------------------------------------------
+支援事件監聽：
+
+VarHook.on(path, callback)
+
+當變數完成修改後觸發：
+
+    callback(
+        oldValue,
+        finalValue,
+        adjustedDiff
+    )
+
+---------------------------------------------------------
+註冊範例：
+
+// 基本倍率模式
+VarHook.register(
+    "stress",
+    1,
+    1
+);
+
+// 使用變數倍率
+VarHook.register(
+    "pain",
+    "CE_painMultiplier",
+    "CE_painNegativeMultiplier"
+);
+
+// 自訂處理邏輯
+VarHook.register(
+    "oxygen",
+    1,
+    1,
+    {
+        transform(ctx){
+
+            if (V.CE_lockOxygenEnabled && ctx.diff < 0){
+                return ctx.old;
+            }
+
+            return ctx.old + ctx.adjustedDiff;
+        }
+    }
+);
+
+// 監聽事件
+VarHook.on("oxygen",(oldVal,newVal,diff)=>{
+    console.log(oldVal,"→",newVal);
+});
+
+---------------------------------------------------------
+運作流程：
+
+V.stress += 5
+    ↓
+setter 攔截
+    ↓
+計算 diff
+    ↓
+倍率轉換
+    ↓
+before(ctx)
+    ↓
+transform(ctx)
+    ↓
+寫回最終值
+    ↓
+after(...)
+    ↓
+VarHook.on(...)
 =========================================================
 */
 
@@ -42,9 +120,9 @@ Cheat Extended - VarHook 變數監聽框架
 
     // 已安裝 hook 的變數
     const installed = {};
-    
-    // [新增] 事件監聽表
-    const events = {};      
+
+    // 事件監聽表
+    const events = {};
 
     // 是否啟用 VarHook
     V.CE_VarHook_enable = false;
@@ -98,12 +176,13 @@ Cheat Extended - VarHook 變數監聽框架
             obj = obj?.[parts[i]];
             if (!obj) return null;
         }
-        
+
         return {
             obj,
             key: parts[parts.length-1]
         };
     }
+
 
     /* =====================================================
     乘數解析器
@@ -111,8 +190,15 @@ Cheat Extended - VarHook 變數監聽框架
     支援三種類型：
 
     number
-    string (V.xxx)
-    function
+    string   變數名稱，例如 "CE_painMultiplier"
+    function 回傳倍率
+
+    注意：
+        string 不需要寫 V.
+        例如：
+            "CE_painMultiplier"
+        會解析為：
+            State.variables.CE_painMultiplier
     ===================================================== */
 
     function resolveMultiplier(mult){
@@ -122,24 +208,28 @@ Cheat Extended - VarHook 變數監聽框架
             if (typeof mult === "string"){
                 const v = State.variables[mult];
                 const num = Number(v);
-            
+
                 if (v === undefined) {
                     warn("Multiplier variable not found:", mult, "using default 1");
                     return 1;
-                }                
+                }
+
                 if (Number.isNaN(num)) {
                     warn("Multiplier variable is NaN:", mult, v, "using default 1");
                     return 1;
                 }
+
                 return num;
             }
 
             if (typeof mult === "function"){
                 const num = Number(mult());
+
                 if (Number.isNaN(num)) {
                     warn("Multiplier function returned NaN:", mult, "using default 1");
                     return 1;
                 }
+
                 return num;
             }
 
@@ -154,7 +244,7 @@ Cheat Extended - VarHook 變數監聽框架
             }
 
             if (typeof mult === "object") {
-                warn("Multiplier is object/array:", mult, "using default 0");
+                warn("Multiplier is object/array:", mult, "using default 1");
                 return 1;
             }
 
@@ -166,6 +256,7 @@ Cheat Extended - VarHook 變數監聽框架
             return 1;
         }
     }
+
 
     /* =====================================================
     差值轉換
@@ -190,27 +281,77 @@ Cheat Extended - VarHook 變數監聽框架
         else{
             return 0;
         }
+
         return diff * mult;
     }
+
 
     /* =====================================================
     註冊函數
     -----------------------------------------------------
     posMult  = 正向變化乘數
     negMult  = 負向變化乘數
+
+    第四參數 options 可選：
+
+        before(ctx)
+            套用 hook 前執行。
+            通常用於記錄、預處理。
+
+        transform(ctx)
+            自訂最終值。
+            若沒有設定，預設為：
+                old + adjustedDiff
+
+            若有設定，會使用 transform 回傳值作為最終值。
+
+        after(oldValue, finalValue, diff, adjustedDiff, ctx)
+            hook 套用後執行。
+            通常用於額外同步其他變數、刷新 UI、輸出訊息。
+
+    ctx 內容：
+
+        path          變數路徑
+        old           原始舊值
+        newValue      外部寫入的新值
+        oldNum        Number(old)
+        newNum        Number(newValue)
+        safeOld       Math.max(0, oldNum)
+        safeNew       Math.max(0, newNum)
+        diff          safeNew - safeOld
+        adjustedDiff  經倍率轉換後的差值
+        config        registry[path]
+
+    舊用法仍可使用：
+        VarHook.register("pain", "CE_painMultiplier", "CE_painNegativeMultiplier");
+
+    新用法：
+        VarHook.register("oxygen", 1, 1, {
+            transform(ctx){
+                if (V.CE_lockOxygenEnabled && ctx.diff < 0) {
+                    return ctx.old;
+                }
+
+                return ctx.old + ctx.adjustedDiff;
+            }
+        });
     ===================================================== */
 
-    function register(varPath, posMult, negMult){
+    function register(varPath, posMult, negMult, options = {}){
 
         registry[varPath] = {
-
             pos: posMult,
-            neg: negMult
+            neg: negMult,
+
+            before: options.before,
+            transform: options.transform,
+            after: options.after
         };
 
-        log("register:", varPath, posMult, negMult);
+        log("register:", varPath, posMult, negMult, options);
     }
-    
+
+
     /* =====================================================
     事件監聽註冊
     -----------------------------------------------------
@@ -221,15 +362,16 @@ Cheat Extended - VarHook 變數監聽框架
         VarHook.on("變數路徑", callback)
 
     callback 參數：
-        oldValue  修改前數值
-        newValue  修改後數值
-        diff      最終套用的變化量
+        oldValue       修改前數值
+        finalValue     VarHook 套用後的最終值
+        adjustedDiff   最終套用的變化量
 
     範例：
-        VarHook.on("angelBanish",(oldVal,newVal,diff)=>{
-            console.log(oldVal,"→",newVal);
+        VarHook.on("angelBanish",(oldVal,finalVal,adjustedDiff)=>{
+            console.log(oldVal,"→",finalVal, adjustedDiff);
         });
-    ===================================================== */    
+    ===================================================== */
+
     function on(varPath, callback){
 
         if (!events[varPath]){
@@ -278,7 +420,7 @@ Cheat Extended - VarHook 變數監聽框架
             Object.defineProperty(obj, key, {
 
                 configurable: true,
-                
+
                 get(){
                     return _value;
                 },
@@ -286,16 +428,18 @@ Cheat Extended - VarHook 變數監聽框架
                 set(newValue){
                     try{
                         const old = _value;
+
+                        // 先保留外部寫入值。
+                        // 若 VarHook 未啟用或跳過，變數仍會正常變成 newValue。
                         _value = newValue;
+
                         const macroLock = setup.CE_macroLock;
 
                         // VarHook 未啟用
-                        
                         if (!V?.CE_VarHook_enable){
                             log("VarHook disable", path);
                             return;
                         }
-                        
 
                         // macro 修改變數時跳過
                         if (macroLock){
@@ -318,7 +462,9 @@ Cheat Extended - VarHook 變數監聽框架
                             warn("no registry:", path);
                             return;
                         }
-                        
+
+                        const config = registry[path];
+
                         const oldNum = Number(old);
                         const newNum = Number(newValue);
 
@@ -350,24 +496,87 @@ Cheat Extended - VarHook 變數監聽框架
                             warn("invalid diff:", adjustedDiff);
                             return;
                         }
-                                               
+
                         log("adjustedDiff:", adjustedDiff);
 
-                        const newValueFinal = old + adjustedDiff;
+                        const ctx = {
+                            path,
+                            old,
+                            newValue,
+                            oldNum,
+                            newNum,
+                            safeOld,
+                            safeNew,
+                            diff,
+                            adjustedDiff,
+                            config
+                        };
+
+                        /* =============
+                        套用前自訂邏輯
+                        =============== */
+
+                        if (typeof config.before === "function"){
+                            try{
+                                config.before(ctx);
+                            }catch(e){
+                                error("VarHook before error:", path, e);
+                            }
+                        }
+
+                        /* =============
+                        計算最終值
+
+                        預設：
+                            old + adjustedDiff
+
+                        若註冊了 transform(ctx)，則使用 transform 的回傳值。
+                        =============== */
+
+                        let newValueFinal;
+
+                        if (typeof config.transform === "function"){
+                            try{
+                                newValueFinal = config.transform(ctx);
+                            }catch(e){
+                                error("VarHook transform error:", path, e);
+                                return;
+                            }
+                        }
+                        else{
+                            newValueFinal = old + adjustedDiff;
+                        }
+
+                        if (!Number.isFinite(Number(newValueFinal))){
+                            warn("invalid final value:", path, newValueFinal);
+                            return;
+                        }
 
                         log(
-                            "change:", path, 
+                            "change:", path,
                             "old:", old,
-                            "→", 
-                            "new:", newValueFinal, 
-                            "diff:", diff, 
+                            "→",
+                            "new:", newValueFinal,
+                            "diff:", diff,
                             "adjustedDiff:", adjustedDiff
                         );
 
                         lock = true;
                         _value = newValueFinal;
                         lock = false;
-                        
+
+                        /* =============
+                        套用後自訂邏輯
+                        =============== */
+
+                        if (typeof config.after === "function"){
+                            try{
+                                config.after(old, newValueFinal, diff, adjustedDiff, ctx);
+                            }catch(e){
+                                error("VarHook after error:", path, e);
+                            }
+                        }
+
                         /* =============
                         觸發事件
                         =============== */
@@ -376,7 +585,7 @@ Cheat Extended - VarHook 變數監聽框架
 
                             for (const cb of events[path]){
                                 try{
-                                    cb(old, newValue, appliedDiff);
+                                    cb(old, newValueFinal, adjustedDiff);
                                 }catch(e){
                                     error("VarHook event error:", path, e);
                                 }
@@ -389,6 +598,7 @@ Cheat Extended - VarHook 變數監聽框架
                     }
                 }
             });
+
             installed[path] = true;
         }
         catch(e){
@@ -396,12 +606,13 @@ Cheat Extended - VarHook 變數監聽框架
         }
     }
 
+
     /* =====================================================
     安裝所有註冊 hook
     ===================================================== */
 
     function installAll(){
-        
+
         log("installAll start");
 
         try{
@@ -414,6 +625,7 @@ Cheat Extended - VarHook 變數監聽框架
         }
     }
 
+
     /* =====================================================
     Passage 切換時重新掛載 hook
     -----------------------------------------------------
@@ -425,10 +637,11 @@ Cheat Extended - VarHook 變數監聽框架
 
     $(document).on(":passagestart", () => {
         log("passage start reinstall");
-        
+
         for (const v in installed){
             installed[v] = false;
         }
+
         installAll();
     });
 
@@ -436,6 +649,7 @@ Cheat Extended - VarHook 變數監聽框架
     /* =====================================================
     對外 API
     ===================================================== */
+
     window.VarHook = {
         register,
         installAll,
@@ -443,13 +657,15 @@ Cheat Extended - VarHook 變數監聽框架
     };
 })();
 
+
 /*
 =========================================================
 初始化註冊
 =========================================================
 */
+
 $(document).one(':passagestart',()=>{
-        
+
     // ------------------- Pain -------------------
     VarHook.register(
         "pain",
@@ -485,27 +701,57 @@ $(document).one(':passagestart',()=>{
         "CE_arousalNegativeMultiplier"
     );
 
-    /// ------------------- Tiredness -------------------
+    // ------------------- Tiredness -------------------
     VarHook.register(
         "tiredness",
         "CE_tiredMultiplier",
         "CE_tiredNegativeMultiplier"
     );
-    
-    /// ------------------- angelBanish(觸手放逐) -------------------
-    
+
+    // ------------------- angelBanish(觸手放逐) -------------------
+    // 預設仍走倍率邏輯：
+    // 正向變化倍率 = 1
+    // 負向變化倍率 = 若 CE_noAngelBanishLoss 開啟則 0，否則 1
     VarHook.register(
-        "angelBanish", 
-        1, 
+        "angelBanish",
+        1,
         () => V?.CE_noAngelBanishLoss ? 0 : 1
     );
-    
-    /// ------------------- oxygen(氧氣) -------------------
-    
+
+    // ------------------- oxygen(氧氣) -------------------
+    // 預設仍走倍率邏輯：
+    // 正向變化倍率 = 1
+    // 負向變化倍率 = 若 CE_lockOxygenEnabled 開啟則 0，否則 1
     VarHook.register(
-        "oxygen", 
-        1, 
+        "oxygen",
+        1,
         () => V?.CE_lockOxygenEnabled ? 0 : 1
+    );
+
+    // ------------------- wardrobe.space(衣櫃空間) -------------------
+    // 避免第三方模組修改衣櫃容量
+    //
+    VarHook.register(
+        "wardrobe.space",
+        1,
+        1,
+        {
+            transform(ctx){
+
+                // 開關沒開，正常允許變化
+                if (!V?.bigest_wardrobe_swich){
+                    return ctx.old + ctx.adjustedDiff;
+                }
+
+                // 開關開啟時，允許改成指定固定值
+                if (Number(ctx.newValue) === Number(V?.bigest_wardrobe_fix)){
+                    return ctx.newValue;
+                }
+
+                // 其他第三方修改全部擋掉
+                return ctx.old;
+            }
+        }
     );
 
     VarHook.installAll();

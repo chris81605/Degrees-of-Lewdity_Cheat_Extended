@@ -332,7 +332,7 @@ Macro.add('eyeCustomManager', {
 CE_TabManager.register({
     id:'eyeCustomManager',
     title:'眼色自定義',
-    onClick:()=>Wikifier.wikifyEval('<<replace #CE_settingsDiv>><<eyeCustomManager>><</replace>>')
+    onClick:()=>CE_renderSettings('<<eyeCustomManager>>')
 });
 
 /* 自訂眼色文字輸出(hook函數) */
