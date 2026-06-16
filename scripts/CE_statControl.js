@@ -616,7 +616,7 @@ maxDepth 越高，
                             console.groupEnd();
                         }
 
-                        if (!V?.CE_DeepProxyHook_enable){
+                        if (!V?.CE_VarHook_enable || !V?.CE_RawHook_enable){
                             return Reflect.set(obj, prop, value, receiver);
                         }
 
@@ -710,7 +710,7 @@ maxDepth 越高，
                             console.groupEnd();
                         }
 
-                        if (!V?.CE_DeepProxyHook_enable){
+                        if (!V?.CE_VarHook_enable || !V?.CE_RawHook_enable){
                             return Reflect.deleteProperty(obj, prop);
                         }
 
@@ -1183,7 +1183,7 @@ Cheat Extended - RawHook 原始變數攔截框架
                         _value = newValue;
 
                         // RawHook 未啟用
-                        if (!V?.CE_RawHook_enable){
+                        if (!V?.CE_VarHook_enable || !V?.CE_RawHook_enable){
                             log("RawHook disable:", path);
                             return;
                         }
