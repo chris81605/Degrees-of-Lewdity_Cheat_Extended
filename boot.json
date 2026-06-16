@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.19",
+  "version": "1.20(dev260615)",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
@@ -76,6 +76,7 @@
     "addon-replace/Widgets_4.txt",
     "addon-replace/Widgets_5.txt",
     "addon-replace/StoryCaption.txt",
+    "addon-replace/Widgets_Wardrobe.txt",
     "readme.md",
     "LICENSE.txt"
   ],
@@ -164,6 +165,12 @@
           "findString": "<<switch Skin.color.natural>>",
           "replace": "<<skinColourFallback>><<switch Skin.color.natural>>",         
           "comments": "針對自定義膚色輸出對應文字patch"
+        },
+        {
+          "passage": "Widgets Wardrobe",
+          "findString": "<<for _i to 0; _i lt _selectedWardrobe[_wardrobe_list].length; _i++>>",
+          "replaceFile": "addon-replace/Widgets_Wardrobe.txt",       
+          "comments": "嘗試修復衣櫥服裝超過1000件後不顯示的問題"
         }
       ]
     },
