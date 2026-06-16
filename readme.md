@@ -446,7 +446,6 @@
         - 支援限制監聽深度(maxDepth)
         - 支援刪除事件攔截(delete)
         - 支援忽略指定 key/path
-        - 支援 Debug 追蹤來源
         - 適用於複雜資料結構相容性修復與除錯
          
     - 新增 內部工具函數
@@ -455,14 +454,12 @@
         - 支援 `before(ctx)`、`transform(ctx)`、`after(oldValue, finalValue, ctx)`。
         - 支援 `RawHook.on(path, callback)` 監聽變數變化。
         - 支援巢狀路徑，例如 `test.a`、`test.0`。
-        - 會在 Passage 切換時自動重新掛載 Hook。
-        - Debug 追蹤功能，可用於追查指定變數由何處修改。
+        - 會在 Passage 切換時自動重新掛載 Hook。        
     
     - 更新 內部工具函數
         - `VarHook`
         - 新增 `before(ctx)`、`transform(ctx)`、`after(...)` 自訂處理流程。
         - 修正事件監聽回呼參數名稱錯誤
-        - 新增 Debug 追蹤功能，可用於追查指定數值變數由何處修改。
     
 - 優化 大容量衣櫃容量鎖定邏輯
     - 修復 `DoL原版优化Optimization`大大大衣櫃功能與`大容量衣櫃`衝突的問題
