@@ -1,5 +1,485 @@
 /*
 =========================================================
+Cheat Extended - RawHook 原始變數攔截框架
+---------------------------------------------------------
+功能：
+- 監聽指定的 V.xxx 變數
+- 不要求數字
+- 不計算 diff
+- 不套倍率
+- 攔截整個變數被重新賦值
+- 由 transform(ctx) 決定最終值
+
+適合：
+- string
+- object
+- array
+- boolean
+- 需要整體鎖定的變數
+
+限制：
+- RawHook 只能攔截「已註冊路徑本身」的重新賦值。
+
+可以攔截：
+    RawHook.register("test", ...)
+    V.test = 新值
+
+    RawHook.register("test.a", ...)
+    V.test.a = 123
+
+    RawHook.register("test.0", ...)
+    V.test[0] = "abc"
+
+不能攔截：
+    RawHook.register("test", ...)
+    V.test.a = 123
+
+    RawHook.register("test", ...)
+    V.test.push(...)
+
+原因：
+    Hook 裝在哪個屬性上，就只能攔截那個屬性的 set。
+    若只 Hook test，就只能攔 V.test = ...
+    不會自動深入攔截 test.a 或 test[0]。
+  
+=========================================================
+*/
+
+(function () {
+
+    /* =====================================================
+    狀態
+    ===================================================== */
+
+    // 註冊表
+    const registry = {};
+
+    // 已安裝 hook 的變數
+    const installed = {};
+
+    // 事件監聽表
+    const events = {};
+
+    // 是否啟用 RawHook
+    if (typeof V.CE_RawHook_enable !== "boolean") {
+        V.CE_RawHook_enable = false;
+    }
+
+    // 防止 setter 自己寫回變數造成無限遞迴
+    let lock = false;
+
+    // Debug 開關
+    const DEBUG = () => !!V.debug;
+    
+    // Debug 追蹤開關，不進存檔
+    if (setup.CE_debugRawHook === undefined) {
+        setup.CE_debugRawHook = null;
+    }
+
+    if (setup.CE_debugRawHookTargets === undefined) {
+        setup.CE_debugRawHookTargets = null;
+    }
+
+    function isRawHookDebug(){
+        return setup.CE_debugRawHook === null
+            ? DEBUG()
+            : !!setup.CE_debugRawHook;
+    }
+
+    /* =====================================================
+    Debug 輸出工具
+    ===================================================== */
+
+    function log(...msg){
+        if (DEBUG()) console.log("[Cheat Extended][RawHook]", ...msg);
+    }
+
+    function warn(...msg){
+        if (DEBUG()) console.warn("[Cheat Extended][RawHook]", ...msg);
+    }
+
+    function error(...msg){
+        console.error("[Cheat Extended][RawHook]", ...msg);
+    }
+
+
+    /* =====================================================
+    工具
+    -----------------------------------------------------
+    解析變數路徑並回傳父物件與 key
+
+    例：
+        player.name
+        -> obj = V.player
+        -> key = name
+    ===================================================== */
+
+    function getParentAndKey(path){
+
+        const parts = path.split(".");
+
+        let obj = State.variables;
+
+        for (let i = 0; i < parts.length - 1; i++){
+            obj = obj?.[parts[i]];
+            if (!obj) return null;
+        }
+
+        return {
+            obj,
+            key: parts[parts.length - 1]
+        };
+    }
+
+
+    /* =====================================================
+    註冊函數
+    -----------------------------------------------------
+    options 可用欄位：
+
+        before(ctx)
+            寫回前執行。
+
+        transform(ctx)
+            自訂最終值。
+            若未提供，預設允許 newValue。
+
+        after(oldValue, finalValue, ctx)
+            寫回後執行。
+
+    ctx 內容：
+
+        path      變數路徑
+        old       舊值
+        newValue  外部寫入的新值
+        config    registry[path]
+
+    範例：
+
+        RawHook.register("playerName", {
+            transform(ctx){
+                return ctx.old;
+            }
+        });
+
+    ===================================================== */
+
+    function register(varPath, options = {}){
+
+        registry[varPath] = {
+            before: options.before,
+            transform: options.transform,
+            after: options.after
+        };
+
+        log("register:", varPath, options);
+    }
+
+
+    /* =====================================================
+    事件監聽註冊
+    -----------------------------------------------------
+    用途：
+        監聽指定變數在 RawHook 修改後的變化
+
+    用法：
+        RawHook.on("變數路徑", callback)
+
+    callback 參數：
+        oldValue    修改前值
+        finalValue  RawHook 套用後的最終值
+        newValue    外部原本寫入的新值
+    ===================================================== */
+
+    function on(varPath, callback){
+
+        if (!events[varPath]){
+            events[varPath] = [];
+        }
+
+        events[varPath].push(callback);
+
+        log("event registered:", varPath);
+    }
+
+
+    /* =====================================================
+    Hook 安裝
+    -----------------------------------------------------
+    對指定變數安裝 setter hook
+    ===================================================== */
+
+    function installRawHook(path){
+
+        try{
+
+            if (installed[path]){
+                log("skip installed:", path);
+                return;
+            }
+
+            const resolved = getParentAndKey(path);
+
+            if (!resolved){
+                warn("path not found:", path);
+                return;
+            }
+
+            const { obj, key } = resolved;
+
+            if (!(key in obj)){
+                warn("variable not found:", path);
+                return;
+            }
+
+            let _value = obj[key];
+
+            log("install hook:", path);
+
+            Object.defineProperty(obj, key, {
+
+                configurable: true,
+
+                get(){
+                    return _value;
+                },
+
+                set(newValue){
+                    try{
+                        const old = _value;
+                        
+                        /* =========================
+                        DEBUG用，追蹤誰在改指定變數
+                        ---------------------------------
+                        使用範例
+                        setup.CE_debugRawHook = true;
+
+                        setup.CE_debugRawHookTargets = [
+                            "wardrobe.space"
+                        ];
+
+                        若 CE_debugRawHookTargets 不存在
+                        則追蹤所有 RawHook 變數
+                        ==========================*/                        
+                        
+                        if (
+                            isRawHookDebug() &&
+                            (
+                                setup.CE_debugRawHookTargets == null ||
+                                (
+                                    Array.isArray(setup.CE_debugRawHookTargets) &&
+                                    setup.CE_debugRawHookTargets.includes(path)
+                                )
+                            )
+                        ){
+                            console.group("[Cheat Extended][RawHook WRITE]");
+                            console.log("path:", path);
+                            console.log("old:", old);
+                            console.log("new:", newValue);
+                            console.trace();
+                            console.groupEnd();
+                        }        
+
+                        // 先保留外部寫入值。
+                        // 若 RawHook 未啟用或跳過，變數仍會正常變成 newValue。
+                        _value = newValue;
+
+                        // RawHook 未啟用
+                        if (!V?.CE_RawHook_enable){
+                            log("RawHook disable:", path);
+                            return;
+                        }
+
+                        // macro 修改變數時跳過
+                        if (setup.CE_macroLock){
+                            log("macroLock skip:", path);
+                            return;
+                        }
+
+                        // setter 寫回保護
+                        if (lock){
+                            log("locked skip:", path);
+                            return;
+                        }
+
+                        if (old === newValue){
+                            log("no change:", path);
+                            return;
+                        }
+
+                        if (!(path in registry)){
+                            warn("no registry:", path);
+                            return;
+                        }
+
+                        const config = registry[path];
+
+                        const ctx = {
+                            path,
+                            old,
+                            newValue,
+                            config
+                        };
+
+                        /* =============
+                        套用前自訂邏輯
+                        =============== */
+
+                        if (typeof config.before === "function"){
+                            try{
+                                config.before(ctx);
+                            }catch(e){
+                                error("RawHook before error:", path, e);
+                            }
+                        }
+
+                        /* =============
+                        計算最終值
+
+                        預設：
+                            newValue
+
+                        若註冊了 transform(ctx)，則使用 transform 的回傳值。
+                        =============== */
+
+                        let finalValue = newValue;
+
+                        if (typeof config.transform === "function"){
+                            try{
+                                finalValue = config.transform(ctx);
+                            }catch(e){
+                                error("RawHook transform error:", path, e);
+                                return;
+                            }
+                        }
+
+                        log(
+                            "change:",
+                            path,
+                            "old:", old,
+                            "→",
+                            "newValue:", newValue,
+                            "→",
+                            "final:", finalValue
+                        );
+
+                        lock = true;
+                        _value = finalValue;
+                        lock = false;
+
+                        /* =============
+                        套用後自訂邏輯
+                        =============== */
+
+                        if (typeof config.after === "function"){
+                            try{
+                                config.after(old, finalValue, ctx);
+                            }catch(e){
+                                error("RawHook after error:", path, e);
+                            }
+                        }
+
+                        /* =============
+                        觸發事件
+                        =============== */
+
+                        if (events[path]){
+
+                            for (const cb of events[path]){
+                                try{
+                                    cb(old, finalValue, newValue);
+                                }catch(e){
+                                    error("RawHook event error:", path, e);
+                                }
+                            }
+                        }
+                    }
+                    catch(e){
+                        error("setter error:", path, e);
+                        lock = false;
+                    }
+                }
+            });
+
+            installed[path] = true;
+        }
+        catch(e){
+            error("installRawHook error:", path, e);
+        }
+    }
+
+
+    /* =====================================================
+    安裝所有註冊 hook
+    ===================================================== */
+
+    function installAll(){
+
+        log("installAll start");
+
+        try{
+            for (const v in registry){
+                installRawHook(v);
+            }
+        }
+        catch(e){
+            error("installAll error:", e);
+        }
+    }
+
+
+    /* =====================================================
+    Passage 切換時重新掛載 hook
+    -----------------------------------------------------
+    SugarCube 特性：
+
+    passage 切換時 State.variables 會 clone
+    因此需要重新掛載 hook
+    ===================================================== */
+
+    $(document).on(":passagestart", () => {
+        log("passage start reinstall");
+
+        for (const v in installed){
+            installed[v] = false;
+        }
+
+        installAll();
+    });
+
+
+    /* =====================================================
+    對外 API
+    ===================================================== */
+
+    window.RawHook = {
+        register,
+        installAll,
+        on
+    };
+
+})();
+/*
+// 使用範例
+$(document).one(":passagestart", () => {
+
+    RawHook.register("CE_testName", {
+        transform(ctx){
+            return ctx.old;
+        },
+
+        after(oldVal, finalVal, ctx){
+            console.log("CE_testName 被攔截:", oldVal, ctx.newValue, finalVal);
+        }
+    });
+
+    RawHook.installAll();
+
+});
+*/
+
+/*
+=========================================================
 Cheat Extended - VarHook 變數監聽框架
 ---------------------------------------------------------
 功能：
@@ -125,7 +605,9 @@ VarHook.on(...)
     const events = {};
 
     // 是否啟用 VarHook
-    V.CE_VarHook_enable = false;
+    if (typeof V.CE_VarHook_enable !== "boolean") {
+        V.CE_VarHook_enable = false;
+    }
 
     // macro操作旗標
     // 當 macro 修改變數時跳過 hook
@@ -135,19 +617,33 @@ VarHook.on(...)
     let lock = false;
 
     // Debug 開關
-    const DEBUG = true;
+    const DEBUG = () => !!V.debug;
+    
+    // Debug 追蹤開關，不進存檔
+    if (setup.CE_debugVarHook === undefined) {
+        setup.CE_debugVarHook = null;
+    }
 
+    if (setup.CE_debugVarHookTargets === undefined) {
+        setup.CE_debugVarHookTargets = null;
+    }
+
+    function isVarHookDebug(){
+        return setup.CE_debugVarHook === null
+            ? DEBUG()
+            : !!setup.CE_debugVarHook;
+    }
 
     /* =====================================================
     Debug 輸出工具
     ===================================================== */
 
     function log(...msg){
-        if (DEBUG) console.log("[Cheat Extended][VarHook]", ...msg);
+        if (DEBUG()) console.log("[Cheat Extended][VarHook]", ...msg);
     }
 
     function warn(...msg){
-        console.warn("[Cheat Extended][VarHook]", ...msg);
+        if (DEBUG()) console.warn("[Cheat Extended][VarHook]", ...msg);
     }
 
     function error(...msg){
@@ -428,7 +924,39 @@ VarHook.on(...)
                 set(newValue){
                     try{
                         const old = _value;
+                        
+                        /* =========================
+                        DEBUG用，追蹤誰在改指定變數
+                        ---------------------------------
+                        使用範例
+                        setup.CE_debugVarHook = true;
 
+                        setup.CE_debugVarHookTargets = [
+                            "wardrobe.space"
+                        ];
+
+                        若 CE_debugVarHookTargets 不存在
+                        則追蹤所有 VarHook 變數
+                        ==========================*/
+                                                                        
+                        if (
+                            isVarHookDebug() &&
+                            (
+                                setup.CE_debugVarHookTargets == null ||
+                                (
+                                    Array.isArray(setup.CE_debugVarHookTargets) &&
+                                    setup.CE_debugVarHookTargets.includes(path)
+                                )
+                            )
+                        ){
+                            console.group("[Cheat Extended][VarHook WRITE]");
+                            console.log("path:", path);
+                            console.log("old:", old);
+                            console.log("new:", newValue);
+                            console.trace();
+                            console.groupEnd();
+                        } 
+                        
                         // 先保留外部寫入值。
                         // 若 VarHook 未啟用或跳過，變數仍會正常變成 newValue。
                         _value = newValue;
@@ -992,3 +1520,4 @@ $(document).one(':passagestart',()=>{
     });
 
 })();
+
