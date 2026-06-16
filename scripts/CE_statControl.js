@@ -77,7 +77,7 @@ delete V.NPCList[0].health
 深度範例：
 
 maxDepth = 2
-Proxy目標：V.tes
+Proxy目標：V.test
 
 --------------------------------
 Proxy存在於：
@@ -173,43 +173,6 @@ maxDepth 越高，
 
     // Debug 開關，跟隨 DoL 原版 debug
     const DEBUG = () => !!V.debug;
-
-    // Debug 追蹤開關，不進存檔
-    // null = 跟隨 DEBUG()
-    // true = 強制開啟
-    // false = 強制關閉
-    if (setup.CE_debugDeepProxyHook === undefined) {
-        setup.CE_debugDeepProxyHook = null;
-    }
-
-    // Debug 追蹤目標
-    // null = 追蹤全部已註冊 DeepProxyHook 變數
-    // Array = 只追蹤指定 root path
-    if (setup.CE_debugDeepProxyHookTargets === undefined) {
-        setup.CE_debugDeepProxyHookTargets = null;
-    }
-
-
-    /* =====================================================
-    Debug 判斷
-    ===================================================== */
-
-    function isDebug(){
-        return setup.CE_debugDeepProxyHook === null
-            ? DEBUG()
-            : !!setup.CE_debugDeepProxyHook;
-    }
-
-    function isDebugTarget(path){
-        return (
-            setup.CE_debugDeepProxyHookTargets == null ||
-            (
-                Array.isArray(setup.CE_debugDeepProxyHookTargets) &&
-                setup.CE_debugDeepProxyHookTargets.includes(path)
-            )
-        );
-    }
-
 
     /* =====================================================
     Debug 輸出工具
@@ -587,36 +550,7 @@ maxDepth 越高，
                             return Reflect.set(obj, prop, value, receiver);
                         }
 
-                        /* =========================
-                        DEBUG用，追蹤誰在改指定變數
-                        ---------------------------------
-                        使用範例：
-
-                        setup.CE_debugDeepProxyHook = true;
-
-                        setup.CE_debugDeepProxyHookTargets = [
-                            "NPCList"
-                        ];
-
-                        若 CE_debugDeepProxyHookTargets 為 null，
-                        則追蹤所有 DeepProxyHook 變數。
-                        ========================== */
-
-                        if (
-                            isDebug() &&
-                            isDebugTarget(path)
-                        ){
-                            console.group("[Cheat Extended][DeepProxyHook SET]");
-                            console.log("root:", path);
-                            console.log("fullPath:", fullPath);
-                            console.log("depth:", depth);
-                            console.log("old:", oldValue);
-                            console.log("new:", value);
-                            console.trace();
-                            console.groupEnd();
-                        }
-
-                        if (!V?.CE_VarHook_enable || !V?.CE_RawHook_enable){
+                        if (!V?.CE_VarHook_enable || !V?.CE_DeepProxyHook_enable){
                             return Reflect.set(obj, prop, value, receiver);
                         }
 
@@ -697,20 +631,8 @@ maxDepth 越高，
                         if (shouldIgnore(fullPath, propName)){
                             return Reflect.deleteProperty(obj, prop);
                         }
-
-                        if (
-                            isDebug() &&
-                            isDebugTarget(path)
-                        ){
-                            console.group("[Cheat Extended][DeepProxyHook DELETE]");
-                            console.log("root:", path);
-                            console.log("fullPath:", fullPath);
-                            console.log("old:", oldValue);
-                            console.trace();
-                            console.groupEnd();
-                        }
-
-                        if (!V?.CE_VarHook_enable || !V?.CE_RawHook_enable){
+                        
+                        if (!V?.CE_VarHook_enable || !V?.CE_DeepProxyHook_enable){
                             return Reflect.deleteProperty(obj, prop);
                         }
 
@@ -968,22 +890,7 @@ Cheat Extended - RawHook 原始變數攔截框架
 
     // Debug 開關
     const DEBUG = () => !!V.debug;
-    
-    // Debug 追蹤開關，不進存檔
-    if (setup.CE_debugRawHook === undefined) {
-        setup.CE_debugRawHook = null;
-    }
-
-    if (setup.CE_debugRawHookTargets === undefined) {
-        setup.CE_debugRawHookTargets = null;
-    }
-
-    function isRawHookDebug(){
-        return setup.CE_debugRawHook === null
-            ? DEBUG()
-            : !!setup.CE_debugRawHook;
-    }
-
+        
     /* =====================================================
     Debug 輸出工具
     ===================================================== */
@@ -1144,39 +1051,7 @@ Cheat Extended - RawHook 原始變數攔截框架
 
                 set(newValue){
                     try{
-                        const old = _value;
-                        
-                        /* =========================
-                        DEBUG用，追蹤誰在改指定變數
-                        ---------------------------------
-                        使用範例
-                        setup.CE_debugRawHook = true;
-
-                        setup.CE_debugRawHookTargets = [
-                            "wardrobe.space"
-                        ];
-
-                        若 CE_debugRawHookTargets 不存在
-                        則追蹤所有 RawHook 變數
-                        ==========================*/                        
-                        
-                        if (
-                            isRawHookDebug() &&
-                            (
-                                setup.CE_debugRawHookTargets == null ||
-                                (
-                                    Array.isArray(setup.CE_debugRawHookTargets) &&
-                                    setup.CE_debugRawHookTargets.includes(path)
-                                )
-                            )
-                        ){
-                            console.group("[Cheat Extended][RawHook WRITE]");
-                            console.log("path:", path);
-                            console.log("old:", old);
-                            console.log("new:", newValue);
-                            console.trace();
-                            console.groupEnd();
-                        }        
+                        const old = _value;                                                     
 
                         // 先保留外部寫入值。
                         // 若 RawHook 未啟用或跳過，變數仍會正常變成 newValue。
@@ -1516,22 +1391,7 @@ VarHook.on(...)
 
     // Debug 開關
     const DEBUG = () => !!V.debug;
-    
-    // Debug 追蹤開關，不進存檔
-    if (setup.CE_debugVarHook === undefined) {
-        setup.CE_debugVarHook = null;
-    }
-
-    if (setup.CE_debugVarHookTargets === undefined) {
-        setup.CE_debugVarHookTargets = null;
-    }
-
-    function isVarHookDebug(){
-        return setup.CE_debugVarHook === null
-            ? DEBUG()
-            : !!setup.CE_debugVarHook;
-    }
-
+        
     /* =====================================================
     Debug 輸出工具
     ===================================================== */
@@ -1822,39 +1682,7 @@ VarHook.on(...)
                 set(newValue){
                     try{
                         const old = _value;
-                        
-                        /* =========================
-                        DEBUG用，追蹤誰在改指定變數
-                        ---------------------------------
-                        使用範例
-                        setup.CE_debugVarHook = true;
-
-                        setup.CE_debugVarHookTargets = [
-                            "wardrobe.space"
-                        ];
-
-                        若 CE_debugVarHookTargets 不存在
-                        則追蹤所有 VarHook 變數
-                        ==========================*/
-                                                                        
-                        if (
-                            isVarHookDebug() &&
-                            (
-                                setup.CE_debugVarHookTargets == null ||
-                                (
-                                    Array.isArray(setup.CE_debugVarHookTargets) &&
-                                    setup.CE_debugVarHookTargets.includes(path)
-                                )
-                            )
-                        ){
-                            console.group("[Cheat Extended][VarHook WRITE]");
-                            console.log("path:", path);
-                            console.log("old:", old);
-                            console.log("new:", newValue);
-                            console.trace();
-                            console.groupEnd();
-                        } 
-                        
+                                                                       
                         // 先保留外部寫入值。
                         // 若 VarHook 未啟用或跳過，變數仍會正常變成 newValue。
                         _value = newValue;
