@@ -469,6 +469,7 @@
     <!-- 主體 -->
     <div class="dol-body">
         <div class="dol-desc">異次元空間衣櫃，再也不擔心老師們的衣服太好看但衣櫃放不下了！</div>
+        <div class="dol-desc"></div>
         <br>
 
         <<set _wardrobe to Furniture.get('wardrobe')>>
@@ -531,6 +532,8 @@
                 <<replace #CE_settingsDiv>><<bigest_wardrobe_mod>><br><br><</replace>>
             <</link>>
         </span>
+        <hr>
+        ⚠️<span class = "red">可啟用<<link "狀態變數hook">><<replace #CE_settingsDiv>><<quick_yanling>><</replace>><</link>>防止第三方修改衣櫃容量。</span>
     </div>
 
 </div>
