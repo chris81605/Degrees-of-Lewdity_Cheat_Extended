@@ -1,5 +1,903 @@
 /*
 =========================================================
+Cheat Extended - DeepProxyHook 深層物件監聽框架
+---------------------------------------------------------
+功能：
+
+- 監聽物件(Object)與陣列(Array)內部變化
+- 攔截巢狀屬性修改
+- 支援限制監聽深度
+- 支援忽略指定 Key 或 Path
+- 支援自訂變數處理邏輯
+- 支援刪除事件攔截
+- 支援 Debug 追蹤來源
+
+---------------------------------------------------------
+適用情境：
+
+VarHook：
+    適合數值變數
+
+RawHook：
+    適合整個變數被重新賦值
+
+DeepProxyHook：
+    適合監聽物件內部變化
+
+例如：
+
+    V.feats.currentSave.cat = true
+    V.NPCList[0].health = 50
+    V.worn.upper.name = "shirt"
+
+---------------------------------------------------------
+支援 Hook 階段：
+
+before(ctx)
+    寫入前執行
+
+transform(ctx)
+    自訂最終值
+
+after(oldValue, finalValue, ctx)
+    寫入後執行
+
+delete(ctx)
+    攔截刪除行為
+
+---------------------------------------------------------
+支援 Debug：
+
+setup.CE_debugDeepProxyHook = true;
+
+setup.CE_debugDeepProxyHookTargets = [
+    "NPCList"
+];
+
+---------------------------------------------------------
+註冊範例：
+
+DeepProxyHook.register(
+    "NPCList",
+    {
+        maxDepth : 2
+    }
+);
+
+---------------------------------------------------------
+可攔截：
+
+V.NPCList[0].health = 50
+
+V.NPCList[0].arousal = 100
+
+delete V.NPCList[0].health
+
+---------------------------------------------------------
+深度範例：
+
+maxDepth = 2
+Proxy目標：V.tes
+
+--------------------------------
+Proxy存在於：
+
+test       depth 0
+test.a     depth 1
+test.a.b   depth 2
+--------------------------------
+可以攔截：
+
+test.a.b.c = 1
+
+因為 set 發生在
+Proxy(test.a.b)
+--------------------------------
+無法攔截：
+
+test.a.b.c.d = 1
+
+因為 c 已不是 Proxy
+---------------------------------------------------------
+運作流程：
+
+寫入
+    ↓
+Proxy.set
+    ↓
+before(ctx)
+    ↓
+transform(ctx)
+    ↓
+寫回最終值
+    ↓
+after(...)
+
+---------------------------------------------------------
+注意事項：
+
+1.
+DeepProxyHook 使用 ES6 Proxy。
+
+2.
+僅代理註冊變數往下指定深度範圍。
+
+3.
+maxDepth 越高，
+效能消耗越大。
+
+4.
+不建議對大型資料結構使用：
+
+    NPCList
+    wardrobe
+    feats
+
+超過必要深度。
+
+5.
+建議：
+
+    maxDepth = 1~2
+
+作為日常使用。
+
+6.
+主要用途：
+
+    Debug
+    相容性修復
+    特殊攔截需求
+
+不建議大量長期掛載。
+
+=========================================================
+*/
+
+(function () {
+
+    /* =====================================================
+    狀態
+    ===================================================== */
+
+    // 註冊表
+    const registry = {};
+
+    // 已安裝 hook 的變數
+    const installed = {};
+
+    // 是否啟用 DeepProxyHook
+    if (typeof V.CE_DeepProxyHook_enable !== "boolean") {
+        V.CE_DeepProxyHook_enable = false;
+    }
+
+    // Debug 開關，跟隨 DoL 原版 debug
+    const DEBUG = () => !!V.debug;
+
+    // Debug 追蹤開關，不進存檔
+    // null = 跟隨 DEBUG()
+    // true = 強制開啟
+    // false = 強制關閉
+    if (setup.CE_debugDeepProxyHook === undefined) {
+        setup.CE_debugDeepProxyHook = null;
+    }
+
+    // Debug 追蹤目標
+    // null = 追蹤全部已註冊 DeepProxyHook 變數
+    // Array = 只追蹤指定 root path
+    if (setup.CE_debugDeepProxyHookTargets === undefined) {
+        setup.CE_debugDeepProxyHookTargets = null;
+    }
+
+
+    /* =====================================================
+    Debug 判斷
+    ===================================================== */
+
+    function isDebug(){
+        return setup.CE_debugDeepProxyHook === null
+            ? DEBUG()
+            : !!setup.CE_debugDeepProxyHook;
+    }
+
+    function isDebugTarget(path){
+        return (
+            setup.CE_debugDeepProxyHookTargets == null ||
+            (
+                Array.isArray(setup.CE_debugDeepProxyHookTargets) &&
+                setup.CE_debugDeepProxyHookTargets.includes(path)
+            )
+        );
+    }
+
+
+    /* =====================================================
+    Debug 輸出工具
+    ===================================================== */
+
+    function log(...msg){
+        if (DEBUG()) console.log("[Cheat Extended][DeepProxyHook]", ...msg);
+    }
+
+    function warn(...msg){
+        if (DEBUG()) console.warn("[Cheat Extended][DeepProxyHook]", ...msg);
+    }
+
+    function error(...msg){
+        console.error("[Cheat Extended][DeepProxyHook]", ...msg);
+    }
+
+
+    /* =====================================================
+    工具
+    -----------------------------------------------------
+    解析變數路徑並回傳父物件與 key
+
+    例：
+        NPCList.0.health
+
+    解析到最後一層前停止：
+
+        obj = V.NPCList[0]
+        key = health
+
+    例：
+        wardrobe
+
+        obj = State.variables
+        key = wardrobe
+    ===================================================== */
+
+    function getParentAndKey(path){
+
+        const parts = path.split(".");
+        let obj = State.variables;
+
+        for (let i = 0; i < parts.length - 1; i++){
+            obj = obj?.[parts[i]];
+            if (!obj) return null;
+        }
+
+        return {
+            obj,
+            key: parts[parts.length - 1]
+        };
+    }
+
+
+    /* =====================================================
+    註冊函數
+    -----------------------------------------------------
+    varPath:
+        要監聽的根路徑
+
+        例如：
+            "NPCList"
+            "wardrobe"
+            "feats.currentSave"
+
+    options 可用欄位：
+
+        deep
+            是否啟用深層代理。
+            預設 true。
+
+        maxDepth
+            最大代理深度。
+            預設 2。
+
+            注意：
+                maxDepth 是從註冊路徑開始算。
+
+            例：
+                DeepProxyHook.register("test", {
+                    maxDepth: 2
+                });
+
+                test        depth 0
+                test.a      depth 1
+                test.a.b    depth 2
+
+                被代理到的物件，其直接屬性 set 會被攔截。
+
+        ignoreKeys
+            忽略指定 key。
+
+            例：
+                ignoreKeys: ["length"]
+
+            可避免 array push 時 length 洗版。
+
+        ignorePath(fullPath, propName)
+            自訂忽略規則。
+
+            回傳 true 表示忽略。
+
+        before(ctx)
+            寫入前執行。
+
+        transform(ctx)
+            自訂最終寫入值。
+
+            若未提供，預設寫入 newValue。
+
+        after(oldValue, finalValue, ctx)
+            寫入後執行。
+
+        delete(ctx)
+            攔截 delete 行為。
+
+            若回傳 false，則取消刪除。
+
+    ctx 內容：
+
+        rootPath    註冊根路徑
+        path        目前所在路徑
+        fullPath    完整變更路徑
+        prop        原始 property key
+        propName    String(prop)
+        depth       目前 Proxy 深度
+        target      被修改的目標物件
+        oldValue    修改前值
+        newValue    外部寫入的新值
+        config      registry[rootPath]
+
+    ===================================================== */
+
+    function register(varPath, options = {}){
+
+        registry[varPath] = {
+            deep: options.deep ?? true,
+            maxDepth: options.maxDepth ?? 2,
+
+            ignoreKeys: options.ignoreKeys ?? [],
+            ignorePath: options.ignorePath,
+
+            before: options.before,
+            transform: options.transform,
+            after: options.after,
+            delete: options.delete
+        };
+
+        log("register:", varPath, registry[varPath]);
+    }
+
+
+    /* =====================================================
+    Hook 安裝
+    -----------------------------------------------------
+    對指定 object / array 安裝 DeepProxy
+
+    與 VarHook / RawHook 不同：
+
+    VarHook / RawHook：
+        使用 Object.defineProperty()
+
+    DeepProxyHook：
+        使用 Proxy()
+
+    因此 DeepProxyHook 會將原物件替換為 Proxy：
+
+        obj[key]
+            ↓
+        Proxy(obj[key])
+    ===================================================== */
+
+    function installDeepProxyHook(path){
+
+        try{
+
+            if (installed[path]){
+                log("skip installed:", path);
+                return;
+            }
+
+            const resolved = getParentAndKey(path);
+
+            if (!resolved){
+                warn("path not found:", path);
+                return;
+            }
+
+            const { obj, key } = resolved;
+
+            if (!(key in obj)){
+                warn("variable not found:", path);
+                return;
+            }
+
+            const target = obj[key];
+
+            if (target == null || typeof target !== "object"){
+                warn("target is not object/array:", path, target);
+                return;
+            }
+
+            const config = registry[path];
+
+            /* =====================================================
+            Proxy 快取
+            -----------------------------------------------------
+            避免同一物件被重複 Proxy。
+
+            沒有快取時可能出現：
+
+                Proxy(
+                    Proxy(
+                        Proxy(obj)
+                    )
+                )
+
+            會導致：
+                - 效能下降
+                - 判斷混亂
+                - 同一物件讀取結果不穩定
+            ===================================================== */
+
+            const proxyCache = new WeakMap();
+
+
+            /* =====================================================
+            忽略規則判斷
+            -----------------------------------------------------
+            符合以下條件時跳過 DeepProxyHook：
+
+            1. propName 存在於 ignoreKeys
+            2. ignorePath(fullPath, propName) 回傳 true
+            ===================================================== */
+
+            function shouldIgnore(fullPath, propName){
+
+                if (config.ignoreKeys.includes(propName)){
+                    return true;
+                }
+
+                if (
+                    typeof config.ignorePath === "function" &&
+                    config.ignorePath(fullPath, propName)
+                ){
+                    return true;
+                }
+
+                return false;
+            }
+
+
+            /* =====================================================
+            Proxy 建立器
+            -----------------------------------------------------
+            將 object / array 包成 Proxy。
+
+            depth 說明：
+
+                註冊根物件      depth 0
+                第一層子物件    depth 1
+                第二層子物件    depth 2
+
+            範例：
+
+                DeepProxyHook.register("test", {
+                    maxDepth: 2
+                });
+
+                V.test                depth 0
+                V.test.a              depth 1
+                V.test.a.b            depth 2
+                V.test.a.b.c          depth 3，不再繼續代理
+
+            注意：
+
+                被代理到的物件，其直接屬性 set 仍會被攔截。
+
+                所以 depth 2 的物件若已經被 Proxy，
+                則：
+
+                    V.test.a.b.c = 1
+
+                會在 depth 2 的 Proxy 上觸發 set。
+            ===================================================== */
+
+            function proxify(targetObj, currentPath, depth){
+
+                if (targetObj == null || typeof targetObj !== "object"){
+                    return targetObj;
+                }
+
+                if (proxyCache.has(targetObj)){
+                    return proxyCache.get(targetObj);
+                }
+
+                const proxy = new Proxy(targetObj, {
+
+                    /* =========================
+                    GET 攔截
+                    ---------------------------------
+                    用途：
+
+                    1. 讀取屬性時，按需建立下一層 Proxy。
+                    2. 避免一次代理整棵資料樹。
+                    3. 控制最大代理深度。
+
+                    例如：
+
+                        V.NPCList[0]
+
+                    只有真的讀取到 [0] 時，
+                    才會建立該物件的 Proxy。
+                    ========================== */
+
+                    get(obj, prop, receiver){
+
+                        const value = Reflect.get(obj, prop, receiver);
+
+                        if (!config.deep){
+                            return value;
+                        }
+
+                        if (typeof prop === "symbol"){
+                            return value;
+                        }
+
+                        const propName = String(prop);
+                        const fullPath = `${currentPath}.${propName}`;
+
+                        if (shouldIgnore(fullPath, propName)){
+                            return value;
+                        }
+
+                        if (depth >= config.maxDepth){
+                            return value;
+                        }
+
+                        if (value != null && typeof value === "object"){
+                            return proxify(value, fullPath, depth + 1);
+                        }
+
+                        return value;
+                    },
+
+
+                    /* =========================
+                    SET 攔截
+                    ---------------------------------
+                    流程：
+
+                    寫入
+                        ↓
+                    Debug 追蹤
+                        ↓
+                    檢查 DeepProxyHook 是否啟用
+                        ↓
+                    before(ctx)
+                        ↓
+                    transform(ctx)
+                        ↓
+                    Reflect.set()
+                        ↓
+                    after(...)
+                    ========================== */
+
+                    set(obj, prop, value, receiver){
+
+                        const propName = String(prop);
+                        const fullPath = `${currentPath}.${propName}`;
+                        const oldValue = obj[prop];
+
+                        if (shouldIgnore(fullPath, propName)){
+                            return Reflect.set(obj, prop, value, receiver);
+                        }
+
+                        /* =========================
+                        DEBUG用，追蹤誰在改指定變數
+                        ---------------------------------
+                        使用範例：
+
+                        setup.CE_debugDeepProxyHook = true;
+
+                        setup.CE_debugDeepProxyHookTargets = [
+                            "NPCList"
+                        ];
+
+                        若 CE_debugDeepProxyHookTargets 為 null，
+                        則追蹤所有 DeepProxyHook 變數。
+                        ========================== */
+
+                        if (
+                            isDebug() &&
+                            isDebugTarget(path)
+                        ){
+                            console.group("[Cheat Extended][DeepProxyHook SET]");
+                            console.log("root:", path);
+                            console.log("fullPath:", fullPath);
+                            console.log("depth:", depth);
+                            console.log("old:", oldValue);
+                            console.log("new:", value);
+                            console.trace();
+                            console.groupEnd();
+                        }
+
+                        if (!V?.CE_DeepProxyHook_enable){
+                            return Reflect.set(obj, prop, value, receiver);
+                        }
+
+                        if (setup.CE_macroLock){
+                            return Reflect.set(obj, prop, value, receiver);
+                        }
+
+                        if (oldValue === value){
+                            return Reflect.set(obj, prop, value, receiver);
+                        }
+
+                        const ctx = {
+                            rootPath: path,
+                            path: currentPath,
+                            fullPath,
+                            prop,
+                            propName,
+                            depth,
+                            target: obj,
+                            oldValue,
+                            newValue: value,
+                            config
+                        };
+
+                        if (typeof config.before === "function"){
+                            try{
+                                config.before(ctx);
+                            }catch(e){
+                                error("before error:", fullPath, e);
+                            }
+                        }
+
+                        let finalValue = value;
+
+                        if (typeof config.transform === "function"){
+                            try{
+                                finalValue = config.transform(ctx);
+                            }catch(e){
+                                error("transform error:", fullPath, e);
+                                return false;
+                            }
+                        }
+
+                        const result = Reflect.set(obj, prop, finalValue, receiver);
+
+                        if (typeof config.after === "function"){
+                            try{
+                                config.after(oldValue, finalValue, ctx);
+                            }catch(e){
+                                error("after error:", fullPath, e);
+                            }
+                        }
+
+                        return result;
+                    },
+
+
+                    /* =========================
+                    DELETE 攔截
+                    ---------------------------------
+                    可攔截：
+
+                        delete obj.xxx
+
+                    若 delete(ctx) 回傳 false，
+                    則取消刪除。
+
+                    回傳 true 或未提供 delete(ctx)，
+                    則允許刪除。
+                    ========================== */
+
+                    deleteProperty(obj, prop){
+
+                        const propName = String(prop);
+                        const fullPath = `${currentPath}.${propName}`;
+                        const oldValue = obj[prop];
+
+                        if (shouldIgnore(fullPath, propName)){
+                            return Reflect.deleteProperty(obj, prop);
+                        }
+
+                        if (
+                            isDebug() &&
+                            isDebugTarget(path)
+                        ){
+                            console.group("[Cheat Extended][DeepProxyHook DELETE]");
+                            console.log("root:", path);
+                            console.log("fullPath:", fullPath);
+                            console.log("old:", oldValue);
+                            console.trace();
+                            console.groupEnd();
+                        }
+
+                        if (!V?.CE_DeepProxyHook_enable){
+                            return Reflect.deleteProperty(obj, prop);
+                        }
+
+                        if (setup.CE_macroLock){
+                            return Reflect.deleteProperty(obj, prop);
+                        }
+
+                        const ctx = {
+                            rootPath: path,
+                            path: currentPath,
+                            fullPath,
+                            prop,
+                            propName,
+                            depth,
+                            target: obj,
+                            oldValue,
+                            config
+                        };
+
+                        if (typeof config.delete === "function"){
+                            try{
+                                const allowDelete = config.delete(ctx);
+
+                                if (allowDelete === false){
+                                    return true;
+                                }
+                            }catch(e){
+                                error("delete error:", fullPath, e);
+                                return false;
+                            }
+                        }
+
+                        return Reflect.deleteProperty(obj, prop);
+                    }
+                });
+
+                proxyCache.set(targetObj, proxy);
+
+                return proxy;
+            }
+
+
+            /* =====================================================
+            實際掛載 Proxy
+            -----------------------------------------------------
+            將目標變數替換為 Proxy。
+
+            例：
+
+                V.test = { a: 1 }
+
+            變成：
+
+                V.test = Proxy({ a: 1 })
+
+            後續：
+
+                V.test.a = 2
+
+            會進入 Proxy.set。
+            ===================================================== */
+
+            obj[key] = proxify(target, path, 0);
+            installed[path] = true;
+
+            log("install deep proxy hook:", path);
+        }
+        catch(e){
+            error("installDeepProxyHook error:", path, e);
+        }
+    }
+
+
+    /* =====================================================
+    安裝所有註冊 hook
+    ===================================================== */
+
+    function installAll(){
+
+        log("installAll start");
+
+        try{
+            for (const v in registry){
+                installDeepProxyHook(v);
+            }
+        }
+        catch(e){
+            error("installAll error:", e);
+        }
+    }
+
+
+    /* =====================================================
+    Passage 切換時重新掛載 Proxy
+    -----------------------------------------------------
+    SugarCube 特性：
+
+    State.variables 會在 Passage 切換時 clone。
+    Proxy 可能會因此失效。
+
+    因此需要在 passage start 時重新掛載。
+    ===================================================== */
+
+    $(document).on(":passagestart", () => {
+        for (const v in installed){
+            installed[v] = false;
+        }
+
+        installAll();
+    });
+
+
+    /* =====================================================
+    對外 API
+    ===================================================== */
+
+    window.DeepProxyHook = {
+        register,
+        installAll
+    };
+
+})();
+
+/*===================================
+使用範例
+---------------------------------------------
+$(document).one(":passagestart", () => {
+
+    V.CE_proxyTest = {
+        a: 1,
+        list: [],
+        deep: {
+            b: 2,
+            c: {
+                d: 3
+            }
+        }
+    };
+
+    DeepProxyHook.register("CE_proxyTest", {
+        deep: true,
+        maxDepth: 2,
+
+        ignoreKeys: ["length"],
+
+        transform(ctx){
+
+            // 阻止 deep.b 被改成 999
+            if (ctx.fullPath === "CE_proxyTest.deep.b" && ctx.newValue === 999){
+                return ctx.oldValue;
+            }
+
+            return ctx.newValue;
+        },
+
+        delete(ctx){
+
+            // 阻止刪除 a
+            if (ctx.fullPath === "CE_proxyTest.a"){
+                return false;
+            }
+
+            return true;
+        },
+
+        after(oldVal, finalVal, ctx){
+            console.log("[DeepProxyHook after]", ctx.fullPath, oldVal, "→", finalVal);
+        }
+    });
+
+    DeepProxyHook.installAll();
+});
+-----------------------------------------------------------------------
+V.CE_DeepProxyHook_enable = true;
+setup.CE_debugDeepProxyHook = true;
+setup.CE_debugDeepProxyHookTargets = ["CE_proxyTest"];
+
+V.CE_proxyTest.a = 10;          // 攔得到
+V.CE_proxyTest.list.push(1);    // 攔得到 list.0，length 被 ignore
+V.CE_proxyTest.deep.b = 999;    // 會被擋
+V.CE_proxyTest.deep.c.d = 4;    // maxDepth:1 時攔不到
+V.CE_proxyTest.deep.c = {}; // maxDepth:1 時攔得到
+delete V.CE_proxyTest.a;        // 會被擋
+=========================================================*/
+
+/*
+=========================================================
 Cheat Extended - RawHook 原始變數攔截框架
 ---------------------------------------------------------
 功能：
