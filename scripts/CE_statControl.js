@@ -22,7 +22,19 @@ RawHook：
     適合整個變數被重新賦值
 
 DeepProxyHook：
-    適合監聽物件內部變化
+適合監聽物件(Object)或陣列(Array)內部屬性的變化。
+
+例如：
+    V.feats.currentSave.cat
+    V.NPCList[0].health
+    V.worn.upper.name
+
+不適合：
+    pain
+    stress
+    arousal
+
+這類單純數值變數。
 
 例如：
 
