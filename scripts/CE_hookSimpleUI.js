@@ -2,8 +2,9 @@
 CE Custom Hook 保存 / 重建工具
 --------------------------------
 1. 只保存設定，不保存 function
-2. 保存於 V.CE_customHooks
-3. Passage 切換時自動重建
+2. 保存 Hook 於 V.CE_customHooks
+3. 臨時 Hook 於 setup.CE_runtimeCustomHooks
+4. Passage 切換時自動重建已保存 Hook
 ==============================*/
 
 (function(){
@@ -14,6 +15,14 @@ CE Custom Hook 保存 / 重建工具
         }
 
         return V.CE_customHooks;
+    }
+
+    function ensureRuntimeStore(){
+        if (!Array.isArray(setup.CE_runtimeCustomHooks)) {
+            setup.CE_runtimeCustomHooks = [];
+        }
+
+        return setup.CE_runtimeCustomHooks;
     }
 
     function makeId(){
@@ -32,7 +41,9 @@ CE Custom Hook 保存 / 重建工具
     setup.CE_makeCustomHookSnapshot = function(state){
         return {
             id: makeId(),
+            runtimeId: makeId(),
             enabled: true,
+            saved: !!state.saveToStore,
 
             type: state.type,
             path: String(state.path || "").trim(),
@@ -52,12 +63,17 @@ CE Custom Hook 保存 / 重建工具
         const key = hookKey(hook);
         const oldIndex = list.findIndex(item => hookKey(item) === key);
 
+        const savedHook = {
+            ...hook,
+            saved: true
+        };
+
         if (oldIndex >= 0) {
-            hook.id = list[oldIndex].id;
-            list[oldIndex] = hook;
+            savedHook.id = list[oldIndex].id;
+            list[oldIndex] = savedHook;
         }
         else {
-            list.push(hook);
+            list.push(savedHook);
         }
     };
 
@@ -70,14 +86,56 @@ CE Custom Hook 保存 / 重建工具
         }
     };
 
+    setup.CE_addRuntimeCustomHook = function(hook){
+        const list = ensureRuntimeStore();
+        const key = hookKey(hook);
+
+        const oldIndex = list.findIndex(item => hookKey(item) === key);
+
+        const runtimeHook = {
+            ...hook,
+            runtimeId: makeId()
+        };
+
+        if (oldIndex >= 0) {
+            runtimeHook.runtimeId = list[oldIndex].runtimeId;
+            list[oldIndex] = runtimeHook;
+        }
+        else {
+            list.push(runtimeHook);
+        }
+    };
+
+    setup.CE_removeRuntimeCustomHook = function(runtimeId){
+        const list = ensureRuntimeStore();
+        const index = list.findIndex(item => item.runtimeId === runtimeId);
+
+        if (index >= 0) {
+            list.splice(index, 1);
+        }
+    };
+
+    setup.CE_unregisterCustomHookConfig = function(hook){
+        if (!hook) return;
+
+        if (hook.type === "VarHook") VarHook.unregister?.(hook.path);
+        if (hook.type === "RawHook") RawHook.unregister?.(hook.path);
+        if (hook.type === "DeepProxyHook") DeepProxyHook.unregister?.(hook.path);
+    };
+
     setup.CE_registerCustomHookConfig = function(hook){
         if (!hook || hook.enabled === false) return;
 
         const path = hook.path;
 
         if (hook.type === "VarHook") {
+
             if (hook.mode === "multiplier") {
-                VarHook.register(path, Number(hook.posMult), Number(hook.negMult));
+                VarHook.register(
+                    path,
+                    Number(hook.posMult),
+                    Number(hook.negMult)
+                );
             }
 
             if (hook.mode === "lock") {
@@ -108,6 +166,7 @@ CE Custom Hook 保存 / 重建工具
         }
 
         if (hook.type === "RawHook") {
+
             if (hook.mode === "lock") {
                 RawHook.register(path, {
                     transform(ctx){
@@ -126,6 +185,7 @@ CE Custom Hook 保存 / 重建工具
         }
 
         if (hook.type === "DeepProxyHook") {
+
             DeepProxyHook.register(path, {
                 maxDepth: Number(hook.maxDepth) || 2,
                 ignoreKeys: ["length"],
@@ -188,7 +248,7 @@ CE Custom Hook 保存 / 重建工具
                     }
 
                     console.log(
-                        "[CE Saved Custom Hook]",
+                        hook.saved ? "[CE Saved Custom Hook]" : "[CE Runtime Custom Hook]",
                         ctx.fullPath,
                         oldVal,
                         "→",
@@ -201,33 +261,37 @@ CE Custom Hook 保存 / 重建工具
         }
     };
 
-    setup.CE_rebuildCustomHooks = function(){
+    setup.CE_installAllCustomHooks = function(){
+        VarHook?.installAll?.();
+        RawHook?.installAll?.();
+        DeepProxyHook?.installAll?.();
+    };
+
+    setup.CE_rebuildSavedCustomHooks = function(){
         const list = ensureStore();
 
         for (const hook of list) {
             setup.CE_registerCustomHookConfig(hook);
         }
 
-        VarHook?.installAll?.();
-        RawHook?.installAll?.();
-        DeepProxyHook?.installAll?.();
+        setup.CE_installAllCustomHooks();
     };
 
     $(document).on(":passagestart", () => {
-        setup.CE_rebuildCustomHooks?.();
+        setup.CE_rebuildSavedCustomHooks?.();
     });
 
 })();
 
 
 /*==============================
-簡易 Hook UI
+CE Custom Hook UI
 --------------------------------
 1. 可臨時註冊 Hook
 2. 可選擇保存到存檔
-3. 自訂 Hook 設定保存於 V.CE_customHooks
-4. 變數路徑不要輸入 V.
-5. 卸載為軟卸載，切換 Passage 後等同完全卸載
+3. 已保存 Hook 顯示於 V.CE_customHooks
+4. 臨時 Hook 顯示於 setup.CE_runtimeCustomHooks
+5. 變數路徑不要輸入 V.
 ==============================*/
 
 Macro.add("CE_CustomHookPanel", {
@@ -309,12 +373,14 @@ Macro.add("CE_CustomHookPanel", {
         const makeSection = () => {
             const block = document.createElement("div");
             block.className = "dol-section-block";
+
             Object.assign(block.style, {
                 border: "1px solid #ccc",
                 padding: "6px",
                 marginBottom: "8px",
                 overflowWrap: "break-word"
             });
+
             return block;
         };
 
@@ -385,6 +451,7 @@ Macro.add("CE_CustomHookPanel", {
 
         const makeSwitch = (label, key, color) => {
             const row = document.createElement("label");
+
             Object.assign(row.style, {
                 display: "block",
                 marginBottom: "4px"
@@ -405,6 +472,7 @@ Macro.add("CE_CustomHookPanel", {
 
             const status = document.createElement("span");
             status.textContent = V[key] ? "✓ 啟用" : "⚠ 停用";
+
             Object.assign(status.style, {
                 color: V[key] ? COLORS.success : COLORS.warn,
                 fontWeight: "bold",
@@ -420,6 +488,7 @@ Macro.add("CE_CustomHookPanel", {
 
         const makeSaveSwitch = () => {
             const row = document.createElement("label");
+
             Object.assign(row.style, {
                 display: "block",
                 marginTop: "6px"
@@ -482,15 +551,10 @@ Macro.add("CE_CustomHookPanel", {
                 display: "inline-block"
             });
 
-            if (type === "danger") {
-                btn.style.color = COLORS.danger;
-            }
-            else if (type === "success") {
-                btn.style.color = COLORS.success;
-            }
-            else if (type === "warn") {
-                btn.style.color = COLORS.warn;
-            }
+            if (type === "danger") btn.style.color = COLORS.danger;
+            else if (type === "success") btn.style.color = COLORS.success;
+            else if (type === "warn") btn.style.color = COLORS.warn;
+            else if (type === "info") btn.style.color = COLORS.info;
 
             return btn;
         };
@@ -527,159 +591,38 @@ Macro.add("CE_CustomHookPanel", {
             return true;
         };
 
-        const registerHook = () => {
+        const registerCurrentHook = () => {
             const path = String(state.path || "").trim();
 
             if (!validatePathForRegister(path)) return;
 
+            const snapshot = setup.CE_makeCustomHookSnapshot(state);
+
             try {
-                if (state.type === "VarHook") {
+                if (snapshot.type === "VarHook") {
                     V.CE_VarHook_enable = true;
-
-                    if (state.mode === "multiplier") {
-                        VarHook.register(path, Number(state.posMult), Number(state.negMult));
-                    }
-
-                    if (state.mode === "lock") {
-                        VarHook.register(path, 1, 1, {
-                            transform(ctx) {
-                                return ctx.old;
-                            }
-                        });
-                    }
-
-                    if (state.mode === "blockIncrease") {
-                        VarHook.register(path, 1, 1, {
-                            transform(ctx) {
-                                if (ctx.diff > 0) return ctx.old;
-                                return ctx.old + ctx.adjustedDiff;
-                            }
-                        });
-                    }
-
-                    if (state.mode === "blockDecrease") {
-                        VarHook.register(path, 1, 1, {
-                            transform(ctx) {
-                                if (ctx.diff < 0) return ctx.old;
-                                return ctx.old + ctx.adjustedDiff;
-                            }
-                        });
-                    }
-
-                    VarHook.installAll();
                 }
 
-                if (state.type === "RawHook") {
+                if (snapshot.type === "RawHook") {
                     V.CE_RawHook_enable = true;
-
-                    if (state.mode === "lock") {
-                        RawHook.register(path, {
-                            transform(ctx) {
-                                return ctx.old;
-                            }
-                        });
-                    }
-
-                    if (state.mode === "forceValue") {
-                        RawHook.register(path, {
-                            transform() {
-                                return state.value;
-                            }
-                        });
-                    }
-
-                    RawHook.installAll();
                 }
 
-                if (state.type === "DeepProxyHook") {
+                if (snapshot.type === "DeepProxyHook") {
                     V.CE_DeepProxyHook_enable = true;
-
-                    DeepProxyHook.register(path, {
-                        maxDepth: Number(state.maxDepth) || 2,
-                        ignoreKeys: ["length"],
-
-                        transform(ctx) {
-                            const targetPath = String(state.targetPath || "").trim();
-
-                            if (targetPath && ctx.fullPath !== targetPath) {
-                                return ctx.newValue;
-                            }
-
-                            if (state.mode === "monitor") return ctx.newValue;
-                            if (state.mode === "lock") return ctx.oldValue;
-                            if (state.mode === "forceValue") return state.value;
-
-                            if (state.mode === "allowIncreaseOnly") {
-                                const oldNum = Number(ctx.oldValue);
-                                const newNum = Number(ctx.newValue);
-
-                                if (!Number.isNaN(oldNum) && !Number.isNaN(newNum)) {
-                                    if (newNum < oldNum) return ctx.oldValue;
-                                }
-
-                                return ctx.newValue;
-                            }
-
-                            if (state.mode === "allowDecreaseOnly") {
-                                const oldNum = Number(ctx.oldValue);
-                                const newNum = Number(ctx.newValue);
-
-                                if (!Number.isNaN(oldNum) && !Number.isNaN(newNum)) {
-                                    if (newNum > oldNum) return ctx.oldValue;
-                                }
-
-                                return ctx.newValue;
-                            }
-
-                            return ctx.newValue;
-                        },
-
-                        delete(ctx) {
-                            const targetPath = String(state.targetPath || "").trim();
-
-                            if (targetPath && ctx.fullPath !== targetPath) {
-                                return true;
-                            }
-
-                            if (state.mode === "blockDelete") {
-                                return false;
-                            }
-
-                            return true;
-                        },
-
-                        after(oldVal, finalVal, ctx) {
-                            const targetPath = String(state.targetPath || "").trim();
-
-                            if (targetPath && ctx.fullPath !== targetPath) {
-                                return;
-                            }
-
-                            console.log(
-                                "[CE Custom DeepProxyHook]",
-                                ctx.fullPath,
-                                oldVal,
-                                "→",
-                                finalVal,
-                                "mode:",
-                                state.mode,
-                                "targetPath:",
-                                targetPath || "(all)"
-                            );
-                        }
-                    });
-
-                    DeepProxyHook.installAll();
                 }
+
+                setup.CE_registerCustomHookConfig(snapshot);
+                setup.CE_installAllCustomHooks();
+
+                setup.CE_addRuntimeCustomHook(snapshot);
 
                 if (state.saveToStore) {
-                    const snapshot = setup.CE_makeCustomHookSnapshot(state);
                     setup.CE_saveCustomHook(snapshot);
                 }
 
                 alert(
                     "Hook 已註冊：" + path +
-                    (state.saveToStore ? "\n已保存到存檔。" : "")
+                    (state.saveToStore ? "\n已保存到存檔。" : "\n此 Hook 為臨時 Hook。")
                 );
 
                 refresh();
@@ -690,7 +633,7 @@ Macro.add("CE_CustomHookPanel", {
             }
         };
 
-        const unregisterHook = () => {
+        const unregisterCurrentHook = () => {
             const path = String(state.path || "").trim();
 
             if (!path) {
@@ -699,9 +642,12 @@ Macro.add("CE_CustomHookPanel", {
             }
 
             try {
-                if (state.type === "VarHook") VarHook.unregister?.(path);
-                if (state.type === "RawHook") RawHook.unregister?.(path);
-                if (state.type === "DeepProxyHook") DeepProxyHook.unregister?.(path);
+                const hook = {
+                    type: state.type,
+                    path
+                };
+
+                setup.CE_unregisterCustomHookConfig(hook);
 
                 alert("Hook 已卸載：" + path + "\n切換 Passage 後會完全生效。");
                 refresh();
@@ -712,122 +658,168 @@ Macro.add("CE_CustomHookPanel", {
             }
         };
 
-        const renderSavedHooks = (body) => {
-            const savedBlock = makeSection();
+        const renderHookRow = (parent, hook, source) => {
+            const row = document.createElement("div");
+            row.className = "dol-section-block";
 
-            const savedTitle = document.createElement("div");
-            savedTitle.style.fontWeight = "bold";
-            savedTitle.style.marginBottom = "6px";
-            savedTitle.textContent = "已保存的自訂 Hook";
-            savedBlock.appendChild(savedTitle);
+            Object.assign(row.style, {
+                border: "1px solid #ccc",
+                padding: "5px",
+                marginBottom: "6px",
+                overflowWrap: "break-word"
+            });
 
-            if (!Array.isArray(V.CE_customHooks) || V.CE_customHooks.length === 0) {
-                addHint(savedBlock, "目前沒有保存任何自訂 Hook。", "muted");
+            const topRow = document.createElement("div");
+
+            Object.assign(topRow.style, {
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+                flexWrap: "wrap"
+            });
+
+            const enabled = document.createElement("input");
+            enabled.type = "checkbox";
+            enabled.checked = hook.enabled !== false;
+
+            enabled.onchange = function(){
+                hook.enabled = this.checked;
+
+                if (!hook.enabled) {
+                    setup.CE_unregisterCustomHookConfig(hook);
+                }
+                else {
+                    setup.CE_registerCustomHookConfig(hook);
+                    setup.CE_installAllCustomHooks();
+                }
+
+                refresh();
+            };
+
+            topRow.appendChild(enabled);
+
+            const tag = document.createElement("span");
+            tag.textContent = `${getHookIcon(hook.type)} ${hook.type}`;
+
+            Object.assign(tag.style, {
+                color: getHookColor(hook.type),
+                fontWeight: "bold",
+                fontSize: "0.9em"
+            });
+
+            topRow.appendChild(tag);
+
+            const sourceTag = document.createElement("span");
+            sourceTag.textContent = source === "saved" ? "已保存" : "臨時";
+
+            Object.assign(sourceTag.style, {
+                color: source === "saved" ? COLORS.success : COLORS.info,
+                fontWeight: "bold",
+                fontSize: "0.85em"
+            });
+
+            topRow.appendChild(sourceTag);
+
+            const status = document.createElement("span");
+            status.textContent = hook.enabled !== false ? "✓ 啟用" : "⚠ 停用";
+
+            Object.assign(status.style, {
+                color: hook.enabled !== false ? COLORS.success : COLORS.warn,
+                fontWeight: "bold",
+                fontSize: "0.85em"
+            });
+
+            topRow.appendChild(status);
+
+            const delBtn = makeButton("刪除", function(){
+                setup.CE_unregisterCustomHookConfig(hook);
+
+                if (source === "saved") {
+                    setup.CE_removeCustomHook(hook.id);
+                }
+                else {
+                    setup.CE_removeRuntimeCustomHook(hook.runtimeId);
+                }
+
+                refresh();
+            }, "danger");
+
+            topRow.appendChild(delBtn);
+
+            row.appendChild(topRow);
+
+            const info = document.createElement("div");
+
+            Object.assign(info.style, {
+                fontSize: "0.9em",
+                marginTop: "4px"
+            });
+
+            info.textContent =
+                `${hook.path}` +
+                (hook.targetPath ? ` → ${hook.targetPath}` : "") +
+                ` / ${hook.mode}`;
+
+            row.appendChild(info);
+
+            const risk = document.createElement("div");
+
+            Object.assign(risk.style, {
+                fontSize: "0.85em",
+                color: getHookColor(hook.type),
+                marginTop: "3px"
+            });
+
+            risk.textContent = `風險：${getHookRiskText(hook.type)}`;
+            row.appendChild(risk);
+
+            parent.appendChild(row);
+        };
+
+        const renderRuntimeHooks = (body) => {
+            const block = makeSection();
+
+            const title = document.createElement("div");
+            title.style.fontWeight = "bold";
+            title.style.marginBottom = "6px";
+            title.textContent = "本次臨時 Hook";
+            block.appendChild(title);
+
+            const list = Array.isArray(setup.CE_runtimeCustomHooks)
+                ? setup.CE_runtimeCustomHooks
+                : [];
+
+            if (!list.length) {
+                addHint(block, "目前沒有臨時 Hook。", "muted");
             }
             else {
-                V.CE_customHooks.forEach(hook => {
-                    const row = document.createElement("div");
-                    row.className = "dol-section-block";
-
-                    Object.assign(row.style, {
-                        border: "1px solid #ccc",
-                        padding: "5px",
-                        marginBottom: "6px",
-                        overflowWrap: "break-word"
-                    });
-
-                    const topRow = document.createElement("div");
-                    Object.assign(topRow.style, {
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "4px",
-                        flexWrap: "wrap"
-                    });
-
-                    const enabled = document.createElement("input");
-                    enabled.type = "checkbox";
-                    enabled.checked = hook.enabled !== false;
-
-                    enabled.onchange = function(){
-                        hook.enabled = this.checked;
-
-                        if (!hook.enabled) {
-                            if (hook.type === "VarHook") VarHook.unregister?.(hook.path);
-                            if (hook.type === "RawHook") RawHook.unregister?.(hook.path);
-                            if (hook.type === "DeepProxyHook") DeepProxyHook.unregister?.(hook.path);
-                        }
-                        else {
-                            setup.CE_registerCustomHookConfig(hook);
-                            VarHook?.installAll?.();
-                            RawHook?.installAll?.();
-                            DeepProxyHook?.installAll?.();
-                        }
-
-                        refresh();
-                    };
-
-                    topRow.appendChild(enabled);
-
-                    const tag = document.createElement("span");
-                    tag.textContent = `${getHookIcon(hook.type)} ${hook.type}`;
-                    Object.assign(tag.style, {
-                        color: getHookColor(hook.type),
-                        fontWeight: "bold",
-                        fontSize: "0.9em"
-                    });
-                    topRow.appendChild(tag);
-
-                    const status = document.createElement("span");
-                    status.textContent = hook.enabled !== false ? "✓ 啟用" : "⚠ 停用";
-                    Object.assign(status.style, {
-                        color: hook.enabled !== false ? COLORS.success : COLORS.warn,
-                        fontWeight: "bold",
-                        fontSize: "0.85em"
-                    });
-                    topRow.appendChild(status);
-
-                    const delBtn = makeButton("刪除", function(){
-                        setup.CE_removeCustomHook(hook.id);
-
-                        if (hook.type === "VarHook") VarHook.unregister?.(hook.path);
-                        if (hook.type === "RawHook") RawHook.unregister?.(hook.path);
-                        if (hook.type === "DeepProxyHook") DeepProxyHook.unregister?.(hook.path);
-
-                        refresh();
-                    }, "danger");
-
-                    topRow.appendChild(delBtn);
-                    row.appendChild(topRow);
-
-                    const info = document.createElement("div");
-                    Object.assign(info.style, {
-                        fontSize: "0.9em",
-                        marginTop: "4px"
-                    });
-
-                    info.textContent =
-                        `${hook.path}` +
-                        (hook.targetPath ? ` → ${hook.targetPath}` : "") +
-                        ` / ${hook.mode}`;
-
-                    row.appendChild(info);
-
-                    const risk = document.createElement("div");
-                    Object.assign(risk.style, {
-                        fontSize: "0.85em",
-                        color: getHookColor(hook.type),
-                        marginTop: "3px"
-                    });
-                    risk.textContent = `風險：${getHookRiskText(hook.type)}`;
-                    row.appendChild(risk);
-
-                    savedBlock.appendChild(row);
-                });
+                list.forEach(hook => renderHookRow(block, hook, "runtime"));
             }
 
-            addHint(savedBlock, "停用或刪除後，目前 Passage 可能仍保留舊 Hook；切換 Passage 後會完全清除。", "warn");
+            addHint(block, "臨時 Hook 不會保存到存檔；重載或清空後會消失。", "info");
 
-            body.appendChild(savedBlock);
+            body.appendChild(block);
+        };
+
+        const renderSavedHooks = (body) => {
+            const block = makeSection();
+
+            const title = document.createElement("div");
+            title.style.fontWeight = "bold";
+            title.style.marginBottom = "6px";
+            title.textContent = "已保存的自訂 Hook";
+            block.appendChild(title);
+
+            if (!Array.isArray(V.CE_customHooks) || V.CE_customHooks.length === 0) {
+                addHint(block, "目前沒有保存任何自訂 Hook。", "muted");
+            }
+            else {
+                V.CE_customHooks.forEach(hook => renderHookRow(block, hook, "saved"));
+            }
+
+            addHint(block, "停用或刪除後，目前 Passage 可能仍保留舊 Hook；切換 Passage 後會完全清除。", "warn");
+
+            body.appendChild(block);
         };
 
         function render() {
@@ -835,7 +827,7 @@ Macro.add("CE_CustomHookPanel", {
 
             const header = document.createElement("div");
             header.className = "dol-header";
-            header.innerHTML = `<span class="dol-title">Cheat Extended - 自訂 Hook</span>`;
+            header.innerHTML = `<span class="dol-title">自訂 Hook</span>`;
             container.appendChild(header);
 
             const body = document.createElement("div");
@@ -860,7 +852,7 @@ Macro.add("CE_CustomHookPanel", {
             statusBlock.appendChild(makeSwitch("RawHook 分開關", "CE_RawHook_enable", COLORS.rawhook));
             statusBlock.appendChild(makeSwitch("DeepProxyHook 分開關", "CE_DeepProxyHook_enable", COLORS.deep));
 
-            addHint(statusBlock, "RawHook / DeepProxyHook 屬於高風險功能，需搭配 VarHook 總開關管理。", "warn");
+            addHint(statusBlock, "RawHook / DeepProxyHook 屬於高風險功能，需透過 VarHook 總開關管理。", "warn");
 
             body.appendChild(statusBlock);
 
@@ -873,12 +865,14 @@ Macro.add("CE_CustomHookPanel", {
             inputBlock.appendChild(inputTitle);
 
             const currentRisk = document.createElement("div");
+
             Object.assign(currentRisk.style, {
                 fontSize: "0.9em",
                 color: getHookColor(state.type),
                 fontWeight: "bold",
                 marginBottom: "6px"
             });
+
             currentRisk.textContent = `${getHookIcon(state.type)} 目前類型：${state.type}（${getHookRiskText(state.type)}）`;
             inputBlock.appendChild(currentRisk);
 
@@ -940,10 +934,11 @@ Macro.add("CE_CustomHookPanel", {
             }
 
             inputBlock.appendChild(makeSaveSwitch());
-            addHint(inputBlock, "保存後會寫入 V.CE_customHooks，之後 Passage 切換時自動重建。", state.saveToStore ? "warn" : "muted");
+            addHint(inputBlock, "保存後會寫入 V.CE_customHooks；未保存則只會出現在本次臨時 Hook 清單。", state.saveToStore ? "warn" : "muted");
 
             body.appendChild(inputBlock);
 
+            renderRuntimeHooks(body);
             renderSavedHooks(body);
 
             const opBlock = makeSection();
@@ -954,8 +949,8 @@ Macro.add("CE_CustomHookPanel", {
             opTitle.textContent = "操作";
             opBlock.appendChild(opTitle);
 
-            opBlock.appendChild(makeButton("註冊 Hook", registerHook, "success"));
-            opBlock.appendChild(makeButton("卸載 Hook", unregisterHook, "warn"));
+            opBlock.appendChild(makeButton("註冊 Hook", registerCurrentHook, "success"));
+            opBlock.appendChild(makeButton("卸載目前輸入路徑", unregisterCurrentHook, "warn"));
 
             addHint(opBlock, "卸載為軟卸載；目前 Passage 可能仍保留舊 setter / Proxy，切換 Passage 後等同完全卸載。", "warn");
 
@@ -966,9 +961,1042 @@ Macro.add("CE_CustomHookPanel", {
     }
 });
 
+/*==============================
+CE Variable Explorer
+--------------------------------
+1. 路徑搜尋
+2. 數值 / 字串 / 布林反搜尋
+3. 快照差異追蹤
+4. 追蹤範圍縮小
+5. 可套用到 Hook 面板
+
+注意：
+- 路徑搜尋 / 值反搜尋 受「結果上限」限制
+- 快照差異 不受「結果上限」限制
+- 快照差異 只受「最大深度」限制
+- 若存在追蹤範圍，快照只比較追蹤範圍內的 path
+==============================*/
+
+Macro.add("CE_VariableExplorer", {
+    handler() {
+        const container = document.createElement("div");
+        container.className = "dol-settings dol-shadow";
+        this.output.appendChild(container);
+
+        const state = setup.CE_variableExplorer ??= {
+            tab: "path",
+            keyword: "",
+            valueQuery: "",
+            maxDepth: 5,
+            maxResults: 100,
+            results: [],
+            diffResults: []
+        };
+
+        const COLORS = {
+            info: "#66aaff",
+            success: "#6cc04a",
+            warn: "#e0b84f",
+            danger: "#ff6666",
+            muted: "gray"
+        };
+
+        const refresh = () => render();
+
+        const addHint = (parent, text, type = "muted") => {
+            const hint = document.createElement("div");
+
+            Object.assign(hint.style, {
+                fontSize: "0.85em",
+                color: COLORS[type] || COLORS.muted,
+                marginTop: "6px",
+                marginBottom: "4px"
+            });
+
+            const prefix = {
+                info: "ℹ ",
+                success: "✓ ",
+                warn: "⚠ ",
+                danger: "⚠ "
+            }[type] || "";
+
+            hint.textContent = prefix + text;
+            parent.appendChild(hint);
+        };
+
+        const makeSection = () => {
+            const block = document.createElement("div");
+            block.className = "dol-section-block";
+
+            Object.assign(block.style, {
+                border: "1px solid #ccc",
+                padding: "6px",
+                marginBottom: "8px",
+                overflowWrap: "break-word"
+            });
+
+            return block;
+        };
+
+        const makeButton = (text, onclick, type = "normal") => {
+            const btn = document.createElement("span");
+            btn.className = "dol-btn";
+            btn.textContent = text;
+            btn.onclick = onclick;
+
+            Object.assign(btn.style, {
+                marginRight: "6px",
+                cursor: "pointer",
+                padding: "1px 5px",
+                fontSize: "0.85em",
+                minWidth: "0",
+                width: "auto",
+                lineHeight: "1.3",
+                display: "inline-block"
+            });
+
+            if (type === "danger") btn.style.color = COLORS.danger;
+            if (type === "success") btn.style.color = COLORS.success;
+            if (type === "warn") btn.style.color = COLORS.warn;
+            if (type === "info") btn.style.color = COLORS.info;
+
+            return btn;
+        };
+
+        const makeTabButton = (key, label) => {
+            return makeButton(label, () => {
+                state.tab = key;
+                refresh();
+            }, state.tab === key ? "success" : "normal");
+        };
+
+        const getTypeName = (value) => {
+            if (value === null) return "null";
+            if (Array.isArray(value)) return "array";
+            return typeof value;
+        };
+
+        const getPreview = (value) => {
+            try {
+                if (value === null) return "null";
+
+                if (typeof value === "string") {
+                    return `"${value.length > 40 ? value.slice(0, 40) + "..." : value}"`;
+                }
+
+                if (
+                    typeof value === "number" ||
+                    typeof value === "boolean" ||
+                    typeof value === "undefined"
+                ) {
+                    return String(value);
+                }
+
+                if (Array.isArray(value)) {
+                    return `Array(${value.length})`;
+                }
+
+                if (typeof value === "object") {
+                    return `Object(${Object.keys(value).length})`;
+                }
+
+                if (typeof value === "function") {
+                    return "function";
+                }
+
+                return String(value);
+            }
+            catch (e) {
+                return "[preview error]";
+            }
+        };
+
+        const isSimpleValue = (value) => {
+            return (
+                value == null ||
+                typeof value === "number" ||
+                typeof value === "string" ||
+                typeof value === "boolean" ||
+                typeof value === "undefined"
+            );
+        };
+
+        const getValueByPath = (path) => {
+            const parts = String(path || "").split(".");
+            let obj = State.variables;
+
+            for (const part of parts) {
+                if (obj == null || !(part in obj)) return undefined;
+                obj = obj[part];
+            }
+
+            return obj;
+        };
+
+        const normalizePathList = (paths) => {
+            return Array.from(new Set(
+                paths
+                    .map(path => String(path || "").trim())
+                    .filter(Boolean)
+            ));
+        };
+
+        /* =====================================================
+        一般搜尋用掃描
+        -----------------------------------------------------
+        受 maxResults 限制，避免 UI 卡死
+        ===================================================== */
+
+        const scanAll = (callback) => {
+            const maxDepth = Number(state.maxDepth) || 5;
+            const maxResults = Number(state.maxResults) || 100;
+
+            const results = [];
+            const seen = new WeakSet();
+
+            function scan(obj, path, depth) {
+                if (results.length >= maxResults) return;
+                if (obj == null) return;
+
+                const type = typeof obj;
+
+                if (type !== "object" && type !== "function") return;
+
+                if (seen.has(obj)) return;
+                seen.add(obj);
+
+                if (depth > maxDepth) return;
+
+                let keys;
+
+                try {
+                    keys = Object.keys(obj);
+                }
+                catch (e) {
+                    return;
+                }
+
+                for (const key of keys) {
+                    if (results.length >= maxResults) break;
+
+                    let value;
+
+                    try {
+                        value = obj[key];
+                    }
+                    catch (e) {
+                        continue;
+                    }
+
+                    const fullPath = path ? `${path}.${key}` : key;
+
+                    const item = {
+                        path: fullPath,
+                        key,
+                        value,
+                        type: getTypeName(value),
+                        preview: getPreview(value),
+                        depth
+                    };
+
+                    if (callback(item)) {
+                        results.push(item);
+                    }
+
+                    if (
+                        value != null &&
+                        typeof value === "object" &&
+                        depth < maxDepth
+                    ) {
+                        scan(value, fullPath, depth + 1);
+                    }
+                }
+            }
+
+            scan(State.variables, "", 0);
+
+            return results;
+        };
+
+        /* =====================================================
+        全域快照用掃描
+        -----------------------------------------------------
+        不受 maxResults 限制。
+        只收集簡單值：
+            number / string / boolean / null / undefined
+        ===================================================== */
+
+        const collectSimpleValues = () => {
+            const maxDepth = Number(state.maxDepth) || 5;
+            const snap = {};
+            const seen = new WeakSet();
+
+            function scan(obj, path, depth) {
+                if (obj == null) return;
+                if (depth > maxDepth) return;
+
+                const type = typeof obj;
+
+                if (type !== "object" && type !== "function") return;
+
+                if (seen.has(obj)) return;
+                seen.add(obj);
+
+                let keys;
+
+                try {
+                    keys = Object.keys(obj);
+                }
+                catch (e) {
+                    return;
+                }
+
+                for (const key of keys) {
+                    let value;
+
+                    try {
+                        value = obj[key];
+                    }
+                    catch (e) {
+                        continue;
+                    }
+
+                    const fullPath = path ? `${path}.${key}` : key;
+
+                    if (isSimpleValue(value)) {
+                        snap[fullPath] = value;
+                    }
+
+                    if (
+                        value != null &&
+                        typeof value === "object" &&
+                        depth < maxDepth
+                    ) {
+                        scan(value, fullPath, depth + 1);
+                    }
+                }
+            }
+
+            scan(State.variables, "", 0);
+
+            return snap;
+        };
+
+        /* =====================================================
+        指定 path 快照
+        -----------------------------------------------------
+        用於追蹤範圍。
+        只記錄指定 paths 內仍存在且為簡單值的資料。
+        ===================================================== */
+
+        const makeSnapshotByPaths = (paths) => {
+            const snap = {};
+            const list = normalizePathList(paths);
+
+            for (const path of list) {
+                const value = getValueByPath(path);
+
+                if (isSimpleValue(value)) {
+                    snap[path] = value;
+                }
+            }
+
+            return snap;
+        };
+
+        const getActiveSnapshotPaths = () => {
+            if (
+                Array.isArray(setup.CE_variableSnapshotPaths) &&
+                setup.CE_variableSnapshotPaths.length
+            ) {
+                return normalizePathList(setup.CE_variableSnapshotPaths);
+            }
+
+            return null;
+        };
+
+        const makeScopedOrGlobalSnapshot = () => {
+            const paths = getActiveSnapshotPaths();
+
+            if (paths) {
+                return makeSnapshotByPaths(paths);
+            }
+
+            return collectSimpleValues();
+        };
+
+        const scanByPath = () => {
+            const keyword = String(state.keyword || "").trim().toLowerCase();
+
+            state.results = scanAll(item => {
+                if (!keyword) return true;
+
+                return (
+                    item.path.toLowerCase().includes(keyword) ||
+                    String(item.key).toLowerCase().includes(keyword)
+                );
+            });
+
+            refresh();
+        };
+
+        const parseValueQuery = (raw) => {
+            const q = String(raw || "").trim();
+
+            if (!q) return { type: "empty" };
+
+            if (q === "true") return { type: "boolean", value: true };
+            if (q === "false") return { type: "boolean", value: false };
+            if (q === "null") return { type: "null", value: null };
+            if (q === "undefined") return { type: "undefined", value: undefined };
+
+            const rangeMatch = q.match(/^(-?\d+(?:\.\d+)?)\s*~\s*(-?\d+(?:\.\d+)?)$/);
+            if (rangeMatch) {
+                return {
+                    type: "range",
+                    min: Number(rangeMatch[1]),
+                    max: Number(rangeMatch[2])
+                };
+            }
+
+            const compareMatch = q.match(/^(>=|<=|>|<|=)\s*(-?\d+(?:\.\d+)?)$/);
+            if (compareMatch) {
+                return {
+                    type: "compare",
+                    op: compareMatch[1],
+                    value: Number(compareMatch[2])
+                };
+            }
+
+            if (!Number.isNaN(Number(q))) {
+                return {
+                    type: "number",
+                    value: Number(q)
+                };
+            }
+
+            return {
+                type: "string",
+                value: q.toLowerCase()
+            };
+        };
+
+        const valueMatches = (value, query) => {
+            if (query.type === "empty") return false;
+
+            if (query.type === "boolean") {
+                return value === query.value;
+            }
+
+            if (query.type === "null") {
+                return value === null;
+            }
+
+            if (query.type === "undefined") {
+                return value === undefined;
+            }
+
+            if (query.type === "number") {
+                return typeof value === "number" && value === query.value;
+            }
+
+            if (query.type === "range") {
+                return (
+                    typeof value === "number" &&
+                    value >= query.min &&
+                    value <= query.max
+                );
+            }
+
+            if (query.type === "compare") {
+                if (typeof value !== "number") return false;
+
+                if (query.op === ">") return value > query.value;
+                if (query.op === "<") return value < query.value;
+                if (query.op === ">=") return value >= query.value;
+                if (query.op === "<=") return value <= query.value;
+                if (query.op === "=") return value === query.value;
+            }
+
+            if (query.type === "string") {
+                return (
+                    typeof value === "string" &&
+                    value.toLowerCase().includes(query.value)
+                );
+            }
+
+            return false;
+        };
+
+        const scanByValue = () => {
+            const query = parseValueQuery(state.valueQuery);
+
+            state.results = scanAll(item => valueMatches(item.value, query));
+            refresh();
+        };
+
+        const makeSnapshot = () => {
+            setup.CE_variableSnapshot = makeScopedOrGlobalSnapshot();
+
+            const scope = getActiveSnapshotPaths();
+
+            alert(
+                "快照已建立。\n" +
+                "模式：" + (scope ? "追蹤範圍" : "全域") + "\n" +
+                "記錄數：" + Object.keys(setup.CE_variableSnapshot).length
+            );
+        };
+
+        const compareSnapshot = () => {
+            const oldSnap = setup.CE_variableSnapshot;
+
+            if (!oldSnap) {
+                alert("尚未建立快照");
+                return;
+            }
+
+            const now = makeScopedOrGlobalSnapshot();
+            const diff = [];
+
+            const keys = new Set([
+                ...Object.keys(oldSnap),
+                ...Object.keys(now)
+            ]);
+
+            for (const key of keys) {
+                if (oldSnap[key] !== now[key]) {
+                    diff.push({
+                        path: key,
+                        oldValue: oldSnap[key],
+                        newValue: now[key],
+                        oldPreview: getPreview(oldSnap[key]),
+                        newPreview: getPreview(now[key])
+                    });
+                }
+            }
+
+            state.diffResults = diff;
+            refresh();
+        };
+
+        const setSnapshotScopeFromSearchResults = () => {
+            if (!Array.isArray(state.results) || !state.results.length) {
+                alert("目前沒有搜尋結果可建立追蹤範圍");
+                return;
+            }
+
+            const paths = normalizePathList(
+                state.results
+                    .filter(item => isSimpleValue(getValueByPath(item.path)))
+                    .map(item => item.path)
+            );
+
+            if (!paths.length) {
+                alert("目前搜尋結果沒有可追蹤的簡單值");
+                return;
+            }
+
+            setup.CE_variableSnapshotPaths = paths;
+            setup.CE_variableSnapshot = makeSnapshotByPaths(paths);
+
+            alert(
+                "已用目前搜尋結果建立追蹤快照。\n" +
+                "追蹤路徑數：" + paths.length
+            );
+
+            state.tab = "diff";
+            refresh();
+        };
+
+        const setSnapshotScopeFromDiffResults = () => {
+            if (!Array.isArray(state.diffResults) || !state.diffResults.length) {
+                alert("目前沒有差異結果可建立追蹤範圍");
+                return;
+            }
+
+            const paths = normalizePathList(
+                state.diffResults
+                    .filter(item => isSimpleValue(getValueByPath(item.path)))
+                    .map(item => item.path)
+            );
+
+            if (!paths.length) {
+                alert("目前差異結果沒有可追蹤的簡單值");
+                return;
+            }
+
+            setup.CE_variableSnapshotPaths = paths;
+            setup.CE_variableSnapshot = makeSnapshotByPaths(paths);
+
+            alert(
+                "已用目前差異結果縮小追蹤快照。\n" +
+                "追蹤路徑數：" + paths.length
+            );
+
+            refresh();
+        };
+
+        const clearSnapshotScope = () => {
+            delete setup.CE_variableSnapshotPaths;
+
+            alert("已清除追蹤範圍。之後建立 / 比較快照會回到全域模式。");
+            refresh();
+        };
+
+        const copyText = (text) => {
+            try {
+                if (navigator.clipboard?.writeText) {
+                    navigator.clipboard.writeText(text);
+                    alert("已複製：\n" + text);
+                    return;
+                }
+            }
+            catch (e) {}
+
+            console.log("[CE Variable Explorer copy]", text);
+            alert("此環境可能不支援剪貼簿，已輸出到控制台：\n" + text);
+        };
+
+        const applyToHookPath = (path) => {
+            setup.CE_customHookPanel ??= {
+                path: "",
+                targetPath: "",
+                type: "VarHook",
+                mode: "lock",
+                value: "",
+                posMult: 1,
+                negMult: 1,
+                maxDepth: 2,
+                saveToStore: false
+            };
+
+            setup.CE_customHookPanel.path = path;
+
+            alert("已帶入 Hook 變數路徑：\n" + path);
+        };
+
+        const applyToDeepTarget = (path) => {
+            setup.CE_customHookPanel ??= {
+                path: "",
+                targetPath: "",
+                type: "DeepProxyHook",
+                mode: "monitor",
+                value: "",
+                posMult: 1,
+                negMult: 1,
+                maxDepth: 2,
+                saveToStore: false
+            };
+
+            const parts = path.split(".");
+
+            if (parts.length > 1) {
+                setup.CE_customHookPanel.path = parts[0];
+                setup.CE_customHookPanel.targetPath = path;
+                setup.CE_customHookPanel.type = "DeepProxyHook";
+                setup.CE_customHookPanel.mode = "monitor";
+            }
+            else {
+                setup.CE_customHookPanel.path = path;
+                setup.CE_customHookPanel.targetPath = "";
+                setup.CE_customHookPanel.type = "DeepProxyHook";
+                setup.CE_customHookPanel.mode = "monitor";
+            }
+
+            alert(
+                "已帶入 DeepProxyHook：\n\n" +
+                "變數路徑：" + setup.CE_customHookPanel.path + "\n" +
+                "目標 fullPath：" + setup.CE_customHookPanel.targetPath
+            );
+        };
+
+        const renderResultRows = (parent, list) => {
+            if (!list.length) {
+                addHint(parent, "尚無結果。", "muted");
+                return;
+            }
+
+            list.forEach(item => {
+                const row = document.createElement("div");
+                row.className = "dol-section-block";
+
+                Object.assign(row.style, {
+                    border: "1px solid #ccc",
+                    padding: "5px",
+                    marginBottom: "6px",
+                    overflowWrap: "break-word"
+                });
+
+                const pathLine = document.createElement("div");
+                pathLine.style.fontWeight = "bold";
+                pathLine.textContent = item.path;
+                row.appendChild(pathLine);
+
+                const metaLine = document.createElement("div");
+                Object.assign(metaLine.style, {
+                    fontSize: "0.85em",
+                    color: COLORS.muted,
+                    marginTop: "3px"
+                });
+                metaLine.textContent = `type: ${item.type} / value: ${item.preview}`;
+                row.appendChild(metaLine);
+
+                const opLine = document.createElement("div");
+                opLine.style.marginTop = "5px";
+
+                opLine.appendChild(makeButton("複製路徑", () => {
+                    copyText(item.path);
+                }, "info"));
+
+                opLine.appendChild(makeButton("套用 Hook 路徑", () => {
+                    applyToHookPath(item.path);
+                }, "success"));
+
+                opLine.appendChild(makeButton("套用 Deep 目標", () => {
+                    applyToDeepTarget(item.path);
+                }, "warn"));
+
+                row.appendChild(opLine);
+                parent.appendChild(row);
+            });
+        };
+        // 重置搜尋UI
+        const resetExplorer = () => {
+            state.keyword = "";
+            state.valueQuery = "";
+            state.maxDepth = 5;
+            state.maxResults = 100;
+            state.results = [];
+            state.diffResults = [];
+
+            delete setup.CE_variableSnapshot;
+            delete setup.CE_variableSnapshotPaths;
+
+            refresh();
+        };
+
+        function render() {
+            container.innerHTML = "";
+
+            const header = document.createElement("div");
+            header.className = "dol-header";
+            header.innerHTML = `<span class="dol-title">變數搜尋器</span>`;
+            container.appendChild(header);
+
+            const body = document.createElement("div");
+            body.className = "dol-body";
+            container.appendChild(body);
+
+            const desc = document.createElement("div");
+            desc.className = "dol-desc";
+            desc.textContent = "搜尋 State.variables / V 內的變數路徑、反查數值，或比較變數變化。";
+            body.appendChild(desc);
+            body.appendChild(document.createElement("br"));
+
+            const tabBlock = makeSection();
+            tabBlock.appendChild(makeTabButton("path", "路徑搜尋"));
+            tabBlock.appendChild(makeTabButton("value", "值反搜尋"));
+            tabBlock.appendChild(makeTabButton("diff", "快照差異"));
+            tabBlock.appendChild(makeButton("重置", resetExplorer, "danger"));
+            body.appendChild(tabBlock);
+
+            const configBlock = makeSection();
+
+            const title = document.createElement("div");
+            title.style.fontWeight = "bold";
+            title.style.marginBottom = "6px";
+            title.textContent = "搜尋設定";
+            configBlock.appendChild(title);
+
+            if (state.tab === "path") {
+                const row = document.createElement("div");
+                row.style.marginBottom = "6px";
+
+                const label = document.createElement("span");
+                label.style.display = "inline-block";
+                label.style.width = "120px";
+                label.textContent = "關鍵字：";
+                row.appendChild(label);
+
+                const input = document.createElement("input");
+                input.type = "text";
+                input.value = state.keyword;
+                input.style.width = "220px";
+                input.placeholder = "例如 health、wardrobe、pain";
+                input.oninput = function(){
+                    state.keyword = this.value;
+                };
+
+                row.appendChild(input);
+                configBlock.appendChild(row);
+
+                configBlock.appendChild(makeButton("搜尋", scanByPath, "success"));
+                configBlock.appendChild(makeButton("以搜尋結果建立追蹤快照", setSnapshotScopeFromSearchResults, "warn"));
+
+                addHint(configBlock, "可先搜尋關鍵字，再用搜尋結果建立追蹤快照。", "info");
+            }
+
+            if (state.tab === "value") {
+                const row = document.createElement("div");
+                row.style.marginBottom = "6px";
+
+                const label = document.createElement("span");
+                label.style.display = "inline-block";
+                label.style.width = "120px";
+                label.textContent = "搜尋值：";
+                row.appendChild(label);
+
+                const input = document.createElement("input");
+                input.type = "text";
+                input.value = state.valueQuery;
+                input.style.width = "220px";
+                input.placeholder = "例如 100、>=50、10~20、true、shirt";
+                input.oninput = function(){
+                    state.valueQuery = this.value;
+                };
+
+                row.appendChild(input);
+                configBlock.appendChild(row);
+
+                configBlock.appendChild(makeButton("反搜尋", scanByValue, "success"));
+                configBlock.appendChild(makeButton("以搜尋結果建立追蹤快照", setSnapshotScopeFromSearchResults, "warn"));
+
+                addHint(configBlock, "支援：精確數字、>=、<=、>、<、範圍 10~20、true/false、字串包含。", "info");
+            }
+
+            if (state.tab === "diff") {
+                const scope = getActiveSnapshotPaths();
+
+                const scopeText = document.createElement("div");
+                Object.assign(scopeText.style, {
+                    fontSize: "0.9em",
+                    marginBottom: "6px",
+                    color: scope ? COLORS.warn : COLORS.info,
+                    fontWeight: "bold"
+                });
+
+                scopeText.textContent = scope
+                    ? `目前模式：追蹤範圍 (${scope.length} paths)`
+                    : "目前模式：全域快照";
+
+                configBlock.appendChild(scopeText);
+
+                configBlock.appendChild(makeButton("建立快照", makeSnapshot, "info"));
+                configBlock.appendChild(makeButton("比較差異", compareSnapshot, "success"));
+
+                if (state.diffResults.length) {
+                    configBlock.appendChild(makeButton("以差異結果縮小追蹤", setSnapshotScopeFromDiffResults, "warn"));
+                }
+
+                if (scope) {
+                    configBlock.appendChild(makeButton("清除追蹤範圍", clearSnapshotScope, "danger"));
+                }
+
+                addHint(configBlock, "快照差異不限制結果數量，但仍受最大深度影響。若差異過多，UI 可能卡頓。", "warn");
+                addHint(configBlock, "可用搜尋結果或差異結果建立追蹤範圍，逐步縮小可疑變數。", "info");
+            }
+
+            const depthRow = document.createElement("div");
+            depthRow.style.marginTop = "8px";
+
+            const depthLabel = document.createElement("span");
+            depthLabel.style.display = "inline-block";
+            depthLabel.style.width = "120px";
+            depthLabel.textContent = "最大深度：";
+            depthRow.appendChild(depthLabel);
+
+            const depthInput = document.createElement("input");
+            depthInput.type = "number";
+            depthInput.value = state.maxDepth;
+            depthInput.style.width = "80px";
+            depthInput.oninput = function(){
+                state.maxDepth = Number(this.value) || 5;
+            };
+
+            depthRow.appendChild(depthInput);
+            configBlock.appendChild(depthRow);
+
+            if (state.tab !== "diff") {
+                const limitRow = document.createElement("div");
+                limitRow.style.marginTop = "6px";
+
+                const limitLabel = document.createElement("span");
+                limitLabel.style.display = "inline-block";
+                limitLabel.style.width = "120px";
+                limitLabel.textContent = "結果上限：";
+                limitRow.appendChild(limitLabel);
+
+                const limitInput = document.createElement("input");
+                limitInput.type = "number";
+                limitInput.value = state.maxResults;
+                limitInput.style.width = "80px";
+                limitInput.oninput = function(){
+                    state.maxResults = Number(this.value) || 100;
+                };
+
+                limitRow.appendChild(limitInput);
+                configBlock.appendChild(limitRow);
+
+                addHint(configBlock, "深度越高越容易卡頓。建議一般搜尋使用 2～5。", "warn");
+            }
+
+            body.appendChild(configBlock);
+
+            const resultBlock = makeSection();
+
+            const resultTitle = document.createElement("div");
+            resultTitle.style.fontWeight = "bold";
+            resultTitle.style.marginBottom = "6px";
+
+            if (state.tab === "diff") {
+                resultTitle.textContent = `差異結果 (${state.diffResults.length})`;
+                resultBlock.appendChild(resultTitle);
+
+                if (!state.diffResults.length) {
+                    addHint(resultBlock, "尚無差異結果。", "muted");
+                }
+                else {
+                    state.diffResults.forEach(item => {
+                        const row = document.createElement("div");
+                        row.className = "dol-section-block";
+
+                        Object.assign(row.style, {
+                            border: "1px solid #ccc",
+                            padding: "5px",
+                            marginBottom: "6px",
+                            overflowWrap: "break-word"
+                        });
+
+                        const pathLine = document.createElement("div");
+                        pathLine.style.fontWeight = "bold";
+                        pathLine.textContent = item.path;
+                        row.appendChild(pathLine);
+
+                        const diffLine = document.createElement("div");
+                        Object.assign(diffLine.style, {
+                            fontSize: "0.9em",
+                            marginTop: "4px"
+                        });
+                        diffLine.textContent = `${item.oldPreview} → ${item.newPreview}`;
+                        row.appendChild(diffLine);
+
+                        const opLine = document.createElement("div");
+                        opLine.style.marginTop = "5px";
+
+                        opLine.appendChild(makeButton("複製路徑", () => {
+                            copyText(item.path);
+                        }, "info"));
+
+                        opLine.appendChild(makeButton("套用 Hook 路徑", () => {
+                            applyToHookPath(item.path);
+                        }, "success"));
+
+                        opLine.appendChild(makeButton("套用 Deep 目標", () => {
+                            applyToDeepTarget(item.path);
+                        }, "warn"));
+
+                        row.appendChild(opLine);
+                        resultBlock.appendChild(row);
+                    });
+                }
+            }
+            else {
+                resultTitle.textContent = `搜尋結果 (${state.results.length})`;
+                resultBlock.appendChild(resultTitle);
+                renderResultRows(resultBlock, state.results);
+            }
+
+            addHint(resultBlock, "套用按鈕只會幫你填入 Hook 面板欄位，不會自動註冊 Hook。", "info");
+
+            body.appendChild(resultBlock);
+        }
+
+        render();
+    }
+});
+
+
+/*=========================================================
+ Cheat Extended - Debug Tool Panel
+
+ 整合：
+   - CE_VariableExplorer
+   - CE_CustomHookPanel
+
+ 用於變數搜尋、快照追蹤與 Hook 管理。
+
+=========================================================*/
+Macro.add("CE_DebugToolPanel", {
+    handler() {
+        const container = document.createElement("div");
+        container.className = "dol-settings dol-shadow";
+        this.output.appendChild(container);
+
+        const state = setup.CE_debugToolPanel ??= {
+            tab: "explorer"
+        };
+
+        const refresh = () => render();
+
+        const makeButton = (key, label) => {
+            const btn = document.createElement("span");
+            btn.className = "dol-btn";
+            btn.textContent = label;
+            btn.style.marginRight = "6px";
+            btn.style.cursor = "pointer";
+
+            if (state.tab === key) {
+                btn.style.fontWeight = "bold";
+                btn.style.color = "#6cc04a";
+            }
+
+            btn.onclick = function(){
+                state.tab = key;
+                refresh();
+            };
+
+            return btn;
+        };
+
+        function render() {
+            container.innerHTML = "";
+
+            const header = document.createElement("div");
+            header.className = "dol-header";
+            header.innerHTML = `<span class="dol-title">Debug 工具</span>`;
+            container.appendChild(header);
+
+            const body = document.createElement("div");
+            body.className = "dol-body";
+            container.appendChild(body);
+
+            const tabRow = document.createElement("div");
+            tabRow.style.marginBottom = "8px";
+
+            tabRow.appendChild(makeButton("explorer", "變數搜尋"));
+            tabRow.appendChild(makeButton("hook", "Hook 管理"));
+
+            body.appendChild(tabRow);
+
+            const content = document.createElement("div");
+            body.appendChild(content);
+
+            if (state.tab === "explorer") {
+                new Wikifier(content, "<<CE_VariableExplorer>>");
+            }
+
+            if (state.tab === "hook") {
+                new Wikifier(content, "<<CE_CustomHookPanel>>");
+            }
+        }
+
+        render();
+    }
+});
+
 CE_TabManager.register({
-    id: 'CE_CustomHookPanel',
-    title: '自訂 Hook',
+    id: 'CE_DebugToolPanel',
+    title: 'Debug 工具',
     condition: () => V.debug, 
-    onClick: () => CE_renderSettings('<<CE_CustomHookPanel>>')
+    onClick: () => CE_renderSettings('<<CE_DebugToolPanel>>')
 });
