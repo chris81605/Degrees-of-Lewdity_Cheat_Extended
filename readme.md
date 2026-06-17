@@ -433,48 +433,88 @@
 # 更新日誌 
 
 ## v1.20 (Dev)
-### Dev20260616
-# 更新日誌 
-
-## v1.20 (Dev)
 
 ### Dev20260616
+
 - 優化 狀態變數hook
    - 新增 內部工具函數
-    - DeepProxyHook（實驗性）
-        - 用於監聽物件(Object)與陣列(Array)內部變化
-        - 支援限制監聽深度(maxDepth)
-        - 支援刪除事件攔截(delete)
-        - 支援忽略指定 key/path
-        - 適用於複雜資料結構相容性修復與除錯
-         
-    - 新增 內部工具函數
-        - `RawHook`
-        - 用於攔截非數值或任意類型變數的重新賦值。
-        - 支援 `before(ctx)`、`transform(ctx)`、`after(oldValue, finalValue, ctx)`。
-        - 支援 `RawHook.on(path, callback)` 監聽變數變化。
-        - 支援巢狀路徑，例如 `test.a`、`test.0`。
-        - 會在 Passage 切換時自動重新掛載 Hook。        
-    
-    - 更新 內部工具函數
-        - `VarHook`
-        - 新增 `before(ctx)`、`transform(ctx)`、`after(...)` 自訂處理流程。
-        - 修正事件監聽回呼參數名稱錯誤
-    
+      - DeepProxyHook（實驗性）
+         - 用於監聽物件(Object)與陣列(Array)內部變化
+         - 支援限制監聽深度(maxDepth)
+         - 支援刪除事件攔截(delete)
+         - 支援忽略指定 key/path
+         - 支援 before(ctx)、transform(ctx)、after(...)
+         - 支援 Debug 路徑追蹤
+         - 適用於複雜資料結構相容性修復與除錯
+
+      - RawHook
+         - 用於攔截非數值或任意類型變數的重新賦值
+         - 支援 before(ctx)、transform(ctx)、after(oldValue, finalValue, ctx)
+         - 支援 RawHook.on(path, callback) 監聽變數變化
+         - 支援巢狀路徑，例如 test.a、test.0
+         - 會在 Passage 切換時自動重新掛載 Hook
+
+   - 更新 內部工具函數
+      - VarHook
+         - 新增 before(ctx)、transform(ctx)、after(...)
+         - 修正事件監聽回呼參數名稱錯誤
+
+- 新增 Hook測試面板（實驗性）
+   - 新增 `CE_CustomHookPanel`
+   - 可於遊戲內快速建立與測試 Hook
+
+   - 支援：
+
+      - VarHook
+         - 倍率模式
+         - 鎖定目前值
+         - 阻止增加
+         - 阻止減少
+
+      - RawHook
+         - 鎖定目前值
+         - 強制指定值
+
+      - DeepProxyHook
+         - 控制台監聽變化
+         - 鎖定值
+         - 強制指定值
+         - 僅允許增加
+         - 僅允許減少
+         - 阻止刪除
+
+   - 支援 Hook 總開關與分開關控制
+   - 支援路徑檢查與錯誤提示
+   - 支援 `DeepProxyHook` 指定目標路徑（fullPath）
+   - 支援已保存 Hook 列表顯示
+   - 支援 Hook 啟用／停用切換
+   - 支援軟卸載 Hook
+      - 當前 Passage 可能仍保留已掛載 Hook
+      - Passage 切換後將重新建構 Hook 狀態
+
+   - 支援保存自訂 Hook 至存檔
+      - Passage 切換後自動重新掛載
+      - 僅保存設定資料
+
+   - 僅供測試用途
+      - 建議不要將大量 Hook 保存至存檔
+      - `DeepProxyHook` 屬高風險功能，可能造成效能下降
+
 - 優化 大容量衣櫃容量鎖定邏輯
     - 修復 `DoL原版优化Optimization`大大大衣櫃功能與`大容量衣櫃`衝突的問題
     - 啟用`狀態變數hook`以套用兼容性修復
-        - 用 `VarHook => transform(ctx)` 判斷來源值。
-        - `狀態變數hook`啟用時，只允許模組自身將 `wardrobe.space` 設為指定固定值。
-        - 避免第三方模組修改衣櫃容量，同時不阻擋 Cheat Extended 自身同步固定容量。
+        - 用 `VarHook => transform(ctx)` 判斷來源值
+        - `狀態變數hook`啟用時，只允許模組自身將 `wardrobe.space` 設為指定固定值
+        - 避免第三方模組修改衣櫃容量，同時不阻擋 Cheat Extended 自身同步固定容量
     - 強行鎖定衣櫃容量設定值  
   
 - 修復 全成就解鎖UI爆紅問題
             
 - 修復 原版衣櫃服裝超過1000件可能不顯示的問題
-    - 不確定原始問題是否仍存在，故加入預防性修復(問題原因：**`Twine迴圈次數上限預設1000`**)。
-    - 新增分頁功能，每頁最多顯示 20 件服裝。
-    - 到底誰會在衣櫃裡塞超過 1000 件衣服？  
+    - 不確定原始問題是否仍存在，故加入預防性修復(問題原因：**`Twine迴圈次數上限預設1000`**)
+    - 新增分頁功能，每頁最多顯示 20 件服裝
+    - 避免大量服裝造成 UI 異常
+    - 到底誰會在衣櫃裡塞超過 1000 件衣服？
 
 ## v1.19 正式版
 
