@@ -89,6 +89,28 @@
 ### 🛠 DEBUG 模式
 - 慎用 開啟原版的除錯模式 
 
+### Debug工具（實驗性）
+- 🧪 **Hook測試工具**
+    - VarHook 測試
+    - RawHook 測試
+    - DeepProxyHook 測試
+    - Hook 啟用／停用管理
+    - Hook 保存與重建
+    - 臨時 Hook 管理
+    - **需啟用`DEBUG 模式`**
+
+- 🔍 **變數搜尋工具**
+    - 路徑搜尋
+    - 值反搜尋
+    - 快照差異追蹤
+    - 追蹤範圍縮小
+
+- 🧰 **除錯輔助**
+    - 快速複製變數路徑
+    - Hook 路徑快速套用
+    - DeepProxyHook 目標路徑快速套用
+    - Debug工具面板整合
+
 ### 👗 服裝功能
 - 一鍵全添加 / 指定添加 / 關鍵字添加
     * 特殊服裝（項圈、口球等）未排除  
@@ -432,6 +454,62 @@
 
 # 更新日誌 
 
+## v1.20 (Dev)
+
+### Dev20260616
+
+- 優化 狀態變數Hook
+   - 新增 `DeepProxyHook`（實驗性）
+      - 支援物件/陣列深層監聽
+      - 支援路徑過濾、刪除攔截、Debug追蹤
+      - 支援 before / transform / after
+   - 新增 `RawHook`
+      - 支援任意類型變數攔截
+      - 支援巢狀路徑與事件監聽
+      - Passage切換後自動重新掛載
+   - 更新 `VarHook`
+      - 支援 before / transform / after
+      - 修正事件監聽參數錯誤
+
+- 新增 Debug工具（實驗性）
+   - 新增 `CE_DebugToolPanel`
+   - 整合：
+      - `CE_VariableExplorer`
+      - `CE_CustomHookPanel`
+
+   - 新增 `CE_CustomHookPanel`
+      - 可於遊戲內建立與測試 Hook
+      - 支援：
+         - VarHook
+         - RawHook
+         - DeepProxyHook
+      - 支援 Hook 開關控制
+      - 支援 Hook 保存、重建與管理
+      - 支援臨時 Hook 與已保存 Hook 列表
+      - 支援軟卸載 Hook
+
+   - 新增 `CE_VariableExplorer`
+      - 支援路徑搜尋
+      - 支援值反搜尋
+      - 支援快照差異追蹤
+      - 支援追蹤範圍縮小
+      - 支援快速套用 Hook 路徑
+
+- 優化 大容量衣櫃容量鎖定邏輯
+    - 修復 `DoL原版优化Optimization`大大大衣櫃功能與`大容量衣櫃`衝突的問題
+    - 啟用`狀態變數hook`以套用兼容性修復           
+        - 當`狀態變數hook`啟用時，只允許模組自身將wardrobe.space 設為指定固定值
+        - 避免第三方模組修改衣櫃容量，同時不阻擋 Cheat Extended 自身同步固定容量
+    - 強行鎖定衣櫃容量設定值  
+  
+- 修復 全成就解鎖UI爆紅問題
+            
+- 修復 原版衣櫃服裝超過1000件可能不顯示的問題
+    - 不確定原始問題是否仍存在，故加入預防性修復(問題原因：**`Twine迴圈次數上限預設1000`**)
+    - 新增分頁功能，每頁最多顯示 20 件服裝
+    - 避免大量服裝造成 UI 異常
+    - 到底誰會在衣櫃裡塞超過 1000 件衣服？
+
 ## v1.19 正式版
 
 - 1.18Dev ～ 1.19Dev => 1.19
@@ -680,7 +758,7 @@
 <details>
 <summary>舊版本（1.19(Dev) 及以前）</summary>
 ## v1.19(Dev)
-Dev20260615
+### Dev20260615
 - 新增 全成就解鎖
     * **感謝`Ayndpa Ji Fuyao`提供功能代碼**
     * 全局操作：支持一键解锁全部成就（同时解锁全部与成就关联的特殊服装套组）或一键重置全部成就，数据将直接同步至当前存档及浏览器的本地全局成就（localStorage.dolFeats）。
