@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.20(dev260615)",
+  "version": "1.20(dev260619)",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
@@ -10,6 +10,9 @@
     "scripts/CE_getTargetWarmth2.js",
     "scripts/CE_Time_Event.js",
     "scripts/CE_sideBarIcon.js",
+    "scripts/CE_QuickSwitch.js",
+    "scripts/CE_YanLinManager.js",
+    "scripts/CE_teleportation.js",
     "scripts/CE_brothelBasementManager.js",
     "scripts/CE_forceAttendSchool.js",
     "scripts/clearCEVars.js",    
@@ -33,13 +36,11 @@
     "scripts/CE_TransformationDG.js",
     "scripts/CE_clothTypeManager.js",
     "scripts/CE_customerSkinColor.js",
-    "scripts/CE_customerEyesColor.js",
+    "scripts/CE_customerEyesColor.js",   
     "scripts/CE_CombatSkill.js"
   ],
   "tweeFileList": [
     "game/CEoverlayReplace.twee",   
-    "game/CE_teleportation.twee",
-    "game/CE_yanling.twee",
     "game/CE_auto_clothes_Warmth.twee",
     "game/CE_cheatExtendedMenu.twee",
     "game/CE_featUnlocker.twee",
