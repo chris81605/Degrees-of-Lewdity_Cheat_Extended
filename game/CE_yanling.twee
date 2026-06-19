@@ -1,4 +1,6 @@
 :: CE_yanling [widget]
+
+<!--已棄用，以CE_YanlingPanel、CE_YanlingSimplePanel取代-->
 <<widget "swich_yanling">>
 <div class="dol-settings dol-shadow">
 

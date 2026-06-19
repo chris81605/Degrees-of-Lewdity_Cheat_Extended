@@ -1,6 +1,6 @@
 :: CE_cheatExtendedMenu [widget]
 
-<!--用於顯示於左側狀態-->
+<!--用於顯示於左側狀態，棄用，用js重構整個CEstatebox
 <<widget "CEstatebox">> 
     <div id="CE_Toggle" class="dol-btn fit"><<CE_Toggle>></div>   
     <div id="CEstatebox">	        
@@ -8,7 +8,9 @@
 	</div>
 	<br>
 <</widget>>
+-->
 
+<!--棄用
 <<widget "CE_Toggle">>
     <<if $CE_Toggle is "undefined">>
         <<set $CE_Toggle to 0>>
@@ -20,7 +22,9 @@
 		    <</replace>>
         <</button>>  
 <</widget>>
+-->
 
+<!--棄用
 <<widget "CE_UiLists">>
     <<if $CE_Toggle>>        
         <div id="CE_UiLists" class="dol-body dol-border">
@@ -53,6 +57,7 @@
         <hr>
     <</if>>  
 <</widget>>
+-->
 
 <!--sideBarIcon入口-->
 <<widget "CE_sideBarIcon">>

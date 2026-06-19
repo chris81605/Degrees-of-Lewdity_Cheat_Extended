@@ -1,5 +1,5 @@
 :: Widgets cheat_extended [widget]
-
+<!--棄用，以CE_QuickPanel取代-->
 <<widget "quick_swich">>
 	<<if $swich is 1>>
 	    <span class="gold">快捷</span>
@@ -16,6 +16,7 @@
 	<</if>>
 <</widget>>			
 
+<!-- 棄用以CE_QuickPanelSettings取代-->
 <<widget "swich">>
 
 <div class="dol-settings dol-shadow">
