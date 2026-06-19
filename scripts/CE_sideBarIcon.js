@@ -1,9 +1,13 @@
+// 右側折疊狀態欄icon入口
 // 抄作業就完事了！
+
 function CEiconClicked() {
     $.wiki("<<CEoverlayReplace \"CEcheatMenu\">>");
 }
 window.CEiconClicked = CEiconClicked;
 
+// 檢測simple framework 存在則顯示右側狀態欄icon(sf框架專用)
+// sf框架需要另一種方式插入icon
 function CEiconSFdetect(){    
     const simpleMod = window.modUtils.getAnyModByNameNoAlias('Simple Frameworks'); // ⚡ Simple Frameworks
     const logger = window.modUtils.getLogger();
@@ -14,7 +18,7 @@ function CEiconSFdetect(){
     //console.warn(`[cheat Extended][CEiconSFdetect] 🧾 V.CE_SFflag = ${V.CE_SFflag}`);
 }
 CEiconSFdetect();
-
+// 用於CE主畫面顯示的安全渲染函數，避免容器不存在的情況仍然渲染導致錯誤
 function CE_renderSettings(wikiText) {
     const target = document.getElementById('CE_settingsDiv') || window.CE_activeSettingsDiv;
     if (!target) {
@@ -27,6 +31,185 @@ function CE_renderSettings(wikiText) {
     return true;
 }
 window.CE_renderSettings = CE_renderSettings;
+
+/*==============================
+CE Statebox UI - JS Rebuild
+--------------------------------
+合併：CEstatebox、CE_Toggle、CE_UiLists三個widget
+對外入口使用：
+<<CEstatebox>>
+==============================*/
+
+(function () {
+
+    "use strict";
+
+    Macro.add("CEstatebox", {
+
+        handler() {
+
+            const root = document.createElement("div");
+
+            this.output.appendChild(root);
+
+            const ensureState = () => {
+
+                if (V.CE_Toggle === undefined || V.CE_Toggle === "undefined") {
+                    V.CE_Toggle = 0;
+                }
+
+                if (V.swich === undefined) {
+                    V.swich = 0;
+                }
+
+                if (V.swich_teleportation === undefined) {
+                    V.swich_teleportation = 0;
+                }
+
+                if (V.swich_yanling === undefined) {
+                    V.swich_yanling = 0;
+                }
+
+            };
+
+            const createEl = (tag, className, textContent) => {
+
+                const el = document.createElement(tag);
+
+                if (className) {
+                    el.className = className;
+                }
+
+                if (textContent !== undefined) {
+                    el.textContent = textContent;
+                }
+
+                return el;
+
+            };
+
+            const createButton = (label, onClick) => {
+
+                const btn = document.createElement("span");
+
+                btn.className = "dol-btn";
+                btn.textContent = label;
+                btn.onclick = onClick;
+
+                Object.assign(btn.style, {
+                    cursor: "pointer",
+                    display: "inline-block"
+                });
+
+                return btn;
+
+            };
+
+            const renderWiki = (parent, wikiCode, errorText) => {
+
+                const box = document.createElement("div");
+
+                parent.appendChild(box);
+
+                try {
+                    $(box).wiki(wikiCode);
+                }
+                catch (e) {
+                    console.error("[CEstatebox]", errorText, e);
+                    box.textContent = "[" + errorText + "]";
+                }
+
+                return box;
+
+            };
+
+            const renderEmptyMessage = (parent) => {
+
+                const desc = createEl("div", "small-description");
+
+                desc.append("空空的什麼也沒有？");
+
+                const mouse = document.createElement("mouse");
+
+                mouse.className = "tooltip linkBlue";
+                mouse.textContent = "(?)";
+
+                const span = document.createElement("span");
+
+                span.textContent = "試著去選項裡打開作弊拓展入口後啟用幾個功能看看？";
+
+                mouse.appendChild(span);
+                desc.appendChild(mouse);
+
+                parent.appendChild(desc);
+
+            };
+
+            const refresh = () => {
+
+                ensureState();
+
+                root.replaceChildren();
+
+                const toggleWrap = createEl("div", "dol-btn fit");
+                const listWrap = document.createElement("div");
+
+                toggleWrap.id = "CE_Toggle";
+                listWrap.id = "CEstatebox";
+
+                const toggleBtn = createButton("作弊拓展", () => {
+
+                    V.CE_Toggle = V.CE_Toggle == 0 ? 1 : 0;
+                    refresh();
+
+                });
+
+                toggleWrap.appendChild(toggleBtn);
+
+                root.appendChild(toggleWrap);
+                root.appendChild(listWrap);
+                root.appendChild(document.createElement("br"));
+
+                if (!V.CE_Toggle) {
+                    return;
+                }
+
+                const list = createEl("div", "dol-body dol-border");
+
+                list.id = "CE_UiLists";
+
+                if (!V.swich && !V.swich_teleportation && !V.swich_yanling) {
+                    renderEmptyMessage(list);
+                }
+
+                renderWiki(list, "<<CE_QuickPanel>>", "CE_QuickPanel 渲染失敗");
+
+                if (V.swich_teleportation) {
+                    list.appendChild(document.createElement("hr"));
+                    renderWiki(list, "<<CE_TeleportationSimplePanel>>", "空間節點 UI 渲染失敗");
+                }
+
+                if (V.swich_yanling) {
+                    list.appendChild(document.createElement("hr"));
+                    renderWiki(list, "<<CE_YanlingSimplePanel>>", "言靈集 UI 渲染失敗");
+                }
+
+                listWrap.appendChild(list);
+                listWrap.appendChild(document.createElement("hr"));
+
+            };
+            
+            // 供外部刷新用
+            setup.CE_StateboxManager ??= {};
+            setup.CE_StateboxManager.refresh = refresh;
+
+            refresh();
+
+        }
+
+    });
+
+})();
 
 /* =========================================
  * <<CE_CheatExtendedVersion>>
@@ -363,9 +546,19 @@ Macro.add('CE_CheatExtendedVersion', {
 
     // 註冊所有 tab
     const tabs = [
-        { id: 'quickTab', title: '左側快捷', onClick: () => CE_renderSettings('<<swich>>') },
-        { id: 'teleport', title: '空間節點', onClick: () => CE_renderSettings('<<swich_teleportation>>') },
-        { id: 'yanling', title: '言靈集', onClick: () => CE_renderSettings('<<swich_yanling>>') },
+        /* ==============棄用=========
+        //
+        //{ id: 'quickTab', title: '左側快捷', onClick: () => CE_renderSettings('<<swich>>') },
+        //{ id: 'teleport', title: '空間節點', onClick: () => CE_renderSettings('<<swich_teleportation>>') },
+        //{ id: 'yanling', title: '言靈集', onClick: () => CE_renderSettings('<<swich_yanling>>') },
+        ==========================*/
+        
+        // =============新版UI=======
+        { id: 'CE_YanlingPanel', title: '言靈集', /*condition: () => V.debug,*/ onClick: () => CE_renderSettings('<<CE_YanlingPanel>>') },
+        { id: 'CE_TeleportationPanel', title: '空間節點', /*condition: () => V.debug,*/ onClick: () => CE_renderSettings('<<CE_TeleportationPanel>>') },
+        { id: 'CE_QuickPanelSettings', title: '快捷面板', /*condition: () => V.debug,*/ onClick: () => CE_renderSettings('<<CE_QuickPanelSettings>>') },
+        // =======================
+        
         { id: 'statControl', title: '狀態控制', onClick: () => CE_renderSettings('<<CE_statControlPanel>>') },
         { id: 'purity', title: '純潔永駐', onClick: () => CE_renderSettings('<<CE_purityControl>>') },
         { id: 'damage', title: '傷害倍數', onClick: () => CE_renderSettings('<<CE_damageMultiplier>>') },
