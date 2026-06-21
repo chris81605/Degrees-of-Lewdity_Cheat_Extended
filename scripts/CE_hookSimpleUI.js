@@ -4,11 +4,17 @@ CE Custom Hook 保存 / 重建工具
 1. 只保存設定，不保存 function
 2. 保存 Hook 於 V.CE_customHooks
 3. 臨時 Hook 於 setup.CE_runtimeCustomHooks
-4. Passage 切換時自動重建已保存 Hook
+4. 支援監聽模式 monitor
+5. 支援臨時自訂邏輯 custom
+6. custom 模式不允許保存到存檔
 ==============================*/
 
 (function(){
 
+    if (typeof V.CE_allowCustomHookSave !== "boolean") {
+        V.CE_allowCustomHookSave = false;
+    }
+    
     function ensureStore(){
         if (!Array.isArray(V.CE_customHooks)) {
             V.CE_customHooks = [];
@@ -38,6 +44,30 @@ CE Custom Hook 保存 / 重建工具
         ].join("|");
     }
 
+    function runCustomCode(hook, ctx, fallbackValue){
+        try {
+            const code = String(hook.customCode || "");
+
+            if (!code.trim()) {
+                return fallbackValue;
+            }
+
+            const fn = new Function(
+                "ctx",
+                "V",
+                "State",
+                "setup",
+                code
+            );
+
+            return fn(ctx, V, State, setup);
+        }
+        catch(e) {
+            console.error("[cheat Extended][Custom Hook customCode error]", hook.path, e);
+            return fallbackValue;
+        }
+    }
+
     setup.CE_makeCustomHookSnapshot = function(state){
         return {
             id: makeId(),
@@ -51,6 +81,7 @@ CE Custom Hook 保存 / 重建工具
 
             mode: state.mode,
             value: state.value,
+            customCode: String(state.customCode || ""),
 
             posMult: Number(state.posMult),
             negMult: Number(state.negMult),
@@ -59,12 +90,27 @@ CE Custom Hook 保存 / 重建工具
     };
 
     setup.CE_saveCustomHook = function(hook){
+        if (
+            hook?.mode === "custom" &&
+            !(V.debug === 1 && V.CE_allowCustomHookSave)
+        ) {
+            alert("自訂邏輯模式不允許保存到存檔。");
+            return;
+        }
+
         const list = ensureStore();
         const key = hookKey(hook);
         const oldIndex = list.findIndex(item => hookKey(item) === key);
 
+        const canSaveCustom =
+            V.debug === 1 &&
+            V.CE_allowCustomHookSave === true;
+
         const savedHook = {
             ...hook,
+            customCode: hook.mode === "custom" && canSaveCustom
+                ? String(hook.customCode || "")
+                : "",
             saved: true
         };
 
@@ -89,12 +135,12 @@ CE Custom Hook 保存 / 重建工具
     setup.CE_addRuntimeCustomHook = function(hook){
         const list = ensureRuntimeStore();
         const key = hookKey(hook);
-
         const oldIndex = list.findIndex(item => hookKey(item) === key);
 
         const runtimeHook = {
             ...hook,
-            runtimeId: makeId()
+            runtimeId: makeId(),
+            saved: false
         };
 
         if (oldIndex >= 0) {
@@ -115,6 +161,33 @@ CE Custom Hook 保存 / 重建工具
         }
     };
 
+    setup.CE_promoteRuntimeCustomHook = function(runtimeId){
+        const list = ensureRuntimeStore();
+        const hook = list.find(item => item.runtimeId === runtimeId);
+
+        if (!hook) {
+            alert("找不到臨時 Hook");
+            return;
+        }
+
+        if (
+            hook.mode === "custom" &&
+            !(V.debug === 1 && V.CE_allowCustomHookSave)
+        ) {
+            alert("自訂邏輯模式不允許保存到存檔。");
+            return;
+        }
+
+        setup.CE_saveCustomHook({
+            ...hook,
+            saved: true,            
+        });
+
+        setup.CE_removeRuntimeCustomHook(runtimeId);
+
+        alert("已保存 Hook 到存檔：\n" + hook.path);
+    };
+
     setup.CE_unregisterCustomHookConfig = function(hook){
         if (!hook) return;
 
@@ -129,6 +202,43 @@ CE Custom Hook 保存 / 重建工具
         const path = hook.path;
 
         if (hook.type === "VarHook") {
+
+            if (hook.mode === "monitor") {
+                VarHook.register(path, 1, 1, {
+                    after(oldValue, finalValue, diff, adjustedDiff, ctx){
+                        console.log(
+                            hook.saved ? "[cheat Extended][Saved VarHook Monitor]" : "[cheat Extended][Runtime VarHook Monitor]",
+                            ctx.path,
+                            oldValue,
+                            "→",
+                            finalValue,
+                            "diff:",
+                            diff,
+                            "adjustedDiff:",
+                            adjustedDiff
+                        );
+                    }
+                });
+            }
+
+            if (hook.mode === "custom") {
+                VarHook.register(path, 1, 1, {
+                    transform(ctx){
+                        return runCustomCode(hook, ctx, ctx.newValue);
+                    },
+                    after(oldValue, finalValue, diff, adjustedDiff, ctx){
+                        console.log(
+                            "[cheat Extended][Runtime VarHook Custom]",
+                            ctx.path,
+                            oldValue,
+                            "→",
+                            finalValue,
+                            "diff:",
+                            diff
+                        );
+                    }
+                });
+            }
 
             if (hook.mode === "multiplier") {
                 VarHook.register(
@@ -167,6 +277,37 @@ CE Custom Hook 保存 / 重建工具
 
         if (hook.type === "RawHook") {
 
+            if (hook.mode === "monitor") {
+                RawHook.register(path, {
+                    after(oldValue, finalValue, ctx){
+                        console.log(
+                            hook.saved ? "[cheat Extended][Saved RawHook Monitor]" : "[cheat Extended][Runtime RawHook Monitor]",
+                            ctx.path,
+                            oldValue,
+                            "→",
+                            finalValue
+                        );
+                    }
+                });
+            }
+
+            if (hook.mode === "custom") {
+                RawHook.register(path, {
+                    transform(ctx){
+                        return runCustomCode(hook, ctx, ctx.newValue);
+                    },
+                    after(oldValue, finalValue, ctx){
+                        console.log(
+                            "[cheat Extended][Runtime RawHook Custom]",
+                            ctx.path,
+                            oldValue,
+                            "→",
+                            finalValue
+                        );
+                    }
+                });
+            }
+
             if (hook.mode === "lock") {
                 RawHook.register(path, {
                     transform(ctx){
@@ -198,6 +339,7 @@ CE Custom Hook 保存 / 重建工具
                     }
 
                     if (hook.mode === "monitor") return ctx.newValue;
+                    if (hook.mode === "custom") return runCustomCode(hook, ctx, ctx.newValue);
                     if (hook.mode === "lock") return ctx.oldValue;
                     if (hook.mode === "forceValue") return hook.value;
 
@@ -248,7 +390,7 @@ CE Custom Hook 保存 / 重建工具
                     }
 
                     console.log(
-                        hook.saved ? "[CE Saved Custom Hook]" : "[CE Runtime Custom Hook]",
+                        hook.saved ? "[cheat Extended][ aved DeepProxyHook]" : "[cheat Extended][Runtime DeepProxyHook]",
                         ctx.fullPath,
                         oldVal,
                         "→",
@@ -271,6 +413,12 @@ CE Custom Hook 保存 / 重建工具
         const list = ensureStore();
 
         for (const hook of list) {
+            if (
+                hook.mode === "custom" &&
+                !(V.debug === 1 && V.CE_allowCustomHookSave)
+            ) {
+                continue;
+            }
             setup.CE_registerCustomHookConfig(hook);
         }
 
@@ -304,8 +452,9 @@ Macro.add("CE_CustomHookPanel", {
             path: "",
             targetPath: "",
             type: "VarHook",
-            mode: "lock",
+            mode: "monitor",
             value: "",
+            customCode: "return ctx.newValue;",
             posMult: 1,
             negMult: 1,
             maxDepth: 2,
@@ -411,6 +560,34 @@ Macro.add("CE_CustomHookPanel", {
             return row;
         };
 
+        const makeTextarea = (label, key) => {
+            const row = document.createElement("div");
+            row.style.marginBottom = "6px";
+
+            const title = document.createElement("div");
+            title.textContent = label + "：";
+            title.style.marginBottom = "4px";
+            row.appendChild(title);
+
+            const textarea = document.createElement("textarea");
+            textarea.value = state[key] ?? "";
+            textarea.rows = 7;
+
+            Object.assign(textarea.style, {
+                width: "100%",
+                boxSizing: "border-box",
+                fontFamily: "monospace",
+                fontSize: "0.85em"
+            });
+
+            textarea.addEventListener("input", () => {
+                state[key] = textarea.value;
+            });
+
+            row.appendChild(textarea);
+            return row;
+        };
+
         const makeSelect = (label, key, options) => {
             const row = document.createElement("div");
             row.style.marginBottom = "6px";
@@ -437,79 +614,17 @@ Macro.add("CE_CustomHookPanel", {
                 state[key] = select.value;
 
                 if (key === "type") {
-                    if (state.type === "VarHook") state.mode = "lock";
-                    else if (state.type === "RawHook") state.mode = "lock";
-                    else if (state.type === "DeepProxyHook") state.mode = "monitor";
+                    state.mode = "monitor";
+                }
+
+                if (key === "mode" && state.mode === "custom" && !state.customCode) {
+                    state.customCode = "return ctx.newValue;";
                 }
 
                 refresh();
             });
 
             row.appendChild(select);
-            return row;
-        };
-
-        const makeSwitch = (label, key, color) => {
-            const row = document.createElement("label");
-
-            Object.assign(row.style, {
-                display: "block",
-                marginBottom: "4px"
-            });
-
-            const input = document.createElement("input");
-            input.type = "checkbox";
-            input.checked = !!V[key];
-
-            input.onchange = function(){
-                V[key] = this.checked;
-                refresh();
-            };
-
-            const text = document.createElement("span");
-            text.textContent = " " + label + " ";
-            text.style.color = color || COLORS.muted;
-
-            const status = document.createElement("span");
-            status.textContent = V[key] ? "✓ 啟用" : "⚠ 停用";
-
-            Object.assign(status.style, {
-                color: V[key] ? COLORS.success : COLORS.warn,
-                fontWeight: "bold",
-                fontSize: "0.85em"
-            });
-
-            row.appendChild(input);
-            row.appendChild(text);
-            row.appendChild(status);
-
-            return row;
-        };
-
-        const makeSaveSwitch = () => {
-            const row = document.createElement("label");
-
-            Object.assign(row.style, {
-                display: "block",
-                marginTop: "6px"
-            });
-
-            const input = document.createElement("input");
-            input.type = "checkbox";
-            input.checked = !!state.saveToStore;
-
-            input.onchange = function(){
-                state.saveToStore = this.checked;
-                refresh();
-            };
-
-            const text = document.createElement("span");
-            text.textContent = " 保存此 Hook 到存檔";
-            text.style.color = state.saveToStore ? COLORS.warn : "";
-
-            row.appendChild(input);
-            row.appendChild(text);
-
             return row;
         };
 
@@ -559,6 +674,132 @@ Macro.add("CE_CustomHookPanel", {
             return btn;
         };
 
+        const makeSwitch = (label, key, color) => {
+            const row = document.createElement("label");
+            Object.assign(row.style, {
+                display: "block",
+                marginBottom: "4px"
+            });
+
+            const input = document.createElement("input");
+            input.type = "checkbox";
+            input.checked = !!V[key];
+
+            input.onchange = function(){
+                V[key] = this.checked;
+                refresh();
+            };
+
+            const text = document.createElement("span");
+            text.textContent = " " + label + " ";
+            text.style.color = color || COLORS.muted;
+
+            const status = document.createElement("span");
+            status.textContent = V[key] ? "✓ 啟用" : "⚠ 停用";
+
+            Object.assign(status.style, {
+                color: V[key] ? COLORS.success : COLORS.warn,
+                fontWeight: "bold",
+                fontSize: "0.85em"
+            });
+
+            row.appendChild(input);
+            row.appendChild(text);
+            row.appendChild(status);
+
+            return row;
+        };
+
+        const makeSaveSwitch = () => {
+            const row = document.createElement("label");
+
+            Object.assign(row.style, {
+                display: "block",
+                marginTop: "6px"
+            });
+
+            const canSaveCustom =
+                V.debug === 1 &&
+                V.CE_allowCustomHookSave === true;
+
+            const input = document.createElement("input");
+            input.type = "checkbox";
+            input.checked = !!state.saveToStore;
+
+            input.disabled =
+                state.mode === "custom" &&
+                !canSaveCustom;
+
+            input.onchange = function(){
+                state.saveToStore = this.checked;
+                refresh();
+            };
+
+            const text = document.createElement("span");
+
+            if (state.mode === "custom" && !canSaveCustom) {
+                text.textContent = " 自訂邏輯不可保存到存檔";
+            }
+            else if (state.mode === "custom") {
+                text.textContent = " ⚠ Debug模式：允許保存自訂邏輯";
+            }
+            else {
+                text.textContent = " 保存此 Hook 到存檔";
+            }
+
+            text.style.color = state.mode === "custom"
+                ? COLORS.danger
+                : (state.saveToStore ? COLORS.warn : "");
+
+            row.appendChild(input);
+            row.appendChild(text);
+
+            return row;
+        };
+
+        const makeScrollableListWrap = () => {
+            const wrap = document.createElement("div");
+
+            Object.assign(wrap.style, {
+                maxHeight: "260px",
+                overflowY: "auto",
+                paddingRight: "4px",
+                borderTop: "1px solid #ccc",
+                marginTop: "6px",
+                paddingTop: "6px"
+            });
+
+            return wrap;
+        };
+
+        if (typeof setup.CE_runtimeHookListExpanded !== "boolean") {
+            setup.CE_runtimeHookListExpanded = true;
+        }
+
+        if (typeof setup.CE_savedHookListExpanded !== "boolean") {
+            setup.CE_savedHookListExpanded = true;
+        }
+
+        const makeCollapsibleTitle = (text, expandedKey, count) => {
+            const title = document.createElement("div");
+
+            Object.assign(title.style, {
+                fontWeight: "bold",
+                marginBottom: "6px",
+                cursor: "pointer",
+                userSelect: "none"
+            });
+
+            title.textContent = `${setup[expandedKey] ? "▾" : "▸"} ${text}（${count}）`;
+
+            title.onclick = () => {
+                setup[expandedKey] = !setup[expandedKey];
+                refresh();
+            };
+
+            return title;
+        };
+
         const validatePathForRegister = (path) => {
             if (!path) {
                 alert("請輸入變數路徑");
@@ -596,6 +837,14 @@ Macro.add("CE_CustomHookPanel", {
 
             if (!validatePathForRegister(path)) return;
 
+            const canSaveCustom =
+                V.debug === 1 &&
+                V.CE_allowCustomHookSave === true;
+
+            if (state.mode === "custom" && !canSaveCustom) {
+                state.saveToStore = false;
+            }
+
             const snapshot = setup.CE_makeCustomHookSnapshot(state);
 
             try {
@@ -614,10 +863,11 @@ Macro.add("CE_CustomHookPanel", {
                 setup.CE_registerCustomHookConfig(snapshot);
                 setup.CE_installAllCustomHooks();
 
-                setup.CE_addRuntimeCustomHook(snapshot);
-
                 if (state.saveToStore) {
                     setup.CE_saveCustomHook(snapshot);
+                }
+                else {
+                    setup.CE_addRuntimeCustomHook(snapshot);
                 }
 
                 alert(
@@ -628,7 +878,7 @@ Macro.add("CE_CustomHookPanel", {
                 refresh();
             }
             catch (e) {
-                console.error("[CE_CustomHookPanel]", e);
+                console.error("[cheat Extended][CustomHookPanel]", e);
                 alert("Hook 註冊失敗，詳情請看控制台");
             }
         };
@@ -642,18 +892,16 @@ Macro.add("CE_CustomHookPanel", {
             }
 
             try {
-                const hook = {
+                setup.CE_unregisterCustomHookConfig({
                     type: state.type,
                     path
-                };
-
-                setup.CE_unregisterCustomHookConfig(hook);
+                });
 
                 alert("Hook 已卸載：" + path + "\n切換 Passage 後會完全生效。");
                 refresh();
             }
             catch (e) {
-                console.error("[CE_CustomHookPanel]", e);
+                console.error("[cheat Extended][CustomHookPanel]", e);
                 alert("Hook 卸載失敗，詳情請看控制台");
             }
         };
@@ -731,6 +979,20 @@ Macro.add("CE_CustomHookPanel", {
 
             topRow.appendChild(status);
 
+            const canSaveCustom =
+                V.debug === 1 &&
+                V.CE_allowCustomHookSave === true;
+
+            if (
+                source === "runtime" &&
+                (hook.mode !== "custom" || canSaveCustom)
+            ) {
+                topRow.appendChild(makeButton("保存", function(){
+                    setup.CE_promoteRuntimeCustomHook(hook.runtimeId);
+                    refresh();
+                }, "success"));
+            }
+
             const delBtn = makeButton("刪除", function(){
                 setup.CE_unregisterCustomHookConfig(hook);
 
@@ -745,7 +1007,6 @@ Macro.add("CE_CustomHookPanel", {
             }, "danger");
 
             topRow.appendChild(delBtn);
-
             row.appendChild(topRow);
 
             const info = document.createElement("div");
@@ -761,16 +1022,66 @@ Macro.add("CE_CustomHookPanel", {
                 ` / ${hook.mode}`;
 
             row.appendChild(info);
+            
+            if (hook.mode === "custom") {
+                const codeToggle = document.createElement("div");
+
+                Object.assign(codeToggle.style, {
+                    fontSize: "0.85em",
+                    color: COLORS.info,
+                    marginTop: "5px",
+                    cursor: "pointer",
+                    userSelect: "none"
+                });
+
+                const codeBox = document.createElement("pre");
+
+                Object.assign(codeBox.style, {
+                    display: "none",
+                    fontSize: "0.8em",
+                    marginTop: "5px",
+                    padding: "5px",
+                    border: "1px solid #555",
+                    maxHeight: "140px",
+                    overflowY: "auto",
+                    whiteSpace: "pre-wrap",
+                    wordBreak: "break-word"
+                });
+
+                codeBox.textContent = hook.customCode || "(空自訂邏輯)";
+
+                let expanded = false;
+
+                codeToggle.textContent = "▸ 查看自訂邏輯";
+
+                codeToggle.onclick = function(){
+                    expanded = !expanded;
+
+                    codeToggle.textContent = expanded
+                        ? "▾ 收合自訂邏輯"
+                        : "▸ 查看自訂邏輯";
+
+                    codeBox.style.display = expanded
+                        ? "block"
+                        : "none";
+                };
+
+                row.appendChild(codeToggle);
+                row.appendChild(codeBox);
+            }
 
             const risk = document.createElement("div");
 
             Object.assign(risk.style, {
                 fontSize: "0.85em",
-                color: getHookColor(hook.type),
+                color: hook.mode === "custom" ? COLORS.danger : getHookColor(hook.type),
                 marginTop: "3px"
             });
 
-            risk.textContent = `風險：${getHookRiskText(hook.type)}`;
+            risk.textContent = hook.mode === "custom"
+                ? "風險：自訂邏輯，高風險。"
+                : `風險：${getHookRiskText(hook.type)}`;
+
             row.appendChild(risk);
 
             parent.appendChild(row);
@@ -779,24 +1090,34 @@ Macro.add("CE_CustomHookPanel", {
         const renderRuntimeHooks = (body) => {
             const block = makeSection();
 
-            const title = document.createElement("div");
-            title.style.fontWeight = "bold";
-            title.style.marginBottom = "6px";
-            title.textContent = "本次臨時 Hook";
-            block.appendChild(title);
-
             const list = Array.isArray(setup.CE_runtimeCustomHooks)
                 ? setup.CE_runtimeCustomHooks
                 : [];
 
-            if (!list.length) {
-                addHint(block, "目前沒有臨時 Hook。", "muted");
-            }
-            else {
-                list.forEach(hook => renderHookRow(block, hook, "runtime"));
-            }
+            block.appendChild(
+                makeCollapsibleTitle(
+                    "本次臨時 Hook",
+                    "CE_runtimeHookListExpanded",
+                    list.length
+                )
+            );
 
-            addHint(block, "臨時 Hook 不會保存到存檔；重載或清空後會消失。", "info");
+            if (setup.CE_runtimeHookListExpanded) {
+                if (!list.length) {
+                    addHint(block, "目前沒有臨時 Hook。", "muted");
+                }
+                else {
+                    const listWrap = makeScrollableListWrap();
+
+                    list.forEach(hook => {
+                        renderHookRow(listWrap, hook, "runtime");
+                    });
+
+                    block.appendChild(listWrap);
+                }
+
+                addHint(block, "臨時 Hook 不會自動保存；確認可用後可按「保存」加入存檔。自訂邏輯 Hook 不可保存。", "info");
+            }
 
             body.appendChild(block);
         };
@@ -804,20 +1125,34 @@ Macro.add("CE_CustomHookPanel", {
         const renderSavedHooks = (body) => {
             const block = makeSection();
 
-            const title = document.createElement("div");
-            title.style.fontWeight = "bold";
-            title.style.marginBottom = "6px";
-            title.textContent = "已保存的自訂 Hook";
-            block.appendChild(title);
+            const list = Array.isArray(V.CE_customHooks)
+                ? V.CE_customHooks
+                : [];
 
-            if (!Array.isArray(V.CE_customHooks) || V.CE_customHooks.length === 0) {
-                addHint(block, "目前沒有保存任何自訂 Hook。", "muted");
-            }
-            else {
-                V.CE_customHooks.forEach(hook => renderHookRow(block, hook, "saved"));
-            }
+            block.appendChild(
+                makeCollapsibleTitle(
+                    "已保存的自訂 Hook",
+                    "CE_savedHookListExpanded",
+                    list.length
+                )
+            );
 
-            addHint(block, "停用或刪除後，目前 Passage 可能仍保留舊 Hook；切換 Passage 後會完全清除。", "warn");
+            if (setup.CE_savedHookListExpanded) {
+                if (!list.length) {
+                    addHint(block, "目前沒有保存任何自訂 Hook。", "muted");
+                }
+                else {
+                    const listWrap = makeScrollableListWrap();
+
+                    list.forEach(hook => {
+                        renderHookRow(listWrap, hook, "saved");
+                    });
+
+                    block.appendChild(listWrap);
+                }
+
+                addHint(block, "已保存 Hook 會寫入存檔，Passage 切換後自動重新掛載。", "warn");
+            }
 
             body.appendChild(block);
         };
@@ -850,9 +1185,27 @@ Macro.add("CE_CustomHookPanel", {
 
             statusBlock.appendChild(makeSwitch("VarHook 總開關", "CE_VarHook_enable", COLORS.varhook));
             statusBlock.appendChild(makeSwitch("RawHook 分開關", "CE_RawHook_enable", COLORS.rawhook));
-            statusBlock.appendChild(makeSwitch("DeepProxyHook 分開關", "CE_DeepProxyHook_enable", COLORS.deep));
+            statusBlock.appendChild(makeSwitch("DeepProxyHook 分開關", "CE_DeepProxyHook_enable", COLORS.deep));                        
 
             addHint(statusBlock, "RawHook / DeepProxyHook 屬於高風險功能，需透過 VarHook 總開關管理。", "warn");
+
+            if (V.debug === 1) {
+
+                statusBlock.appendChild(
+                    makeSwitch(
+                        "允許保存自訂邏輯",
+                        "CE_allowCustomHookSave",
+                        COLORS.danger
+                    )
+                );
+
+                addHint(
+                    statusBlock,
+                    "高風險：允許將 Custom Hook(JavaScript) 保存至存檔",
+                    "danger"
+                );
+
+            }
 
             body.appendChild(statusBlock);
 
@@ -868,12 +1221,15 @@ Macro.add("CE_CustomHookPanel", {
 
             Object.assign(currentRisk.style, {
                 fontSize: "0.9em",
-                color: getHookColor(state.type),
+                color: state.mode === "custom" ? COLORS.danger : getHookColor(state.type),
                 fontWeight: "bold",
                 marginBottom: "6px"
             });
 
-            currentRisk.textContent = `${getHookIcon(state.type)} 目前類型：${state.type}（${getHookRiskText(state.type)}）`;
+            currentRisk.textContent = state.mode === "custom"
+                ? `${getHookIcon(state.type)} 目前類型：${state.type}（自訂邏輯，高風險）`
+                : `${getHookIcon(state.type)} 目前類型：${state.type}（${getHookRiskText(state.type)}）`;
+
             inputBlock.appendChild(currentRisk);
 
             inputBlock.appendChild(makeInput("變數路徑", "path"));
@@ -887,10 +1243,12 @@ Macro.add("CE_CustomHookPanel", {
 
             if (state.type === "VarHook") {
                 inputBlock.appendChild(makeSelect("模式", "mode", [
+                    { value: "monitor", label: "監聽變化" },                    
                     { value: "multiplier", label: "倍率模式" },
                     { value: "lock", label: "鎖定目前值" },
                     { value: "blockIncrease", label: "阻止增加" },
-                    { value: "blockDecrease", label: "阻止減少" }
+                    { value: "blockDecrease", label: "阻止減少" },
+                    { value: "custom", label: "自訂邏輯（高風險）" }
                 ]));
 
                 if (state.mode === "multiplier") {
@@ -901,8 +1259,10 @@ Macro.add("CE_CustomHookPanel", {
 
             if (state.type === "RawHook") {
                 inputBlock.appendChild(makeSelect("模式", "mode", [
+                    { value: "monitor", label: "監聽變化" },                    
                     { value: "lock", label: "鎖定目前值" },
-                    { value: "forceValue", label: "強制指定值" }
+                    { value: "forceValue", label: "強制指定值" },
+                    { value: "custom", label: "自訂邏輯（高風險）" }
                 ]));
 
                 if (state.mode === "forceValue") {
@@ -914,12 +1274,13 @@ Macro.add("CE_CustomHookPanel", {
 
             if (state.type === "DeepProxyHook") {
                 inputBlock.appendChild(makeSelect("模式", "mode", [
-                    { value: "monitor", label: "監聽變化" },
+                    { value: "monitor", label: "監聽變化" },                    
                     { value: "lock", label: "鎖定值" },
                     { value: "forceValue", label: "強制指定值" },
                     { value: "allowIncreaseOnly", label: "僅允許增加" },
                     { value: "allowDecreaseOnly", label: "僅允許減少" },
-                    { value: "blockDelete", label: "阻止刪除" }
+                    { value: "blockDelete", label: "阻止刪除" },
+                    { value: "custom", label: "自訂邏輯（高風險）" }
                 ]));
 
                 inputBlock.appendChild(makeInput("目標 fullPath", "targetPath"));
@@ -933,13 +1294,54 @@ Macro.add("CE_CustomHookPanel", {
                 addHint(inputBlock, "DeepProxyHook 高風險；maxDepth 建議 1～2，避免大型資料結構造成效能問題。", "danger");
             }
 
+            if (state.mode === "custom") {
+                inputBlock.appendChild(makeTextarea("自訂 JS 邏輯", "customCode"));
+
+                addHint(inputBlock, "自訂邏輯可使用 ctx、V、State、setup，必須 return 最終值。", "danger");
+
+                if (state.type === "VarHook") {
+                    addHint(inputBlock, "VarHook ctx：path=變數路徑、old=舊值、newValue=外部寫入值、oldNum/newNum=數字化後的值、safeOld/safeNew=不小於0的數值、diff=原始差值、adjustedDiff=倍率後差值。", "info");
+                    addHint(inputBlock, "常用：return ctx.newValue; 通過原寫入 / return ctx.old; 鎖定 / return ctx.old + ctx.adjustedDiff; 套用倍率後差值。", "muted");
+                }
+
+                if (state.type === "RawHook") {
+                    addHint(inputBlock, "RawHook ctx：path=變數路徑、old=舊值、newValue=外部寫入值。", "info");
+                    addHint(inputBlock, "常用：return ctx.newValue; 通過原寫入 / return ctx.old; 鎖定 / return '指定值'; 強制指定。", "muted");
+                }
+
+                if (state.type === "DeepProxyHook") {
+                    addHint(inputBlock, "DeepProxyHook ctx：rootPath=註冊根路徑、path=目前Proxy所在路徑、fullPath=實際變更完整路徑、prop/propName=被修改屬性、depth=目前深度、target=被修改物件、oldValue=舊值、newValue=外部寫入值。", "info");
+                    addHint(inputBlock, "常用：return ctx.newValue; 通過原寫入 / return ctx.oldValue; 鎖定 / if (ctx.fullPath !== 'NPCList.0.health') return ctx.newValue; 只處理指定路徑。", "muted");
+                }
+            }
+            
+            if (
+                V.debug === 1 &&
+                V.CE_allowCustomHookSave
+            ) {
+                addHint(
+                    inputBlock,
+                    "保存自訂邏輯會將 JavaScript 程式碼寫入存檔。",
+                    "danger"
+                );
+
+                addHint(
+                    inputBlock,
+                    "讀檔時會自動重新建立並執行該 Hook。",
+                    "danger"
+                );
+
+                addHint(
+                    inputBlock,
+                    "僅建議模組開發與除錯用途。",
+                    "danger"
+                );
+            }
+
             inputBlock.appendChild(makeSaveSwitch());
             addHint(inputBlock, "保存後會寫入 V.CE_customHooks；未保存則只會出現在本次臨時 Hook 清單。", state.saveToStore ? "warn" : "muted");
 
             body.appendChild(inputBlock);
-
-            renderRuntimeHooks(body);
-            renderSavedHooks(body);
 
             const opBlock = makeSection();
 
@@ -955,6 +1357,9 @@ Macro.add("CE_CustomHookPanel", {
             addHint(opBlock, "卸載為軟卸載；目前 Passage 可能仍保留舊 setter / Proxy，切換 Passage 後等同完全卸載。", "warn");
 
             body.appendChild(opBlock);
+
+            renderRuntimeHooks(body);
+            renderSavedHooks(body);
         }
 
         render();
@@ -1553,7 +1958,7 @@ Macro.add("CE_VariableExplorer", {
             }
             catch (e) {}
 
-            console.log("[CE Variable Explorer copy]", text);
+            console.log("[cheat Extended][Variable Explorer copy]", text);
             alert("此環境可能不支援剪貼簿，已輸出到控制台：\n" + text);
         };
 
