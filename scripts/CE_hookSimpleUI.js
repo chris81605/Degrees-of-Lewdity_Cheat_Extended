@@ -6,7 +6,7 @@ CE Custom Hook 保存 / 重建工具
 3. 臨時 Hook 於 setup.CE_runtimeCustomHooks
 4. 支援監聽模式 monitor
 5. 支援臨時自訂邏輯 custom
-6. custom 模式不允許保存到存檔
+6. custom 模式預設不允許保存到存檔
 ==============================*/
 
 (function(){
