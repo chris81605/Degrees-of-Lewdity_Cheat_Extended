@@ -1,5 +1,5 @@
+        <<set $stall_amount to random(11, 30)>>
+	<</if>>
     <<if $black_storeswich is 1>>
         <<set $stall_amount to random($black_store_FIX_MIN, $black_store_FIX_MAX)>>
     <</if>>
-    <<if $stall_amount gte $plants[$stall_plant].amount>>
-	     
