@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.20(dev260619)",
+  "version": "1.20(dev260626)",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
@@ -36,7 +36,8 @@
     "scripts/CE_TransformationDG.js",
     "scripts/CE_clothTypeManager.js",
     "scripts/CE_customerSkinColor.js",
-    "scripts/CE_customerEyesColor.js",   
+    "scripts/CE_customerEyesColor.js",
+    "scripts/CE_inventory_helper.js",   
     "scripts/CE_CombatSkill.js"
   ],
   "tweeFileList": [
@@ -46,7 +47,6 @@
     "game/CE_featUnlocker.twee",
     "game/CE_milk_mod.twee",
     "game/CE_test_widget.twee",
-    "game/CE_inventory_helper.twee",
     "game/Ce_tattoo_widget.twee",
     "game/Widgets cheat_extended.twee",
     "game/CE_Wardrobe.twee",
@@ -128,7 +128,7 @@
         },
         {
           "passage": "Widgets Market",
-          "findString": "\t<<if $stall_amount gte $plants[$stall_plant].amount>>",
+          "findString": "<<set $stall_amount to random(11, 30)>>\n\t<</if>>",
           "replaceFile": "addon-replace/Widgets Market_2.txt",
           "all": true,
           "comments": "黑心商店"
