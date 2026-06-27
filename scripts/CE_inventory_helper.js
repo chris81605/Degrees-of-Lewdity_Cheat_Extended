@@ -3,8 +3,8 @@
  * Full DOM API Version
  *
  * 兼容：
- * - 新版：setup.foodstuff + $foodstuff
- * - 舊版：setup.plants + $plants
+ * - 新版：setup.foodstuff + $foodstuff，分類欄位 category
+ * - 舊版：setup.plants + $plants，分類欄位 type
  * ============================== */
 
 (function () {
@@ -12,18 +12,57 @@
 
     setup.CE_foodCompat = {
         getDbInfo() {
-            const candidates = [
-                { name: "foodstuff", db: setup.foodstuff, storeName: "foodstuff", isNewVersion: true },
-                { name: "plants", db: setup.plants, storeName: "plants", isNewVersion: false }
-            ];
+            
+            /*
+            * 注意：
+            * maplebirch 框架在舊版遊戲也可能預先建立空的 setup.foodstuff。
+            * 因此不能只判斷是否存在，必須確認資料庫內至少有一筆
+            * 合法物品（category/type）後才能判定遊戲版本。
+            */
+            function hasValidDb(db, typeKey) {
+                if (!db || typeof db !== "object") return false;
 
-            for (const c of candidates) {
-                if (!c.db) continue;
-                for (const id in c.db) {
-                    const item = c.db[id];
-                    if (item && item.type !== undefined) return c;
+                for (const id in db) {
+                    const item = db[id];
+                    if (!item || typeof item !== "object") continue;
+
+                    if (item[typeKey] !== undefined) {
+                        return true;
+                    }
                 }
+
+                return false;
             }
+
+            /*
+            * 新版：
+            * setup.foodstuff 必須真的有資料，且至少一筆有 category。
+            * 避免框架在舊版也建立空 foodstuff，造成誤判。
+            */
+            if (hasValidDb(setup.foodstuff, "category")) {
+                return {
+                    name: "foodstuff",
+                    db: setup.foodstuff,
+                    storeName: "foodstuff",
+                    isNewVersion: true,
+                    typeKey: "category"
+                };
+            }
+
+            /*
+            * 舊版：
+            * setup.plants 必須真的有資料，且至少一筆有 type。
+            */
+        if (hasValidDb(setup.plants, "type")) {
+                return {
+                    name: "plants",
+                    db: setup.plants,
+                    storeName: "plants",
+                    isNewVersion: false,
+                    typeKey: "type"
+                };
+            }
+
             return null;
         },
 
@@ -37,12 +76,23 @@
 
         store() {
             const name = this.storeName();
-            if (!State.variables[name]) State.variables[name] = {};
+
+            if (!State.variables[name]) {
+                State.variables[name] = {};
+            }
+
             return State.variables[name];
         },
 
         isNewVersion() {
             return this.getDbInfo()?.isNewVersion || false;
+        },
+
+        getItemType(item) {
+            const info = this.getDbInfo();
+            if (!info || !item) return "未分類";
+
+            return item[info.typeKey] ?? "未分類";
         },
 
         getTypes() {
@@ -52,7 +102,12 @@
             for (const id in db) {
                 const item = db[id];
                 if (!item) continue;
-                if (!allTypes.includes(item.type)) allTypes.push(item.type);
+
+                const type = this.getItemType(item);
+
+                if (!allTypes.includes(type)) {
+                    allTypes.push(type);
+                }
             }
 
             return allTypes;
@@ -64,7 +119,10 @@
             for (const id in db) {
                 const item = db[id];
                 if (!item) continue;
-                if (item.type === type) callback(id, item);
+
+                if (this.getItemType(item) === type) {
+                    callback(id, item);
+                }
             }
         },
 
@@ -225,10 +283,31 @@
                     id,
                     item.name,
                     item.plural,
-                    item.singular
+                    item.singular,
+                    item.displayName,
+                    item.label
                 ].filter(Boolean).join(" ").toLowerCase();
 
                 return text.includes(keyword);
+            }
+
+            function getItemName(id, item) {
+                return item.plural ||
+                    item.name ||
+                    item.singular ||
+                    item.displayName ||
+                    item.label ||
+                    id;
+            }
+
+            function getIconSrc(item) {
+                if (!item.icon) return "";
+
+                if (String(item.icon).includes("/")) {
+                    return item.icon;
+                }
+
+                return "img/misc/icon/tending/" + item.icon;
             }
 
             function renderGrid() {
@@ -247,19 +326,23 @@
                         "display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%;"
                     );
 
-                    const img = document.createElement("img");
-                    img.className = "tending_icon";
-                    img.width = 32;
-                    img.src = "img/misc/icon/tending/" + item.icon;
+                    const iconSrc = getIconSrc(item);
 
-                    const itemName = item.plural || item.name || id;
+                    if (iconSrc) {
+                        const img = document.createElement("img");
+                        img.className = "tending_icon";
+                        img.width = 32;
+                        img.src = iconSrc;
+                        top.appendChild(img);
+                    }
+
+                    const itemName = getItemName(id, item);
 
                     const link = makeLink(`${itemName}（+${amount}）`, () => {
                         food.give(id, amount);
                         renderGrid();
                     });
 
-                    top.appendChild(img);
                     top.appendChild(link);
 
                     const amountText = span(null);
