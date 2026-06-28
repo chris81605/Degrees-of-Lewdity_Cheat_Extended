@@ -300,14 +300,24 @@
                     id;
             }
 
+            /*
+            * 官方目前所有 icon 皆位於 tending。
+            * 若未來依 prop_folder 分類，只需將 usePropFolder 改為 true。
+            */
+            const usePropFolder = false;
+
             function getIconSrc(item) {
-                if (!item.icon) return "";
+                if (!item || !item.icon) return "";
 
                 if (String(item.icon).includes("/")) {
                     return item.icon;
+    }
+
+                if (usePropFolder) {
+                    return `img/misc/icon/${item.prop_folder || "tending"}/${item.icon}`;
                 }
 
-                return "img/misc/icon/tending/" + item.icon;
+                return `img/misc/icon/tending/${item.icon}`;
             }
 
             function renderGrid() {
