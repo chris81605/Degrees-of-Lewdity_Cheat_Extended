@@ -1,6 +1,5 @@
 // 右側折疊狀態欄icon入口
 // 抄作業就完事了！
-
 function CEiconClicked() {
     $.wiki("<<CEoverlayReplace \"CEcheatMenu\">>");
 }
@@ -18,6 +17,7 @@ function CEiconSFdetect(){
     //console.warn(`[cheat Extended][CEiconSFdetect] 🧾 V.CE_SFflag = ${V.CE_SFflag}`);
 }
 CEiconSFdetect();
+
 // 用於CE主畫面顯示的安全渲染函數，避免容器不存在的情況仍然渲染導致錯誤
 function CE_renderSettings(wikiText) {
     const target = document.getElementById('CE_settingsDiv') || window.CE_activeSettingsDiv;
@@ -242,6 +242,10 @@ Macro.add('CE_CheatExtendedVersion', {
     }
 });
 
+/* =========================================
+ * 作弊拓展目錄註冊
+ * 用於註冊各個功能設定UI
+ * ========================================= */
 (() => {
     // CE_TabManager 物件：管理所有自訂 tab 的註冊、渲染、排序等功能
     const CE_TabManager = {
@@ -779,3 +783,436 @@ Macro.add('cheat_extended', {
  * - cheat_extended 宏只需單層 requestAnimationFrame
  * - title_cheatExtendedMenu 宏需兩層 requestAnimationFrame 確保 overlay DOM 已渲染完成
  ****************************************/
+ 
+/*=========================================
+ Cheat Expansion - Options System
+
+ 功能：
+ 1. 提供通用設定頁 UI（Macro.add）
+ 2. 提供設定項目註冊 API
+ 3. 支援其他模組自行註冊設定
+ 4. 自動初始化存檔預設值
+ 5. 使用 Renderer Factory 生成不同類型控制項
+
+ 支援類型：
+ - checkbox
+ - select
+ - number
+ - text
+ - button
+ - custom
+
+ 使用方式：
+ setup.CE_registerOption({...});
+ setup.CE_registerOptions([...]);
+
+ Twine：
+ <<CE_options>>
+=========================================*/
+
+(function () {
+    "use strict";
+
+    /* =====================
+     * 設定註冊區
+     * ===================== */
+
+    setup.CE_options = setup.CE_options || [];
+
+    // 註冊單一設定；同 key 會覆蓋，避免重複
+    setup.CE_registerOption = function (option) {
+        if (!option || !option.type) return;
+
+        if (option.key) {
+            const index = setup.CE_options.findIndex(o => o.key === option.key);
+
+            if (index >= 0) {
+                setup.CE_options[index] = option;
+                return;
+            }
+        }
+
+        setup.CE_options.push(option);
+    };
+
+    // 批次註冊設定
+    setup.CE_registerOptions = function (options) {
+        if (!Array.isArray(options)) return;
+        options.forEach(setup.CE_registerOption);
+    };
+
+    /* =====================
+     * 工具函式
+     * ===================== */
+
+    // 深拷貝預設值，避免 object / array 共用引用
+    function cloneDefault(value) {
+        if (Array.isArray(value)) return value.slice();
+
+        if (value && typeof value === "object") {
+            return JSON.parse(JSON.stringify(value));
+        }
+
+        return value;
+    }
+
+    // 初始化存檔變數
+    function initDefault(option, V) {
+        if (!option.key) return;
+
+        if (V[option.key] === undefined) {
+            V[option.key] = cloneDefault(option.default);
+        }
+    }
+
+    // 建立 tooltip
+    function makeTooltip(option) {
+        if (!option.tooltip) return null;
+
+        const mouse = document.createElement("mouse");
+        mouse.className = "tooltip linkBlue";
+        mouse.textContent = "(?)";
+
+        const span = document.createElement("span");
+
+        if (option.tooltipClass) {
+            span.className = option.tooltipClass;
+        }
+
+        span.innerHTML = option.tooltip;
+        mouse.appendChild(span);
+
+        return mouse;
+    }
+
+    // 建立描述區
+    function makeDesc(option) {
+        const desc = document.createElement("div");
+        desc.className = "small-description";
+        desc.innerHTML = option.desc ?? "";
+        return desc;
+    }
+
+    /* =====================
+     * 控制項 Renderer
+     * ===================== */
+
+    setup.CE_optionRenderers = setup.CE_optionRenderers || {};
+
+    setup.CE_optionRenderers.checkbox = function (option, ctx) {
+        const { V } = ctx;
+
+        const label = document.createElement("label");
+
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.checked = !!V[option.key];
+
+        input.addEventListener("change", () => {
+            V[option.key] = input.checked;
+            option.onChange?.(input.checked, option, ctx);
+        });
+
+        const span = document.createElement("span");
+        span.innerHTML = option.label ?? option.key;
+
+        label.appendChild(input);
+        label.appendChild(span);
+
+        return label;
+    };
+
+    setup.CE_optionRenderers.select = function (option, ctx) {
+        const { V } = ctx;
+
+        const label = document.createElement("label");
+        label.appendChild(document.createTextNode(option.label ?? ""));
+
+        const select = document.createElement("select");
+
+        (option.options ?? []).forEach(opt => {
+            const el = document.createElement("option");
+            el.value = opt.value;
+            el.textContent = opt.text;
+            el.selected = V[option.key] === opt.value;
+            select.appendChild(el);
+        });
+
+        select.addEventListener("change", () => {
+            V[option.key] = select.value;
+            option.onChange?.(select.value, option, ctx);
+        });
+
+        label.appendChild(select);
+
+        return label;
+    };
+
+    setup.CE_optionRenderers.number = function (option, ctx) {
+        const { V } = ctx;
+
+        const label = document.createElement("label");
+        label.appendChild(document.createTextNode(option.label ?? ""));
+
+        const input = document.createElement("input");
+        input.type = "number";
+        input.value = Number(V[option.key] ?? option.default ?? 0);
+
+        if (option.min !== undefined) input.min = option.min;
+        if (option.max !== undefined) input.max = option.max;
+        if (option.step !== undefined) input.step = option.step;
+
+        input.addEventListener("change", () => {
+            let value = Number(input.value);
+
+            if (Number.isNaN(value)) {
+                value = Number(option.default ?? 0);
+            }
+
+            if (option.min !== undefined) value = Math.max(Number(option.min), value);
+            if (option.max !== undefined) value = Math.min(Number(option.max), value);
+
+            V[option.key] = value;
+            input.value = value;
+
+            option.onChange?.(value, option, ctx);
+        });
+
+        label.appendChild(input);
+
+        return label;
+    };
+
+    setup.CE_optionRenderers.text = function (option, ctx) {
+        const { V } = ctx;
+
+        const label = document.createElement("label");
+        label.appendChild(document.createTextNode(option.label ?? ""));
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.value = V[option.key] ?? "";
+
+        if (option.placeholder) {
+            input.placeholder = option.placeholder;
+        }
+
+        input.addEventListener("change", () => {
+            V[option.key] = input.value;
+            option.onChange?.(input.value, option, ctx);
+        });
+
+        label.appendChild(input);
+
+        return label;
+    };
+
+    setup.CE_optionRenderers.button = function (option, ctx) {
+        const label = document.createElement("label");
+
+        const button = document.createElement("button");
+        button.textContent = option.label ?? "執行";
+
+        button.addEventListener("click", () => {
+            option.onClick?.(option, ctx);
+        });
+
+        label.appendChild(button);
+
+        return label;
+    };
+
+    setup.CE_optionRenderers.custom = function (option, ctx) {
+        option.render?.(ctx);
+        return null;
+    };
+
+    /* =====================
+     * CE_options Macro
+     * ===================== */
+
+    Macro.add("CE_options", {
+        handler() {
+            const V = State.variables;
+
+            const root = document.createElement("div");
+
+            const header = document.createElement("div");
+            header.className = "settingsHeader options";
+
+            const title = document.createElement("span");
+            title.className = "gold";
+            title.textContent = "--作弊拓展選項--";
+
+            header.appendChild(title);
+            root.appendChild(header);
+
+            const grid = document.createElement("div");
+            grid.className = "settingsGrid";
+            root.appendChild(grid);
+
+            const ctx = {
+                V,
+                root,
+                grid,
+                macro: this,
+            };
+
+            // 建立單一設定項
+            function makeItem(option) {
+                initDefault(option, V);
+
+                const item = document.createElement("div");
+                item.className = option.className ?? "settingsToggleItem";
+
+                item.appendChild(makeDesc(option));
+
+                const itemCtx = {
+                    ...ctx,
+                    item,
+                    option,
+                };
+
+                const renderer = setup.CE_optionRenderers[option.type];
+
+                if (renderer) {
+                    const element = renderer(option, itemCtx);
+
+                    if (element) {
+                        item.appendChild(element);
+                    }
+                } else {
+                    const warn = document.createElement("div");
+                    warn.className = "red";
+                    warn.textContent = `未知設定類型：${option.type}`;
+                    item.appendChild(warn);
+                }
+
+                const tooltip = makeTooltip(option);
+
+                if (tooltip) {
+                    item.appendChild(tooltip);
+                }
+
+                item.appendChild(document.createElement("hr"));
+                grid.appendChild(item);
+            }
+
+            // 建立所有已註冊設定
+            (setup.CE_options ?? []).forEach(makeItem);
+
+            /* =====================
+             * 保存按鈕
+             * ===================== */
+
+            const saveWrap = document.createElement("div");
+
+            const saveBtn = document.createElement("button");
+            saveBtn.textContent = "保存設置";
+
+            saveBtn.addEventListener("click", () => {
+                Renderer?.Canvas?.queueRender?.();
+                State.display(State.passage);
+            });
+
+            saveWrap.appendChild(saveBtn);
+            grid.appendChild(saveWrap);
+
+            this.output.appendChild(root);
+        },
+    });
+
+})();
+
+/*=========================================
+ Cheat Expansion - Default Options
+=========================================*/
+
+(function () {
+    "use strict";
+
+    setup.CE_registerOptions([
+        {
+            type: "checkbox",
+            key: "CE_forceEnableCheat",
+            default: false,
+            desc: "強制啟用作弊模式",
+            label: "強制啟用作弊",
+            tooltip: "啟用原版的作弊模式就不需要開，否則會出現兩個作弊按鈕。",
+        },
+        {
+            type: "checkbox",
+            key: "CE_sideBarIconEnable",
+            default: false,
+            desc: "啟用作弊拓展側邊Icon按鈕",
+            label: "啟用側邊Icon按鈕",
+            tooltip: "啟用後左側狀態欄收合時會出現作弊拓展的Icon按鈕",
+        },
+        {
+            type: "checkbox",
+            key: "CE_hideCEToggleDisable",
+            default: false,
+            desc: `<span class="red">禁用</span>作弊拓展狀態欄操作介面`,
+            label: `<span class="red">禁用</span>狀態欄操作介面`,
+            tooltip: "左側言靈集面板、左側快捷及空間節點功能勾選後將失去操作介面",
+            tooltipClass: "red",
+        },
+        {
+            type: "checkbox",
+            key: "CE_menuSortEnable",
+            default: false,
+            desc: "設定作弊拓展目錄中的標籤順序與顯示狀態",
+            label: "顯示作弊拓展標籤設定頁",
+            tooltip: "在作弊拓展目錄最後新增「設定」標籤，可調整各標籤的顯示／隱藏與順序",
+        },
+        {
+            type: "checkbox",
+            key: "CE_featBypass",
+            default: false,
+            desc: `
+                無視遊戲限制，強制啟用成就系統<br>
+                目前無視下列條件：<br>
+                作弊模式<br>
+                調試模式
+            `,
+            label: "強制啟用成就系統",
+            tooltip: "啟用後即使開啟作弊模式、曾經使用作弊成就被鎖、開啟調試模式等情況也能獲取成就",
+        },
+        {
+            type: "checkbox",
+            key: "CE_hideUiBarToggleEnable",
+            default: false,
+            desc: `
+                隱藏畫布上的小箭頭、溫度計、防狼噴霧及避孕套 icon，讓畫面更乾淨<br>
+                （不要問這和作弊有什麼關系，問就是因為開發者懶，不想從頭再打包一個模組）
+            `,
+            label: "隱藏左側狀態開啟/關閉按鈕",
+            tooltip: "注意，開啟後手機端只能用滑動的方式開啟左側狀態欄（因為按鈕不見了）",
+            tooltipClass: "red",
+        },
+        {
+            type: "select",
+            key: "CE_HeadMaskMode",
+            default: "compat",
+            desc: `
+                頭部遮罩相容模式<br>
+                用於修正新版頭部遮罩導致舊版頭部服裝模組顯示異常的問題。
+            `,
+            label: "頭部遮罩模式：",
+            options: [
+                { value: "compat", text: "相容模式：只保留手持物遮罩" },
+                { value: "vanilla", text: "原版模式：使用新版完整頭部遮罩" },
+                { value: "off", text: "關閉模式：完全不使用頭部遮罩" },
+            ],
+            tooltip: `
+                相容模式建議給舊版服裝模組使用。<br>
+                原版模式會套用新版 headMask。<br>
+                關閉模式會完全不套用頭部遮罩。
+            `,
+            onChange() {
+                Renderer?.Canvas?.queueRender?.();
+            },
+        },
+    ]);
+
+})();
