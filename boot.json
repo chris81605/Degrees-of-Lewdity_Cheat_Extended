@@ -37,7 +37,8 @@
     "scripts/CE_clothTypeManager.js",
     "scripts/CE_customerSkinColor.js",
     "scripts/CE_customerEyesColor.js",
-    "scripts/CE_inventory_helper.js",   
+    "scripts/CE_inventory_helper.js",
+    "scripts/CE_HeadMaskCompat.js",   
     "scripts/CE_CombatSkill.js"
   ],
   "tweeFileList": [
