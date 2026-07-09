@@ -53,7 +53,7 @@
             * 舊版：
             * setup.plants 必須真的有資料，且至少一筆有 type。
             */
-        if (hasValidDb(setup.plants, "type")) {
+            if (hasValidDb(setup.plants, "type")) {
                 return {
                     name: "plants",
                     db: setup.plants,

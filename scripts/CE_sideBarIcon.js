@@ -90,21 +90,17 @@ CE Statebox UI - JS Rebuild
 
             const createButton = (label, onClick) => {
 
-                const btn = document.createElement("span");
+                const btn = document.createElement("button");
 
-                btn.className = "dol-btn";
+                btn.type = "button";
+                btn.className = "CE-statebox-toggle-btn";
                 btn.textContent = label;
                 btn.onclick = onClick;
 
-                Object.assign(btn.style, {
-                    cursor: "pointer",
-                    display: "inline-block"
-                });
-
                 return btn;
-
+            
             };
-
+            
             const renderWiki = (parent, wikiCode, errorText) => {
 
                 const box = document.createElement("div");
@@ -151,7 +147,7 @@ CE Statebox UI - JS Rebuild
 
                 root.replaceChildren();
 
-                const toggleWrap = createEl("div", "dol-btn fit");
+                const toggleWrap = createEl("div", "CE-statebox-toggle-wrap");
                 const listWrap = document.createElement("div");
 
                 toggleWrap.id = "CE_Toggle";

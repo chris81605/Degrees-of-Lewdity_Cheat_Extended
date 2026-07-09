@@ -1,5 +1,5 @@
 /*==============================
-CE Yanling Pro
+CE Yanling +
 ==============================*/
 
 (function () {
@@ -92,6 +92,12 @@ CE Yanling Pro
         try {
             const frag = document.createDocumentFragment();
             new Wikifier(frag, text(code));
+            
+            const errorNode = frag.querySelector?.(".error");
+            if (errorNode) {
+                result.ok = false;
+                result.error = errorNode.textContent || "Wiki 渲染錯誤";
+            }
         }
         catch (e) {
             result.ok = false;
@@ -608,27 +614,72 @@ CE Yanling Pro
 
             const code = text(item?.code ?? item);
 
+            box.classList.remove("CE-YL-error");
+            box.replaceChildren();
+
             if (item && item.valid === false) {
                 box.classList.add("CE-YL-error");
 
-                const msg = this.createEl("div", "red", "[語法錯誤，未執行]");
+                const msg = this.createEl("div", "red", "[語法錯誤]");
                 const raw = this.createEl("div", "CE-YL-raw-code", code);
 
                 box.replaceChildren(msg, raw);
-                return;
+                return false;
             }
+
+            const temp = document.createElement("div");
 
             try {
-                $(box).empty().wiki(code);
+                $(temp).wiki(code);
 
-                if (box.querySelector(".error")) {
+                const errorNode = temp.querySelector(".error");
+
+                if (errorNode) {
                     box.classList.add("CE-YL-error");
+
+                    const msg = this.createEl(
+                        "div",
+                        "red",
+                        "[語法錯誤]"
+                    );
+
+                    const errorText = this.createEl(
+                        "div",
+                        "red",
+                        errorNode.textContent || "未知錯誤"
+                    );
+
+                    const raw = this.createEl(
+                        "div",
+                        "CE-YL-raw-code",
+                        code
+                    );
+
+                    box.replaceChildren(msg, errorText, raw);
+                    return false;
                 }
+
+                while (temp.firstChild) {
+                    box.appendChild(temp.firstChild);
+                }
+
+                return true;
             }
             catch (e) {
-                console.error("[CE Yanling] 言靈渲染失敗：", e);
+                console.error("[cheat Extended][Yanling] 言靈錯誤：", e);
+
                 box.classList.add("CE-YL-error");
-                box.textContent = "[言靈渲染失敗] " + (e?.message || String(e));
+
+                const msg = this.createEl(
+                    "div",
+                    "red",
+                    "[言靈錯誤，未插入] " + (e?.message || String(e))
+                );
+
+                const raw = this.createEl("div", "CE-YL-raw-code", code);
+
+                box.replaceChildren(msg, raw);
+                return false;
             }
 
         },
@@ -666,7 +717,7 @@ CE Yanling Pro
             root.replaceChildren();
 
             const header = H.createEl("div", "dol-header");
-            header.appendChild(H.createEl("span", "dol-title gold", "言靈集 Pro"));
+            header.appendChild(H.createEl("span", "dol-title gold", "言靈集+"));
             root.appendChild(header);
 
             const body = H.createEl("div", "dol-body");
@@ -687,7 +738,7 @@ CE Yanling Pro
             search.placeholder = "搜尋言靈名稱或內容";
             search.value = this.keyword;
 
-            search.addEventListener("input", e => {
+            search.addEventListener("change", e => {
                 this.keyword = e.target.value;
                 this.render(root);
             });
@@ -943,7 +994,7 @@ CE Yanling Pro
             search.placeholder = "搜尋言靈";
             search.value = this.keyword;
 
-            search.addEventListener("input", e => {
+            search.addEventListener("change", e => {
                 this.keyword = e.target.value;
                 this.render(root);
             });

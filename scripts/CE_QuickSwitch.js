@@ -416,11 +416,30 @@ CE Quick Switch
             }
 
             const root = document.createElement("div");
-
             this.output.appendChild(root);
 
-            root.appendChild(createEl("span", "gold", "快捷"));
-            root.appendChild(document.createElement("br"));
+            const wrap = createEl("div", "dol-settings dol-shadow");
+            root.appendChild(wrap);
+
+            const details = document.createElement("details");
+            details.className = "settingsToggleItem";
+            
+            if (V.CE_QS_simple_open === undefined) {
+                V.CE_QS_simple_open = true;
+            }
+
+            details.open = !!V.CE_QS_simple_open;
+
+            details.addEventListener("toggle", () => {
+                V.CE_QS_simple_open = details.open;
+            });
+
+            const summary = document.createElement("summary");
+            summary.appendChild(createEl("span", "gold", "快捷"));
+            details.appendChild(summary);
+
+            const body = createEl("div", "dol-body");
+            details.appendChild(body);
 
             const defaultGrid = createEl("div", "CE-QS-quick-grid");
 
@@ -434,13 +453,13 @@ CE Quick Switch
 
             });
 
-            root.appendChild(defaultGrid);
+            body.appendChild(defaultGrid);
 
             const quickItems = getQuickItems();
 
             if (quickItems.length > 0) {
 
-                root.appendChild(document.createElement("hr"));
+                body.appendChild(document.createElement("hr"));
 
                 const customGrid = createEl("div", "CE-QS-quick-grid");
 
@@ -454,9 +473,11 @@ CE Quick Switch
 
                 });
 
-                root.appendChild(customGrid);
+                body.appendChild(customGrid);
 
             }
+
+            wrap.appendChild(details);
 
         }
 
@@ -643,7 +664,7 @@ CE Quick Switch
                 search.placeholder = "搜尋言靈名稱或內容";
                 search.value = state.keyword;
 
-                search.addEventListener("input", e => {
+                search.addEventListener("change", e => {
                     state.keyword = e.target.value;
                     state.addOpen = true;
                     render();

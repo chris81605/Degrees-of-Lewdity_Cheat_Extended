@@ -1,5 +1,5 @@
 /*==============================
-CE Teleportation Pro
+CE Teleportation+
 --------------------------------
 1. 新版資料：V.teleportation_db
 2. 舊版相容：V.teleportation / V.teleportation_name
@@ -620,7 +620,7 @@ CE Teleportation Pro
             root.replaceChildren();
 
             const header = H.createEl("div", "dol-header");
-            header.appendChild(H.createEl("span", "dol-title gold", "空間節點 Pro"));
+            header.appendChild(H.createEl("span", "dol-title gold", "空間節點+"));
             root.appendChild(header);
 
             const body = H.createEl("div", "dol-body");
@@ -656,7 +656,7 @@ CE Teleportation Pro
             search.placeholder = "搜尋節點名稱或 Passage";
             search.value = this.keyword;
 
-            search.addEventListener("input", e => {
+            search.addEventListener("change", e => {
                 this.keyword = e.target.value;
                 this.render(root);
             });
