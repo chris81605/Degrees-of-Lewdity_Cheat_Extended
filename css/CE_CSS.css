@@ -183,6 +183,49 @@ margin: 0;                /* 消除額外 margin */
     background-color: transparent !important;
 }
 
+/*側邊欄迷你ui樣式*/
+.CE-statebox-toggle-wrap {
+    margin: 0.35em 0;
+}
+
+.CE-statebox-toggle-btn {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35em;
+
+    padding: 0.35em 0.85em;
+    border: 1px solid #b88a2a;
+    border-radius: 999px;
+
+    background: linear-gradient(to bottom, #fff4c2, #e3b64d);
+    color: #3b2600;
+
+    font-weight: bold;
+    font-size: 0.95em;
+    line-height: 1.4;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.6),
+        0 1px 3px rgba(0,0,0,0.25);
+}
+
+.CE-statebox-toggle-btn::before {
+    content: "⚙";
+    font-size: 0.95em;
+}
+
+.CE-statebox-toggle-btn:hover {
+    filter: brightness(1.08);
+}
+
+.CE-statebox-toggle-btn:active {
+    transform: translateY(1px);
+    box-shadow:
+        inset 0 1px 3px rgba(0,0,0,0.25),
+        0 1px 1px rgba(0,0,0,0.2);
+}
+
 
 /*新的ui*/
 
