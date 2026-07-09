@@ -159,6 +159,10 @@ CE Statebox UI - JS Rebuild
                     refresh();
 
                 });
+                
+                if (V.CE_Toggle) {
+                    toggleBtn.classList.add("CE-open");
+                }
 
                 toggleWrap.appendChild(toggleBtn);
 
@@ -181,12 +185,12 @@ CE Statebox UI - JS Rebuild
                 renderWiki(list, "<<CE_QuickPanel>>", "CE_QuickPanel 渲染失敗");
 
                 if (V.swich_teleportation) {
-                    list.appendChild(document.createElement("hr"));
+                    // list.appendChild(document.createElement("hr"));
                     renderWiki(list, "<<CE_TeleportationSimplePanel>>", "空間節點 UI 渲染失敗");
                 }
 
                 if (V.swich_yanling) {
-                    list.appendChild(document.createElement("hr"));
+                    // list.appendChild(document.createElement("hr"));
                     renderWiki(list, "<<CE_YanlingSimplePanel>>", "言靈集 UI 渲染失敗");
                 }
 
