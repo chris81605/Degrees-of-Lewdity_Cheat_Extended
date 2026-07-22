@@ -1,4 +1,5 @@
-    <<set _pageSize to 20>>
+    <<set _pageSize to Number($CE_wardrobePageSize) || 20>>
+    <<set _pageSize to Math.max(20, Math.floor(_pageSize))>>
 
     /* 用 JS 建立真正可顯示的衣服索引清單，避免 Twee for 超過 999 */
     <<run
