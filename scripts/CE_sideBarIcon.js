@@ -184,13 +184,11 @@ CE Statebox UI - JS Rebuild
 
                 renderWiki(list, "<<CE_QuickPanel>>", "CE_QuickPanel 渲染失敗");
 
-                if (V.swich_teleportation) {
-                    // list.appendChild(document.createElement("hr"));
+                if (V.swich_teleportation) {                   
                     renderWiki(list, "<<CE_TeleportationSimplePanel>>", "空間節點 UI 渲染失敗");
                 }
 
-                if (V.swich_yanling) {
-                    // list.appendChild(document.createElement("hr"));
+                if (V.swich_yanling) {                    
                     renderWiki(list, "<<CE_YanlingSimplePanel>>", "言靈集 UI 渲染失敗");
                 }
 
@@ -1212,6 +1210,24 @@ Macro.add('cheat_extended', {
             onChange() {
                 Renderer?.Canvas?.queueRender?.();
             },
+        },
+        {
+            type: "number",
+            key: "CE_wardrobePageSize",
+            default: 20,
+            min: 1,
+            max: 200,
+            step: 1,
+            desc: `
+                設定衣櫃清單每頁顯示的服裝數量。<br>
+                數量越大，單頁顯示的服裝項目越多，可能增加頁面載入時間。
+            `,
+            label: "衣櫃每頁顯示數量：",
+            tooltip: `
+                預設為 20。<br>
+                建議手機端設定在 20～50 之間。                
+            `,
+    
         },
     ]);
 
