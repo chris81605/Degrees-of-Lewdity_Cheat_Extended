@@ -1,17 +1,99 @@
 :: CE_safeNumberSlider [widget]
 
 <<widget "CE_safeNumberSlider">>
+	<!-- =====================
+	     參數讀取
+	     ===================== -->
+
 	<<set _CE_sliderPath to _args[0]>>
-	<<set _CE_sliderValue to _args[1]>>
+	<<set _CE_sliderRawValue to _args[1]>>
 	<<set _CE_sliderMin to Number(_args[2])>>
 	<<set _CE_sliderMax to Number(_args[3])>>
 	<<set _CE_sliderStep to Number(_args[4])>>
-	<<set _CE_sliderNumber to Number(_CE_sliderValue)>>
 
-	<<if Number.isFinite(_CE_sliderNumber)
-		and _CE_sliderNumber >= _CE_sliderMin
-		and _CE_sliderNumber <= _CE_sliderMax>>
+	<!-- 保存原始正常範圍 -->
+	<<set _CE_sliderNormalMin to _CE_sliderMin>>
+	<<set _CE_sliderNormalMax to _CE_sliderMax>>
 
+	<!-- =====================
+	     嚴格檢查當前值
+
+	     只接受：
+	     1. 有限的 number
+	     2. 非空白且可轉為有限數字的 string
+
+	     拒絕：
+	     undefined、null、空字串、布林值、
+	     陣列、物件、NaN、Infinity 等
+	     ===================== -->
+
+	<<set _CE_sliderValueValid to
+		(
+			typeof _CE_sliderRawValue is "number"
+			and Number.isFinite(_CE_sliderRawValue)
+		)
+		or
+		(
+			typeof _CE_sliderRawValue is "string"
+			and _CE_sliderRawValue.trim() is not ""
+			and Number.isFinite(Number(_CE_sliderRawValue))
+		)
+	>>
+
+	<!-- 通過嚴格檢查後才進行數字轉換 -->
+	<<if _CE_sliderValueValid>>
+		<<set _CE_sliderNumber to Number(_CE_sliderRawValue)>>
+	<<else>>
+		<<set _CE_sliderNumber to NaN>>
+	<</if>>
+
+	<!-- =====================
+	     檢查滑塊設定本身
+	     ===================== -->
+
+	<<set _CE_sliderConfigValid to
+		Number.isFinite(_CE_sliderMin)
+		and Number.isFinite(_CE_sliderMax)
+		and Number.isFinite(_CE_sliderStep)
+		and _CE_sliderMin <= _CE_sliderMax
+		and _CE_sliderStep > 0
+	>>
+
+	<!-- =====================
+	     當前值與滑塊設定都有效
+	     ===================== -->
+
+	<<if _CE_sliderConfigValid and _CE_sliderValueValid>>
+
+		<!--
+			目前值低於正常最小值：
+			依照 step 向下擴張實際最小值。
+		-->
+		<<if _CE_sliderNumber < _CE_sliderNormalMin>>
+			<<set _CE_sliderMin to
+				_CE_sliderNormalMin
+				- Math.ceil(
+					(_CE_sliderNormalMin - _CE_sliderNumber)
+					/ _CE_sliderStep
+				) * _CE_sliderStep
+			>>
+		<</if>>
+
+		<!--
+			目前值高於正常最大值：
+			依照 step 向上擴張實際最大值。
+		-->
+		<<if _CE_sliderNumber > _CE_sliderNormalMax>>
+			<<set _CE_sliderMax to
+				_CE_sliderNormalMax
+				+ Math.ceil(
+					(_CE_sliderNumber - _CE_sliderNormalMax)
+					/ _CE_sliderStep
+				) * _CE_sliderStep
+			>>
+		<</if>>
+
+		<!-- 顯示滑塊 -->
 		<<numberslider
 			_CE_sliderPath
 			_CE_sliderNumber
@@ -20,27 +102,87 @@
 			_CE_sliderStep
 		>>
 
+		<!-- 超出正常範圍時顯示提示 -->
+		<<if _CE_sliderNumber < _CE_sliderNormalMin
+			or _CE_sliderNumber > _CE_sliderNormalMax>>
+
+			<div class="dol-desc" style="margin: 4px 0 8px 0;">
+				<span class="dol-red">
+					数值超出正常范围，滑块范围已自动扩展
+				</span>
+				<br>
+
+				当前值：
+				<span class="gold">
+					<<print _CE_sliderRawValue>>
+				</span>
+				<br>
+
+				正常范围：
+				<span style="color: gray;">
+					<<print _CE_sliderNormalMin>>
+					-
+					<<print _CE_sliderNormalMax>>
+				</span>
+				<br>
+
+				当前滑块范围：
+				<span style="color: gray;">
+					<<print _CE_sliderMin>>
+					-
+					<<print _CE_sliderMax>>
+				</span>
+			</div>
+
+		<</if>>
+
+	<!-- =====================
+	     異常資料：不顯示滑塊
+	     ===================== -->
+
 	<<else>>
 
 		<div class="dol-desc" style="margin: 4px 0 8px 0;">
 			<span class="dol-red">
-				数值超出正常范围，已隐藏滑块
+				当前值或滑块参数无效，已隐藏滑块
 			</span>
 			<br>
+
 			当前值：
 			<span class="gold">
-				<<print _CE_sliderValue>>
+				<<if _CE_sliderRawValue is undefined>>
+					undefined
+				<<elseif _CE_sliderRawValue is null>>
+					null
+				<<elseif typeof _CE_sliderRawValue is "string"
+					and _CE_sliderRawValue.trim() is "">>
+					空字符串
+				<<else>>
+					<<print _CE_sliderRawValue>>
+				<</if>>
 			</span>
 			<br>
+
 			正常范围：
 			<span style="color: gray;">
-				<<print _CE_sliderMin>> - <<print _CE_sliderMax>>
+				<<print _CE_sliderNormalMin>>
+				-
+				<<print _CE_sliderNormalMax>>
 			</span>
+
+			<<if !_CE_sliderConfigValid>>
+				<br>
+				<span style="color: gray;">
+					滑块配置：
+					min = <<print _CE_sliderMin>>，
+					max = <<print _CE_sliderMax>>，
+					step = <<print _CE_sliderStep>>
+				</span>
+			<</if>>
 		</div>
 
 	<</if>>
 <</widget>>
-
 
 :: CE_farmCheatPanel [widget]
 
