@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.20(dev260719)",
+  "version": "1.20(dev260815)",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
@@ -129,7 +129,7 @@
         },
         {
           "passage": "Widgets Market",
-          "findString": "<<set $stall_amount to random(11, 30)>>\n\t<</if>>",
+          "findString": "<<if $stall_amount gte $foodstuff[$stall_foodstuff].amount>>",
           "replaceFile": "addon-replace/Widgets Market_2.txt",
           "all": true,
           "comments": "黑心商店"
@@ -187,8 +187,8 @@
         "js": [
           {
             "TODO": "semen_releasedFIX",
-            "from": "\tif (V.cow >= 6) released *= 2;",
-            "to": "\tif (V.cow >= 6) released *= 2;\n\tif (V.semen_releasedFIX > 1) released *= V.semen_releasedFIX;\n",
+            "from": "if (V.cow >= 6) released *= 1.2;",
+            "to": "if (V.cow >= 6) released *= 1.2;\n\tif (V.semen_releasedFIX > 1) released *= V.semen_releasedFIX;\n",
             "fileName": "ingame.js"
           },
           {
