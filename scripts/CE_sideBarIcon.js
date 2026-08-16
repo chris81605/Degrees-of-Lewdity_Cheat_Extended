@@ -568,6 +568,7 @@ Macro.add('CE_CheatExtendedVersion', {
         { id: 'hpap', title: 'HP、AP顯示', onClick: () => CE_renderSettings('<<swich_HP_AP_display>>') },
         { id: 'milk', title: '大量擠🥛模式', onClick: () => CE_renderSettings('<<milk_released_setting>>') },
         { id: 'semen', title: '大爆🐍模式', condition: () => V.player?.penisExist || V.debug, onClick: () => CE_renderSettings('<<semen_released_setting>>') },
+        { id: 'cafeBunCheat', title: '小麵包收入', onClick: () => CE_renderSettings('<<CE_cafeBunCheat>>') },
         { id: 'blackStore', title: '黑心商店', onClick: () => CE_renderSettings('<<black_stores_setting>>') },
         { id: 'money', title: '收支倍率調整', onClick: () => CE_renderSettings('<<CE_moneyCheat>>') },
         { id: 'danceReward', title: '跳舞報酬加倍', onClick: () => CE_renderSettings('<<dance_reward_setting>>') },
