@@ -1,6 +1,6 @@
 {
   "name": "cheat extended",
-  "version": "1.20(dev260815)",
+  "version": "1.20(dev260816)",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
@@ -18,6 +18,7 @@
     "scripts/clearCEVars.js",    
     "scripts/CE_tattoo.js",
     "scripts/CE_MoneyCheat.js",
+    "scripts/CE_cafeBunCheat.js",
     "scripts/CE_hookTool.js",
     "scripts/CE_hookSimpleUI.js",
     "scripts/CE_macroHookTool.js",
@@ -63,7 +64,7 @@
     "game/CE_parasiteControl.twee",
     "game/CE_EnemyState.twee",
     "game/CE_autoRepairClothes.twee",
-    "game/CE_farmCheat.twee"
+    "game/CE_farmCheat.twee",
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
@@ -176,7 +177,37 @@
           "findString": "<<for _i to 0; _i lt _selectedWardrobe[_wardrobe_list].length; _i++>>",
           "replaceFile": "addon-replace/Widgets_Wardrobe.txt",       
           "comments": "嘗試修復衣櫥服裝超過1000件後不顯示的問題"
-        }
+        },
+        {
+          "passage": "Widgets Cafe",
+          "findString": "<<set _bun_money to 10 * (Math.floor((1000 + ((_bun_effective_value * $bun_cut) * _buns_sold)) / 10))>> /* We don't want to be paid £0.3333 */",
+          "replace": "<<set _bun_money to 10 * (Math.floor((1000 + ((_bun_effective_value * $bun_cut) * _buns_sold)) / 10))>> /* We don't want to be paid £0.3333 */\n\t<<set _CE_bun_cut to $bun_cut>>\n\t<<set _CE_bun_wage to 1000>>\n\t<<if $CE_cafeBunCheat.enabled>>\n\t\t<<if $CE_cafeBunCheat.noPriceDrop>>\n\t\t\t<<set _bun_effective_value to $bun_value>>\n\t\t<</if>>\n\t\t<<set _bun_effective_value to Math.max(0, Math.round(_bun_effective_value * $CE_cafeBunCheat.priceMultiplier))>>\n\t\t<<set _CE_bun_cut to Math.max(0, $bun_cut * $CE_cafeBunCheat.cutMultiplier)>>\n\t\t<<set _CE_bun_wage to Math.round($CE_cafeBunCheat.fixedWage * 10) * 10>>\n\t\t<<set _bun_money to 10 * Math.floor((_CE_bun_wage + (_bun_effective_value * _CE_bun_cut * _buns_sold)) / 10)>>\n\t<</if>>",
+          "comments": "咖啡店小麵包收入修改"
+        },
+        {
+          "passage": "Widgets Cafe",
+          "findString": "面包售价：£<<print (Math.floor(_bun_effective_value / 100))>>/* The bun value must be an integer */",
+          "replace": "面包售价：£<<print (_bun_effective_value / 100)>>",
+          "comments": "咖啡店小麵包售價顯示"
+        },
+        {
+          "passage": "Widgets Cafe",
+          "findString": "你的分红：<<print ($bun_cut * 100)>>%",
+          "replace": "你的分红：<<print (_CE_bun_cut * 100)>>%",
+          "comments": "咖啡店小麵包分成顯示"
+        },
+        {
+          "passage": "Widgets Cafe",
+          "findString": "劳动报酬：£10",
+          "replace": "劳动报酬：£<<print (_CE_bun_wage / 100)>>",
+          "comments": "咖啡店小麵包固定工資顯示"
+        },
+        {
+          "passage": "Widgets Cafe",
+          "findString": "<<money 1000 \"cafeChef\">>\n\t<<money `_bun_money - 1000` \"cafeBuns\">>",
+          "replace": "<<money `_CE_bun_wage` \"cafeChef\">>\n\t<<money `_bun_money - _CE_bun_wage` \"cafeBuns\">>",
+          "comments": "咖啡店小麵包收入分帳"
+        }       
       ]
     },
     {
@@ -250,7 +281,7 @@
     },
     {
       "modName": "GameVersion",
-      "version": ">=0.5.5.9"
+      "version": ">=0.5.11.9"
     }
   ]
 }
