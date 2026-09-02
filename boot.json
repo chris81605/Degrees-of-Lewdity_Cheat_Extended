@@ -1,6 +1,10 @@
 {
   "name": "cheat extended",
-  "version": "1.20(dev260816)",
+  "nickName": {
+    "cn": "作弊拓展",
+    "en": "Cheat Expansion"
+  },
+  "version": "1.20(dev260902)",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
@@ -40,7 +44,11 @@
     "scripts/CE_customerEyesColor.js",
     "scripts/CE_inventory_helper.js",
     "scripts/CE_HeadMaskCompat.js",   
-    "scripts/CE_CombatSkill.js"
+    "scripts/CE_CombatSkill.js",
+    "scripts/CE_forestMapGui.js",
+    "scripts/CE_sewersMapGui.js",
+    "scripts/CE_farmRoadMapGui.js"
+    
   ],
   "tweeFileList": [
     "game/CEoverlayReplace.twee",   
@@ -171,6 +179,12 @@
           "findString": "<<switch Skin.color.natural>>",
           "replace": "<<skinColourFallback>><<switch Skin.color.natural>>",         
           "comments": "針對自定義膚色輸出對應文字patch"
+        },
+        {
+            "passage": "Widgets Text",
+            "findString": "<<widget \"skintonetext\">>\n\t<<switch Skin.color.natural>>",
+            "replace": "<<widget \"skintonetext\">>\n\t<<skinToneFallback>><<switch Skin.color.natural>>",
+            "comments": "針對自定義膚色色調輸出色塊patch"
         },
         {
           "passage": "Widgets Wardrobe",
