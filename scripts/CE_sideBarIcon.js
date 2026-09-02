@@ -218,25 +218,30 @@ CE Statebox UI - JS Rebuild
 Macro.add('CE_CheatExtendedVersion', {
     handler: function() {
         var version = window.modUtils.getMod('cheat extended').version;
-        var div = document.createElement('div');
+        var div = document.getElementById('CE-cheatExtended-version');
+
+        if (!div) {
+            div = document.createElement('div');
+            div.id = 'CE-cheatExtended-version';
+
+            /* 位置設定：畫面底部置中 */
+            div.style.position = 'fixed';
+            div.style.left = '50%';
+            div.style.bottom = '20px';
+            div.style.transform = 'translateX(-50%)';
+            div.style.zIndex = '9999';
+
+            /* 外觀設定 */
+            div.style.fontSize = '8.8px';
+            div.style.color = 'rgb(119,119,119)';
+            div.style.opacity = '0.8';
+            div.style.whiteSpace = 'nowrap';
+            div.style.pointerEvents = 'none';
+
+            document.body.appendChild(div);
+        }
+
         div.textContent = 'CE v' + version;
-        div.id = 'CE-cheatExtended-version';
-        
-        /* 位置設定：畫面底部置中 */
-        div.style.position = 'fixed';
-        div.style.left = '50%';
-        div.style.bottom = '5px';
-        div.style.transform = 'translateX(-50%)';
-        div.style.zIndex = '9999';
-
-        /* 外觀設定 */
-        div.style.fontSize = '8.8px';
-        div.style.color = 'rgb(119,119,119)';
-        div.style.opacity = '0.8';
-        div.style.whiteSpace = 'nowrap';
-        div.style.pointerEvents = 'none'; // 不擋點擊
-
-        document.body.appendChild(div);
     }
 });
 
@@ -1229,6 +1234,36 @@ Macro.add('cheat_extended', {
                 建議手機端設定在 20～50 之間。                
             `,
     
+        },
+        {
+	        type: "checkbox",
+	        key: "CE_ForestMapGUI",
+	        default: false,
+	        desc: "在森林探索頁面顯示森林深度與已發現地點的簡易導覽圖。",
+	        label: "顯示森林探索導覽圖",
+	        tooltip: `
+		        啟用後會在森林頁面頂部顯示森林探索深度與已發現地點。<br>
+		        地點位置為概略標示，並非精確地圖座標。
+	        `
+        },
+        {
+	        type: "checkbox",
+	        key: "CE_SewersMapGUI",
+	        default: false,
+	        desc: `
+		        在下水道及相關地下探索區域顯示地圖 GUI。<br>
+		        目前包含下水道與海岸洞穴。
+	        `,
+	        label: "啟用地下探索地圖",
+	        tooltip: "在下水道與海岸洞穴等地下探索場景顯示目前位置、附近通道及已發現地點。",
+        },
+        {
+	        type: "checkbox",
+	        key: "CE_FarmRoadMapGUI",
+	        default: false,
+	        desc: "在鄉間道路及荒原探索場景上方顯示地圖",
+	        label: "啟用鄉間道路與荒原地圖",
+	        tooltip: "顯示目前所在的道路或荒原區域，並記錄已探索過的地點。"
         },
     ]);
 
