@@ -41,17 +41,17 @@
 			y: 0
 		},
 		"Sewers Waterfall": {
-			name: "潮湿的隧道",
+			name: "潮濕的隧道",
 			x: 50,
 			y: 18
 		},
 		"Sewers Industrial": {
-			name: "工业区",
+			name: "工業區",
 			x: 50,
 			y: 38
 		},
 		"Sewers Algae": {
-			name: "水藻覆盖的管道",
+			name: "水藻覆蓋的管道",
 			x: 25,
 			y: 55
 		},
@@ -61,52 +61,52 @@
 			y: 55
 		},
 		"Sewers Mud": {
-			name: "泥泞的隧道",
+			name: "泥濘的隧道",
 			x: 25,
 			y: 75
 		},
 		"Sewers Commercial": {
-			name: "商业区",
+			name: "商業區",
 			x: 50,
 			y: 75
 		},
 		"Sewers Ruins": {
-			name: "荒废的隧道",
+			name: "荒廢的隧道",
 			x: 75,
 			y: 75
 		},
 		"Sewers Shrooms": {
-			name: "长满真菌的管道",
+			name: "長滿真菌的管道",
 			x: 0,
 			y: 75
 		},
 		"Sewers Hole": {
-			name: "风洞",
+			name: "風洞",
 			x: 100,
 			y: 75
 		},
 		"Sewers Residential": {
-			name: "住宅区",
+			name: "住宅區",
 			x: 50,
 			y: 100
 		},
 		"Sewers Scrap": {
-			name: "充满废料的隧道",
+			name: "充滿廢料的隧道",
 			x: 30,
 			y: 120
 		},
 		"Sewers Wood": {
-			name: "满是木头的隧道",
+			name: "滿是木頭的隧道",
 			x: 70,
 			y: 120
 		},
 		"Sewers Workshop": {
-			name: "满是雕塑的隧道",
+			name: "滿是雕塑的隧道",
 			x: 15,
 			y: 140
 		},
 		"Sewers Webs": {
-			name: "布满蜘蛛网的管道",
+			name: "布滿蜘蛛網的管道",
 			x: 85,
 			y: 140
 		}
@@ -176,7 +176,7 @@
 		{
 			id: "Commercial Drain",
 			from: "Sewers Commercial",
-			name: "商业区排水口",
+			name: "商業區排水口",
 			direction: "up-right",
 			show: () =>
 				V.sewerschased !== 1 &&
@@ -185,7 +185,7 @@
 		{
 			id: "Residential Drain",
 			from: "Sewers Residential",
-			name: "住宅区排水口",
+			name: "住宅區排水口",
 			direction: "down",
 			show: () =>
 				V.sewerschased !== 1 &&
@@ -194,7 +194,7 @@
 		{
 			id: "Industrial Drain",
 			from: "Sewers Industrial",
-			name: "工业区排水口",
+			name: "工業區排水口",
 			direction: "up",
 			show: () =>
 				V.sewerschased !== 1 &&
@@ -212,7 +212,7 @@
 		{
 			id: "Smuggler Pub Sewer Intro",
 			from: "Sewers Algae",
-			name: "墙上的破洞",
+			name: "牆上的破洞",
 			direction: "left",
 			show: () =>
 				V.smuggler_pub_known !== 1 &&
@@ -944,10 +944,10 @@
 
 	function getZone(depth) {
 		if (depth <= 0) return "洞口附近";
-		if (depth < 20) return "浅水区域";
+		if (depth < 20) return "淺水區域";
 		if (depth < 50) return "腰深水域";
-		if (depth < 100) return "洞穴深处";
-		return "洞穴尽头";
+		if (depth < 100) return "洞穴深處";
+		return "洞穴盡頭";
 	}
 
 	/* =========================================================
@@ -1319,7 +1319,7 @@
 		const note = document.createElement("div");
 		note.className = "beach-cave-map-note";
 		note.textContent =
-			"已探索或发现的地点会记录在洞穴地图上。";
+			"已探索或發現的地點會記錄在洞穴地圖上。";
 
 		gui.append(title, map, note);
 

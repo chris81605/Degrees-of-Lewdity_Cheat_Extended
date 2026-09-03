@@ -1138,25 +1138,6 @@ Macro.add('cheat_extended', {
 
     setup.CE_registerOptions([
         {
-            type: "select",
-            key: "CE_langMode",
-            id: "CE_optionsLang",
-            default: "t",
-            desc: "設定作弊拓展介面使用的中文顯示方式。",
-            label: "介面語言：",
-            options: [
-                { value: "t", text: "繁體中文" },
-                { value: "s", text: "简体中文" },
-            ],
-            tooltip: `
-                繁體中文為作弊拓展的原始介面語言。<br>
-                切換為簡體中文時，僅轉換作弊拓展介面的顯示文字，不會修改存檔中的文字內容。
-            `,
-            onChange() {
-                window.CE_refreshLang?.();
-            },
-        },
-        {
             type: "checkbox",
             key: "CE_forceEnableCheat",
             default: false,
@@ -1284,7 +1265,26 @@ Macro.add('cheat_extended', {
 	        desc: "在鄉間道路及荒原探索場景上方顯示地圖",
 	        label: "啟用鄉間道路與荒原地圖",
 	        tooltip: "顯示目前所在的道路或荒原區域，並記錄已探索過的地點。"
-        },        
+        },
+        {
+            type: "select",
+            key: "CE_langMode",
+            id: "CE_optionsLang",
+            default: "t",
+            desc: "設定作弊拓展介面使用的中文顯示方式。",
+            label: "介面語言：",
+            options: [
+                { value: "t", text: "繁體中文" },
+                { value: "s", text: "简体中文" },
+            ],
+            tooltip: `
+                繁體中文為作弊拓展的原始介面語言。<br>
+                切換為簡體中文時，僅轉換作弊拓展介面的顯示文字，不會修改存檔中的文字內容。
+            `,
+            onChange() {
+                window.CE_refreshLang?.();
+            },
+        },
     ]);
 
 })();

@@ -31,17 +31,17 @@
 		"Farm Road 1": {
 			index: 1,
 			id: "road1",
-			name: "城镇近郊"
+			name: "城鎮近郊"
 		},
 		"Farm Road 2": {
 			index: 2,
 			id: "road2",
-			name: "庄园丘陵"
+			name: "莊園丘陵"
 		},
 		"Farm Road 3": {
 			index: 3,
 			id: "road3",
-			name: "林间道路"
+			name: "林間道路"
 		},
 		"Farm Road 4": {
 			index: 4,
@@ -51,34 +51,34 @@
 		"Farm Road 5": {
 			index: 5,
 			id: "road5",
-			name: "贫瘠平原"
+			name: "貧瘠平原"
 		},
 		"Farm Road 6": {
 			index: 6,
 			id: "road6",
-			name: "农田道路"
+			name: "農田道路"
 		}
 	};
 
 	const PLACES = [
 		{
 			id: "town",
-			name: "城镇",
+			name: "城鎮",
 			pos: 0
 		},
 		{
 			id: "road1",
-			name: "城镇近郊",
+			name: "城鎮近郊",
 			pos: 1 / 7 * 100
 		},
 		{
 			id: "road2",
-			name: "庄园丘陵",
+			name: "莊園丘陵",
 			pos: 2 / 7 * 100
 		},
 		{
 			id: "road3",
-			name: "林间道路",
+			name: "林間道路",
 			pos: 3 / 7 * 100
 		},
 		{
@@ -88,17 +88,17 @@
 		},
 		{
 			id: "road5",
-			name: "贫瘠平原",
+			name: "貧瘠平原",
 			pos: 5 / 7 * 100
 		},
 		{
 			id: "road6",
-			name: "农田道路",
+			name: "農田道路",
 			pos: 6 / 7 * 100
 		},
 		{
 			id: "farmland",
-			name: "农田",
+			name: "農田",
 			pos: 100
 		}
 	];
@@ -524,31 +524,31 @@
 	const PLACES = [
 		{
 			id: "farmland",
-			name: "农田",
+			name: "農田",
 			pos: 0,
 			discover: depth => depth <= 0
 		},
 		{
 			id: "estate",
-			name: "雷米庄园",
+			name: "雷米莊園",
 			pos: 10,
 			discover: depth => depth === 10
 		},
 		{
 			id: "sign20",
-			name: "褪色标志",
+			name: "褪色標誌",
 			pos: 20,
 			discover: depth => depth === 20
 		},
 		{
 			id: "sign50",
-			name: "褪色标志",
+			name: "褪色標誌",
 			pos: 50,
 			discover: depth => depth === 50
 		},
 		{
 			id: "bog",
-			name: "沼泽",
+			name: "沼澤",
 			pos: 85,
 			discover: depth =>
 				depth >= 80 &&
@@ -557,7 +557,7 @@
 		},
 		{
 			id: "castle",
-			name: "废墟城堡",
+			name: "廢墟城堡",
 			pos: 100,
 			discover: depth => depth >= 100
 		}
@@ -582,11 +582,11 @@
 	}
 
 	function getZone(depth) {
-		if (depth <= 0) return "荒原边缘";
-		if (depth <= 20) return "荒原外围";
+		if (depth <= 0) return "荒原邊緣";
+		if (depth <= 20) return "荒原外圍";
 		if (depth <= 50) return "荒原中段";
-		if (depth < 100) return "荒原深处";
-		return "荒原尽头";
+		if (depth < 100) return "荒原深處";
+		return "荒原盡頭";
 	}
 
 	/* =========================================================

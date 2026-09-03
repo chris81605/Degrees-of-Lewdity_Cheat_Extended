@@ -23,7 +23,7 @@ function unlockAllFeats() {
     
     updateFeats();
     localStorage.setItem("dolFeats", JSON.stringify(V.feats.allSaves));
-    console.log('[cheat Extended] 🔓 已解锁全部成就并同步全局存档');
+    console.log('[cheat Extended] 🔓 已解鎖全部成就并同步全局存档');
 }
 window.unlockAllFeats = unlockAllFeats;
 
@@ -72,7 +72,7 @@ function toggleFeat(featName, unlock) {
     
     updateFeats();
     localStorage.setItem("dolFeats", JSON.stringify(V.feats.allSaves));
-    console.log(`[cheat Extended] ⚙️ 成就 [${featName}] 状态已切换为: ${unlock ? '解锁' : '未解锁'}`);
+    console.log(`[cheat Extended] ⚙️ 成就 [${featName}] 状态已切换为: ${unlock ? '解锁' : '未解鎖'}`);
 }
 window.toggleFeat = toggleFeat;
 
@@ -282,7 +282,7 @@ Macro.add("CE_FeatUnlockerPanel", {
 				el("div", { className: "dol-header" }, [
 					el("span", {
 						className: "dol-title",
-						text: "🏆 成就解锁器 (Achievement Unlocker)",
+						text: "🏆 成就解鎖器 (Achievement Unlocker)",
 					}),
 				])
 			);
@@ -293,7 +293,7 @@ Macro.add("CE_FeatUnlockerPanel", {
 			body.appendChild(
 				el("div", {
 					className: "dol-desc",
-					text: "管理当前存档与浏览器本地全局成就，可单独解锁、上锁，或一键批量处理。",
+					text: "管理當前存檔與瀏覽器本地全域成就，可單獨解鎖、上鎖，或一鍵批量處理。",
 				})
 			);
 
@@ -306,7 +306,7 @@ Macro.add("CE_FeatUnlockerPanel", {
 				el("div", { className: "dol-header" }, [
 					el("span", {
 						className: "dol-title",
-						text: "全局操作 (Bulk Operations)",
+						text: "全域操作 (Bulk Operations)",
 					}),
 				])
 			);
@@ -323,12 +323,12 @@ Macro.add("CE_FeatUnlockerPanel", {
 							flexWrap: "wrap",
 						},
 					}, [
-						button("一键解锁全部成就 (Unlock All)", () => {
+						button("一鍵解鎖全部成就 (Unlock All)", () => {
 							unlockAllFeats();
 							render();
 						}),
 
-						button("一键重置全部成就 (Reset All)", () => {
+						button("一鍵重置全部成就 (Reset All)", () => {
 							resetAllFeats();
 							state.page = 1;
 							render();
@@ -337,7 +337,7 @@ Macro.add("CE_FeatUnlockerPanel", {
 
 					el("div", {
 						className: "dol-desc",
-						text: "※ 解锁或重置会直接同步修改当前存档及浏览器的本地全局成就 localStorage。",
+						text: "※ 解鎖或重置會直接同步修改當前存檔及瀏覽器的本地全域成就 localStorage。",
 						style: {
 							fontSize: "0.85em",
 							color: "gray",
@@ -373,7 +373,7 @@ Macro.add("CE_FeatUnlockerPanel", {
 			const searchInput = el("input", {
 				attrs: {
 					type: "text",
-					placeholder: "搜索成就标题 / 描述 / 提示...",
+					placeholder: "搜尋成就標題 / 描述 / 提示...",
 				},
 				style: {
 					flex: "1",
@@ -407,8 +407,8 @@ Macro.add("CE_FeatUnlockerPanel", {
 
 			[
 				["all", "全部"],
-				["unlocked", "已解锁"],
-				["locked", "未解锁"],
+				["unlocked", "已解鎖"],
+				["locked", "未解鎖"],
 			].forEach(([value, text]) => {
 				const option = el("option", {
 					text,
@@ -445,7 +445,7 @@ Macro.add("CE_FeatUnlockerPanel", {
 				listSection.appendChild(
 					el("div", {
 						className: "dol-desc",
-						text: "没有符合条件的成就。",
+						text: "沒有符合條件的成就。",
 						style: { color: "gray" },
 					})
 				);
@@ -466,8 +466,8 @@ Macro.add("CE_FeatUnlockerPanel", {
 				const status = el("span", {
 					className: feat.unlocked ? "dol-green" : "dol-red",
 					text: feat.unlocked
-						? "★ [已解锁 / Unlocked]"
-						: "☆ [未解锁 / Locked]",
+						? "★ [已解鎖 / Unlocked]"
+						: "☆ [未解鎖 / Locked]",
 				});
 
 				const title = el("span", {
@@ -497,7 +497,7 @@ Macro.add("CE_FeatUnlockerPanel", {
 					className: "dol-btn",
 					style: { whiteSpace: "nowrap" },
 				}, [
-					button(feat.unlocked ? "上锁 (Lock)" : "解锁 (Unlock)", () => {
+					button(feat.unlocked ? "上鎖 (Lock)" : "解鎖 (Unlock)", () => {
 						toggleFeat(feat.key, !feat.unlocked);
 						render();
 					}),
@@ -533,17 +533,17 @@ Macro.add("CE_FeatUnlockerPanel", {
 						marginTop: "10px",
 					},
 				}, [
-					button("上一页", () => {
+					button("上一頁", () => {
 						state.page--;
 						render();
 					}, state.page <= 1),
 
 					el("span", {
 						className: "dol-desc",
-						text: `第 ${state.page} / ${totalPages} 页，共 ${filtered.length} 项`,
+						text: `第 ${state.page} / ${totalPages} 頁，共 ${filtered.length} 項`,
 					}),
 
-					button("下一页", () => {
+					button("下一頁", () => {
 						state.page++;
 						render();
 					}, state.page >= totalPages),

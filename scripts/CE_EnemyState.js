@@ -109,8 +109,8 @@
              */
             const states = [
                 { key: 'health', label: '生命值', value: V.enemyhealth, max: V.enemyhealthmax },
-                { key: 'arousal', label: '性奋', value: V.enemyarousal, max: V.enemyarousalmax },
-                { key: 'anger', label: '愤怒', value: V.enemyanger, max: V.enemyangermax },
+                { key: 'arousal', label: '性奮', value: V.enemyarousal, max: V.enemyarousalmax },
+                { key: 'anger', label: '憤怒', value: V.enemyanger, max: V.enemyangermax },
                 { key: 'trust', label: '信任', value: V.enemytrust, max: 100 }, // 信任軟上限
             ];
 
