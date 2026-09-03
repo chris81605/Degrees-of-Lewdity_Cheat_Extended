@@ -47,17 +47,17 @@
     <<if _totalItems gt _pageSize>>
 	    <div class="wardrobe-action no-numberify">
 		    <<if $wardrobePage[_wardrobe_list] gt 0>>
-			    <<link "◀ 上一页">>
+			    <<link "◀ 上一頁">>
 				    <<set $wardrobePage[_wardrobe_list] -= 1>>
 				    <<updatewardrobe>>
 			    <</link>>
 		    <</if>>
 
-		    第 <<print $wardrobePage[_wardrobe_list] + 1>> / <<print _maxPage + 1>> 页
-		    （显示 <<print _pageStart + 1>> - <<print _pageEnd>> / <<print _totalItems>>）
+		    第 <<print $wardrobePage[_wardrobe_list] + 1>> / <<print _maxPage + 1>> 頁
+		    （顯示 <<print _pageStart + 1>> - <<print _pageEnd>> / <<print _totalItems>>）
 
 		    <<if $wardrobePage[_wardrobe_list] lt _maxPage>>
-			    <<link "下一页 ▶">>
+			    <<link "下一頁 ▶">>
 				    <<set $wardrobePage[_wardrobe_list] += 1>>
 				    <<updatewardrobe>>
 			    <</link>>
