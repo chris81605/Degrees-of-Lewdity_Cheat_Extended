@@ -4,13 +4,15 @@
     "cn": "作弊拓展",
     "en": "Cheat Expansion"
   },
-  "version": "1.20(dev260902)",
+  "version": "1.20(dev260903)",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
     "scriptEarly/Utils/spectrum.css"
   ],
   "scriptFileList": [
+    "scripts/lan_t2s/CE_langDict.js",
+    "scripts/lan_t2s/CE_lang.js",
     "scripts/CE_getTargetWarmth2.js",
     "scripts/CE_Time_Event.js",
     "scripts/CE_sideBarIcon.js",
@@ -47,7 +49,7 @@
     "scripts/CE_CombatSkill.js",
     "scripts/CE_forestMapGui.js",
     "scripts/CE_sewersMapGui.js",
-    "scripts/CE_farmRoadMapGui.js"
+    "scripts/CE_farmRoadMapGui.js",
     
   ],
   "tweeFileList": [
@@ -78,6 +80,7 @@
   "scriptFileList_inject_early": [
     "scriptEarly/CERegist.js",
     "scriptEarly/framework_detector.js",
+    "scriptEarly/CE_environmentGuard.js",
     "scriptEarly/Utils/spectrum.js"
   ],
   "additionFile": [
