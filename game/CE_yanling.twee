@@ -173,9 +173,9 @@
 	<<if $swich_yanling is 1>>
 	<details id="yanling_edit" class="settingsToggleItem">
 			<summary><span style="color: gold;">選擇言靈：</span></summary><br>
-		<<listbox "_cccount" autoselect>><<option "未选中">><<optionsfrom $cccheat_name>><</listbox>><br>
-		<<button "查看选中">>
-			<<if _cccount isnot "未选中">>
+		<<listbox "_cccount" autoselect>><<option "未選中">><<optionsfrom $cccheat_name>><</listbox>><br>
+		<<button "查看選中">>
+			<<if _cccount isnot "未選中">>
 				<<for _l to 0 ;_l lt $cccheat_name.length ;_l++>>
 					<<if _cccount is $cccheat_name[_l]>>
 					    <<if document.getElementById("cccheatarea") isnot null>>
@@ -200,7 +200,7 @@
 		<</button>><br>
 		
         <<button "編輯選中">>
-            <<if _cccount isnot "未选中">>
+            <<if _cccount isnot "未選中">>
                 <<for _l to 0; _l lt $cccheat_name.length; _l++>>
                     <<if _cccount is $cccheat_name[_l]>>
                         <<if document.getElementById("cccheatarea") isnot null>>
@@ -246,8 +246,8 @@
             <</if>>
         <</button>><br>
 						
-		<<button "刪除选中">>
-			<<if _cccount isnot "未选中">>
+		<<button "刪除選中">>
+			<<if _cccount isnot "未選中">>
 				<<for _l to 0 ;_l lt $cccheat_name.length ;_l++>>
 					<<if _cccount is $cccheat_name[_l]>>
 						<<set $cccheat.deleteAt(_l)>>

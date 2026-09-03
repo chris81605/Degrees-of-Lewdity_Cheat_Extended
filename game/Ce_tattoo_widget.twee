@@ -200,20 +200,20 @@
                     <div class="dol-desc">
                         紋身顏色：
                         <<listbox "_CE_tattoo_color">>
-                            <<option "红色" "red">>
+                            <<option "紅色" "red">>
                             <<option "橙色" "orange">>
                             <<option "焦橙色" "burntorange">>
-                            <<option "黄色" "yellow">>
-                            <<option "姜黄色" "tangerine">>
+                            <<option "黃色" "yellow">>
+                            <<option "姜黃色" "tangerine">>
                             <<option "灰金色" "ashy">>
                             <<option "淡金色" "platinum">>
-                            <<option "浅金色" "softblond">>
+                            <<option "淺金色" "softblond">>
                             <<option "草莓金" "strawberry">>
                             <<option "金色" "gold">>
-                            <<option "绿色" "green">>
-                            <<option "柠檬绿" "lime-green">>
-                            <<option "浅蓝色" "lblue">>
-                            <<option "蓝色" "blue">>
+                            <<option "綠色" "green">>
+                            <<option "檸檬綠" "lime-green">>
+                            <<option "淺藍色" "lblue">>
+                            <<option "藍色" "blue">>
                             <<option "粉色" "pink">>
                             <<option "紫色" "purple">>
                             <<option "黑色" "black">>
@@ -260,15 +260,15 @@
                                     類型：
                                     <<listbox "_special_tattoo">>
                                         <<option "通常" "none">>
-                                        <<option "淫乱" "sex">>
-                                        <<option "卖淫" "prostitution">>
+                                        <<option "淫亂" "sex">>
+                                        <<option "賣淫" "prostitution">>
                                         <<option "露出" "exhibitionism">>
-                                        <<option "异种" "bestiality">>
+                                        <<option "異種" "bestiality">>
                                         <<option "受虐" "violence">>
                                         <<option "順從" "none2">>
-                                        <<option "怀孕" "pregnancy">>
-                                        <<option "爱人" "lover">>
-                                        <<option "神圣" "holy">>
+                                        <<option "懷孕" "pregnancy">>
+                                        <<option "愛人" "lover">>
+                                        <<option "神聖" "holy">>
                                     <</listbox>>
                                 </div>
                                 <div class="dol-desc">
@@ -289,23 +289,23 @@
                                             <<else>>    
                                                 <span class="green">是</span>
                                                 <<listbox "_lover_tattoo">>
-                                                    <<option "无" "none">>
-                                                    <<option "罗宾" "Robin">>
+                                                    <<option "無" "none">>
+                                                    <<option "羅賓" "Robin">>
                                                     <<option "悉尼" "Sydney">>
-                                                    <<option "凯拉尔" "Kylar">>
+                                                    <<option "凱拉爾" "Kylar">>
                                                     <<option "惠特尼" "Whitney">>
                                                     <<option "伊甸" "Eden">>
                                                     <<option "艾弗里" "Avery">>
                                                     <<option "艾利克斯" "Alex">>
                                                     <<option "黑狼" "Black Wolf">>
-                                                    <<option "巨鹰" "Great Hawk">>
+                                                    <<option "巨鷹" "Great Hawk">>
                                                 <</listbox>>
                                             <</if>>
                                         <</replace>>
                                     <</button>></span>
                                 </div>
                                 <div class="dol-desc">
-                                    是否带有指向性器的箭頭：
+                                    是否帶有指向性器的箭頭：
                                     <<listbox "_arrow">>
                                         <<option "否" 0>>
                                         <<option "是" 1>>

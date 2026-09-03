@@ -108,17 +108,17 @@
 
 			<div class="dol-desc" style="margin: 4px 0 8px 0;">
 				<span class="dol-red">
-					数值超出正常范围，滑块范围已自动扩展
+					數值超出正常範圍，滑塊範圍已自動擴展
 				</span>
 				<br>
 
-				当前值：
+				當前值：
 				<span class="gold">
 					<<print _CE_sliderRawValue>>
 				</span>
 				<br>
 
-				正常范围：
+				正常範圍：
 				<span style="color: gray;">
 					<<print _CE_sliderNormalMin>>
 					-
@@ -126,7 +126,7 @@
 				</span>
 				<br>
 
-				当前滑块范围：
+				當前滑塊範圍：
 				<span style="color: gray;">
 					<<print _CE_sliderMin>>
 					-
@@ -144,11 +144,11 @@
 
 		<div class="dol-desc" style="margin: 4px 0 8px 0;">
 			<span class="dol-red">
-				当前值或滑块参数无效，已隐藏滑块
+				當前值或滑塊參數無效，已隱藏滑塊
 			</span>
 			<br>
 
-			当前值：
+			當前值：
 			<span class="gold">
 				<<if _CE_sliderRawValue is undefined>>
 					undefined
@@ -163,7 +163,7 @@
 			</span>
 			<br>
 
-			正常范围：
+			正常範圍：
 			<span style="color: gray;">
 				<<print _CE_sliderNormalMin>>
 				-
@@ -173,7 +173,7 @@
 			<<if !_CE_sliderConfigValid>>
 				<br>
 				<span style="color: gray;">
-					滑块配置：
+					滑塊配置：
 					min = <<print _CE_sliderMin>>，
 					max = <<print _CE_sliderMax>>，
 					step = <<print _CE_sliderStep>>
@@ -190,13 +190,13 @@
 <div class="dol-settings dol-shadow">
 
 	<div class="dol-header">
-		<span class="dol-title">农场作弊助手 (Farm Cheat Helper)</span>
+		<span class="dol-title">農場作弊助手 (Farm Cheat Helper)</span>
 	</div>
 
 	<div class="dol-body">
 
 		<div class="dol-desc">
-			快速完成农场升级，瞬间解锁全建筑，拉满牲畜或自动收获。
+			快速完成農場升級，瞬間解鎖全建築，拉滿牲畜或自動收穫。
 		</div>
 
 		<br>
@@ -328,11 +328,7 @@
 
 		<<if $farm_work.fence_damage is undefined>>
 			<<set $farm_work.fence_damage to 0>>
-		<</if>>
-
-		<<if $farm_stage is undefined>>
-			<<set $farm_stage to 0>>
-		<</if>>
+		<</if>>		
 
 		<<if $alex_greenhouse is undefined>>
 			<<set $alex_greenhouse to 0>>
@@ -340,18 +336,18 @@
 
 
 		<!-- ================================================== -->
-		<!-- 一键快捷操作 -->
+		<!-- 一鍵快捷操作 -->
 		<!-- ================================================== -->
 
 		<div class="dol-header">
-			<span class="dol-title">一键快捷操作 (Quick Actions)</span>
+			<span class="dol-title">一鍵快捷操作 (Quick Actions)</span>
 		</div>
 
 		<br>
 
 		<div class="dol-btn">
 
-			<<button "一键完美升级农场">>
+			<<button "一鍵完美升級農場">>
 
 				<<set $farm_stage to 12>>
 
@@ -417,7 +413,7 @@
 		</div>
 
 		<div class="dol-desc" style="font-size: 0.85em; color: gray; margin-top: 4px;">
-			※ 将故事线拉到第 12 阶段，所有建筑升至满级，解锁农场育儿室与更衣室，拥有 9 块已松土的特级大型自动灌溉农田，并将所有牲畜补满到 30 只上限。
+			※ 將故事線拉到第 12 階段，所有建築升至滿級，解鎖農場育兒室與更衣室，擁有 9 塊已鬆土的特級大型自動灌溉農田，並將所有牲畜補滿到 30 隻上限。
 		</div>
 
 		<br>
@@ -429,7 +425,7 @@
 
 		<div class="dol-btn">
 
-			<<button "立刻完成当前建造项目">>
+			<<button "立刻完成當前建造項目">>
 
 				<<if $farm.build isnot 0 and $farm.build isnot undefined>>
 
@@ -545,16 +541,16 @@
 
 			<<if $farm.build isnot 0 and $farm.build isnot undefined>>
 
-				当前正在建造:
+				當前正在建造:
 				<span class="gold">
 					<<print $farm.build>>
 				</span>
 
-				(剩余天数: <<print $farm.build_timer>> 天)
+				(剩餘天數: <<print $farm.build_timer>> 天)
 
 			<<else>>
 
-				当前没有正在进行的建造项目。
+				當前沒有正在進行的建造項目。
 
 			<</if>>
 
@@ -569,7 +565,7 @@
 
 		<div class="dol-btn">
 
-			<<button "农作物瞬间成熟">>
+			<<button "農作物瞬間成熟">>
 
 				<<run tendingInstaGrow("farm")>>
 
@@ -582,7 +578,7 @@
 		</div>
 
 		<div class="dol-desc" style="font-size: 0.85em; color: gray; margin-top: 4px;">
-			※ 立刻让农场所有已播种的农田内的作物成熟。
+			※ 立刻讓農場所有已播種的農田內的作物成熟。
 		</div>
 
 		<br>
@@ -590,11 +586,11 @@
 
 
 		<!-- ================================================== -->
-		<!-- 细项升级控制 -->
+		<!-- 細項升級控制 -->
 		<!-- ================================================== -->
 
 		<div class="dol-header">
-			<span class="dol-title">细项升级控制 (Detailed Upgrades)</span>
+			<span class="dol-title">細項升級控制 (Detailed Upgrades)</span>
 		</div>
 
 		<br>
@@ -602,7 +598,7 @@
 		<div class="dol-section">
 
 			<div class="dol-desc">
-				农场主线阶段 (0 - 12):
+				農場主線階段 (0 - 12):
 			</div>
 
 			<<CE_safeNumberSlider "$farm_stage" $farm_stage 0 12 1>>
@@ -611,7 +607,7 @@
 
 
 			<div class="dol-desc">
-				石墙/围栏等级 (0 - 4):
+				石牆/圍欄等級 (0 - 4):
 			</div>
 
 			<<CE_safeNumberSlider "$farm.wall" $farm.wall 0 4 1>>
@@ -620,7 +616,7 @@
 
 
 			<div class="dol-desc">
-				瞭望塔等级 (0 - 2):
+				瞭望塔等級 (0 - 2):
 			</div>
 
 			<<CE_safeNumberSlider "$farm.tower" $farm.tower 0 2 1>>
@@ -629,7 +625,7 @@
 
 
 			<div class="dol-desc">
-				林地吞并等级 (0 - 3):
+				林地吞併等級 (0 - 3):
 			</div>
 
 			<<CE_safeNumberSlider "$farm.woodland" $farm.woodland 0 3 1>>
@@ -638,7 +634,7 @@
 
 
 			<div class="dol-desc">
-				猎犬舍防卫训练 (0 - 1):
+				獵犬舍防衛訓練 (0 - 1):
 			</div>
 
 			<<CE_safeNumberSlider "$farm.kennel" $farm.kennel 0 1 1>>
@@ -647,7 +643,7 @@
 
 
 			<div class="dol-desc">
-				谷仓与自动挤奶等级 (0 - 2):
+				穀倉與自動擠奶等級 (0 - 2):
 			</div>
 
 			<<CE_safeNumberSlider "$farm.barn" $farm.barn 0 2 1>>
@@ -656,7 +652,7 @@
 
 
 			<div class="dol-desc">
-				马厩扩建等级 (0 - 1):
+				馬廄擴建等級 (0 - 1):
 			</div>
 
 			<<CE_safeNumberSlider "$farm.stable" $farm.stable 0 1 1>>
@@ -665,7 +661,7 @@
 
 
 			<div class="dol-desc">
-				鸡舍扩建等级 (0 - 2):
+				雞舍擴建等級 (0 - 2):
 			</div>
 
 			<<CE_safeNumberSlider "$farm.coop" $farm.coop 0 2 1>>
@@ -674,7 +670,7 @@
 
 
 			<div class="dol-desc">
-				寄生虫谷仓等级 (0 - 2):
+				寄生蟲穀倉等級 (0 - 2):
 			</div>
 
 			<<CE_safeNumberSlider "$farm.parasitebarn" $farm.parasitebarn 0 2 1>>
@@ -683,7 +679,7 @@
 
 
 			<div class="dol-desc">
-				已安装灌溉的土地数 (0 - 9):
+				已安裝灌溉的土地數 (0 - 9):
 			</div>
 
 			<<CE_safeNumberSlider "$farm.irrigation" $farm.irrigation 0 9 1>>
@@ -692,7 +688,7 @@
 
 
 			<div class="dol-desc">
-				Remy 敌对骚扰值 (0 - 100):
+				Remy 敵對騷擾值 (0 - 100):
 			</div>
 
 			<<CE_safeNumberSlider "$farm.aggro" $farm.aggro 0 100 5>>
@@ -701,7 +697,7 @@
 
 
 			<div class="dol-desc">
-				围栏受损程度 (0 - 100):
+				圍欄受損程度 (0 - 100):
 			</div>
 
 			<<CE_safeNumberSlider "$farm_work.fence_damage" $farm_work.fence_damage 0 100 5>>
@@ -710,7 +706,7 @@
 
 
 			<div class="dol-desc">
-				孤儿院 Alex 温室等级 (0 - 3):
+				孤兒院 Alex 溫室等級 (0 - 3):
 			</div>
 
 			<<CE_safeNumberSlider "$alex_greenhouse" $alex_greenhouse 0 3 1>>
@@ -723,11 +719,11 @@
 
 
 		<!-- ================================================== -->
-		<!-- 牲畜与育儿室设置 -->
+		<!-- 牲畜與育兒室設置 -->
 		<!-- ================================================== -->
 
 		<div class="dol-header">
-			<span class="dol-title">牲畜与育儿室设置 (Livestock & Nursery)</span>
+			<span class="dol-title">牲畜與育兒室設置 (Livestock & Nursery)</span>
 		</div>
 
 		<br>
@@ -735,7 +731,7 @@
 		<div class="dol-section">
 
 			<div class="dol-desc">
-				猪只数量 (0 - 30):
+				豬隻數量 (0 - 30):
 			</div>
 
 			<<CE_safeNumberSlider "$farm.beasts.pigs" $farm.beasts.pigs 0 30 1>>
@@ -744,7 +740,7 @@
 
 
 			<div class="dol-desc">
-				马匹数量 (0 - 30):
+				馬匹數量 (0 - 30):
 			</div>
 
 			<<CE_safeNumberSlider "$farm.beasts.horses" $farm.beasts.horses 0 30 1>>
@@ -753,7 +749,7 @@
 
 
 			<div class="dol-desc">
-				牛只数量 (0 - 30):
+				牛隻數量 (0 - 30):
 			</div>
 
 			<<CE_safeNumberSlider "$farm.beasts.cattle" $farm.beasts.cattle 0 30 1>>
@@ -762,7 +758,7 @@
 
 
 			<div class="dol-desc">
-				牧羊犬数量 (0 - 30):
+				牧羊犬數量 (0 - 30):
 			</div>
 
 			<<CE_safeNumberSlider "$farm.beasts.dogs" $farm.beasts.dogs 0 30 1>>
@@ -771,12 +767,12 @@
 
 
 			<div class="dol-desc">
-				农场小屋育儿室解锁状态:
+				農場小屋育兒室解鎖狀態:
 			</div>
 
 			<div class="dol-btn">
 
-				<<button "切换育儿室解锁状态">>
+				<<button "切換育兒室解鎖狀態">>
 
 					<<if C.npc.Alex.pregnancy.nursery is true>>
 
@@ -799,18 +795,18 @@
 
 			<div class="dol-desc" style="font-size: 0.85em; color: gray; margin-top: 4px;">
 
-				当前状态:
+				當前狀態:
 
 				<<if C.npc.Alex.pregnancy.nursery is true>>
 
 					<span class="dol-green">
-						已解锁 (Unlocked)
+						已解鎖 (Unlocked)
 					</span>
 
 				<<else>>
 
 					<span class="dol-red">
-						未解锁 (Locked)
+						未解鎖 (Locked)
 					</span>
 
 				<</if>>
@@ -829,7 +825,7 @@
 
 		<div class="dol-btn">
 
-			<<button "保存并刷新面板">>
+			<<button "保存並刷新面板">>
 
 				<<replace #CE_settingsDiv>>
 					<<CE_farmCheatPanel>>

@@ -4,8 +4,8 @@
 	<<if $swich is 1>>
 	    <span class="gold">快捷</span>
 	    <br>
-		[[状态全恢复|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]] |
-		[[PC立马高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
+		[[狀態全恢復|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]] |
+		[[PC立馬高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
 		<br>
 		<<if $quick_swich isnot undefined>>
 		    <<for _i to 0; _i lt $quick_swich.length; _i++>>
@@ -634,11 +634,11 @@
             <summary>衣物 / 身體</summary>
             <br>
             <span class="dol-link">
-                [[一键烘干衣服|$passage][$upperwet to 0, $lowerwet to 0, $underlowerwet to 0, $underupperwet to 0]]
+                [[一鍵烘乾衣服|$passage][$upperwet to 0, $lowerwet to 0, $underlowerwet to 0, $underupperwet to 0]]
             </span>
             <br>
             <span class="dol-link">
-                [[pc缝衣服中…|$passage][$worn.upper.integrity += 1000,$worn.lower.integrity += 1000,$worn.under_lower.integrity += 1000,$worn.under_upper.integrity += 1000]]
+                [[pc縫衣服中…|$passage][$worn.upper.integrity += 1000,$worn.lower.integrity += 1000,$worn.under_lower.integrity += 1000,$worn.under_upper.integrity += 1000]]
             </span>
             <br>
         </details>
@@ -648,11 +648,11 @@
             <summary>狀態 / 性</summary>
             <br>
             <span class="dol-link">
-                [[状态全恢复|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]]
+                [[狀態全恢復|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]]
             </span>
             <br>
             <span class="dol-link">
-                [[PC立马高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
+                [[PC立馬高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
             </span>
             <br>
         </details>
@@ -678,7 +678,7 @@
             </span>
             <br>
             <span class="dol-link">
-                [[金贞操带|Lake Ruin Box][$rng = 96]]
+                [[金貞操帶|Lake Ruin Box][$rng = 96]]
             </span>
             <br>
         </details>
@@ -688,11 +688,11 @@
             <summary>變化 / 轉化特性</summary>
             <br>
             <span class="dol-link">
-                [[pc长翅膀|$passage][$harpy to 100,$birdFly to 1]]
+                [[pc長翅膀|$passage][$harpy to 100,$birdFly to 1]]
             </span>
             <br>
             <span class="dol-link">
-                [[去踏🐴的神殿 一键恢复贞洁誓言特质|$passage][$player.virginity.temple to true]]
+                [[去踏🐴的神殿 一鍵恢復貞潔誓言特質|$passage][$player.virginity.temple to true]]
             </span>
             <br>
             <span class="dol-link">
@@ -700,19 +700,19 @@
             </span>
             <br>
             <span class="dol-link">
-                [[去除渴望特质|$passage][$hypnosis_traits.scream to undefined]]
+                [[去除渴望特質|$passage][$hypnosis_traits.scream to undefined]]
             </span>
             <br>
             <span class="dol-link">
-                [[去除炫耀特质|$passage][$hypnosis_traits.cover to undefined]]
+                [[去除炫耀特質|$passage][$hypnosis_traits.cover to undefined]]
             </span>
             <br>
             <span class="dol-link">
-                [[去除异种癖特质|$passage][$hypnosis_traits.deviancy to undefined]]
+                [[去除異種癖特質|$passage][$hypnosis_traits.deviancy to undefined]]
             </span>
             <br>
             <span class="dol-link">
-                [[一键恢复全童真|$passage][$player.virginity.vaginal to true,$player.virginity.penile to true,$player.virginity.anal to true,$player.virginity.oral to true,$player.virginity.handholding to true,$player.virginity.kiss to true]]
+                [[一鍵恢復全童真|$passage][$player.virginity.vaginal to true,$player.virginity.penile to true,$player.virginity.anal to true,$player.virginity.oral to true,$player.virginity.handholding to true,$player.virginity.kiss to true]]
             </span>
             <br>
             <span class="dol-link">
@@ -728,7 +728,7 @@
             </span>
             <br>
             <span class="dol-link">
-                [[吃媚药|$passage][$drugged += 1000]]
+                [[吃媚藥|$passage][$drugged += 1000]]
             </span>
             <br>
         </details>
@@ -738,7 +738,7 @@
             <summary>動物化特性</summary>
             <br>
             <span class="dol-link">
-                [[猫化特性|$passage][$cat = 6]]
+                [[貓化特性|$passage][$cat = 6]]
             </span>
             <br>
             <span class="dol-link">
@@ -746,7 +746,7 @@
             </span>
             <br>
             <span class="dol-link">
-                [[鸟化特性|$passage][$harpy = 6, $birdFly=1]]
+                [[鳥化特性|$passage][$harpy = 6, $birdFly=1]]
             </span>
             <br>
             <span class="dol-link">
@@ -758,7 +758,7 @@
             </span>
             <br>
             <span class="dol-link">
-                [[长獠牙|$passage][$transformationParts.traits.fangs to String.fromCharCode (105,115,110,111,32,116,100,101,102,97,117,108,116)]]
+                [[長獠牙|$passage][$transformationParts.traits.fangs to String.fromCharCode (105,115,110,111,32,116,100,101,102,97,117,108,116)]]
             </span>
             <br>
         </details>
@@ -782,30 +782,30 @@
         <div class="dol-desc">快速跳轉時間到指定小時：</div>
         <br>
 
-        <span class="dol-link">[[时空穿越到0点|$passage][Time.setTime(0, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到1点|$passage][Time.setTime(1, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到2点|$passage][Time.setTime(2, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到3点|$passage][Time.setTime(3, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到4点|$passage][Time.setTime(4, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到5点|$passage][Time.setTime(5, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到6点|$passage][Time.setTime(6, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到7点|$passage][Time.setTime(7, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到8点|$passage][Time.setTime(8, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到9点|$passage][Time.setTime(9, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到10点|$passage][Time.setTime(10, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到11点|$passage][Time.setTime(11, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到12点|$passage][Time.setTime(12, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到13点|$passage][Time.setTime(13, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到14点|$passage][Time.setTime(14, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到15点|$passage][Time.setTime(15, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到16点|$passage][Time.setTime(16, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到17点|$passage][Time.setTime(17, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到18点|$passage][Time.setTime(18, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到19点|$passage][Time.setTime(19, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到20点|$passage][Time.setTime(20, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到21点|$passage][Time.setTime(21, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到22点|$passage][Time.setTime(22, 0)]]</span><br>
-        <span class="dol-link">[[时空穿越到23点|$passage][Time.setTime(23, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到0點|$passage][Time.setTime(0, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到1點|$passage][Time.setTime(1, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到2點|$passage][Time.setTime(2, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到3點|$passage][Time.setTime(3, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到4點|$passage][Time.setTime(4, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到5點|$passage][Time.setTime(5, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到6點|$passage][Time.setTime(6, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到7點|$passage][Time.setTime(7, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到8點|$passage][Time.setTime(8, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到9點|$passage][Time.setTime(9, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到10點|$passage][Time.setTime(10, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到11點|$passage][Time.setTime(11, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到12點|$passage][Time.setTime(12, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到13點|$passage][Time.setTime(13, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到14點|$passage][Time.setTime(14, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到15點|$passage][Time.setTime(15, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到16點|$passage][Time.setTime(16, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到17點|$passage][Time.setTime(17, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到18點|$passage][Time.setTime(18, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到19點|$passage][Time.setTime(19, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到20點|$passage][Time.setTime(20, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到21點|$passage][Time.setTime(21, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到22點|$passage][Time.setTime(22, 0)]]</span><br>
+        <span class="dol-link">[[時空穿越到23點|$passage][Time.setTime(23, 0)]]</span><br>
     </div>
 </div>
 
