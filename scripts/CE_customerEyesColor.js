@@ -329,11 +329,6 @@ Macro.add('eyeCustomManager', {
 });
 
 /* 註冊 Tab */
-CE_TabManager.register({
-    id:'eyeCustomManager',
-    title:'眼色自定義',
-    onClick:()=>CE_renderSettings('<<eyeCustomManager>>')
-});
 
 /* 自訂眼色文字輸出(hook函數) */
 

@@ -4,7 +4,7 @@
     "cn": "作弊拓展",
     "en": "Cheat Expansion"
   },
-  "version": "1.20(dev260903)",
+  "version": "1.20(dev260904)",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
@@ -16,6 +16,10 @@
     "scripts/CE_getTargetWarmth2.js",
     "scripts/CE_Time_Event.js",
     "scripts/CE_sideBarIcon.js",
+    "scripts/CE_safehouseCheat.js",
+    "scripts/CE_autoFarm.js",
+    "scripts/CE_manorHelper.js",
+    "scripts/CE_brothelVending.js",
     "scripts/CE_QuickSwitch.js",
     "scripts/CE_YanLinManager.js",
     "scripts/CE_teleportation.js",
@@ -50,6 +54,9 @@
     "scripts/CE_forestMapGui.js",
     "scripts/CE_sewersMapGui.js",
     "scripts/CE_farmRoadMapGui.js",
+    "scripts/CE_hopelessCycle.js",
+    "scripts/CE_forestShop.js",
+    "scripts/CE_farmCheat.js",
     
   ],
   "tweeFileList": [
@@ -74,7 +81,8 @@
     "game/CE_parasiteControl.twee",
     "game/CE_EnemyState.twee",
     "game/CE_autoRepairClothes.twee",
-    "game/CE_farmCheat.twee",
+   
+    
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
@@ -224,7 +232,19 @@
           "findString": "<<money 1000 \"cafeChef\">>\n\t<<money `_bun_money - 1000` \"cafeBuns\">>",
           "replace": "<<money `_CE_bun_wage` \"cafeChef\">>\n\t<<money `_bun_money - _CE_bun_wage` \"cafeBuns\">>",
           "comments": "咖啡店小麵包收入分帳"
-        }       
+        },
+        {
+          "passage": "Orphanage Loft Kitchen",
+          "findString": "<<if Object.keys($loftIngredients).length gte 1>>",
+          "replace": "<<if $CE_loftKitchenInfinite or Object.keys($loftIngredients).length gte 1>>",
+          "comments": "閣樓廚房無限食材：空庫存時仍進入供應分支"
+        },
+        {
+          "passage": "Orphanage Loft Kitchen",
+          "findString": "<<ingredientsSupplied `Object.keys($loftIngredients)`>>",
+          "replace": "<<if $CE_loftKitchenInfinite>><span class=\"green\">「我的廚房裝下了整個宇宙！」</span><br><<ingredientsSupplied `setup.CE_LoftKitchen.allKeys()`>><<else>><<ingredientsSupplied `Object.keys($loftIngredients)`>><</if>>",
+          "comments": "閣樓廚房無限食材：供應全部配方食材"
+        }
       ]
     },
     {

@@ -67,6 +67,32 @@
     color: var(--button-hover-color, #fff);
 }
 
+
+.CE-category-bar,
+.CE-subtab-bar {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 2px;
+    width: 100%;
+    -webkit-overflow-scrolling: touch;
+}
+
+.CE-category-bar {
+    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(204,204,204,0.35);
+}
+
+.CE-subtab-bar {
+    padding-top: 4px;
+}
+
+.CE-category-bar > *,
+.CE-subtab-bar > * {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+}
+
 /* 下方設定區塊 */
 .CEDISPLAY_setting {
     flex: 1 1 auto;
@@ -106,18 +132,11 @@
     pointer-events: none;
 }
 /*用於加入最愛按鈕的背景特殊樣式*/
-.ce-tab-favorite {
-    background: rgba(255, 215, 0, 0.35);  /* 背景加深 */
-    font-weight: 600;                     /* 文字加粗 */
-    border-radius: 5px;                   /* 保持與父按鈕一致圓角 */
-
-}
-.ce-tab-favorite:hover {
-    background: rgba(255, 215, 0, 0.45);  /* hover 稍亮 */
-}
-button.active.ce-tab-favorite {
-    background: rgba(255, 215, 0, 0.5);   /* active 更亮 */
-}
+/* 背景加深 */
+/* 文字加粗 */
+/* 保持與父按鈕一致圓角 */
+/* hover 稍亮 */
+/* active 更亮 */
 
 /*用於顯示彈窗式ui上方按鈕*/
 .CEtab {
@@ -397,4 +416,349 @@ select, input[type="text"], textarea {
   .dol-body { padding: 10px; }       /* 小螢幕時減少內距 */
   select, input[type="text"] { min-width: 120px; } /* 小螢幕輸入框調整 */
   .dol-actions { flex-direction: column; align-items: stretch; } /* 按鈕改直排 */
+}
+.CEbuttonBar.CE-two-level-tabs,
+.CEtab.CE-two-level-tabs {
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.CEbuttonBar.CE-two-level-tabs > .CE-category-bar,
+.CEbuttonBar.CE-two-level-tabs > .CE-subtab-bar,
+.CEtab.CE-two-level-tabs > .CE-category-bar,
+.CEtab.CE-two-level-tabs > .CE-subtab-bar {
+    display: flex !important;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+
+.CE-tab-manage-group {
+    margin-top: 8px;
+    border: 1px solid rgba(204,204,204,0.25);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.CE-tab-manage-category-row,
+.CE-tab-manage-tab-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 6px;
+}
+
+.CE-tab-manage-category-row {
+    background: rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(204,204,204,0.2);
+    font-weight: 600;
+}
+
+.CE-tab-manage-category-label {
+    flex: 1;
+}
+
+.CE-tab-manage-tab-row {
+    padding-left: 20px;
+}
+
+.CE-tab-manage-tab-row + .CE-tab-manage-tab-row {
+    border-top: 1px solid rgba(204,204,204,0.08);
+}
+
+.CE-tab-manage-hint {
+    padding: 5px 8px 6px 28px;
+    font-size: 0.85rem;
+    color: #777;
+}
+
+.CE-tab-manage-add-category {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 6px 0;
+}
+
+.CE-tab-manage-add-category > input {
+    flex: 1 1 180px;
+    min-width: 0;
+}
+
+.CE-tab-manage-category-name {
+    flex: 1 1 160px;
+    min-width: 0 !important;
+}
+
+.CE-tab-manage-tab-label {
+    flex: 1 1 140px;
+    min-width: 90px;
+}
+
+.CE-tab-manage-category-select {
+    flex: 0 1 180px;
+    min-width: 120px;
+    max-width: 220px;
+}
+
+@media (max-width: 640px) {
+    .CE-tab-manage-category-row,
+    .CE-tab-manage-tab-row {
+        flex-wrap: wrap;
+    }
+
+    .CE-tab-manage-tab-row {
+        padding-left: 10px;
+    }
+
+    .CE-tab-manage-category-select {
+        flex: 1 1 140px;
+        max-width: none;
+    }
+}
+
+/* CE 安全屋助手 */
+.CE-safehouse-tabs {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 0 10px;
+  margin-bottom: 8px;
+  scrollbar-width: thin;
+}
+
+.CE-safehouse-tab {
+  flex: 0 0 auto;
+}
+
+.CE-safehouse-tab > button {
+  white-space: nowrap;
+  min-width: 0;
+  padding: 6px 10px;
+}
+
+.CE-safehouse-tab.CE-active > button {
+  color: #d8b04a;
+  border-color: #d8b04a;
+  background: rgba(216,176,74,0.1);
+}
+
+.CE-safehouse-details {
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+  background: rgba(0,0,0,0.12);
+}
+
+.CE-safehouse-details > summary {
+  cursor: pointer;
+  padding: 8px 10px;
+  color: #cfd7e2;
+  font-weight: 600;
+  user-select: none;
+}
+
+.CE-safehouse-details[open] > summary {
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.CE-safehouse-details > .dol-section,
+.CE-safehouse-details > .dol-actions {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+@media (max-width: 640px) {
+  .CE-safehouse-tabs {
+    gap: 4px;
+  }
+
+  .CE-safehouse-tab > button {
+    padding: 5px 8px;
+  }
+
+  .CE-safehouse-details .dol-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* CE 安全屋助手 - JS UI */
+.CE-safehouse-shell {
+  min-width: 0;
+}
+
+.CE-safehouse-content {
+  min-width: 0;
+}
+
+.CE-safehouse-panel-title {
+  margin: 12px 0 8px;
+  font-weight: 700;
+  font-size: 1.05em;
+}
+
+.CE-safehouse-section {
+  min-width: 0;
+}
+
+.CE-safehouse-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.CE-safehouse-actions > .dol-btn {
+  min-width: 0;
+  margin: 0;
+}
+
+.CE-safehouse-actions > .dol-btn > button {
+  max-width: 100%;
+  white-space: normal;
+}
+
+.CE-safehouse-control-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+  gap: 8px 12px;
+  padding: 10px;
+  min-width: 0;
+}
+
+.CE-safehouse-range-row {
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 5px;
+  background: rgba(0,0,0,0.08);
+}
+
+.CE-safehouse-range-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.CE-safehouse-range-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.CE-safehouse-range-number {
+  flex: 0 0 64px;
+  width: 64px;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.CE-safehouse-range {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  margin-top: 6px;
+  box-sizing: border-box;
+}
+
+.CE-safehouse-status-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+  gap: 6px;
+  margin-bottom: 10px;
+  min-width: 0;
+}
+
+.CE-safehouse-status-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+  padding: 7px 9px;
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 5px;
+  background: rgba(0,0,0,0.08);
+}
+
+.CE-safehouse-status-label {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.CE-safehouse-unlock-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
+  gap: 7px;
+  padding: 10px;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.CE-safehouse-unlock-btn {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.25;
+}
+
+.CE-safehouse-unlock-btn.CE-done {
+  opacity: 0.65;
+}
+
+@media (max-width: 640px) {
+  .CE-safehouse-control-grid,
+  .CE-safehouse-status-grid,
+  .CE-safehouse-unlock-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .CE-safehouse-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .CE-safehouse-actions > .dol-btn,
+  .CE-safehouse-actions > .dol-btn > button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* 自動收穫遊戲內提示 */
+.CE-autoFarm-toast-wrap {
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    pointer-events: none;
+}
+.CE-autoFarm-toast {
+    background: rgba(30, 30, 30, 0.92);
+    border: 1px solid var(--gold, #ffd700);
+    color: #fff;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    max-width: 320px;
+    word-break: break-word;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.CE-autoFarm-toast.show {
+    opacity: 1;
+    transform: translateY(0);
 }

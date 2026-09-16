@@ -2399,9 +2399,3 @@ Macro.add("CE_DebugToolPanel", {
     }
 });
 
-CE_TabManager.register({
-    id: 'CE_DebugToolPanel',
-    title: 'Debug 工具',
-    condition: () => V.debug, 
-    onClick: () => CE_renderSettings('<<CE_DebugToolPanel>>')
-});

@@ -206,11 +206,6 @@ const CE_TransformationDailyGain = (() => {
     // =========================
     // tab register
     // =========================
-    CE_TabManager.register({
-       id: 'transformationDailyGain',
-       title: '額外轉化點數',
-       onClick: () => CE_renderSettings('<<CE_TransformationDailyGainSettings>>')
-    });
 
     // 將內部物件公開給外部調用
    // return { config, handleExclusiveToggle };

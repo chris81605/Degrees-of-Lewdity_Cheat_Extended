@@ -1,12 +1,12 @@
-// 右側折疊狀態欄icon入口
-// 抄作業就完事了！
+// 右側折疊狀態欄的 CE 入口。
+// 點擊後以 CE overlay 顯示作弊拓展主選單。
 function CEiconClicked() {
     $.wiki("<<CEoverlayReplace \"CEcheatMenu\">>");
 }
 window.CEiconClicked = CEiconClicked;
 
-// 檢測simple framework 存在則顯示右側狀態欄icon(sf框架專用)
-// sf框架需要另一種方式插入icon
+// 偵測 Simple Frameworks。
+// 僅記錄相容旗標；實際圖示插入方式由對應框架端處理。
 function CEiconSFdetect(){    
     const simpleMod = window.modUtils.getAnyModByNameNoAlias('Simple Frameworks'); // ⚡ Simple Frameworks
     const logger = window.modUtils.getLogger();
@@ -211,9 +211,8 @@ CE Statebox UI - JS Rebuild
 
 /* =========================================
  * <<CE_CheatExtendedVersion>>
- * 專門顯示 cheat Extended 模組版本
- * 使用 div 並內嵌樣式
- * 不要問為啥放在這
+ * 在畫面頂端顯示目前 Cheat Extended 版本號。
+ * 元素只建立一次，之後呼叫僅更新文字內容。
  * ========================================= */
 Macro.add('CE_CheatExtendedVersion', {
     handler: function() {
@@ -246,20 +245,44 @@ Macro.add('CE_CheatExtendedVersion', {
 });
 
 /* =========================================
- * 作弊拓展目錄註冊
- * 用於註冊各個功能設定UI
+ * Cheat Extended 功能目錄 / 兩級標籤管理
+ *
+ * CE_TabManager 負責：
+ * - 功能 tab 註冊與顯示條件
+ * - 一級分類與二級功能 tab 的渲染
+ * - 最愛、顯示/隱藏、排序與分類歸屬
+ * - 自訂一級分類的新增、改名與刪除
+ * - 記錄並恢復上次選中的分類與功能 tab
  * ========================================= */
 (() => {
-    // CE_TabManager 物件：管理所有自訂 tab 的註冊、渲染、排序等功能
+    // CE_TabManager：集中管理一級分類與二級功能 tab。
     const CE_TabManager = {
         tabs: [],           // 存放所有已註冊的 tab 物件
         _btnMap: {},        // tabId → button DOM 映射，用於 restore 上次選中 tab
         _sortWrap: null,    // 排序 UI 容器 DOM
         _defaultOrder: null,// 預設 tab 註冊順序（用於還原）
+        _activeCategory: null,
+        _categoryBar: null,
+        _tabBar: null,
+        _container: null,
+        categories: [
+            { id: 'favorite', title: '⭐ 我的最愛', virtual: true },
+            { id: 'common', title: '常用面板', builtin: true },
+            { id: 'combat', title: '戰鬥', builtin: true },
+            { id: 'body', title: '身體', builtin: true },
+            { id: 'pregnancy', title: '懷孕與生產', builtin: true },
+            { id: 'money', title: '金錢與報酬', builtin: true },
+            { id: 'system', title: '時間與系統', builtin: true },
+            { id: 'items', title: '物品與衣櫃', builtin: true },
+            { id: 'scene', title: '場景助手', builtin: true },
+            { id: 'other', title: '其他', builtin: true }
+        ],
+        _defaultCategoryOrder: ['favorite', 'common', 'combat', 'pregnancy', 'money', 'system', 'items', 'scene', 'other'],
+        _customCategorySerial: 0,
 
         /**
-         * 註冊 tab
-         * @param {object} tab - 包含 id, title, onClick, condition 等欄位
+         * 註冊二級功能 tab。
+         * @param {object} tab - id / title / category / onClick / condition 等設定
          */
         register(tab) {
             this.tabs.push(tab);
@@ -291,110 +314,279 @@ Macro.add('CE_CheatExtendedVersion', {
             V.CE_TabOrder = this.tabs.map(t => t.id);
         },
 
+        ensureCategoryState() {
+            V.CE_CustomCategories = Array.isArray(V.CE_CustomCategories) ? V.CE_CustomCategories : [];
+            V.CE_CategoryTitleOverride = V.CE_CategoryTitleOverride || {};
+            V.CE_CategoryHidden = V.CE_CategoryHidden || {};
+            V.CE_TabCategoryOverride = V.CE_TabCategoryOverride || {};
+
+            const builtinIds = new Set(this.categories.map(category => category.id));
+            const seen = new Set();
+            V.CE_CustomCategories = V.CE_CustomCategories.filter(category => {
+                if (!category || typeof category.id !== 'string' || typeof category.title !== 'string') return false;
+                if (!category.id.startsWith('custom_') || builtinIds.has(category.id) || seen.has(category.id)) return false;
+                seen.add(category.id);
+                return true;
+            });
+
+            const validIds = new Set(this.getAllCategoriesRaw().map(category => category.id));
+            Object.keys(V.CE_TabCategoryOverride).forEach(tabId => {
+                if (!validIds.has(V.CE_TabCategoryOverride[tabId]) || V.CE_TabCategoryOverride[tabId] === 'favorite') {
+                    delete V.CE_TabCategoryOverride[tabId];
+                }
+            });
+        },
+
+        getAllCategoriesRaw() {
+            const custom = Array.isArray(V.CE_CustomCategories) ? V.CE_CustomCategories : [];
+            return this.categories.concat(custom.map(category => ({ ...category, custom: true })));
+        },
+
+        getCategoryTitle(category) {
+            if (!category) return '';
+            if (category.custom) return category.title;
+            return V.CE_CategoryTitleOverride?.[category.id] || category.title;
+        },
+
+        getTabCategory(tab) {
+            if (!tab) return 'other';
+            return V.CE_TabCategoryOverride?.[tab.id] || tab.category || 'other';
+        },
+
+        getCategoryOrder() {
+            this.ensureCategoryState();
+            const knownIds = this.getAllCategoriesRaw().map(category => category.id);
+            const stored = Array.isArray(V.CE_CategoryOrder) ? V.CE_CategoryOrder : [];
+            const order = stored.filter(id => knownIds.includes(id));
+            knownIds.forEach(id => {
+                if (!order.includes(id)) order.push(id);
+            });
+            V.CE_CategoryOrder = order;
+            return order;
+        },
+
+        getOrderedCategories() {
+            this.ensureCategoryState();
+            const map = Object.create(null);
+            this.getAllCategoriesRaw().forEach(category => map[category.id] = category);
+            return this.getCategoryOrder().map(id => map[id]).filter(Boolean);
+        },
+
+        createCustomCategory(title) {
+            this.ensureCategoryState();
+            title = String(title ?? '').trim();
+            if (!title) return null;
+
+            let id;
+            do {
+                this._customCategorySerial += 1;
+                id = `custom_${Date.now().toString(36)}_${this._customCategorySerial.toString(36)}`;
+            } while (this.getAllCategoriesRaw().some(category => category.id === id));
+
+            const category = { id, title };
+            V.CE_CustomCategories.push(category);
+            const order = this.getCategoryOrder();
+            if (!order.includes(id)) order.push(id);
+            V.CE_CategoryOrder = order;
+            return category;
+        },
+
+        renameCategory(categoryId, title) {
+            this.ensureCategoryState();
+            title = String(title ?? '').trim();
+            if (!title) return false;
+
+            const custom = V.CE_CustomCategories.find(category => category.id === categoryId);
+            if (custom) {
+                custom.title = title;
+                return true;
+            }
+
+            const category = this.categories.find(category => category.id === categoryId);
+            if (!category) return false;
+            if (title === category.title) delete V.CE_CategoryTitleOverride[categoryId];
+            else V.CE_CategoryTitleOverride[categoryId] = title;
+            return true;
+        },
+
+        deleteCustomCategory(categoryId) {
+            this.ensureCategoryState();
+            const index = V.CE_CustomCategories.findIndex(category => category.id === categoryId);
+            if (index < 0) return false;
+
+            this.tabs.forEach(tab => {
+                if (V.CE_TabCategoryOverride[tab.id] === categoryId) {
+                    delete V.CE_TabCategoryOverride[tab.id];
+                }
+            });
+
+            V.CE_CustomCategories.splice(index, 1);
+            delete V.CE_CategoryHidden[categoryId];
+            delete V.CE_CategoryTitleOverride[categoryId];
+            V.CE_CategoryOrder = this.getCategoryOrder().filter(id => id !== categoryId);
+            if (V.CE_LastCategory === categoryId) delete V.CE_LastCategory;
+            return true;
+        },
+
         /**
-         * 渲染 tab 按鈕到指定容器
-         * 規則：
-         *  1. ⭐ 我的最愛 tab 會優先顯示
-         *  2. 其餘 tab 依排序順序顯示
-         *  3. 隱藏 / condition 不符的 tab 不顯示
-         *  4. 排序管理 tab 永遠顯示在最後
+         * 將兩級標籤 UI 渲染到指定容器。
+         *
+         * 一級：分類列；只顯示未隱藏且至少含一個可用二級 tab 的分類。
+         * 二級：目前分類中的功能 tab；「我的最愛」是虛擬分類，不改變 tab 的實際歸屬。
+         * condition 不符或被使用者隱藏的 tab 不參與顯示。
+         * 「標籤頁管理」固定附加在一級分類列末端，不參與一般 tab 排序。
          */
         render(container) {
             this.applyOrder();
             container.innerHTML = '';
+            container.classList.add('CE-two-level-tabs');
             this._btnMap = {};
 
-            // 初始化狀態表
             V.CE_TabHidden = V.CE_TabHidden || {};
             V.CE_TabFavorite = V.CE_TabFavorite || {};
 
-            const favorites = []; // ⭐ 我的最愛 tab
-            const normals = [];   // 一般 tab
+            this._container = container;
+            this.ensureCategoryState();
+            const categoryDefs = this.getOrderedCategories();
 
-            // 將 tab 分類（最愛 / 一般）
-            this.tabs.forEach(tab => {
-                if (tab.id === 'tabSort') return;
-                if ((tab.condition && !tab.condition()) || V.CE_TabHidden[tab.id]) return;
-
-                if (V.CE_TabFavorite[tab.id]) favorites.push(tab);
-                else normals.push(tab);
+            const visibleTabs = () => this.tabs.filter(tab => {
+                if (tab.id === 'tabSort') return false;
+                if ((tab.condition && !tab.condition()) || V.CE_TabHidden[tab.id]) return false;
+                return true;
             });
 
-            /**
-             * 建立並渲染單一 tab 按鈕
-             */
-            const renderTab = (tab) => {
-                const btn = document.createElement('button');
-                
-                // 給加入最愛的按鈕標題增加 ⭐
-                // btn.textContent = tab.title; 
-                btn.textContent = V.CE_TabFavorite[tab.id]
-                    ? `⭐ ${tab.title}`
-                    : tab.title;
-                /*
-                給加入最愛的按鈕背景加入特殊樣式
-                if (V.CE_TabFavorite[tab.id]) {
-                    btn.classList.add('ce-tab-favorite');
-                }
-                */    
-                    
-                btn.dataset.tabId = tab.id;
-                btn.onclick = () => {
-                    tab.onClick?.();          // 執行 tab 功能
-                    V.CE_LastTab = tab.id;    // 記錄最後點擊 tab
-                };
-                this._btnMap[tab.id] = btn;
-                container.appendChild(btn);
+            const tabsForCategory = categoryId => {
+                const tabs = visibleTabs();
+                if (categoryId === 'favorite') return tabs.filter(tab => V.CE_TabFavorite[tab.id]);
+                return tabs.filter(tab => this.getTabCategory(tab) === categoryId);
             };
 
-            // ⭐ 先渲染最愛
-            favorites.forEach(renderTab);
-            // 分割線
-            if (favorites.length > 0 && normals.length > 0) {
-                const separator = document.createElement('span');
-                separator.className = 'ce-tab-separator';
-                separator.textContent = '|';
-                container.appendChild(separator);
-            }
-            
-            // 再渲染一般 tab
-            normals.forEach(renderTab);
-            //分隔線
-            if (V.CE_menuSortEnable || V.debug > 0) {
-                const separator = document.createElement('span');
-                separator.className = 'ce-tab-separator';
-                separator.textContent = '|';
-                container.appendChild(separator);
-            }
-            
-            // 最後渲染排序管理 tab（固定不參與排序）
+            const availableCategories = () => categoryDefs.filter(category => !V.CE_CategoryHidden[category.id] && tabsForCategory(category.id).length > 0);
+            const selectedClass = container.classList.contains('CEbuttonBar') ? 'CEbuttonBarSelected' : 'CEtabSelected';
+
+            const categoryBar = document.createElement('div');
+            categoryBar.className = 'CE-category-bar';
+            const tabBar = document.createElement('div');
+            tabBar.className = 'CE-subtab-bar';
+            container.append(categoryBar, tabBar);
+            this._categoryBar = categoryBar;
+            this._tabBar = tabBar;
+
+            const scrollSelectedIntoView = (categoryId, tabId) => {
+                // 等兩級標籤完成佈局後再捲動，避免剛進入選單時
+                // restore() 雖已選中項目，但瀏覽器尚未算出正確的水平位置。
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        const categoryBtn = categoryBar.querySelector(
+                            `button[data-category-id="${categoryId}"]`
+                        );
+                        const tabBtn = this._btnMap[tabId];
+
+                        categoryBtn?.scrollIntoView({
+                            behavior: 'smooth',
+                            inline: 'center',
+                            block: 'nearest'
+                        });
+
+                        tabBtn?.scrollIntoView({
+                            behavior: 'smooth',
+                            inline: 'center',
+                            block: 'nearest'
+                        });
+                    });
+                });
+            };
+
+            const selectTab = (tab, categoryId) => {
+                tabBar.querySelectorAll('button').forEach(btn => btn.classList.remove(selectedClass));
+                const btn = this._btnMap[tab.id];
+                if (btn) btn.classList.add(selectedClass);
+                tab.onClick?.();
+                V.CE_LastTab = tab.id;
+                V.CE_LastCategory = categoryId;
+                V.CE_LastTabByCategory = V.CE_LastTabByCategory || {};
+                V.CE_LastTabByCategory[categoryId] = tab.id;
+                const actualCategory = this.getTabCategory(tab);
+                if (actualCategory) V.CE_LastTabByCategory[actualCategory] = tab.id;
+                scrollSelectedIntoView(categoryId, tab.id);
+            };
+
+            const renderTabs = (categoryId, restoreTab = true) => {
+                this._activeCategory = categoryId;
+                V.CE_LastCategory = categoryId;
+                this._btnMap = {};
+                tabBar.innerHTML = '';
+                categoryBar.querySelectorAll('button[data-category-id]').forEach(btn => {
+                    btn.classList.toggle(selectedClass, btn.dataset.categoryId === categoryId);
+                });
+
+                const tabs = tabsForCategory(categoryId);
+                tabs.forEach(tab => {
+                    const btn = document.createElement('button');
+                    btn.textContent = V.CE_TabFavorite[tab.id] ? `⭐ ${tab.title}` : tab.title;
+                    btn.dataset.tabId = tab.id;
+                    btn.onclick = () => selectTab(tab, categoryId);
+                    this._btnMap[tab.id] = btn;
+                    tabBar.appendChild(btn);
+                });
+
+                if (!restoreTab || tabs.length === 0) return;
+                V.CE_LastTabByCategory = V.CE_LastTabByCategory || {};
+                const savedId = V.CE_LastTabByCategory[categoryId];
+                const target = tabs.find(tab => tab.id === savedId)
+                    || tabs.find(tab => tab.id === V.CE_LastTab)
+                    || tabs[0];
+                if (target) selectTab(target, categoryId);
+            };
+
+            availableCategories().forEach(category => {
+                const btn = document.createElement('button');
+                btn.textContent = this.getCategoryTitle(category);
+                btn.dataset.categoryId = category.id;
+                btn.onclick = () => renderTabs(category.id, true);
+                categoryBar.appendChild(btn);
+            });
+
             const tabSort = this.tabs.find(t => t.id === 'tabSort');
             if (tabSort && (!tabSort.condition || tabSort.condition())) {
-                renderTab(tabSort);
+                const separator = document.createElement('span');
+                separator.className = 'ce-tab-separator';
+                separator.textContent = '|';
+                categoryBar.appendChild(separator);
+                const btn = document.createElement('button');
+                btn.textContent = tabSort.title;
+                btn.onclick = () => tabSort.onClick?.();
+                categoryBar.appendChild(btn);
             }
-        },
 
+            this._renderCategoryTabs = renderTabs;
+            this._availableCategories = availableCategories;
+        },
         /**
-         * 恢復上次選中的 tab
-         * 若不存在則選第一個可用 tab
+         * 恢復上次選中的一級分類與二級 tab。
+         * 若原項目已不可用，依最後 tab 所屬分類或第一個可用分類回退。
          */
         restore() {
-            let tabId = V.CE_LastTab;
-            if (!tabId || !this._btnMap[tabId]) {
-                const firstTab = this.tabs.find(t => (!t.condition || t.condition()) && !V.CE_TabHidden?.[t.id]);
-                if (!firstTab) return;
-                tabId = firstTab.id;
-            }
-            this._btnMap[tabId]?.click();
-        },
+            const categories = this._availableCategories?.() || [];
+            if (!categories.length) return;
 
+            let categoryId = V.CE_LastCategory;
+            if (!categories.some(category => category.id === categoryId)) {
+                const lastTab = this.tabs.find(tab => tab.id === V.CE_LastTab);
+                categoryId = this.getTabCategory(lastTab);
+            }
+            if (!categories.some(category => category.id === categoryId)) {
+                categoryId = categories[0].id;
+            }
+
+            this._renderCategoryTabs?.(categoryId, true);
+        },
         /**
-         * 打開 tab 排序 / 管理 UI 對話框
-         * 功能：
-         *  1. ▲▼ 調整 tab 順序（不含排序管理按鈕）
-         *  2. ☑ 控制 tab 顯示 / 隱藏
-         *  3. ⭐ 設定我的最愛（顯示時優先）
-         *  4. 還原預設順序
+         * 打開兩級標籤管理對話框。
+         *
+         * 一級分類：新增、改名、顯示/隱藏、上下排序；自訂分類可刪除。
+         * 二級 tab：加入最愛、顯示/隱藏、變更分類歸屬、分類內排序。
+         * 另提供還原預設排序，以及還原內建分類名稱 / tab 歸屬。
          */
         openSortUI() {
             if (this._sortWrap) {
@@ -402,7 +594,7 @@ Macro.add('CE_CheatExtendedVersion', {
                 this._sortWrap = null;
             }
 
-            Dialog.setup('⚙️調整標籤順序 / 最愛');
+            Dialog.setup('⚙️標籤頁管理');
             Dialog.wiki('');
 
             /* === 修復0.5.7.8消失的 Dialog 關閉按鈕 === */
@@ -425,7 +617,7 @@ Macro.add('CE_CheatExtendedVersion', {
             const body = Dialog.body();
             const wrap = document.createElement('div');
             wrap.className = 'CE-tab-sorter';
-            wrap.style.maxHeight = '400px';
+            wrap.style.maxHeight = '70vh';
             wrap.style.overflowY = 'auto';
             body.appendChild(wrap);
             this._sortWrap = wrap;
@@ -433,119 +625,280 @@ Macro.add('CE_CheatExtendedVersion', {
             // 初始化狀態表
             V.CE_TabHidden = V.CE_TabHidden || {};
             V.CE_TabFavorite = V.CE_TabFavorite || {};
+            this.ensureCategoryState();
+            this.getCategoryOrder();
 
-            // 說明文字
-            const info = document.createElement('div');
-            info.style.marginBottom = '8px';
-            info.style.fontSize = '0.85rem';
-            info.style.color = '#666';
-            info.textContent = '☑ ⭐ 最愛會顯示在最前｜☑ 控制顯示｜▲▼ 調整順序（排序按鈕不參與）';
-            wrap.appendChild(info);
+            const rerender = () => {
+                wrap.replaceChildren();
 
-            // 還原預設排序按鈕
-            const restoreBtn = document.createElement('button');
-            restoreBtn.textContent = '還原預設順序';
-            restoreBtn.onclick = () => {
-                this.tabs.sort((a, b) =>
-                    this._defaultOrder.indexOf(a.id) - this._defaultOrder.indexOf(b.id)
-                );
-                this.saveOrder();
-                wrap.innerHTML = '';
-                this.openSortUI();
+                // 說明文字
+                const info = document.createElement('div');
+                info.style.marginBottom = '8px';
+                info.style.fontSize = '0.85rem';
+                info.style.color = '#666';
+                info.textContent = '一級：新增、改名、顯示、排序｜二級：⭐ 最愛、顯示、分類歸屬、分類內排序';
+                wrap.appendChild(info);
+
+                const addWrap = document.createElement('div');
+                addWrap.className = 'CE-tab-manage-add-category';
+
+                const addInput = document.createElement('input');
+                addInput.type = 'text';
+                addInput.placeholder = '新的分類名稱';
+                addInput.maxLength = 40;
+
+                const addBtn = document.createElement('button');
+                addBtn.textContent = '＋新增分類';
+                addBtn.onclick = () => {
+                    if (!this.createCustomCategory(addInput.value)) return;
+                    rerender();
+                };
+                addInput.onkeydown = event => {
+                    if (event.key === 'Enter') addBtn.click();
+                };
+                addWrap.append(addInput, addBtn);
+                wrap.appendChild(addWrap);
+
+                // 還原預設排序按鈕
+                const restoreBtn = document.createElement('button');
+                restoreBtn.textContent = '還原預設排序';
+                restoreBtn.onclick = () => {
+                    this.tabs.sort((a, b) =>
+                        this._defaultOrder.indexOf(a.id) - this._defaultOrder.indexOf(b.id)
+                    );
+                    this.saveOrder();
+                    const customIds = V.CE_CustomCategories.map(category => category.id);
+                    V.CE_CategoryOrder = this._defaultCategoryOrder.concat(customIds);
+                    rerender();
+                };
+                wrap.appendChild(restoreBtn);
+
+                const resetLayoutBtn = document.createElement('button');
+                resetLayoutBtn.textContent = '還原預設分類名稱 / 歸屬';
+                resetLayoutBtn.onclick = () => {
+                    V.CE_CategoryTitleOverride = {};
+                    V.CE_TabCategoryOverride = {};
+                    rerender();
+                };
+                wrap.appendChild(resetLayoutBtn);
+
+                const categoryOrder = this.getCategoryOrder();
+                const categoryMap = Object.create(null);
+                this.getAllCategoriesRaw().forEach(category => categoryMap[category.id] = category);
+
+                categoryOrder.forEach(categoryId => {
+                    const category = categoryMap[categoryId];
+                    if (!category) return;
+
+                    const group = document.createElement('div');
+                    group.className = 'CE-tab-manage-group';
+
+                    const categoryRow = document.createElement('div');
+                    categoryRow.className = 'CE-tab-manage-category-row';
+
+                    const categoryVisible = document.createElement('input');
+                    categoryVisible.type = 'checkbox';
+                    categoryVisible.title = '顯示此一級標籤';
+                    categoryVisible.checked = !V.CE_CategoryHidden[category.id];
+                    categoryVisible.onchange = () => {
+                        if (categoryVisible.checked) delete V.CE_CategoryHidden[category.id];
+                        else V.CE_CategoryHidden[category.id] = true;
+                    };
+                    categoryRow.appendChild(categoryVisible);
+
+                    const categoryName = document.createElement('input');
+                    categoryName.type = 'text';
+                    categoryName.className = 'CE-tab-manage-category-name';
+                    categoryName.value = this.getCategoryTitle(category);
+                    categoryName.maxLength = 40;
+                    categoryName.title = '一級標籤名稱';
+                    categoryName.onchange = () => {
+                        if (!this.renameCategory(category.id, categoryName.value)) {
+                            categoryName.value = this.getCategoryTitle(category);
+                            return;
+                        }
+                        rerender();
+                    };
+                    categoryRow.appendChild(categoryName);
+
+                    const categoryUp = document.createElement('button');
+                    categoryUp.textContent = '▲';
+                    categoryUp.title = '一級標籤上移';
+                    categoryUp.onclick = () => {
+                        const order = this.getCategoryOrder();
+                        const idx = order.indexOf(category.id);
+                        if (idx <= 0) return;
+                        [order[idx - 1], order[idx]] = [order[idx], order[idx - 1]];
+                        V.CE_CategoryOrder = order;
+                        rerender();
+                    };
+
+                    const categoryDown = document.createElement('button');
+                    categoryDown.textContent = '▼';
+                    categoryDown.title = '一級標籤下移';
+                    categoryDown.onclick = () => {
+                        const order = this.getCategoryOrder();
+                        const idx = order.indexOf(category.id);
+                        if (idx < 0 || idx >= order.length - 1) return;
+                        [order[idx], order[idx + 1]] = [order[idx + 1], order[idx]];
+                        V.CE_CategoryOrder = order;
+                        rerender();
+                    };
+
+                    categoryRow.append(categoryUp, categoryDown);
+
+                    if (category.custom) {
+                        const categoryDelete = document.createElement('button');
+                        categoryDelete.textContent = '🗑';
+                        categoryDelete.title = '刪除此自訂分類；其中標籤會回到預設分類';
+                        categoryDelete.onclick = () => {
+                            const title = this.getCategoryTitle(category);
+                            if (!window.confirm(`刪除分類「${title}」？\n其中的二級標籤會回到各自的預設分類。`)) return;
+                            this.deleteCustomCategory(category.id);
+                            rerender();
+                        };
+                        categoryRow.appendChild(categoryDelete);
+                    }
+
+                    group.appendChild(categoryRow);
+
+                    if (category.id === 'favorite') {
+                        const favoriteHint = document.createElement('div');
+                        favoriteHint.className = 'CE-tab-manage-hint';
+                        favoriteHint.textContent = '此分類內容由下方二級標籤的 ⭐ 設定，不能作為標籤的實際歸屬分類。';
+                        group.appendChild(favoriteHint);
+                        wrap.appendChild(group);
+                        return;
+                    }
+
+                    // 建立每個 tab 的設定 row
+                    const categoryTabs = this.tabs.filter(tab => tab.id !== 'tabSort' && this.getTabCategory(tab) === category.id);
+                    categoryTabs.forEach(tab => {
+                        const row = document.createElement('div');
+                        row.className = 'CE-tab-manage-tab-row';
+
+                        /**
+                         * ⭐ 我的最愛
+                         * 將此 tab 同時顯示於虛擬「我的最愛」分類；不改變實際分類歸屬。
+                         */
+                        const fav = document.createElement('input');
+                        fav.type = 'checkbox';
+                        fav.title = '加入最愛';
+                        fav.checked = !!V.CE_TabFavorite[tab.id];
+                        fav.onchange = () => {
+                            if (fav.checked) V.CE_TabFavorite[tab.id] = true;
+                            else delete V.CE_TabFavorite[tab.id];
+                        };
+                        row.appendChild(fav);
+
+                        /**
+                         * ☑ 顯示 / 隱藏
+                         */
+                        const visible = document.createElement('input');
+                        visible.type = 'checkbox';
+                        visible.title = '顯示此標籤';
+                        visible.checked = !V.CE_TabHidden[tab.id];
+                        visible.onchange = () => {
+                            V.CE_TabHidden[tab.id] = !visible.checked;
+                        };
+                        row.appendChild(visible);
+
+                        // tab 標題
+                        const label = document.createElement('span');
+                        label.textContent = tab.title;
+                        label.className = 'CE-tab-manage-tab-label';
+                        row.appendChild(label);
+
+                        const categorySelect = document.createElement('select');
+                        categorySelect.className = 'CE-tab-manage-category-select';
+                        this.getOrderedCategories().filter(item => item.id !== 'favorite').forEach(item => {
+                            const option = document.createElement('option');
+                            option.value = item.id;
+                            option.textContent = this.getCategoryTitle(item);
+                            option.selected = item.id === this.getTabCategory(tab);
+                            categorySelect.appendChild(option);
+                        });
+                        categorySelect.title = '二級標籤所屬分類';
+                        categorySelect.onchange = () => {
+                            const defaultCategory = tab.category || 'other';
+                            if (categorySelect.value === defaultCategory) delete V.CE_TabCategoryOverride[tab.id];
+                            else V.CE_TabCategoryOverride[tab.id] = categorySelect.value;
+                            rerender();
+                        };
+                        row.appendChild(categorySelect);
+
+                        const resetCategory = document.createElement('button');
+                        resetCategory.textContent = '↩';
+                        resetCategory.title = '還原預設分類';
+                        resetCategory.disabled = !V.CE_TabCategoryOverride[tab.id];
+                        resetCategory.onclick = () => {
+                            delete V.CE_TabCategoryOverride[tab.id];
+                            rerender();
+                        };
+                        row.appendChild(resetCategory);
+
+                        /**
+                         * ▲ 上移
+                         */
+                        const up = document.createElement('button');
+                        up.textContent = '▲';
+                        up.onclick = () => {
+                            const sortable = this.tabs.filter(t => t.id !== 'tabSort' && this.getTabCategory(t) === category.id);
+                            const idx = sortable.indexOf(tab);
+                            if (idx <= 0) return;
+
+                            const a = this.tabs.indexOf(tab);
+                            const b = this.tabs.indexOf(sortable[idx - 1]);
+                            [this.tabs[a], this.tabs[b]] = [this.tabs[b], this.tabs[a]];
+                            this.saveOrder();
+                            rerender();
+                        };
+
+                        /**
+                         * ▼ 下移
+                         */
+                        const down = document.createElement('button');
+                        down.textContent = '▼';
+                        down.onclick = () => {
+                            const sortable = this.tabs.filter(t => t.id !== 'tabSort' && this.getTabCategory(t) === category.id);
+                            const idx = sortable.indexOf(tab);
+                            if (idx < 0 || idx >= sortable.length - 1) return;
+
+                            const a = this.tabs.indexOf(tab);
+                            const b = this.tabs.indexOf(sortable[idx + 1]);
+                            [this.tabs[a], this.tabs[b]] = [this.tabs[b], this.tabs[a]];
+                            this.saveOrder();
+                            rerender();
+                        };
+
+                        row.append(up, down);
+                        group.appendChild(row);
+                    });
+
+                    if (!categoryTabs.length) {
+                        const empty = document.createElement('div');
+                        empty.className = 'CE-tab-manage-hint';
+                        empty.textContent = '此分類目前沒有二級標籤。';
+                        group.appendChild(empty);
+                    }
+
+                    wrap.appendChild(group);
+                });
             };
-            wrap.appendChild(restoreBtn);
 
-            // 建立每個 tab 的設定 row
-            this.tabs.forEach(tab => {
-                if (tab.id === 'tabSort') return;
-
-                const row = document.createElement('div');
-                row.style.display = 'flex';
-                row.style.alignItems = 'center';
-                row.style.gap = '4px';
-                row.style.marginBottom = '4px';
-
-                /**
-                 * ⭐ 我的最愛
-                 * 只影響顯示優先順序，不影響排序
-                 */
-                const fav = document.createElement('input');
-                fav.type = 'checkbox';
-                fav.title = '加入最愛';
-                fav.checked = !!V.CE_TabFavorite[tab.id];
-                fav.onchange = () => {
-                    if (fav.checked) V.CE_TabFavorite[tab.id] = true;
-                    else delete V.CE_TabFavorite[tab.id];
-                };
-                row.appendChild(fav);
-
-                /**
-                 * ☑ 顯示 / 隱藏
-                 */
-                const visible = document.createElement('input');
-                visible.type = 'checkbox';
-                visible.title = '顯示此標籤';
-                visible.checked = !V.CE_TabHidden[tab.id];
-                visible.onchange = () => {
-                    V.CE_TabHidden[tab.id] = !visible.checked;
-                };
-                row.appendChild(visible);
-
-                // tab 標題
-                const label = document.createElement('span');
-                label.textContent = tab.title;
-                label.style.flex = '1';
-                row.appendChild(label);
-
-                /**
-                 * ▲ 上移
-                 */
-                const up = document.createElement('button');
-                up.textContent = '▲';
-                up.onclick = () => {
-                    const sortable = this.tabs.filter(t => t.id !== 'tabSort');
-                    const idx = sortable.indexOf(tab);
-                    if (idx === 0) return;
-
-                    const a = this.tabs.indexOf(tab);
-                    const b = this.tabs.indexOf(sortable[idx - 1]);
-                    [this.tabs[a], this.tabs[b]] = [this.tabs[b], this.tabs[a]];
-                    this.saveOrder();
-
-                    const prev = row.previousElementSibling;
-                    if (prev) wrap.insertBefore(row, prev);
-                };
-
-                /**
-                 * ▼ 下移
-                 */
-                const down = document.createElement('button');
-                down.textContent = '▼';
-                down.onclick = () => {
-                    const sortable = this.tabs.filter(t => t.id !== 'tabSort');
-                    const idx = sortable.indexOf(tab);
-                    if (idx === sortable.length - 1) return;
-
-                    const a = this.tabs.indexOf(tab);
-                    const b = this.tabs.indexOf(sortable[idx + 1]);
-                    [this.tabs[a], this.tabs[b]] = [this.tabs[b], this.tabs[a]];
-                    this.saveOrder();
-
-                    const next = row.nextElementSibling?.nextElementSibling;
-                    wrap.insertBefore(row, next || null);
-                };
-
-                row.append(up, down);
-                wrap.appendChild(row);
-            });
+            rerender();
 
             Dialog.open(() => {
                 this._sortWrap = null;
+                if (this._container?.isConnected) {
+                    this.render(this._container);
+                    this.restore();
+                }
             });
         }
     };
 
-    // 將 CE_TabManager 暴露到全局 window，避免被覆蓋
+    // 暴露唯讀的全域 CE_TabManager 入口，供其他 CE UI 呼叫。
     Object.defineProperty(window, 'CE_TabManager', {
         value: CE_TabManager,
         writable: false
@@ -561,44 +914,52 @@ Macro.add('CE_CheatExtendedVersion', {
         ==========================*/
         
         // =============新版UI=======
-        { id: 'CE_YanlingPanel', title: '言靈集', /*condition: () => V.debug,*/ onClick: () => CE_renderSettings('<<CE_YanlingPanel>>') },
-        { id: 'CE_TeleportationPanel', title: '空間節點', /*condition: () => V.debug,*/ onClick: () => CE_renderSettings('<<CE_TeleportationPanel>>') },
-        { id: 'CE_QuickPanelSettings', title: '快捷面板', /*condition: () => V.debug,*/ onClick: () => CE_renderSettings('<<CE_QuickPanelSettings>>') },
+        { id: 'CE_YanlingPanel', title: '言靈集', category: 'common', /*condition: () => V.debug,*/ onClick: () => CE_renderSettings('<<CE_YanlingPanel>>') },
+        { id: 'CE_TeleportationPanel', title: '空間節點', category: 'common', /*condition: () => V.debug,*/ onClick: () => CE_renderSettings('<<CE_TeleportationPanel>>') },
+        { id: 'CE_QuickPanelSettings', title: '快捷面板', category: 'common', /*condition: () => V.debug,*/ onClick: () => CE_renderSettings('<<CE_QuickPanelSettings>>') },
         // =======================
         
-        { id: 'statControl', title: '狀態控制', onClick: () => CE_renderSettings('<<CE_statControlPanel>>') },
-        { id: 'purity', title: '純潔永駐', onClick: () => CE_renderSettings('<<CE_purityControl>>') },
-        { id: 'damage', title: '傷害倍數', onClick: () => CE_renderSettings('<<CE_damageMultiplier>>') },
-        { id: 'violence', title: '疼痛衰減', onClick: () => CE_renderSettings('<<CE_violenceControl>>') },
-        { id: 'hpap', title: 'HP、AP顯示', onClick: () => CE_renderSettings('<<swich_HP_AP_display>>') },
-        { id: 'milk', title: '大量擠🥛模式', onClick: () => CE_renderSettings('<<milk_released_setting>>') },
-        { id: 'semen', title: '大爆🐍模式', condition: () => V.player?.penisExist || V.debug, onClick: () => CE_renderSettings('<<semen_released_setting>>') },
-        { id: 'cafeBunCheat', title: '小麵包收入', onClick: () => CE_renderSettings('<<CE_cafeBunCheat>>') },
-        { id: 'blackStore', title: '黑心商店', onClick: () => CE_renderSettings('<<black_stores_setting>>') },
-        { id: 'money', title: '收支倍率調整', onClick: () => CE_renderSettings('<<CE_moneyCheat>>') },
-        { id: 'danceReward', title: '跳舞報酬加倍', onClick: () => CE_renderSettings('<<dance_reward_setting>>') },
-        { id: 'brothelReward', title: '尋歡洞報酬加倍', onClick: () => CE_renderSettings('<<brothel_basement_setting>>') },
-        { id: 'timeMultiplier', title: '時間流速控制', onClick: () => CE_renderSettings('<<CE_timeMultiplier>>') },
-        { id: 'timeTravel', title: '時空穿越', onClick: () => CE_renderSettings('<<CE_TimeTravelPlus>>') },
-        { id: 'debugMode', title: 'DEBUG MODE', onClick: () => CE_renderSettings('<<swich_DEBUG_MODE>>') },
-        { id: 'study', title: '用功學習', onClick: () => CE_renderSettings('<<study_hard_mod>>') },
-        { id: 'wardrobe', title: '大容量衣櫃', onClick: () => CE_renderSettings('<<bigest_wardrobe_mod>>') },
-        { id: 'pcRepair', title: 'Pc縫衣中', onClick: () => CE_renderSettings('<<CE_autoRepairClothesUI>>') },
-        { id: 'allClothes', title: '一鍵添加所有服裝+', onClick: () => CE_renderSettings('<<CE_getAllClothes_new>>') },
-        { id: 'voidCreate', title: '虛空創造', onClick: () => CE_renderSettings('<<CE_inventory_helper>>') },
-        { id: 'magicCircuit', title: '魔術迴路', onClick: () => CE_renderSettings('<<CE_tattoo>>') },
-        { id: 'pcPreg', title: 'PC懷孕', onClick: () => CE_renderSettings('<<CE_Pregnancy>>') },
-        { id: 'parasitePreg', title: '寄生物懷孕控制', onClick: () => CE_renderSettings('<<CE_parasiteControl>>') },
-        { id: 'autoWarm', title: '自動調溫', onClick: () => CE_renderSettings('<<auto_clothes_Warmth>>') },
-        { id: 'quickYanling', title: '快速言靈', onClick: () => CE_renderSettings('<<quick_yanling>>') },
-        { id: 'farmCheat', title: '農場助手', condition: () => V.farm_stage >= 2 || V.debug === 1, onClick: () => CE_renderSettings(`<<CE_farmCheatPanel>>`) },
-        { id: 'featUnlocker', title: '成就解鎖器', onClick: () => CE_renderSettings(`<<CE_FeatUnlockerPanel>>`) },
+        { id: 'statControl', title: '狀態控制', category: 'combat', onClick: () => CE_renderSettings('<<CE_statControlPanel>>') },
+        { id: 'purity', title: '純潔永駐', category: 'bofy', onClick: () => CE_renderSettings('<<CE_purityControl>>') },
+        { id: 'damage', title: '傷害倍數', category: 'combat', onClick: () => CE_renderSettings('<<CE_damageMultiplier>>') },
+        { id: 'violence', title: '疼痛衰減', category: 'combat', onClick: () => CE_renderSettings('<<CE_violenceControl>>') },
+        { id: 'hpap', title: 'HP、AP顯示', category: 'combat', onClick: () => CE_renderSettings('<<swich_HP_AP_display>>') },
+        { id: 'transformationDailyGain', title: '額外轉化點數', category: 'combat', onClick: () => CE_renderSettings('<<CE_TransformationDailyGainSettings>>') },
+        { id: 'milk', title: '大量擠🥛模式', category: 'pregnancy', onClick: () => CE_renderSettings('<<milk_released_setting>>') },
+        { id: 'semen', title: '大爆🐍模式', category: 'pregnancy', condition: () => V.player?.penisExist || V.debug, onClick: () => CE_renderSettings('<<semen_released_setting>>') },
+        { id: 'cafeBunCheat', title: '小麵包收入', category: 'money', onClick: () => CE_renderSettings('<<CE_cafeBunCheat>>') },
+        { id: 'blackStore', title: '黑心商店', category: 'money', onClick: () => CE_renderSettings('<<black_stores_setting>>') },
+        { id: 'money', title: '收支倍率調整', category: 'money', onClick: () => CE_renderSettings('<<CE_moneyCheat>>') },
+        { id: 'danceReward', title: '跳舞報酬加倍', category: 'money', onClick: () => CE_renderSettings('<<dance_reward_setting>>') },
+        { id: 'brothelReward', title: '尋歡洞報酬加倍', category: 'money', onClick: () => CE_renderSettings('<<brothel_basement_setting>>') },
+        { id: 'timeMultiplier', title: '時間流速控制', category: 'system', onClick: () => CE_renderSettings('<<CE_timeMultiplier>>') },
+        { id: 'timeTravel', title: '時空穿越', category: 'system', onClick: () => CE_renderSettings('<<CE_TimeTravelPlus>>') },
+        { id: 'debugMode', title: 'DEBUG MODE', category: 'system', onClick: () => CE_renderSettings('<<swich_DEBUG_MODE>>') },
+        { id: 'CE_DebugToolPanel', title: 'Debug 工具', category: 'system', condition: () => V.debug, onClick: () => CE_renderSettings('<<CE_DebugToolPanel>>') },
+        { id: 'study', title: '用功學習', category: 'system', onClick: () => CE_renderSettings('<<study_hard_mod>>') },
+        { id: 'wardrobe', title: '大容量衣櫃', category: 'items', onClick: () => CE_renderSettings('<<bigest_wardrobe_mod>>') },
+        { id: 'pcRepair', title: 'Pc縫衣中', category: 'items', onClick: () => CE_renderSettings('<<CE_autoRepairClothesUI>>') },
+        { id: 'allClothes', title: '一鍵添加所有服裝+', category: 'items', onClick: () => CE_renderSettings('<<CE_getAllClothes_new>>') },
+        { id: 'voidCreate', title: '虛空創造', category: 'items', onClick: () => CE_renderSettings('<<CE_inventory_helper>>') },
+        { id: 'magicCircuit', title: '魔術迴路', category: 'body', onClick: () => CE_renderSettings('<<CE_tattoo>>') },
+        { id: 'eyeCustomManager', title: '眼色自定義', category: 'body', onClick: () => CE_renderSettings('<<eyeCustomManager>>') },
+        { id: 'skinCustomManager', title: '膚色自定義', category: 'body', onClick: () => CE_renderSettings('<<skinCustomManager>>') },
+        { id: 'clothTypeManager', title: '服裝類型管理', category: 'items', onClick: () => CE_renderSettings('<<clothTypeManager>>') },
+        { id: 'pcPreg', title: 'PC懷孕', category: 'pregnancy', onClick: () => CE_renderSettings('<<CE_Pregnancy>>') },
+        { id: 'parasitePreg', title: '寄生物懷孕控制', category: 'pregnancy', onClick: () => CE_renderSettings('<<CE_parasiteControl>>') },
+        { id: 'autoWarm', title: '自動調溫', category: 'body', onClick: () => CE_renderSettings('<<auto_clothes_Warmth>>') },
+        { id: 'quickYanling', title: '快速言靈', category: 'common', onClick: () => CE_renderSettings('<<quick_yanling>>') },
+        { id: 'farmCheat', title: '農場助手', category: 'scene', condition: () => V.farm_stage >= 2 || V.debug === 1, onClick: () => CE_renderSettings(`<<CE_farmCheatPanel>>`) },
+        { id: 'safehouseCheat', title: '安全屋助手', category: 'scene', onClick: () => CE_renderSettings(`<<CE_safehouseCheatPanel>>`) },
+        { id: 'featUnlocker', title: '成就解鎖器', category: 'system', onClick: () => CE_renderSettings(`<<CE_FeatUnlockerPanel>>`) },
+        { id: 'hopelessCycle', title: '不爱玩小游戏', category: 'other', onClick: () => CE_renderSettings('<<CE_hopelessCyclePanel>>') },
+        { id: 'forestShop', title: '格皇我要攻略你呀', category: 'other', onClick: () => CE_renderSettings('<<CE_forestShopPanel>>') },
 
         // 排序 UI 按鈕，不參與排序，只用於打開排序對話框
         { id: 'tabSort', title: '⚙️標籤頁管理', condition: () => V.CE_menuSortEnable || V.debug, onClick: () => CE_TabManager.openSortUI() }
     ];
 
-    // 將每個 tab 註冊到 CE_TabManager
+    // 集中註冊所有二級功能 tab。
     tabs.forEach(tab => CE_TabManager.register(tab));
 })();
 
@@ -606,59 +967,39 @@ Macro.add('CE_CheatExtendedVersion', {
  * title_cheatExtendedMenu macro
  ****************************************/
 
-/*用於CEoverlayReplace將CE功能按鈕顯示在原版彈窗的按鈕列*/
+/* CE overlay 版入口：在原版 overlay 內容中建立 CE 的兩級功能目錄。 */
 
 Macro.add("title_cheatExtendedMenu", {
     handler() {
-        // 1. 呼叫原本 widget，用於初始化 tabs 內容（原版叫出彈窗都有這個步驟，具體功能不明）
+        // 先執行原版 setupTabs，保持 overlay 所需的基礎初始化。
         Wikifier.wikifyEval("<<setupTabs>>", this.output);
 
-        // 2. 建立 tabs 按鈕容器
+        // 建立 CE 兩級標籤容器。
         const container = document.createElement("div");
         container.id = "cheat_extended_options";
         container.className = "CEtab"; // 保留原樣式，不影響其他地方
         this.output.append(container);
 
-        // 3. 找到 overlay 的內容容器，保證後續操作有依附的 DOM
+        // 確認 overlay 內容容器已存在。
         const content = document.getElementById("customOverlayContent");
         if (!content) throw new Error("#customOverlayContent not found");
 
-        // 4. 確保 CE_TabManager 已存在
+        // 由 CE_TabManager 生成分類列與功能 tab。
         if (window.CE_TabManager) {
-            // 5. 使用 requestAnimationFrame 延遲執行，確保 DOM 元素已渲染到頁面
+            // 延後到下一幀，確保剛建立的容器已掛入 DOM。
             requestAnimationFrame(() => {
-                CE_TabManager.render(container); // 生成 tab 按鈕
+                CE_TabManager.render(container); // 生成一級分類列與二級功能 tab
 
-                const buttons = container.querySelectorAll("button"); // 找到所有按鈕
-
-                // 6. 先移除所有舊的選中樣式
-                buttons.forEach(btn => btn.classList.remove("CEtabSelected"));
-
-                // 7. 監聽每個按鈕的點擊事件
-                buttons.forEach(btn => {
-                    btn.addEventListener("click", () => {
-                        buttons.forEach(b => b.classList.remove("CEtabSelected")); // 移除其他按鈕的選中
-                        btn.classList.add("CEtabSelected"); // 當前按鈕套用選中樣式
-                        btn.scrollIntoView({ behavior: `smooth`, inline: `center`, block: 'nearest' }); // 滾動到視窗中
-                    });
-                });
-
-                // 8. 再次使用 requestAnimationFrame，確保按鈕已完全渲染
+                // render() 內部已建立按鈕、事件與選中狀態；再下一幀恢復上次位置。
                 requestAnimationFrame(() => {
-                    CE_TabManager.restore(); // 調用 restore 點擊最後選中的 tab
+                    CE_TabManager.restore(); // 恢復最後選中的分類與功能 tab
                 });
 
-                // 9. 套用上次選中 tab 的按鈕樣式
-                const lastTabId = V.CE_LastTab;
-                const selectedBtn = Array.from(buttons).find(btn => btn.dataset.tabId === lastTabId);
-                if (selectedBtn) {
-                    selectedBtn.classList.add("CEtabSelected");
-                    selectedBtn.scrollIntoView({ behavior: `smooth`, inline: `center`, block: 'nearest' });
-                }
+
             });
         }
 
-        // 10. 自製關閉按鈕（原版的關閉按鈕調用失敗直接自己做一個）
+        // Overlay 使用 CE 自製關閉按鈕，避免依賴原版關閉按鈕行為。
         const closeBtn = document.createElement("button");
         closeBtn.textContent = "✖";
         closeBtn.className = "CE-close-btn";
@@ -677,16 +1018,16 @@ Macro.add("title_cheatExtendedMenu", {
 });
 
 
-// 用於顯示在作弊選單裡，包含整個目錄的完整結構
+// 內嵌作弊選單入口：建立標題、兩級標籤列與共用內容區。
 Macro.add('cheat_extended', {
     handler() {
         const container = document.createElement('div');
 
-        // 1. 上方 HR
+        // 分隔線。
         const hr = document.createElement('hr');
         container.appendChild(hr);
 
-        // 2. 標題
+        // 標題。
         const header = document.createElement('div');
         header.className = 'settingsHeader options';
         const titleSpan = document.createElement('span');
@@ -695,20 +1036,20 @@ Macro.add('cheat_extended', {
         header.appendChild(titleSpan);
         container.appendChild(header);
 
-        // 3. 空行
+        // 標題與主體之間留白。
         container.appendChild(document.createElement('br'));
 
-        // 4. 主體容器
+        // 主體容器。
         const main = document.createElement('div');
         main.className = 'CEDISPLAY';
 
-        // 5. 按鈕列容器
+        // 一級 / 二級標籤容器。
         const buttonBar = document.createElement('div');
         buttonBar.id = 'cheat_extended_options';
         buttonBar.className = 'CEbuttonBar';
         main.appendChild(buttonBar);
 
-        // 6. 下方內容區
+        // 功能內容共用渲染區。
         const contentWrapper = document.createElement('div');
         contentWrapper.className = 'CEDISPLAY_setting';
         const contentDiv = document.createElement('div');
@@ -719,77 +1060,41 @@ Macro.add('cheat_extended', {
 
         container.appendChild(main);
 
-        // 7. 插入到頁面
+        // 將完整 CE 選單插入目前 macro 輸出。
         this.output.appendChild(container);
 
-        // 8. 渲染 TabManager 並處理按鈕樣式
+        // 下一幀建立兩級標籤 UI，再恢復上次選中的分類與功能。
         requestAnimationFrame(() => {
             CE_TabManager.render(buttonBar);
 
-            const btns = buttonBar.querySelectorAll('button');
-
-            // 點擊事件監聽：套用選中樣式 & 滾動
-            btns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    btns.forEach(b => b.classList.remove('CEbuttonBarSelected'));
-                    btn.classList.add('CEbuttonBarSelected');
-                    btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
-                });
-            });
-
-            // 9. restore 上次選擇的 tab
+            // render() 內部負責事件、選中樣式與水平捲動。
             CE_TabManager.restore();
 
-            // 10. 套用上次選中按鈕樣式
-            const lastTabId = V.CE_LastTab;
-            const selectedBtn = Array.from(btns).find(btn => btn.dataset.tabId === lastTabId);
-            if (selectedBtn) selectedBtn.classList.add('CEbuttonBarSelected');
-            if (selectedBtn) selectedBtn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+
         });
     }
 });
 
 /****************************************
- * 時序註解（放在檔尾）
+ * 兩種 CE 選單入口的渲染時序
  *
- * cheat_extended 宏：
- * 1️⃣ 宏開始執行，生成完整 DOM 結構：
- *      - 上方 HR
- *      - 標題
- *      - 按鈕列 container
- *      - 下方內容區 (#CE_settingsDiv)
- * 2️⃣ 將 container 插入到頁面 (this.output.append)
- * 3️⃣ requestAnimationFrame：
- *      - CE_TabManager.render(buttonBar)：生成按鈕
- *      - 遍歷按鈕綁定 click 事件：
- *          • 移除其他按鈕的選中樣式
- *          • 套用當前按鈕選中樣式
- *          • 滾動到中間位置 (scrollIntoView)
- *      - CE_TabManager.restore()：呼叫最後選中的 tab onClick
- *      - 根據 V.CE_LastTab 套用選中按鈕樣式
- *      - scrollIntoView 保證按鈕置中
+ * cheat_extended：
+ * 1. 直接建立內嵌選單 DOM（標題、標籤容器、#CE_settingsDiv）。
+ * 2. 掛入頁面後於下一幀呼叫 CE_TabManager.render()。
+ * 3. render() 建立一級分類列與目前分類的二級 tab，並綁定點擊事件。
+ * 4. CE_TabManager.restore() 恢復上次分類 / tab，並執行該 tab 的 onClick。
  *
- * title_cheatExtendedMenu 宏：
- * 1️⃣ 宏開始執行，先呼叫 <<setupTabs>>，生成 overlay 基本內容
- * 2️⃣ 在 overlay 裡插入 tabs 按鈕 container
- * 3️⃣ requestAnimationFrame：
- *      - CE_TabManager.render(container)：生成按鈕
- *      - 遍歷按鈕綁定 click 事件（套用選中樣式 + 滾動）
- *      - requestAnimationFrame（二層）：
- *          • 保證按鈕完全生成後，呼叫 CE_TabManager.restore()
- *          • 套用最後選中按鈕樣式
- *          • scrollIntoView 保證置中
+ * title_cheatExtendedMenu：
+ * 1. 先執行 <<setupTabs>> 完成 overlay 基礎初始化。
+ * 2. 建立 CE 標籤容器並掛入 overlay。
+ * 3. 下一幀呼叫 render()；再下一幀呼叫 restore()，避免 overlay 尚未完成佈局。
  *
- * 🔑 注意事項：
- * - restore 必須在按鈕完全生成後呼叫，否則會報錯或找不到按鈕
- * - click 事件監聽必須先綁定，再 restore，才能正確套用樣式
- * - scrollIntoView 使用 inline:'center', block:'nearest' 避免垂直滾動影響 macro 本身位置
- * - cheat_extended 宏只需單層 requestAnimationFrame
- * - title_cheatExtendedMenu 宏需兩層 requestAnimationFrame 確保 overlay DOM 已渲染完成
+ * 選中樣式、tab click、V.CE_LastCategory / V.CE_LastTab 記錄，以及
+ * scrollIntoView 均由 CE_TabManager 內部處理，外層 macro 不再重複綁定。
  ****************************************/
  
 /*=========================================
- Cheat Expansion - Options System
+ Cheat Extended - Options System
 
  功能：
  1. 提供通用設定頁 UI（Macro.add）
@@ -1130,7 +1435,7 @@ Macro.add('cheat_extended', {
 })();
 
 /*=========================================
- Cheat Expansion - Default Options
+ Cheat Extended - Default Options
 =========================================*/
 
 (function () {

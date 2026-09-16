@@ -661,12 +661,7 @@ Macro.add('skinCustomManager', {
     },
 });
 
-CE_TabManager.register({
-    id: 'skinCustomManager',
-    title: '膚色自定義',
-    //condition: () => V.debug
-    onClick: () => CE_renderSettings('<<skinCustomManager>>')
-});
+//condition: () => V.debug
 
 //針對自定義膚色輸出對應文字
 Macro.add('skinColourFallback', {
