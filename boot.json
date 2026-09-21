@@ -4,7 +4,7 @@
     "cn": "作弊拓展",
     "en": "Cheat Expansion"
   },
-  "version": "1.20(dev260904)",
+  "version": "1.20(dev260921)",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
@@ -174,8 +174,8 @@
         },
         {
           "passage": "Pregnancy",
-          "findString": "<<case 0 1 2 3>>",
-          "replace": "<<case _args[0] is a number>>",
+          "findString": "<<switch _args[0]>>\n\t\t\t<<case 0 1 2 3>>",
+          "replace": "<<switch typeof _args[0]>>\n\t\t\t<<case \"number\">>",
           "all": true,
           "comments": "寄生物插槽擴充分娩相關代碼patch"
         },
