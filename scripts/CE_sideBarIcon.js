@@ -951,6 +951,7 @@ Macro.add('CE_CheatExtendedVersion', {
         { id: 'quickYanling', title: '快速言靈', category: 'common', onClick: () => CE_renderSettings('<<quick_yanling>>') },
         { id: 'farmCheat', title: '農場助手', category: 'scene', condition: () => V.farm_stage >= 2 || V.debug === 1, onClick: () => CE_renderSettings(`<<CE_farmCheatPanel>>`) },
         { id: 'safehouseCheat', title: '安全屋助手', category: 'scene', onClick: () => CE_renderSettings(`<<CE_safehouseCheatPanel>>`) },
+        { id: 'averyHelper', title: '艾弗里助手', category: 'scene', onClick: () => CE_renderSettings('<<CE_averyHelperPanel>>') },
         { id: 'featUnlocker', title: '成就解鎖器', category: 'system', onClick: () => CE_renderSettings(`<<CE_FeatUnlockerPanel>>`) },
         { id: 'hopelessCycle', title: '不爱玩小游戏', category: 'other', onClick: () => CE_renderSettings('<<CE_hopelessCyclePanel>>') },
         { id: 'forestShop', title: '格皇我要攻略你呀', category: 'other', onClick: () => CE_renderSettings('<<CE_forestShopPanel>>') },

@@ -131,6 +131,141 @@
         });
     }
 
+
+
+    function getGwylanNpc() {
+        try {
+            if (typeof C !== "undefined" && C.npc && C.npc.Gwylan) return C.npc.Gwylan;
+        } catch (_) {}
+        return null;
+    }
+
+    function refreshGwylanStatus() {
+        try {
+            if (typeof window.gwylanStatusCheck === "function") window.gwylanStatusCheck();
+            else if (typeof gwylanStatusCheck === "function") gwylanStatusCheck();
+        } catch (e) {
+            console.warn("[Cheat Extended] gwylanStatusCheck failed:", e);
+        }
+    }
+
+    function changeGwylanStat(key, delta) {
+        const npc = getGwylanNpc();
+        if (!npc) return false;
+        npc[key] = Math.max(0, Number(npc[key] || 0) + delta);
+        refreshGwylanStatus();
+        return true;
+    }
+
+    function fillGwylanTalked() {
+        const V = State.variables;
+        if (!Array.isArray(V.gwylanTalked)) V.gwylanTalked = [];
+        const sets = setup.specialClothesSets || {};
+        Object.keys(sets).forEach(key => {
+            const shop = sets[key] && sets[key].shop;
+            if (!Array.isArray(shop) || !shop.includes("forest")) return;
+            if (!V.gwylanTalked.includes(key)) V.gwylanTalked.push(key);
+        });
+        refreshGwylanStatus();
+    }
+
+    function fillGwylanSamples() {
+        const V = State.variables;
+        if (!V.gwylan || typeof V.gwylan !== "object") V.gwylan = {};
+        if (!V.gwylan.request || typeof V.gwylan.request !== "object") V.gwylan.request = {};
+        let items = Array.isArray(V.gwylan.request.items) ? V.gwylan.request.items : [];
+        const hasSamples = items.some(item => item && item.category === "sample");
+
+        if (!V.gwylan.request.event || !hasSamples) {
+            try {
+                if (V.gwylan.request.event && typeof window.wikifier === "function") window.wikifier("gwylanRequestEnd", "skip");
+                if (typeof window.gwylanRequest === "function") window.gwylanRequest("sample");
+            } catch (e) {
+                console.warn("[Cheat Extended] 建立格威嵐樣本請求失敗：", e);
+            }
+            items = Array.isArray(V.gwylan.request.items) ? V.gwylan.request.items : [];
+        }
+
+        items.forEach(item => {
+            if (!item) return;
+            if (item.category === "sample") {
+                item.have = Number(item.need || 0);
+            } else if (item.category === "tending" && item.name) {
+                if (!V.foodstuff || typeof V.foodstuff !== "object") V.foodstuff = {};
+                if (!V.foodstuff[item.name] || typeof V.foodstuff[item.name] !== "object") V.foodstuff[item.name] = { amount: 0 };
+                V.foodstuff[item.name].amount = Math.max(Number(V.foodstuff[item.name].amount || 0), Number(item.need || 0));
+            }
+        });
+        return items.some(item => item && item.category === "sample");
+    }
+
+    function renderGwylanRomance(body, root) {
+        const V = State.variables;
+        refreshGwylanStatus();
+        const npc = getGwylanNpc();
+        const T = State.temporary || {};
+        const statuses = Array.isArray(T.gwylanStatus) ? T.gwylanStatus : [];
+        const seen = Array.isArray(V.gwylanSeen) ? V.gwylanSeen : [];
+        const lovePct = Number(T.gwylanLovePercent || 0);
+        const wary = Number(V.gwylan?.wary || 0);
+
+        body.appendChild(document.createElement("br"));
+        body.appendChild(document.createElement("hr"));
+        const title = makeEl("div", "dol-label mt15", "💗 格威嵐 好感與戀愛階段");
+        title.style.fontWeight = "bold";
+        title.style.fontSize = "1.05em";
+        body.appendChild(title);
+
+        if (!npc) {
+            body.appendChild(makeDesc('<span class="dol-red">尚未建立格威嵐 NPC 資料。</span><span class="note">正常遇見格威嵐後即可使用戀愛助手。</span>', "mt8"));
+            return;
+        }
+
+        body.appendChild(makeDesc(`愛意 <span class="dol-blue">${lovePct}%</span>（值 ${Number(npc.love || 0)}）　支配 <span class="dol-blue">${Number(npc.dom || 0)}</span>　情慾 <span class="dol-blue">${Number(npc.lust || 0)}</span>　警戒 <span class="dol-red">${wary}</span>　狀態 <span class="gold">${npc.state || "—"}</span>`, "mt8"));
+
+        const guide = makeEl("div", "dol-section-block mt10");
+        guide.appendChild(makeDesc(`<b>階段與門檻</b><br>
+① 儀式之約：完成一次儀式性愛　${seen.includes("ritual_sex") ? '<span class="dol-green">已達成</span>' : '<span class="dol-red">未達成</span>'}<br>
+② 渴望／aroused：愛意 ≥65% + 支配 ≥20 + 情慾 ≥40（非警戒）→ 收信 → Yearning　${seen.includes("yearning") ? '<span class="dol-green">已達成</span>' : '<span class="dol-red">未達成</span>'}<br>
+③ 慾望／lust：愛意 ≥75% + 支配 ≥50 + 情慾 ≥30 + 支配+情慾 ≥90　${statuses.includes("lust") ? '<span class="dol-green">已達成</span>' : '<span class="dol-red">未達成</span>'}<br>
+④ 戀人／partners　${seen.includes("partners") ? '<span class="dol-green">已達成</span>' : '<span class="dol-red">未達成</span>'}<br>
+⑤ 永遠／romance　${seen.includes("romance") ? '<span class="dol-green">已達成</span>' : '<span class="dol-red">未達成</span>'}<br>
+⑥ 發情／heat：戀人 + 支配 ≥100 + 情慾 ≥40 + 支配+情慾 ≥160　${statuses.includes("heat") ? '<span class="dol-green">已達成</span>' : '<span class="dol-red">未達成</span>'}<br>
+⑦ 孕育意願：愛意 ≥90% + 支配 ≥140 + 發情　${statuses.includes("wantsPregnancy") ? '<span class="dol-green">已達成</span>' : '<span class="dol-red">未達成</span>'}`));
+        body.appendChild(guide);
+
+        const statBox = makeEl("div", "dol-section-block mt10");
+        statBox.appendChild(makeDesc("<b>⚡ 數值作弊與狀態調整</b>"));
+        [["🔥 情慾", "lust"], ["👑 支配", "dom"]].forEach(([label, key]) => {
+            const row = makeEl("div", "dol-actions mt8");
+            row.appendChild(makeEl("span", "", `${label}：${Number(npc[key] || 0)} `));
+            [-10, -1, 1, 10].forEach(delta => row.appendChild(makeButton(delta > 0 ? `＋${delta}` : String(delta).replace("-", "－"), () => { changeGwylanStat(key, delta); render(root); })));
+            statBox.appendChild(row);
+        });
+        const waryRow = makeEl("div", "dol-actions mt8");
+        waryRow.appendChild(makeEl("span", "", `🚨 警戒：${wary} `));
+        waryRow.appendChild(makeButton("清空（歸零）", () => { if (!V.gwylan) V.gwylan = {}; V.gwylan.wary = 0; refreshGwylanStatus(); render(root); }));
+        waryRow.appendChild(makeButton("－1", () => { if (!V.gwylan) V.gwylan = {}; V.gwylan.wary = Math.max(0, Number(V.gwylan.wary || 0) - 1); refreshGwylanStatus(); render(root); }));
+        waryRow.appendChild(makeButton("＋1", () => { if (!V.gwylan) V.gwylan = {}; V.gwylan.wary = Number(V.gwylan.wary || 0) + 1; refreshGwylanStatus(); render(root); }));
+        statBox.appendChild(waryRow);
+        statBox.appendChild(makeDesc('<span class="note">※ 警戒 > 1 會進入 cautious，可能壓制關係進度。</span>', "mt8"));
+
+        const loveRow = makeEl("div", "dol-actions mt10");
+        loveRow.appendChild(makeButton("補齊「已聊」森林套裝（愛意的一半）", () => { fillGwylanTalked(); render(root); }));
+        statBox.appendChild(loveRow);
+
+        const req = V.gwylan && V.gwylan.request;
+        const samples = req && Array.isArray(req.items) ? req.items.filter(item => item && item.category === "sample") : [];
+        const names = { human:"人類", wolf:"狼", fox:"狐狸", cat:"貓", dog:"犬", lizard:"蜥蜴", dolphin:"海豚", boar:"野豬", bear:"熊", plant:"植物花蜜", hawk:"猛禽", harpy:"鳥妖" };
+        const sampleText = samples.length ? samples.map(item => `${names[item.name] || item.name} (${Number(item.have || 0)}/${Number(item.need || 0)})${Number(item.have || 0) >= Number(item.need || 0) ? " ✅" : " ⏳"}`).join("、") : "目前無體液樣本請求";
+        statBox.appendChild(makeDesc(`🧪 <b>體液樣本請求</b>：${req?.event ? `<span class="gold">${req.event}</span>　` : ""}${sampleText}`, "mt10"));
+        const sampleActions = makeEl("div", "dol-actions mt8");
+        sampleActions.appendChild(makeButton("🧪 一鍵獲取/補齊所需體液樣本", () => { fillGwylanSamples(); render(root); }));
+        statBox.appendChild(sampleActions);
+        statBox.appendChild(makeDesc('<span class="note">※ 若目前沒有樣本請求，會嘗試用原版 gwylanRequest("sample") 建立；同一請求中的 tending 素材也會補到需求量。</span>', "mt8"));
+        body.appendChild(statBox);
+    }
+
     function render(root, feedback = null) {
         const V = State.variables;
         root.replaceChildren();
@@ -292,6 +427,8 @@
             '<span class="note">※ 解鎖為「目錄同步」：沒遇見過的服裝也會補進你的發現列表（套裝湊齊才會出現對應故事，講完故事才正式結算好感）；「故事條件直通」可隨時開關，關閉即恢復原版判定。服裝中文名來自漢化包（未安裝時顯示英文名）；解鎖後到格威嵐貨架購買，穿去聊天有額外試裝劇情分支。</span>',
             "mt8"
         ));
+
+        renderGwylanRomance(body, root);
 
         shell.appendChild(body);
         root.appendChild(shell);

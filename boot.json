@@ -4,7 +4,7 @@
     "cn": "作弊拓展",
     "en": "Cheat Expansion"
   },
-  "version": "1.20(dev260921)",
+  "version": "1.20(dev260923)",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",

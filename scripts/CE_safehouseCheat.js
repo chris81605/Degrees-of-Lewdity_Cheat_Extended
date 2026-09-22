@@ -76,15 +76,6 @@ $(document).on(':passagestart', function () {
         },
         { id: "loft", label: "🪜 閣樓" },
         { id: "farm", label: "💧 農田" },
-        {
-            id: "manor",
-            label: "🏰 莊園",
-            condition: () => {
-                const V = State.variables;
-                return V.debug === 1 ||
-                    (V.avery_mansion && typeof V.avery_mansion === "object");
-            }
-        },
         { id: "other", label: "🏚️ 其他" },
     ];
 
@@ -599,31 +590,6 @@ $(document).on(':passagestart', function () {
         host.appendChild(autoSection);
     }
 
-    function renderManor(host, refresh) {
-        const V = State.variables;
-        V.CE_manorClean ??= false;
-        host.appendChild(makeEl("div", "CE-safehouse-panel-title", "🏰 艾弗里莊園"));
-
-        const section = makeSection("🧹 自動管家");
-        const rooms = setup.CE_ManorHelper?.rooms || ["lounge", "kitchen", "dining", "display", "bedroom", "bathroom", "garden", "pool"];
-        let dirt = 0;
-        if (V.avery_mansion && typeof V.avery_mansion === "object") {
-            rooms.forEach(room => { dirt += Number(V.avery_mansion[room] || 0); });
-            section.appendChild(makeDesc(`自動打掃：<span class="${V.CE_manorClean ? "green" : "dol-red"}">${V.CE_manorClean ? "已開啟" : "未開啟"}</span>；莊園髒度總和：<span class="dol-blue">${dirt}</span> / 32`));
-        } else {
-            section.appendChild(makeDesc(`自動打掃：<span class="${V.CE_manorClean ? "green" : "dol-red"}">${V.CE_manorClean ? "已開啟" : "未開啟"}</span>；<span class="note">尚未進入艾弗里莊園，解鎖後自動生效。</span>`));
-        }
-
-        const actions = makeActions();
-        appendAction(actions, V.CE_manorClean ? "關閉自動打掃" : "開啟自動打掃", () => { V.CE_manorClean = !V.CE_manorClean; refresh(); });
-        if (V.avery_mansion && typeof V.avery_mansion === "object") {
-            appendAction(actions, "立即整理莊園", () => { setup.CE_ManorHelper?.cleanNow?.(); refresh(); });
-        }
-        section.appendChild(actions);
-        section.appendChild(makeDesc('<span class="note">※ 開啟後八個房間會在每次場景切換時自動恢復乾淨。</span>', "mt10"));
-        host.appendChild(section);
-    }
-
     function renderOther(host) {
         host.appendChild(makeEl("div", "CE-safehouse-panel-title", "🏚️ 其餘安全屋"));
         const section = makeSection();
@@ -679,7 +645,6 @@ $(document).on(':passagestart', function () {
         else if (setup.CE_safehouseTab === "eden") renderEden(content, refresh);
         else if (setup.CE_safehouseTab === "loft") renderLoft(content, refresh);
         else if (setup.CE_safehouseTab === "farm") renderFarm(content, refresh);
-        else if (setup.CE_safehouseTab === "manor") renderManor(content, refresh);
         else renderOther(content, refresh);
 
         body.appendChild(content);
