@@ -255,6 +255,106 @@ Macro.add('CE_CheatExtendedVersion', {
  * - 記錄並恢復上次選中的分類與功能 tab
  * ========================================= */
 (() => {
+    // === Global tab layout config (TEST v4) ===
+    // 進入 CE 介面時初始化 / 遷移。舊存檔中的 V.CE_* 配置只讀取、不刪除、不修改。
+    const CE_TAB_CONFIG_STORAGE_KEY = 'CheatExtended.TabConfig.v1';
+    const CE_TAB_CONFIG_FIELDS = {
+        CE_CustomCategories: 'customCategories',
+        CE_CategoryTitleOverride: 'categoryTitleOverride',
+        CE_CategoryHidden: 'categoryHidden',
+        CE_TabCategoryOverride: 'tabCategoryOverride',
+        CE_CategoryOrder: 'categoryOrder',
+        CE_TabOrder: 'tabOrder',
+        CE_TabHidden: 'tabHidden',
+        CE_TabFavorite: 'tabFavorite'
+    };
+    let CE_GlobalTabConfig = null;
+
+    const cloneConfigValue = value => {
+        if (value === undefined) return undefined;
+        try { return JSON.parse(JSON.stringify(value)); }
+        catch (e) { return value; }
+    };
+
+    const createEmptyGlobalTabConfig = () => ({
+        CE_CustomCategories: [],
+        CE_CategoryTitleOverride: {},
+        CE_CategoryHidden: {},
+        CE_TabCategoryOverride: {},
+        CE_CategoryOrder: [],
+        CE_TabOrder: [],
+        CE_TabHidden: {},
+        CE_TabFavorite: {}
+    });
+
+    const deserializeGlobalTabConfig = raw => {
+        const cfg = createEmptyGlobalTabConfig();
+        if (!raw || typeof raw !== 'object') return cfg;
+        Object.entries(CE_TAB_CONFIG_FIELDS).forEach(([legacyKey, storageKey]) => {
+            if (raw[storageKey] !== undefined) cfg[legacyKey] = cloneConfigValue(raw[storageKey]);
+        });
+        return cfg;
+    };
+
+    const serializeGlobalTabConfig = cfg => {
+        const raw = { version: 1 };
+        Object.entries(CE_TAB_CONFIG_FIELDS).forEach(([legacyKey, storageKey]) => {
+            raw[storageKey] = cloneConfigValue(cfg[legacyKey]);
+        });
+        return raw;
+    };
+
+    const saveGlobalTabConfig = () => {
+        if (!CE_GlobalTabConfig) return false;
+        try {
+            localStorage.setItem(CE_TAB_CONFIG_STORAGE_KEY, JSON.stringify(serializeGlobalTabConfig(CE_GlobalTabConfig)));
+            return true;
+        } catch (e) {
+            console.warn('[cheat Extended][TabManager] 全局標籤配置寫入失敗：', e);
+            return false;
+        }
+    };
+
+    const ensureGlobalTabConfig = () => {
+        // 每次進入 CE 都確認 Global 資料。        
+        try {           
+            const stored = localStorage.getItem(CE_TAB_CONFIG_STORAGE_KEY);
+            // Global 存在，第一次確認時建立快取，之後每次確認皆沿用快取避免重複建立引用         
+            if (stored !== null) {
+                // 已經有快取
+                if (CE_GlobalTabConfig) return CE_GlobalTabConfig;
+
+                CE_GlobalTabConfig = deserializeGlobalTabConfig(JSON.parse(stored));
+                console.log('[cheat Extended][TabManager] 已載入全局標籤配置');
+                return CE_GlobalTabConfig;
+            }
+
+            // Global 已不存在(可能被使用者手動清空)：舊記憶體快取必須失效。
+            // 接下來以「目前已載入的存檔」Legacy 配置重新建立 Global。
+            CE_GlobalTabConfig = null;
+        } catch (e) {
+            console.warn('[cheat Extended][TabManager] 全局標籤配置讀取失敗，改從目前存檔建立：', e);
+            CE_GlobalTabConfig = null;
+        }
+
+        // Global 不存在：此刻已進入 CE，因此 V 應為目前已載入存檔。
+        // 有任一 Legacy 欄位就整體複製；完全沒有才建立預設配置。
+        const hasLegacy = Object.keys(CE_TAB_CONFIG_FIELDS).some(key => V[key] !== undefined);
+        CE_GlobalTabConfig = createEmptyGlobalTabConfig();
+
+        if (hasLegacy) {
+            Object.keys(CE_TAB_CONFIG_FIELDS).forEach(key => {
+                if (V[key] !== undefined) CE_GlobalTabConfig[key] = cloneConfigValue(V[key]);
+            });
+            console.log('[cheat Extended][TabManager] 已從目前存檔複製 Legacy 標籤配置（原存檔資料保留）');
+        } else {
+            console.log('[cheat Extended][TabManager] 未發現 Legacy 標籤配置，建立新的全局預設配置');
+        }
+
+        saveGlobalTabConfig();
+        return CE_GlobalTabConfig;
+    };
+
     // CE_TabManager：集中管理一級分類與二級功能 tab。
     const CE_TabManager = {
         tabs: [],           // 存放所有已註冊的 tab 物件
@@ -293,36 +393,37 @@ Macro.add('CE_CheatExtendedVersion', {
 
         /**
          * 套用儲存的 tab 順序
-         * 依照 V.CE_TabOrder 儲存順序排列 tab，未排序的 tab 追加到最後
+         * 依照 CE_GlobalTabConfig.CE_TabOrder 儲存順序排列 tab，未排序的 tab 追加到最後
          */
         applyOrder() {
-            if (!Array.isArray(V.CE_TabOrder)) return;
+            if (!Array.isArray(CE_GlobalTabConfig.CE_TabOrder)) return;
 
             const map = Object.create(null);
             this.tabs.forEach(t => map[t.id] = t);
 
-            this.tabs = V.CE_TabOrder
+            this.tabs = CE_GlobalTabConfig.CE_TabOrder
                 .map(id => map[id])          // 依序建立新陣列
                 .filter(Boolean)             // 過濾不存在的 tab
-                .concat(this.tabs.filter(t => !V.CE_TabOrder.includes(t.id))); // 追加未排序 tab
+                .concat(this.tabs.filter(t => !CE_GlobalTabConfig.CE_TabOrder.includes(t.id))); // 追加未排序 tab
         },
 
         /**
-         * 儲存目前 tab 順序到 V.CE_TabOrder
+         * 儲存目前 tab 順序到 CE_GlobalTabConfig.CE_TabOrder
          */
         saveOrder() {
-            V.CE_TabOrder = this.tabs.map(t => t.id);
+            CE_GlobalTabConfig.CE_TabOrder = this.tabs.map(t => t.id);
+            saveGlobalTabConfig();
         },
 
         ensureCategoryState() {
-            V.CE_CustomCategories = Array.isArray(V.CE_CustomCategories) ? V.CE_CustomCategories : [];
-            V.CE_CategoryTitleOverride = V.CE_CategoryTitleOverride || {};
-            V.CE_CategoryHidden = V.CE_CategoryHidden || {};
-            V.CE_TabCategoryOverride = V.CE_TabCategoryOverride || {};
+            CE_GlobalTabConfig.CE_CustomCategories = Array.isArray(CE_GlobalTabConfig.CE_CustomCategories) ? CE_GlobalTabConfig.CE_CustomCategories : [];
+            CE_GlobalTabConfig.CE_CategoryTitleOverride = CE_GlobalTabConfig.CE_CategoryTitleOverride || {};
+            CE_GlobalTabConfig.CE_CategoryHidden = CE_GlobalTabConfig.CE_CategoryHidden || {};
+            CE_GlobalTabConfig.CE_TabCategoryOverride = CE_GlobalTabConfig.CE_TabCategoryOverride || {};
 
             const builtinIds = new Set(this.categories.map(category => category.id));
             const seen = new Set();
-            V.CE_CustomCategories = V.CE_CustomCategories.filter(category => {
+            CE_GlobalTabConfig.CE_CustomCategories = CE_GlobalTabConfig.CE_CustomCategories.filter(category => {
                 if (!category || typeof category.id !== 'string' || typeof category.title !== 'string') return false;
                 if (!category.id.startsWith('custom_') || builtinIds.has(category.id) || seen.has(category.id)) return false;
                 seen.add(category.id);
@@ -330,38 +431,38 @@ Macro.add('CE_CheatExtendedVersion', {
             });
 
             const validIds = new Set(this.getAllCategoriesRaw().map(category => category.id));
-            Object.keys(V.CE_TabCategoryOverride).forEach(tabId => {
-                if (!validIds.has(V.CE_TabCategoryOverride[tabId]) || V.CE_TabCategoryOverride[tabId] === 'favorite') {
-                    delete V.CE_TabCategoryOverride[tabId];
+            Object.keys(CE_GlobalTabConfig.CE_TabCategoryOverride).forEach(tabId => {
+                if (!validIds.has(CE_GlobalTabConfig.CE_TabCategoryOverride[tabId]) || CE_GlobalTabConfig.CE_TabCategoryOverride[tabId] === 'favorite') {
+                    delete CE_GlobalTabConfig.CE_TabCategoryOverride[tabId];
                 }
             });
         },
 
         getAllCategoriesRaw() {
-            const custom = Array.isArray(V.CE_CustomCategories) ? V.CE_CustomCategories : [];
+            const custom = Array.isArray(CE_GlobalTabConfig.CE_CustomCategories) ? CE_GlobalTabConfig.CE_CustomCategories : [];
             return this.categories.concat(custom.map(category => ({ ...category, custom: true })));
         },
 
         getCategoryTitle(category) {
             if (!category) return '';
             if (category.custom) return category.title;
-            return V.CE_CategoryTitleOverride?.[category.id] || category.title;
+            return CE_GlobalTabConfig.CE_CategoryTitleOverride?.[category.id] || category.title;
         },
 
         getTabCategory(tab) {
             if (!tab) return 'other';
-            return V.CE_TabCategoryOverride?.[tab.id] || tab.category || 'other';
+            return CE_GlobalTabConfig.CE_TabCategoryOverride?.[tab.id] || tab.category || 'other';
         },
 
         getCategoryOrder() {
             this.ensureCategoryState();
             const knownIds = this.getAllCategoriesRaw().map(category => category.id);
-            const stored = Array.isArray(V.CE_CategoryOrder) ? V.CE_CategoryOrder : [];
+            const stored = Array.isArray(CE_GlobalTabConfig.CE_CategoryOrder) ? CE_GlobalTabConfig.CE_CategoryOrder : [];
             const order = stored.filter(id => knownIds.includes(id));
             knownIds.forEach(id => {
                 if (!order.includes(id)) order.push(id);
             });
-            V.CE_CategoryOrder = order;
+            CE_GlobalTabConfig.CE_CategoryOrder = order;
             return order;
         },
 
@@ -384,10 +485,10 @@ Macro.add('CE_CheatExtendedVersion', {
             } while (this.getAllCategoriesRaw().some(category => category.id === id));
 
             const category = { id, title };
-            V.CE_CustomCategories.push(category);
+            CE_GlobalTabConfig.CE_CustomCategories.push(category);
             const order = this.getCategoryOrder();
             if (!order.includes(id)) order.push(id);
-            V.CE_CategoryOrder = order;
+            CE_GlobalTabConfig.CE_CategoryOrder = order;
             return category;
         },
 
@@ -396,7 +497,7 @@ Macro.add('CE_CheatExtendedVersion', {
             title = String(title ?? '').trim();
             if (!title) return false;
 
-            const custom = V.CE_CustomCategories.find(category => category.id === categoryId);
+            const custom = CE_GlobalTabConfig.CE_CustomCategories.find(category => category.id === categoryId);
             if (custom) {
                 custom.title = title;
                 return true;
@@ -404,26 +505,26 @@ Macro.add('CE_CheatExtendedVersion', {
 
             const category = this.categories.find(category => category.id === categoryId);
             if (!category) return false;
-            if (title === category.title) delete V.CE_CategoryTitleOverride[categoryId];
-            else V.CE_CategoryTitleOverride[categoryId] = title;
+            if (title === category.title) delete CE_GlobalTabConfig.CE_CategoryTitleOverride[categoryId];
+            else CE_GlobalTabConfig.CE_CategoryTitleOverride[categoryId] = title;
             return true;
         },
 
         deleteCustomCategory(categoryId) {
             this.ensureCategoryState();
-            const index = V.CE_CustomCategories.findIndex(category => category.id === categoryId);
+            const index = CE_GlobalTabConfig.CE_CustomCategories.findIndex(category => category.id === categoryId);
             if (index < 0) return false;
 
             this.tabs.forEach(tab => {
-                if (V.CE_TabCategoryOverride[tab.id] === categoryId) {
-                    delete V.CE_TabCategoryOverride[tab.id];
+                if (CE_GlobalTabConfig.CE_TabCategoryOverride[tab.id] === categoryId) {
+                    delete CE_GlobalTabConfig.CE_TabCategoryOverride[tab.id];
                 }
             });
 
-            V.CE_CustomCategories.splice(index, 1);
-            delete V.CE_CategoryHidden[categoryId];
-            delete V.CE_CategoryTitleOverride[categoryId];
-            V.CE_CategoryOrder = this.getCategoryOrder().filter(id => id !== categoryId);
+            CE_GlobalTabConfig.CE_CustomCategories.splice(index, 1);
+            delete CE_GlobalTabConfig.CE_CategoryHidden[categoryId];
+            delete CE_GlobalTabConfig.CE_CategoryTitleOverride[categoryId];
+            CE_GlobalTabConfig.CE_CategoryOrder = this.getCategoryOrder().filter(id => id !== categoryId);
             if (V.CE_LastCategory === categoryId) delete V.CE_LastCategory;
             return true;
         },
@@ -437,13 +538,14 @@ Macro.add('CE_CheatExtendedVersion', {
          * 「標籤頁管理」固定附加在一級分類列末端，不參與一般 tab 排序。
          */
         render(container) {
+            ensureGlobalTabConfig();
             this.applyOrder();
             container.innerHTML = '';
             container.classList.add('CE-two-level-tabs');
             this._btnMap = {};
 
-            V.CE_TabHidden = V.CE_TabHidden || {};
-            V.CE_TabFavorite = V.CE_TabFavorite || {};
+            CE_GlobalTabConfig.CE_TabHidden = CE_GlobalTabConfig.CE_TabHidden || {};
+            CE_GlobalTabConfig.CE_TabFavorite = CE_GlobalTabConfig.CE_TabFavorite || {};
 
             this._container = container;
             this.ensureCategoryState();
@@ -451,17 +553,17 @@ Macro.add('CE_CheatExtendedVersion', {
 
             const visibleTabs = () => this.tabs.filter(tab => {
                 if (tab.id === 'tabSort') return false;
-                if ((tab.condition && !tab.condition()) || V.CE_TabHidden[tab.id]) return false;
+                if ((tab.condition && !tab.condition()) || CE_GlobalTabConfig.CE_TabHidden[tab.id]) return false;
                 return true;
             });
 
             const tabsForCategory = categoryId => {
                 const tabs = visibleTabs();
-                if (categoryId === 'favorite') return tabs.filter(tab => V.CE_TabFavorite[tab.id]);
+                if (categoryId === 'favorite') return tabs.filter(tab => CE_GlobalTabConfig.CE_TabFavorite[tab.id]);
                 return tabs.filter(tab => this.getTabCategory(tab) === categoryId);
             };
 
-            const availableCategories = () => categoryDefs.filter(category => !V.CE_CategoryHidden[category.id] && tabsForCategory(category.id).length > 0);
+            const availableCategories = () => categoryDefs.filter(category => !CE_GlobalTabConfig.CE_CategoryHidden[category.id] && tabsForCategory(category.id).length > 0);
             const selectedClass = container.classList.contains('CEbuttonBar') ? 'CEbuttonBarSelected' : 'CEtabSelected';
 
             const categoryBar = document.createElement('div');
@@ -523,7 +625,7 @@ Macro.add('CE_CheatExtendedVersion', {
                 const tabs = tabsForCategory(categoryId);
                 tabs.forEach(tab => {
                     const btn = document.createElement('button');
-                    btn.textContent = V.CE_TabFavorite[tab.id] ? `⭐ ${tab.title}` : tab.title;
+                    btn.textContent = CE_GlobalTabConfig.CE_TabFavorite[tab.id] ? `⭐ ${tab.title}` : tab.title;
                     btn.dataset.tabId = tab.id;
                     btn.onclick = () => selectTab(tab, categoryId);
                     this._btnMap[tab.id] = btn;
@@ -573,7 +675,9 @@ Macro.add('CE_CheatExtendedVersion', {
             let categoryId = V.CE_LastCategory;
             if (!categories.some(category => category.id === categoryId)) {
                 const lastTab = this.tabs.find(tab => tab.id === V.CE_LastTab);
-                categoryId = this.getTabCategory(lastTab);
+                if (lastTab) {
+                    categoryId = this.getTabCategory(lastTab);
+                }
             }
             if (!categories.some(category => category.id === categoryId)) {
                 categoryId = categories[0].id;
@@ -589,6 +693,7 @@ Macro.add('CE_CheatExtendedVersion', {
          * 另提供還原預設排序，以及還原內建分類名稱 / tab 歸屬。
          */
         openSortUI() {
+            ensureGlobalTabConfig();
             if (this._sortWrap) {
                 Dialog.close();
                 this._sortWrap = null;
@@ -623,12 +728,13 @@ Macro.add('CE_CheatExtendedVersion', {
             this._sortWrap = wrap;
 
             // 初始化狀態表
-            V.CE_TabHidden = V.CE_TabHidden || {};
-            V.CE_TabFavorite = V.CE_TabFavorite || {};
+            CE_GlobalTabConfig.CE_TabHidden = CE_GlobalTabConfig.CE_TabHidden || {};
+            CE_GlobalTabConfig.CE_TabFavorite = CE_GlobalTabConfig.CE_TabFavorite || {};
             this.ensureCategoryState();
             this.getCategoryOrder();
 
             const rerender = () => {
+                saveGlobalTabConfig();
                 wrap.replaceChildren();
 
                 // 說明文字
@@ -667,8 +773,8 @@ Macro.add('CE_CheatExtendedVersion', {
                         this._defaultOrder.indexOf(a.id) - this._defaultOrder.indexOf(b.id)
                     );
                     this.saveOrder();
-                    const customIds = V.CE_CustomCategories.map(category => category.id);
-                    V.CE_CategoryOrder = this._defaultCategoryOrder.concat(customIds);
+                    const customIds = CE_GlobalTabConfig.CE_CustomCategories.map(category => category.id);
+                    CE_GlobalTabConfig.CE_CategoryOrder = this._defaultCategoryOrder.concat(customIds);
                     rerender();
                 };
                 wrap.appendChild(restoreBtn);
@@ -676,8 +782,8 @@ Macro.add('CE_CheatExtendedVersion', {
                 const resetLayoutBtn = document.createElement('button');
                 resetLayoutBtn.textContent = '還原預設分類名稱 / 歸屬';
                 resetLayoutBtn.onclick = () => {
-                    V.CE_CategoryTitleOverride = {};
-                    V.CE_TabCategoryOverride = {};
+                    CE_GlobalTabConfig.CE_CategoryTitleOverride = {};
+                    CE_GlobalTabConfig.CE_TabCategoryOverride = {};
                     rerender();
                 };
                 wrap.appendChild(resetLayoutBtn);
@@ -699,10 +805,11 @@ Macro.add('CE_CheatExtendedVersion', {
                     const categoryVisible = document.createElement('input');
                     categoryVisible.type = 'checkbox';
                     categoryVisible.title = '顯示此一級標籤';
-                    categoryVisible.checked = !V.CE_CategoryHidden[category.id];
+                    categoryVisible.checked = !CE_GlobalTabConfig.CE_CategoryHidden[category.id];
                     categoryVisible.onchange = () => {
-                        if (categoryVisible.checked) delete V.CE_CategoryHidden[category.id];
-                        else V.CE_CategoryHidden[category.id] = true;
+                        if (categoryVisible.checked) delete CE_GlobalTabConfig.CE_CategoryHidden[category.id];
+                        else CE_GlobalTabConfig.CE_CategoryHidden[category.id] = true;
+                        saveGlobalTabConfig();
                     };
                     categoryRow.appendChild(categoryVisible);
 
@@ -729,7 +836,7 @@ Macro.add('CE_CheatExtendedVersion', {
                         const idx = order.indexOf(category.id);
                         if (idx <= 0) return;
                         [order[idx - 1], order[idx]] = [order[idx], order[idx - 1]];
-                        V.CE_CategoryOrder = order;
+                        CE_GlobalTabConfig.CE_CategoryOrder = order;
                         rerender();
                     };
 
@@ -741,7 +848,7 @@ Macro.add('CE_CheatExtendedVersion', {
                         const idx = order.indexOf(category.id);
                         if (idx < 0 || idx >= order.length - 1) return;
                         [order[idx], order[idx + 1]] = [order[idx + 1], order[idx]];
-                        V.CE_CategoryOrder = order;
+                        CE_GlobalTabConfig.CE_CategoryOrder = order;
                         rerender();
                     };
 
@@ -784,10 +891,11 @@ Macro.add('CE_CheatExtendedVersion', {
                         const fav = document.createElement('input');
                         fav.type = 'checkbox';
                         fav.title = '加入最愛';
-                        fav.checked = !!V.CE_TabFavorite[tab.id];
+                        fav.checked = !!CE_GlobalTabConfig.CE_TabFavorite[tab.id];
                         fav.onchange = () => {
-                            if (fav.checked) V.CE_TabFavorite[tab.id] = true;
-                            else delete V.CE_TabFavorite[tab.id];
+                            if (fav.checked) CE_GlobalTabConfig.CE_TabFavorite[tab.id] = true;
+                            else delete CE_GlobalTabConfig.CE_TabFavorite[tab.id];
+                            saveGlobalTabConfig();
                         };
                         row.appendChild(fav);
 
@@ -797,9 +905,10 @@ Macro.add('CE_CheatExtendedVersion', {
                         const visible = document.createElement('input');
                         visible.type = 'checkbox';
                         visible.title = '顯示此標籤';
-                        visible.checked = !V.CE_TabHidden[tab.id];
+                        visible.checked = !CE_GlobalTabConfig.CE_TabHidden[tab.id];
                         visible.onchange = () => {
-                            V.CE_TabHidden[tab.id] = !visible.checked;
+                            CE_GlobalTabConfig.CE_TabHidden[tab.id] = !visible.checked;
+                            saveGlobalTabConfig();
                         };
                         row.appendChild(visible);
 
@@ -821,8 +930,8 @@ Macro.add('CE_CheatExtendedVersion', {
                         categorySelect.title = '二級標籤所屬分類';
                         categorySelect.onchange = () => {
                             const defaultCategory = tab.category || 'other';
-                            if (categorySelect.value === defaultCategory) delete V.CE_TabCategoryOverride[tab.id];
-                            else V.CE_TabCategoryOverride[tab.id] = categorySelect.value;
+                            if (categorySelect.value === defaultCategory) delete CE_GlobalTabConfig.CE_TabCategoryOverride[tab.id];
+                            else CE_GlobalTabConfig.CE_TabCategoryOverride[tab.id] = categorySelect.value;
                             rerender();
                         };
                         row.appendChild(categorySelect);
@@ -830,9 +939,9 @@ Macro.add('CE_CheatExtendedVersion', {
                         const resetCategory = document.createElement('button');
                         resetCategory.textContent = '↩';
                         resetCategory.title = '還原預設分類';
-                        resetCategory.disabled = !V.CE_TabCategoryOverride[tab.id];
+                        resetCategory.disabled = !CE_GlobalTabConfig.CE_TabCategoryOverride[tab.id];
                         resetCategory.onclick = () => {
-                            delete V.CE_TabCategoryOverride[tab.id];
+                            delete CE_GlobalTabConfig.CE_TabCategoryOverride[tab.id];
                             rerender();
                         };
                         row.appendChild(resetCategory);
@@ -889,6 +998,7 @@ Macro.add('CE_CheatExtendedVersion', {
             rerender();
 
             Dialog.open(() => {
+                saveGlobalTabConfig();
                 this._sortWrap = null;
                 if (this._container?.isConnected) {
                     this.render(this._container);
@@ -897,6 +1007,16 @@ Macro.add('CE_CheatExtendedVersion', {
             });
         }
     };
+
+    // TEST：控制台檢查目前 GlobalConfig。
+    Object.defineProperty(window, 'CE_TabGlobalConfigDebug', {
+        value: {
+            storageKey: CE_TAB_CONFIG_STORAGE_KEY,
+            get: () => cloneConfigValue(CE_GlobalTabConfig || ensureGlobalTabConfig()),
+            save: () => saveGlobalTabConfig()
+        },
+        writable: false
+    });
 
     // 暴露唯讀的全域 CE_TabManager 入口，供其他 CE UI 呼叫。
     Object.defineProperty(window, 'CE_TabManager', {
