@@ -407,6 +407,22 @@ $(document).on(':passagestart', function () {
         host.appendChild(section);
     }
 
+    function ensureBirdMaterials() {
+        const V = State.variables;
+        V.bird ??= {};
+        V.bird.materials ??= {
+            wood: 0,
+            fabric: 0,
+            sticks: 0,
+            leaves: 0,
+            junk: 0,
+            lurkers: 0,
+            leather: 0,
+            feathers: 0,
+            valuables: {}
+        };
+    }
+
     function loftStatusCard(label, value, max) {
         const card = makeEl("div", "CE-safehouse-status-card");
         card.appendChild(makeEl("span", "CE-safehouse-status-label", label));
@@ -458,6 +474,7 @@ $(document).on(':passagestart', function () {
             V.loft_known = 1;
             V.loft_whitney = 6;
             V.loft_gh = 3;
+            ensureBirdMaterials();
             V.loft_river = 1;
             V.loft_kylar = 1;
             V.loft_independentLab = 1;
@@ -474,8 +491,8 @@ $(document).on(':passagestart', function () {
         const unlocks = [
             ["發現閣樓", "loft_known", 1, false],
             ["惠特尼房間（6 級）", "loft_whitney", 6, true],
-            ["巨鷹飄窗（3 級）", "loft_gh", 3, true],
-            ["瑞雯廚房", "loft_river", 1, true, true],
+            ["巨鷹飄窗（3 級）", "loft_gh", 3, true, ensureBirdMaterials],
+            ["瑞雯廚房", "loft_river", 1, true, () => { V.loftIngredients ??= {}; }],
             ["凱拉房間", "loft_kylar", 1, true],
             ["獨立實驗室", "loft_independentLab", 1, true],
             ["多倫讀書角", "loft_doren", 1, true],
@@ -483,11 +500,11 @@ $(document).on(':passagestart', function () {
             ["雷恩房間（2 級）", "loft_wren", 2, true],
         ];
 
-        unlocks.forEach(([label, key, value, countUpgrade, initIngredients]) => {
+        unlocks.forEach(([label, key, value, countUpgrade, onUnlock]) => {
             const btn = makeButton(label, () => {
                 if (countUpgrade && !V[key]) V.loft_upgrade += 1;
                 V[key] = value;
-                if (initIngredients) V.loftIngredients ??= {};
+                onUnlock?.();
                 refresh();
             }, "CE-safehouse-unlock-btn");
             if (V[key]) btn.classList.add("CE-done");
@@ -495,6 +512,7 @@ $(document).on(':passagestart', function () {
         });
 
         section.appendChild(makeDetails("單個解鎖", unlockGrid, true));
+        section.appendChild(makeDesc('<span class="dol-red">⚠ 提前解鎖可能跳過原版劇情或初始化流程，造成潛在的進度或功能異常，請謹慎使用。</span>', "mt10"));
         section.appendChild(makeDesc('<span class="note">※ 再也不用煩惱要攻略角色才能開閣樓科技了。</span>', "mt10"));
         host.appendChild(section);
         renderLoftKitchen(host, refresh);
@@ -663,3 +681,8 @@ $(document).on(':passagestart', function () {
         }
     });
 })();
+
+
+
+
+
