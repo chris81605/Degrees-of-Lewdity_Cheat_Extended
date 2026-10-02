@@ -1039,8 +1039,7 @@ Macro.add('CE_CheatExtendedVersion', {
         { id: 'CE_QuickPanelSettings', title: '快捷面板', category: 'common', /*condition: () => V.debug,*/ onClick: () => CE_renderSettings('<<CE_QuickPanelSettings>>') },
         // =======================
         
-        { id: 'statControl', title: '狀態控制', category: 'combat', onClick: () => CE_renderSettings('<<CE_statControlPanel>>') },
-        { id: 'purity', title: '純潔永駐', category: 'bofy', onClick: () => CE_renderSettings('<<CE_purityControl>>') },
+        { id: 'statControl', title: '狀態控制', category: 'combat', onClick: () => CE_renderSettings('<<CE_statControlPanel>>') },       
         { id: 'damage', title: '傷害倍數', category: 'combat', onClick: () => CE_renderSettings('<<CE_damageMultiplier>>') },
         { id: 'violence', title: '疼痛衰減', category: 'combat', onClick: () => CE_renderSettings('<<CE_violenceControl>>') },
         { id: 'hpap', title: 'HP、AP顯示', category: 'combat', onClick: () => CE_renderSettings('<<swich_HP_AP_display>>') },
@@ -1062,6 +1061,7 @@ Macro.add('CE_CheatExtendedVersion', {
         { id: 'allClothes', title: '一鍵添加所有服裝+', category: 'items', onClick: () => CE_renderSettings('<<CE_getAllClothes_new>>') },
         { id: 'voidCreate', title: '虛空創造', category: 'items', onClick: () => CE_renderSettings('<<CE_inventory_helper>>') },
         { id: 'magicCircuit', title: '魔術迴路', category: 'body', onClick: () => CE_renderSettings('<<CE_tattoo>>') },
+        { id: 'purity', title: '純潔永駐', category: 'body', onClick: () => CE_renderSettings('<<CE_purityControl>>') },
         { id: 'eyeCustomManager', title: '眼色自定義', category: 'body', onClick: () => CE_renderSettings('<<eyeCustomManager>>') },
         { id: 'skinCustomManager', title: '膚色自定義', category: 'body', onClick: () => CE_renderSettings('<<skinCustomManager>>') },
         { id: 'hairCustomManager', title: '髮色自定義', category: 'body', onClick: () => CE_renderSettings('<<hairCustomManager>>') },
