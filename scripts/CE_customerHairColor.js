@@ -406,3 +406,60 @@ Macro.add('hairCustomManager', {
         self.output.append(container);
     }
 });
+
+
+/* =========================
+   髮色文字輸出
+   ========================= */
+
+function CEHairColourTextBrightness(hex, amount) {
+    if (typeof hex !== 'string') return '#ffffff';
+
+    hex = hex.replace('#', '');
+    if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+    if (!/^[0-9a-fA-F]{6}$/.test(hex)) return '#ffffff';
+
+    const bigint = parseInt(hex, 16);
+    const factor = 1 + (Number(amount) || 0);
+    const clamp = value => Math.min(Math.max(value, 0), 255);
+    const r = clamp(((bigint >> 16) & 255) * factor);
+    const g = clamp(((bigint >> 8) & 255) * factor);
+    const b = clamp((bigint & 255) * factor);
+
+    return `rgb(${r},${g},${b})`;
+}
+
+setup.CEHairColourMarkup = function (key) {
+    if (!key) return '';
+
+    const hair = setup.colours?.hair_map?.[key];
+    if (!hair) return String(key);
+
+    const name = hair.name_cap || hair.name || hair.variable || key;
+    const blend = hair.canvasfilter?.blend;
+    if (!blend) return String(name);
+
+    const color = CEHairColourTextBrightness(
+        blend,
+        hair.canvasfilter?.brightness ?? 0
+    );
+
+    return `<span style="
+        color:${color};
+        padding:0 2px;
+        border-radius:2px;
+        text-shadow:
+            1px 1px 2px rgba(0,0,0,0.6),
+           -1px 1px 2px rgba(0,0,0,0.6),
+            1px -1px 2px rgba(0,0,0,0.6),
+           -1px -1px 2px rgba(0,0,0,0.6);
+    ">${name}</span>`;
+};
+
+Macro.add('CEhaircolourtext', {
+    handler() {
+        const key = this.args[0];
+        if (!key) return;
+        $(this.output).wiki(setup.CEHairColourMarkup(key));
+    }
+});

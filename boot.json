@@ -242,6 +242,18 @@
           "findString": "<<ingredientsSupplied `Object.keys($loftIngredients)`>>",
           "replace": "<<if $CE_loftKitchenInfinite>><span class=\"green\">「我的廚房裝下了整個宇宙！」</span><br><<ingredientsSupplied `setup.CE_LoftKitchen.allKeys()`>><<else>><<ingredientsSupplied `Object.keys($loftIngredients)`>><</if>>",
           "comments": "閣樓廚房無限食材：供應全部配方食材"
+        },
+        {
+          "passage": "Widgets Text",
+          "findString": "<<print setup.colours.hair_map[_args[0]].name_cap>>",
+          "replace": "<<CEhaircolourtext _args[0]>>",
+          "comments": "髮色名稱套用實際髮色"
+        },
+        {
+          "passage": "Widgets",
+          "findString": "<<set _colour to $hairfringecolour>>",
+          "replace": "<<set _colour to setup.CEHairColourMarkup($hairfringecolour)>>",
+          "comments": "劉海描述套用實際髮色"
         }
       ]
     },
