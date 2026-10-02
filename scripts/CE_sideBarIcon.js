@@ -1064,6 +1064,7 @@ Macro.add('CE_CheatExtendedVersion', {
         { id: 'magicCircuit', title: '魔術迴路', category: 'body', onClick: () => CE_renderSettings('<<CE_tattoo>>') },
         { id: 'eyeCustomManager', title: '眼色自定義', category: 'body', onClick: () => CE_renderSettings('<<eyeCustomManager>>') },
         { id: 'skinCustomManager', title: '膚色自定義', category: 'body', onClick: () => CE_renderSettings('<<skinCustomManager>>') },
+        { id: 'hairCustomManager', title: '髮色自定義', category: 'body', onClick: () => CE_renderSettings('<<hairCustomManager>>') },
         { id: 'clothTypeManager', title: '服裝類型管理', category: 'items', onClick: () => CE_renderSettings('<<clothTypeManager>>') },
         { id: 'pcPreg', title: 'PC懷孕', category: 'pregnancy', onClick: () => CE_renderSettings('<<CE_Pregnancy>>') },
         { id: 'parasitePreg', title: '寄生物懷孕控制', category: 'pregnancy', onClick: () => CE_renderSettings('<<CE_parasiteControl>>') },
@@ -1714,3 +1715,7 @@ Macro.add('cheat_extended', {
     ]);
 
 })();
+
+
+
+

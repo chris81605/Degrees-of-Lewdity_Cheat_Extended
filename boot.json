@@ -4,7 +4,7 @@
     "cn": "作弊拓展",
     "en": "Cheat Expansion"
   },
-  "version": "1.20(dev2601001)",
+  "version": "1.20(dev261003)",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
@@ -25,7 +25,7 @@
     "scripts/CE_teleportation.js",
     "scripts/CE_brothelBasementManager.js",
     "scripts/CE_forceAttendSchool.js",
-    "scripts/clearCEVars.js",    
+    "scripts/clearCEVars.js",
     "scripts/CE_tattoo.js",
     "scripts/CE_MoneyCheat.js",
     "scripts/CE_cafeBunCheat.js",
@@ -48,19 +48,19 @@
     "scripts/CE_clothTypeManager.js",
     "scripts/CE_customerSkinColor.js",
     "scripts/CE_customerEyesColor.js",
+    "scripts/CE_customerHairColor.js",
     "scripts/CE_inventory_helper.js",
-    "scripts/CE_HeadMaskCompat.js",   
+    "scripts/CE_HeadMaskCompat.js",
     "scripts/CE_CombatSkill.js",
     "scripts/CE_forestMapGui.js",
     "scripts/CE_sewersMapGui.js",
     "scripts/CE_farmRoadMapGui.js",
     "scripts/CE_hopelessCycle.js",
     "scripts/CE_forestShop.js",
-    "scripts/CE_farmCheat.js",
-    
+    "scripts/CE_farmCheat.js"
   ],
   "tweeFileList": [
-    "game/CEoverlayReplace.twee",   
+    "game/CEoverlayReplace.twee",
     "game/CE_auto_clothes_Warmth.twee",
     "game/CE_cheatExtendedMenu.twee",
     "game/CE_featUnlocker.twee",
@@ -80,9 +80,7 @@
     "game/CE_purityControl.twee",
     "game/CE_parasiteControl.twee",
     "game/CE_EnemyState.twee",
-    "game/CE_autoRepairClothes.twee",
-   
-    
+    "game/CE_autoRepairClothes.twee"
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
@@ -182,25 +180,25 @@
         {
           "passage": "Pregnancy",
           "findString": "_args[0] lte 3",
-          "replace": "$_pregnancy.fetus[_args[0]] isnot undefined",         
+          "replace": "$_pregnancy.fetus[_args[0]] isnot undefined",
           "comments": "寄生物插槽擴充分娩相關代碼patch"
         },
         {
           "passage": "Widgets Text",
           "findString": "<<switch Skin.color.natural>>",
-          "replace": "<<skinColourFallback>><<switch Skin.color.natural>>",         
+          "replace": "<<skinColourFallback>><<switch Skin.color.natural>>",
           "comments": "針對自定義膚色輸出對應文字patch"
         },
         {
-            "passage": "Widgets Text",
-            "findString": "<<widget \"skintonetext\">>\n\t<<switch Skin.color.natural>>",
-            "replace": "<<widget \"skintonetext\">>\n\t<<skinToneFallback>><<switch Skin.color.natural>>",
-            "comments": "針對自定義膚色色調輸出色塊patch"
+          "passage": "Widgets Text",
+          "findString": "<<widget \"skintonetext\">>\n\t<<switch Skin.color.natural>>",
+          "replace": "<<widget \"skintonetext\">>\n\t<<skinToneFallback>><<switch Skin.color.natural>>",
+          "comments": "針對自定義膚色色調輸出色塊patch"
         },
         {
           "passage": "Widgets Wardrobe",
           "findString": "<<for _i to 0; _i lt _selectedWardrobe[_wardrobe_list].length; _i++>>",
-          "replaceFile": "addon-replace/Widgets_Wardrobe.txt",       
+          "replaceFile": "addon-replace/Widgets_Wardrobe.txt",
           "comments": "嘗試修復衣櫥服裝超過1000件後不顯示的問題"
         },
         {
@@ -276,7 +274,7 @@
             "from": "switch (V.sexStats[genital].pregnancy.motherStatus)",
             "to": "if (V.CE_parasiteControl){\n\t\t return CE_parasiteControlLimit(genital)\n\t};\n\tswitch (V.sexStats[genital].pregnancy.motherStatus)",
             "fileName": "pregnancy-types.js"
-          }                          
+          }
         ],
         "twee": [
           {

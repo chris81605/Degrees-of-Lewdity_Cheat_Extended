@@ -601,6 +601,11 @@ Macro.add('skinCustomManager', {
                 // 內容區塊
                 const content = document.createElement('div');
                 content.style.display = 'none'; // 預設摺疊
+                content.style.maxWidth = '100%';
+                content.style.maxHeight = 'min(55vh, 520px)';
+                content.style.overflowY = 'auto';
+                content.style.overflowX = 'hidden';
+                content.style.boxSizing = 'border-box';
                 container.appendChild(content);
 
                 // 點擊標題切換顯示
@@ -621,6 +626,9 @@ Macro.add('skinCustomManager', {
                     row.style.display = 'flex';
                     row.style.alignItems = 'center';
                     row.style.marginBottom = '4px';
+                    row.style.width = '100%';
+                    row.style.maxWidth = '100%';
+                    row.style.boxSizing = 'border-box';
 
                     const label = document.createElement('span');
                     label.style.width = '120px';

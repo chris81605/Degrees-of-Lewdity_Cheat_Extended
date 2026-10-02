@@ -262,24 +262,38 @@ Macro.add('eyeCustomManager', {
             );
 
             if (defaultEyes.length) {
-                const details = document.createElement('details');
+                const details = document.createElement('div');
                 details.style.marginTop = '12px';
                 details.style.marginBottom = '6px';
-    
-                // summary
-                const summary = document.createElement('summary');
-                summary.textContent = '原版眼睛顏色（點擊展開）';
+
+                // 標題 + 摺疊按鈕（同步原版膚色 / 髮色）
+                const summary = document.createElement('div');
+                summary.textContent = '原版眼睛顏色 ▸'; // ▸ 收合， ▾ 展開
                 summary.style.fontWeight = 'bold';
                 summary.style.cursor = 'pointer';
-                summary.style.marginBottom = '4px';
+                summary.style.userSelect = 'none';
+                summary.style.marginBottom = '6px';
                 details.appendChild(summary);
 
                 // 內部列表
                 const innerDiv = document.createElement('div');
-                innerDiv.style.display = 'flex';
-                innerDiv.style.flexWrap = 'wrap';
-                innerDiv.style.gap = '4px'; // 每個按鈕間隔
+                innerDiv.style.display = 'none'; // 預設摺疊
                 innerDiv.style.marginTop = '4px';
+                innerDiv.style.maxWidth = '100%';
+                innerDiv.style.maxHeight = 'min(55vh, 520px)';
+                innerDiv.style.overflowY = 'auto';
+                innerDiv.style.overflowX = 'hidden';
+                innerDiv.style.boxSizing = 'border-box';
+
+                summary.onclick = () => {
+                    if (innerDiv.style.display === 'none') {
+                        innerDiv.style.display = 'block';
+                        summary.textContent = '原版眼睛顏色 ▾';
+                    } else {
+                        innerDiv.style.display = 'none';
+                        summary.textContent = '原版眼睛顏色 ▸';
+                    }
+                };
 
                 defaultEyes.forEach(eye => {
                     const row = document.createElement('div');
@@ -288,6 +302,9 @@ Macro.add('eyeCustomManager', {
                     row.style.alignItems = 'center';
                     row.style.marginBottom = '4px';
                     row.style.flexWrap = 'wrap';
+                    row.style.width = '100%';
+                    row.style.maxWidth = '100%';
+                    row.style.boxSizing = 'border-box';
 
                     // 色塊
                     const colorBox = document.createElement('div');

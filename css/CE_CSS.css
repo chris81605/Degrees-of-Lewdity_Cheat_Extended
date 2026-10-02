@@ -301,17 +301,17 @@ margin: 0;                /* 消除額外 margin */
 
 .dol-section {
   padding: 10px;                  /* 內距 */
-  border: 1px solid rgba(255,255,255,0.03); /* 淡邊框 */
+  border: 1px solid rgba(255,255,255,0.08); /* 提高區塊邊界辨識度 */
   border-radius: 6px;             /* 圓角 */
-  background: rgba(255,255,255,0.01); /* 半透明背景 */
+  background: rgba(255,255,255,0.025); /* 與外層背景保持可見層次 */
 }
 
 .dol-section-block {
   margin-bottom: 8px;             /* 與下方區塊間距 */
   padding: 10px;                  /* 內距 */
   border-radius: 6px;             /* 圓角 */
-  background: linear-gradient(180deg, rgba(255,255,255,0.005), rgba(255,255,255,0.01)); /* 淡漸層背景 */
-  border: 1px solid rgba(255,255,255,0.02); /* 淡邊框 */
+  background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.025)); /* 提高子區塊背景辨識度 */
+  border: 1px solid rgba(255,255,255,0.10); /* 清楚但不過重的區塊邊界 */
 }
 
 .dol-label {
@@ -336,8 +336,8 @@ margin: 0;                /* 消除額外 margin */
 
 .dol-btn {
   padding: 8px 12px;              /* 按鈕內距 */
-  background: rgba(255,255,255,0.02); /* 淡背景 */
-  border: 1px solid rgba(255,255,255,0.03); /* 淡邊框 */
+  background: rgba(255,255,255,0.055); /* 以背景區分按鈕 */
+  border: 1px solid transparent; /* 避免容器框內再出現按鈕框 */
   border-radius: 6px;             /* 圓角 */
   cursor: pointer;                /* 滑鼠變手型 */
   font-weight: 600;               /* 字體稍粗 */
@@ -389,7 +389,7 @@ margin: 0;                /* 消除額外 margin */
 .dol-status {
   margin-top: 12px;                 /* 上方間距 */
   padding: 10px;                    /* 內距 */
-  border-left: 3px solid rgba(74,163,255,0.12); /* 左側強調條 */
+  border-left: 3px solid rgba(74,163,255,0.32); /* 提高左側強調條辨識度 */
   background: rgba(0,0,0,0.15);     /* 半透明背景 */
   border-radius: 4px;               /* 圓角 */
   color: #dfe9f8;                   /* 文字顏色 */
@@ -402,8 +402,8 @@ margin: 0;                /* 消除額外 margin */
 
 /* Improve listbox / textbox appearance in SugarCube */
 select, input[type="text"], textarea {
-  background: rgba(255,255,255,0.02); /* 淡背景 */
-  border: 1px solid rgba(255,255,255,0.03); /* 淡邊框 */
+  background: rgba(255,255,255,0.055); /* 提高輸入區背景辨識度 */
+  border: 1px solid rgba(255,255,255,0.12); /* 保留清楚的輸入邊界 */
   padding: 6px 8px;                  /* 內距 */
   border-radius: 4px;                /* 圓角 */
   color: #e6eef8;                     /* 文字顏色 */
