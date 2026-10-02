@@ -1,11 +1,3 @@
-/*
-simpleFrameworks.addto('iModCheats', 'cheat_extended')
-simpleFrameworks.addto('ModMenuBig', 'bccmeditor_button')
-simpleFrameworks.addto('ModCaptionAfterDescription', 'bccmeditor_init')
-simpleFrameworks.addto('ModCaptionAfterDescription', 'CEstatebox')
-simpleFrameworks.addto('iModOptions', 'swich_DEBUG_MODE')
-*/
-
 (() => {
     window.modSC2DataManager.getModLoadController().addLifeTimeCircleHook(
         'cheatExtended',
@@ -44,7 +36,7 @@ simpleFrameworks.addto('iModOptions', 'swich_DEBUG_MODE')
                         maplebirch.tool.addTo('CaptionAfterDescription', 'CEstatebox');
                         maplebirch.tool.addTo('Options', 'CE_options');
                         maplebirch.tool.addTo('HintMobile', 'CE_sideBarIcon');
-                        maplebirch.tool.addTo('Footer', 'CE_CheatExtendedVersion');
+                        maplebirch.tool.addTo('Footer', 'CE_CheatExtendedVersion');                        
                         
                     } else {
                         logger.error(`[Cheat Extended] maplebirch 版本過低，至少需要 v3.2.5，當前 v${maplebirchMod.version}`);

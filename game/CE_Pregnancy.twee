@@ -56,7 +56,7 @@
 
 <<set _pregGenitalList to ["anus", "vagina"]>>
 <<set _pregTypeList to ["Pale Tentacle", "tentacle", "eels", "slimes", "Pale slime", "fish", "snake", "worms", "lurker", "wasp", "bee", "squid", "vine", "slug"]>>
-<<set _pregGenderList to ["male", "female", "Hermaphrodite"]>>
+<<set _pregGenderList to ["Male", "Female", "Hermaphrodite"]>>
 
 <div class="dol-section-block">
   <label class="dol-label">懷孕位置</label>

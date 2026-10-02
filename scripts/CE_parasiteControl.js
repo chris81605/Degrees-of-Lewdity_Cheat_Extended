@@ -209,3 +209,4 @@ function CE_parasiteControlLimit(genital = "anus") {
     console.log(`[Cheat Extended] ✨ CE_calculateParasiteLimit 手動模式, genital: ${genital}, 上限: ${customLimit}`);
     return customLimit;
 }
+

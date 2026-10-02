@@ -8,10 +8,10 @@ const CE_TransformationDailyGain = (() => {
     // =========================
     const config = [
         { key: "angel",       label: "天使",   group: "divine", buildVar: "angelbuild" },
-        { key: "fallenangel", label: "堕天使", group: "divine", buildVar: "fallenbuild" },
-        { key: "demon",       label: "恶魔",   group: "divine", buildVar: "demonbuild" },
+        { key: "fallenangel", label: "墮天使", group: "divine", buildVar: "fallenbuild" },
+        { key: "demon",       label: "惡魔",   group: "divine", buildVar: "demonbuild" },
         { key: "wolf",        label: "狼",     group: "beast",  buildVar: "wolfbuild" },
-        { key: "cat",         label: "猫",     group: "beast",  buildVar: "catbuild" },
+        { key: "cat",         label: "貓",     group: "beast",  buildVar: "catbuild" },
         { key: "cow",         label: "奶牛",   group: "beast",  buildVar: "cowbuild" },
         { key: "bird",        label: "哈比",     group: "beast",  buildVar: "birdbuild" },
         { key: "fox",         label: "狐狸",   group: "beast",  buildVar: "foxbuild" }
@@ -206,11 +206,6 @@ const CE_TransformationDailyGain = (() => {
     // =========================
     // tab register
     // =========================
-    CE_TabManager.register({
-       id: 'transformationDailyGain',
-       title: '額外轉化點數',
-       onClick: () => Wikifier.wikifyEval('<<replace #CE_settingsDiv>><<CE_TransformationDailyGainSettings>><</replace>>')
-    });
 
     // 將內部物件公開給外部調用
    // return { config, handleExclusiveToggle };
@@ -227,11 +222,11 @@ const CE_TransformationDailyGain = (() => {
 [✔] 啟用每日增加
 每日增加量： [ 25 ▓▓▓▓▓░░░░░ ]  (slider)
 
-💠 堕天使（神魔系）
+💠 墮天使（神魔系）
 [ ] 啟用每日增加
 每日增加量： [ 10 ▓▓░░░░░░░ ]  (slider)
 
-💠 恶魔（神魔系）
+💠 惡魔（神魔系）
 [ ] 啟用每日增加
 每日增加量： [ 5 ▓░░░░░░░░░ ]  (slider)
 
@@ -239,7 +234,7 @@ const CE_TransformationDailyGain = (() => {
 [ ] 啟用每日增加
 每日增加量： [ 8 ▓▓░░░░░░░ ]  (slider)
 
-💠 猫（動物系）
+💠 貓（動物系）
 [ ] 啟用每日增加
 每日增加量： [ 12 ▓▓▓░░░░░ ]  (slider)
 

@@ -1,5 +1,6 @@
 :: CE_teleportation [widget]
 
+<!--已棄用，以CE_TeleportationPanel、CE_TeleportationSimplePanel取代-->
 <<widget "swich_teleportation">>
 <div class="dol-settings dol-shadow">
     <div class="dol-header"><span class="dol-title">空間節點</span></div>

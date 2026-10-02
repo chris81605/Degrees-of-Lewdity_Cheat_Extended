@@ -1,3 +1,5 @@
+// 已棄用，改用狀態變數hook實現
+/*
 registerCE_genericTimeEvent(
     'onAfter',
     'CE_氧氣鎖定',
@@ -32,3 +34,4 @@ registerCE_genericTimeEvent(
         });
     }
 );
+*/

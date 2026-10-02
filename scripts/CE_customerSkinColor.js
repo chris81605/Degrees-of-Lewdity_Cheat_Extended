@@ -601,6 +601,11 @@ Macro.add('skinCustomManager', {
                 // 內容區塊
                 const content = document.createElement('div');
                 content.style.display = 'none'; // 預設摺疊
+                content.style.maxWidth = '100%';
+                content.style.maxHeight = 'min(55vh, 520px)';
+                content.style.overflowY = 'auto';
+                content.style.overflowX = 'hidden';
+                content.style.boxSizing = 'border-box';
                 container.appendChild(content);
 
                 // 點擊標題切換顯示
@@ -621,6 +626,9 @@ Macro.add('skinCustomManager', {
                     row.style.display = 'flex';
                     row.style.alignItems = 'center';
                     row.style.marginBottom = '4px';
+                    row.style.width = '100%';
+                    row.style.maxWidth = '100%';
+                    row.style.boxSizing = 'border-box';
 
                     const label = document.createElement('span');
                     label.style.width = '120px';
@@ -661,12 +669,7 @@ Macro.add('skinCustomManager', {
     },
 });
 
-CE_TabManager.register({
-    id: 'skinCustomManager',
-    title: '膚色自定義',
-    //condition: () => V.debug
-    onClick: () => CE_renderSettings('<<skinCustomManager>>')
-});
+//condition: () => V.debug
 
 //針對自定義膚色輸出對應文字
 Macro.add('skinColourFallback', {
@@ -680,7 +683,7 @@ Macro.add('skinColourFallback', {
         );
         if (vanilla.has(key)) return;
 
-        const tan = V.player?.skin?.tan ?? 0;
+        const tan = Skin.color.tan ?? 0;
         let colorHex = '#ffffff';
 
         try {
@@ -689,13 +692,7 @@ Macro.add('skinColourFallback', {
                 colorHex = setup.colours.getSkinRgb(skinOpt, tan / 100);
             }
         } catch (e) { /* fallback */ }
-
-        // 日曬文字
-        let tanText = '';
-        if (tan >= 80) tanText = '，上面有深深的晒痕';
-        else if (tan >= 60) tanText = '，上面有中等程度的晒痕';
-        else if (tan >= 30) tanText = '，上面有着晒痕';
-        else if (tan >= 10) tanText = '，上面有轻微的晒痕';
+        
 
         // ===== CSS 加強可讀性 =====
         const style = `
@@ -709,6 +706,45 @@ Macro.add('skinColourFallback', {
             border-radius: 2px;
         `;
 
-        $(this.output).wiki(`<span style="${style}">${key}${tanText}</span>`);
+        $(this.output).wiki(`<span style="${style}">${key}</span>`);
+    }
+});
+
+// 自定義膚色沒有原版色調分類，直接顯示實際顏色
+Macro.add('skinToneFallback', {
+    handler() {
+        const key = V.player?.skin?.color;
+        if (!key) return;
+        if (!V.customSkin) V.customSkin = [];
+
+        const vanilla = new Set(
+            Object.keys(setup.colours.skin_options)
+                .filter(name => !V.customSkin.some(s => s.name === name))
+        );
+
+        // 原版膚色交給原版 switch
+        if (vanilla.has(key)) return;
+
+        const tan = Skin.color.tan ?? 0;
+        let colorHex = '#ffffff';
+
+        try {
+            const skinOpt = setup.colours.skin_options[key];
+            if (skinOpt) {
+                colorHex = setup.colours.getSkinRgb(skinOpt, tan / 100);
+            }
+        } catch (e) { /* fallback */ }
+
+        $(this.output).wiki(`
+            <span style="
+                display: inline-block;
+                width: 0.9em;
+                height: 0.9em;
+                background: ${colorHex};
+                border: 1px solid rgba(128,128,128,0.7);
+                border-radius: 2px;
+                vertical-align: -0.05em;
+            "></span>
+        `);
     }
 });

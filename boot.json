@@ -1,20 +1,37 @@
 {
   "name": "cheat extended",
-  "version": "1.19",
+  "nickName": {
+    "cn": "作弊拓展",
+    "en": "Cheat Expansion"
+  },
+  "version": "1.20",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
     "scriptEarly/Utils/spectrum.css"
   ],
   "scriptFileList": [
+    "scripts/lan_t2s/CE_langDict.js",
+    "scripts/lan_t2s/CE_lang.js",
     "scripts/CE_getTargetWarmth2.js",
     "scripts/CE_Time_Event.js",
     "scripts/CE_sideBarIcon.js",
+    "scripts/CE_safehouseCheat.js",
+    "scripts/CE_autoFarm.js",
+    "scripts/CE_manorHelper.js",
+    "scripts/CE_brothelVending.js",
+    "scripts/CE_QuickSwitch.js",
+    "scripts/CE_YanLinManager.js",
+    "scripts/CE_teleportation.js",
     "scripts/CE_brothelBasementManager.js",
     "scripts/CE_forceAttendSchool.js",
-    "scripts/clearCEVars.js",    
+    "scripts/clearCEVars.js",
     "scripts/CE_tattoo.js",
     "scripts/CE_MoneyCheat.js",
+    "scripts/CE_cafeBunCheat.js",
+    "scripts/CE_hookTool.js",
+    "scripts/CE_hookSimpleUI.js",
+    "scripts/CE_macroHookTool.js",
     "scripts/CE_statControl.js",
     "scripts/CE_timeMultiplier.js",
     "scripts/CE_featBypass.js",
@@ -31,18 +48,24 @@
     "scripts/CE_clothTypeManager.js",
     "scripts/CE_customerSkinColor.js",
     "scripts/CE_customerEyesColor.js",
-    "scripts/CE_CombatSkill.js"
+    "scripts/CE_customerHairColor.js",
+    "scripts/CE_inventory_helper.js",
+    "scripts/CE_HeadMaskCompat.js",
+    "scripts/CE_CombatSkill.js",
+    "scripts/CE_forestMapGui.js",
+    "scripts/CE_sewersMapGui.js",
+    "scripts/CE_farmRoadMapGui.js",
+    "scripts/CE_hopelessCycle.js",
+    "scripts/CE_forestShop.js",
+    "scripts/CE_farmCheat.js"
   ],
   "tweeFileList": [
-    "game/CEoverlayReplace.twee",   
-    "game/CE_teleportation.twee",
-    "game/CE_yanling.twee",
+    "game/CEoverlayReplace.twee",
     "game/CE_auto_clothes_Warmth.twee",
     "game/CE_cheatExtendedMenu.twee",
     "game/CE_featUnlocker.twee",
     "game/CE_milk_mod.twee",
     "game/CE_test_widget.twee",
-    "game/CE_inventory_helper.twee",
     "game/Ce_tattoo_widget.twee",
     "game/Widgets cheat_extended.twee",
     "game/CE_Wardrobe.twee",
@@ -57,13 +80,13 @@
     "game/CE_purityControl.twee",
     "game/CE_parasiteControl.twee",
     "game/CE_EnemyState.twee",
-    "game/CE_autoRepairClothes.twee",
-    "game/CE_farmCheat.twee"
+    "game/CE_autoRepairClothes.twee"
   ],
   "imgFileList": [],
   "scriptFileList_inject_early": [
     "scriptEarly/CERegist.js",
     "scriptEarly/framework_detector.js",
+    "scriptEarly/CE_environmentGuard.js",
     "scriptEarly/Utils/spectrum.js"
   ],
   "additionFile": [
@@ -76,6 +99,7 @@
     "addon-replace/Widgets_4.txt",
     "addon-replace/Widgets_5.txt",
     "addon-replace/StoryCaption.txt",
+    "addon-replace/Widgets_Wardrobe.txt",
     "readme.md",
     "LICENSE.txt"
   ],
@@ -123,7 +147,7 @@
         },
         {
           "passage": "Widgets Market",
-          "findString": "\t<<if $stall_amount gte $plants[$stall_plant].amount>>",
+          "findString": "<<if $stall_amount gte $foodstuff[$stall_foodstuff].amount>>",
           "replaceFile": "addon-replace/Widgets Market_2.txt",
           "all": true,
           "comments": "黑心商店"
@@ -148,22 +172,76 @@
         },
         {
           "passage": "Pregnancy",
-          "findString": "<<case 0 1 2 3>>",
-          "replace": "<<case _args[0] is a number>>",
+          "findString": "<<switch _args[0]>>\n\t\t\t<<case 0 1 2 3>>",
+          "replace": "<<switch typeof _args[0]>>\n\t\t\t<<case \"number\">>",
           "all": true,
           "comments": "寄生物插槽擴充分娩相關代碼patch"
         },
         {
           "passage": "Pregnancy",
           "findString": "_args[0] lte 3",
-          "replace": "$_pregnancy.fetus[_args[0]] isnot undefined",         
+          "replace": "$_pregnancy.fetus[_args[0]] isnot undefined",
           "comments": "寄生物插槽擴充分娩相關代碼patch"
         },
         {
           "passage": "Widgets Text",
           "findString": "<<switch Skin.color.natural>>",
-          "replace": "<<skinColourFallback>><<switch Skin.color.natural>>",         
+          "replace": "<<skinColourFallback>><<switch Skin.color.natural>>",
           "comments": "針對自定義膚色輸出對應文字patch"
+        },
+        {
+          "passage": "Widgets Text",
+          "findString": "<<widget \"skintonetext\">>\n\t<<switch Skin.color.natural>>",
+          "replace": "<<widget \"skintonetext\">>\n\t<<skinToneFallback>><<switch Skin.color.natural>>",
+          "comments": "針對自定義膚色色調輸出色塊patch"
+        },
+        {
+          "passage": "Widgets Wardrobe",
+          "findString": "<<for _i to 0; _i lt _selectedWardrobe[_wardrobe_list].length; _i++>>",
+          "replaceFile": "addon-replace/Widgets_Wardrobe.txt",
+          "comments": "嘗試修復衣櫥服裝超過1000件後不顯示的問題"
+        },
+        {
+          "passage": "Widgets Cafe",
+          "findString": "<<set _bun_money to 10 * (Math.floor((1000 + ((_bun_effective_value * $bun_cut) * _buns_sold)) / 10))>> /* We don't want to be paid £0.3333 */",
+          "replace": "<<set _bun_money to 10 * (Math.floor((1000 + ((_bun_effective_value * $bun_cut) * _buns_sold)) / 10))>> /* We don't want to be paid £0.3333 */\n\t<<set _CE_bun_cut to $bun_cut>>\n\t<<set _CE_bun_wage to 1000>>\n\t<<if $CE_cafeBunCheat.enabled>>\n\t\t<<if $CE_cafeBunCheat.noPriceDrop>>\n\t\t\t<<set _bun_effective_value to $bun_value>>\n\t\t<</if>>\n\t\t<<set _bun_effective_value to Math.max(0, Math.round(_bun_effective_value * $CE_cafeBunCheat.priceMultiplier))>>\n\t\t<<set _CE_bun_cut to Math.max(0, $bun_cut * $CE_cafeBunCheat.cutMultiplier)>>\n\t\t<<set _CE_bun_wage to Math.round($CE_cafeBunCheat.fixedWage * 10) * 10>>\n\t\t<<set _bun_money to 10 * Math.floor((_CE_bun_wage + (_bun_effective_value * _CE_bun_cut * _buns_sold)) / 10)>>\n\t<</if>>",
+          "comments": "咖啡店小麵包收入修改"
+        },
+        {
+          "passage": "Widgets Cafe",
+          "findString": "面包售价：£<<print (Math.floor(_bun_effective_value / 100))>>/* The bun value must be an integer */",
+          "replace": "面包售价：£<<print (_bun_effective_value / 100)>>",
+          "comments": "咖啡店小麵包售價顯示"
+        },
+        {
+          "passage": "Widgets Cafe",
+          "findString": "你的分红：<<print ($bun_cut * 100)>>%",
+          "replace": "你的分红：<<print (_CE_bun_cut * 100)>>%",
+          "comments": "咖啡店小麵包分成顯示"
+        },
+        {
+          "passage": "Widgets Cafe",
+          "findString": "劳动报酬：£10",
+          "replace": "劳动报酬：£<<print (_CE_bun_wage / 100)>>",
+          "comments": "咖啡店小麵包固定工資顯示"
+        },
+        {
+          "passage": "Widgets Cafe",
+          "findString": "<<money 1000 \"cafeChef\">>\n\t<<money `_bun_money - 1000` \"cafeBuns\">>",
+          "replace": "<<money `_CE_bun_wage` \"cafeChef\">>\n\t<<money `_bun_money - _CE_bun_wage` \"cafeBuns\">>",
+          "comments": "咖啡店小麵包收入分帳"
+        },
+        {
+          "passage": "Orphanage Loft Kitchen",
+          "findString": "<<if Object.keys($loftIngredients).length gte 1>>",
+          "replace": "<<if $CE_loftKitchenInfinite or Object.keys($loftIngredients).length gte 1>>",
+          "comments": "閣樓廚房無限食材：空庫存時仍進入供應分支"
+        },
+        {
+          "passage": "Orphanage Loft Kitchen",
+          "findString": "<<ingredientsSupplied `Object.keys($loftIngredients)`>>",
+          "replace": "<<if $CE_loftKitchenInfinite>><span class=\"green\">「我的廚房裝下了整個宇宙！」</span><br><<ingredientsSupplied `setup.CE_LoftKitchen.allKeys()`>><<else>><<ingredientsSupplied `Object.keys($loftIngredients)`>><</if>>",
+          "comments": "閣樓廚房無限食材：供應全部配方食材"
         }
       ]
     },
@@ -175,8 +253,8 @@
         "js": [
           {
             "TODO": "semen_releasedFIX",
-            "from": "\tif (V.cow >= 6) released *= 2;",
-            "to": "\tif (V.cow >= 6) released *= 2;\n\tif (V.semen_releasedFIX > 1) released *= V.semen_releasedFIX;\n",
+            "from": "if (V.cow >= 6) released *= 1.2;",
+            "to": "if (V.cow >= 6) released *= 1.2;\n\tif (V.semen_releasedFIX > 1) released *= V.semen_releasedFIX;\n",
             "fileName": "ingame.js"
           },
           {
@@ -196,7 +274,7 @@
             "from": "switch (V.sexStats[genital].pregnancy.motherStatus)",
             "to": "if (V.CE_parasiteControl){\n\t\t return CE_parasiteControlLimit(genital)\n\t};\n\tswitch (V.sexStats[genital].pregnancy.motherStatus)",
             "fileName": "pregnancy-types.js"
-          }                          
+          }
         ],
         "twee": [
           {
@@ -238,7 +316,7 @@
     },
     {
       "modName": "GameVersion",
-      "version": ">=0.5.5.9"
+      "version": ">=0.5.11.9"
     }
   ]
 }

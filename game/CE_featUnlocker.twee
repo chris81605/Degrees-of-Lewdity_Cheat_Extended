@@ -4,37 +4,37 @@
 <div class="dol-settings dol-shadow">
 
 	<div class="dol-header">
-		<span class="dol-title">🏆 成就解锁器 (Achievement Unlocker)</span>
+		<span class="dol-title">🏆 成就解鎖器 (Achievement Unlocker)</span>
 	</div>
 
 	<div class="dol-body">
 
 		<div class="dol-desc">
-			管理当前存档与浏览器本地全局成就，可单独解锁、上锁，或一键批量处理。
+			管理當前存檔與瀏覽器本地全域成就，可單獨解鎖、上鎖，或一鍵批量處理。
 		</div>
 		<br>
 
-		<!-- ================= 全局操作 ================= -->
+		<!-- ================= 全域操作 ================= -->
 		<div class="dol-header">
-			<span class="dol-title">全局操作 (Bulk Operations)</span>
+			<span class="dol-title">全域操作 (Bulk Operations)</span>
 		</div>
 		<br>
 
 		<div class="dol-section">
 			<div class="dol-btn" style="display: flex; gap: 10px; flex-wrap: wrap;">
-				<<button "一键解锁全部成就 (Unlock All)">>
+				<<button "一鍵解鎖全部成就 (Unlock All)">>
 					<<run unlockAllFeats()>>
 					<<replace #CE_settingsDiv>><<CE_featUnlockerPanel>><</replace>>
 				<</button>>
 
-				<<button "一键重置全部成就 (Reset All)">>
+				<<button "一鍵重置全部成就 (Reset All)">>
 					<<run resetAllFeats()>>
 					<<replace #CE_settingsDiv>><<CE_featUnlockerPanel>><</replace>>
 				<</button>>
 			</div>
 
 			<div class="dol-desc" style="font-size: 0.85em; color: gray; margin-top: 6px;">
-				※ 解锁或重置会直接同步修改当前存档及浏览器的本地全局成就 localStorage。
+				※ 解鎖或重置會直接同步修改當前存檔及瀏覽器的本地全域成就 localStorage。
 			</div>
 		</div>
 
@@ -63,9 +63,9 @@
 							<div style="flex: 1;">
 								<span @class="_isUnlocked ? 'dol-green' : 'dol-red'">
 									<<if _isUnlocked>>
-										★ [已解锁 / Unlocked]
+										★ [已解鎖 / Unlocked]
 									<<else>>
-										☆ [未解锁 / Locked]
+										☆ [未解鎖 / Locked]
 									<</if>>
 								</span>
 
@@ -86,12 +86,12 @@
 
 							<div class="dol-btn" style="white-space: nowrap;">
 								<<if _isUnlocked>>
-									<<link "上锁 (Lock)">>
+									<<link "上鎖 (Lock)">>
 										<<run toggleFeat(_featName, false)>>
 										<<replace #CE_settingsDiv>><<CE_featUnlockerPanel>><</replace>>
 									<</link>>
 								<<else>>
-									<<link "解锁 (Unlock)">>
+									<<link "解鎖 (Unlock)">>
 										<<run toggleFeat(_featName, true)>>
 										<<replace #CE_settingsDiv>><<CE_featUnlockerPanel>><</replace>>
 									<</link>>

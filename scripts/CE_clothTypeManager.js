@@ -343,11 +343,6 @@ Macro.add('clothTypeManager', {
     }
 });
 
-CE_TabManager.register({
-    id: 'clothTypeManager',
-    title: '服裝類型管理',
-    onClick: () => Wikifier.wikifyEval('<<replace #CE_settingsDiv>><<clothTypeManager>><</replace>>')
-});
 
 setup.autoApplyClothTypePreset = function () {
     if (!V.clothTypeAutoApply) return;
