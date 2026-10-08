@@ -4,7 +4,7 @@
     "cn": "作弊拓展",
     "en": "Cheat Expansion"
   },
-  "version": "1.20",
+  "version": "1.20.2",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
@@ -112,13 +112,13 @@
         {
           "passage": "Widgets",
           "findString": "\t\t\t<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod / _clothesMod)>>",
-          "replaceFile": "addon-replace/Widgets_3.txt",
+          "replace": "\t\t\t<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)) / _possessMod / _clothesMod) * ($CE_violenceEnabled ? $CE_violenceMultiplier : 1)>>",
           "comments": "金鐘罩、鐵布衫"
         },
         {
           "passage": "Widgets",
           "findString": "\t\t\t<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10)))>>",
-          "replaceFile": "addon-replace/Widgets_4.txt",
+          "replace": "\t\t\t<<set $pain += (_violence * _painMod * (1 - ($masochism / 1200)) * (1 - ($sciencetrait / 10))) * ($CE_violenceEnabled ? $CE_violenceMultiplier : 1)>>",
           "comments": "金鐘罩、鐵布衫"
         },
         {
@@ -283,9 +283,9 @@
           },
           {
             "TODO": "patch => maxParasites",
-            "from": "switch (V.sexStats[genital].pregnancy.motherStatus)",
-            "to": "if (V.CE_parasiteControl){\n\t\t return CE_parasiteControlLimit(genital)\n\t};\n\tswitch (V.sexStats[genital].pregnancy.motherStatus)",
-            "fileName": "pregnancy-types.js"
+            "from": "switch (V.sexStats[orifice].pregnancy.motherStatus)",
+            "to": "if (V.CE_parasiteControl){\n\t\t return CE_parasiteControlLimit(genital)\n\t};\n\tswitch (V.sexStats[orifice].pregnancy.motherStatus)",
+            "fileName": "parasite.js"
           }
         ],
         "twee": [
@@ -328,7 +328,7 @@
     },
     {
       "modName": "GameVersion",
-      "version": ">=0.5.11.9"
+      "version": ">=0.5.12.13"
     }
   ]
 }
