@@ -4,7 +4,7 @@
     "cn": "作弊拓展",
     "en": "Cheat Expansion"
   },
-  "version": "1.20.3",
+  "version": "1.20.3.1",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
@@ -285,7 +285,7 @@
           {
             "TODO": "patch => maxParasites",
             "from": "switch (V.sexStats[orifice].pregnancy.motherStatus)",
-            "to": "if (V.CE_parasiteControl){\n\t\t return CE_parasiteControlLimit(genital)\n\t};\n\tswitch (V.sexStats[orifice].pregnancy.motherStatus)",
+            "to": "if (V.CE_parasiteControl){\n\t\t return CE_parasiteControlLimit(orifice)\n\t};\n\tswitch (V.sexStats[orifice].pregnancy.motherStatus)",
             "fileName": "parasite.js"
           }
         ],

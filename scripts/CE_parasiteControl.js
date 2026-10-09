@@ -181,20 +181,20 @@
 
 // 自訂寄生物上限計算函數
 // (在原版代碼插入此函數打補丁）
-function CE_parasiteControlLimit(genital = "anus") {
+function CE_parasiteControlLimit(orifice = "anus") {
     // 無限模式
     if (V.CE_parasiteUnlimited) {
-        const fetusArr = V.sexStats[genital]?.pregnancy?.fetus;
+        const fetusArr = V.sexStats[orifice]?.pregnancy?.fetus;
         if (Array.isArray(fetusArr)) {
             const unlimitedCount = fetusArr.length + 1;
-            console.log(`[Cheat Extended] ✨ CE_calculateParasiteLimit 無限模式, genital: ${genital}, 上限: ${unlimitedCount}`);
+            console.log(`[Cheat Extended] ✨ CE_calculateParasiteLimit 無限模式, orifice: ${orifice}, 上限: ${unlimitedCount}`);
             return unlimitedCount;
         }
     }
 
     // 手動模式
     let customLimit;
-    switch (genital) {
+    switch (orifice) {
         case "vagina":
             customLimit = parseInt(V.CE_parasiteMaxVagina);
             break;
@@ -206,7 +206,7 @@ function CE_parasiteControlLimit(genital = "anus") {
     }
 
     if (isNaN(customLimit) || customLimit < 1) customLimit = 1;
-    console.log(`[Cheat Extended] ✨ CE_calculateParasiteLimit 手動模式, genital: ${genital}, 上限: ${customLimit}`);
+    console.log(`[Cheat Extended] ✨ CE_calculateParasiteLimit 手動模式, orifice: ${orifice}, 上限: ${customLimit}`);
     return customLimit;
 }
 
