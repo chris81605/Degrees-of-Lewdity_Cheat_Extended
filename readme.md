@@ -1,4 +1,4 @@
-> 測試版本：1.20.3.dev.10。側邊欄入口為「服裝類型管理 Plus」；舊版穿著特質管理可由 Plus 介面內的備用連結進入。
+
 
 # Degrees-of-Lewdity Cheat Extended
 
