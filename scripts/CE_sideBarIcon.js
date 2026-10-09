@@ -566,6 +566,48 @@ Macro.add('CE_CheatExtendedVersion', {
             const availableCategories = () => categoryDefs.filter(category => !CE_GlobalTabConfig.CE_CategoryHidden[category.id] && tabsForCategory(category.id).length > 0);
             const selectedClass = container.classList.contains('CEbuttonBar') ? 'CEbuttonBarSelected' : 'CEtabSelected';
 
+            // 固定 Tab 寬度，僅讓超出範圍的文字在按鈕內左右滾動。
+            // 重新建立 Tab 列表前，先中斷先前的觀察器。
+            this._marqueeObserver?.disconnect();
+            const marqueeObserver = typeof ResizeObserver === 'function'
+                ? new ResizeObserver(entries => {
+                    entries.forEach(({ target }) => {
+                        if (target.isConnected) updateMarquee(target);
+                    });
+                })
+                : null;
+            this._marqueeObserver = marqueeObserver;
+
+            function updateMarquee(button) {
+                const viewport = button.querySelector('.CE-tab-label-viewport');
+                const label = viewport?.querySelector('.CE-tab-label-text');
+                if (!viewport || !label) return;
+                const overflow = Math.max(0, Math.ceil(label.scrollWidth - viewport.clientWidth));
+                label.classList.toggle('CE-tab-label-scrolling', overflow > 1);
+                if (overflow > 1) {
+                    label.style.setProperty('--ce-tab-scroll-distance', `${overflow}px`);
+                    label.style.setProperty('--ce-tab-scroll-duration', `${Math.max(5, Math.min(16, overflow / 18 + 4)).toFixed(1)}s`);
+                } else {
+                    label.style.removeProperty('--ce-tab-scroll-distance');
+                    label.style.removeProperty('--ce-tab-scroll-duration');
+                }
+            }
+
+            function setTabLabel(button, value) {
+                button.title = value;
+                const viewport = document.createElement('span');
+                viewport.className = 'CE-tab-label-viewport';
+                const label = document.createElement('span');
+                label.className = 'CE-tab-label-text';
+                label.textContent = value;
+                viewport.appendChild(label);
+                button.appendChild(viewport);
+                marqueeObserver?.observe(button);
+                requestAnimationFrame(() => {
+                    if (button.isConnected) updateMarquee(button);
+                });
+            }
+
             const categoryBar = document.createElement('div');
             categoryBar.className = 'CE-category-bar';
             const tabBar = document.createElement('div');
@@ -625,7 +667,7 @@ Macro.add('CE_CheatExtendedVersion', {
                 const tabs = tabsForCategory(categoryId);
                 tabs.forEach(tab => {
                     const btn = document.createElement('button');
-                    btn.textContent = CE_GlobalTabConfig.CE_TabFavorite[tab.id] ? `⭐ ${tab.title}` : tab.title;
+                    setTabLabel(btn, CE_GlobalTabConfig.CE_TabFavorite[tab.id] ? `⭐ ${tab.title}` : tab.title);
                     btn.dataset.tabId = tab.id;
                     btn.onclick = () => selectTab(tab, categoryId);
                     this._btnMap[tab.id] = btn;
@@ -643,7 +685,7 @@ Macro.add('CE_CheatExtendedVersion', {
 
             availableCategories().forEach(category => {
                 const btn = document.createElement('button');
-                btn.textContent = this.getCategoryTitle(category);
+                setTabLabel(btn, this.getCategoryTitle(category));
                 btn.dataset.categoryId = category.id;
                 btn.onclick = () => renderTabs(category.id, true);
                 categoryBar.appendChild(btn);
@@ -656,7 +698,7 @@ Macro.add('CE_CheatExtendedVersion', {
                 separator.textContent = '|';
                 categoryBar.appendChild(separator);
                 const btn = document.createElement('button');
-                btn.textContent = tabSort.title;
+                setTabLabel(btn, tabSort.title);
                 btn.onclick = () => tabSort.onClick?.();
                 categoryBar.appendChild(btn);
             }
@@ -1065,7 +1107,7 @@ Macro.add('CE_CheatExtendedVersion', {
         { id: 'eyeCustomManager', title: '眼色自定義', category: 'body', onClick: () => CE_renderSettings('<<eyeCustomManager>>') },
         { id: 'skinCustomManager', title: '膚色自定義', category: 'body', onClick: () => CE_renderSettings('<<skinCustomManager>>') },
         { id: 'hairCustomManager', title: '髮色自定義', category: 'body', onClick: () => CE_renderSettings('<<hairCustomManager>>') },
-        { id: 'clothTypeManager', title: '服裝類型管理', category: 'items', onClick: () => CE_renderSettings('<<clothTypeManager>>') },
+        { id: 'clothTraitEditor', title: '服裝類型管理 Plus', category: 'items', onClick: () => CE_renderSettings('<<clothTraitEditor>>') },
         { id: 'pcPreg', title: 'PC懷孕', category: 'pregnancy', onClick: () => CE_renderSettings('<<CE_Pregnancy>>') },
         { id: 'parasitePreg', title: '寄生物懷孕控制', category: 'pregnancy', onClick: () => CE_renderSettings('<<CE_parasiteControl>>') },
         { id: 'autoWarm', title: '自動調溫', category: 'body', onClick: () => CE_renderSettings('<<auto_clothes_Warmth>>') },

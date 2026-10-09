@@ -91,18 +91,44 @@ Macro.add('clothTypeManager', {
 
         body.innerHTML += `
             <div class="dol-desc">
-                可為目前穿著的各部位服裝動態指定多個類型，並可隨時還原為原始定義。
+                暫時調整目前穿著的特質，也可以儲存和套用預設。換裝後是否自動套用，可在下方設定。
             </div><br>
         `;
 
-        /* ===== 服裝部位 ===== */
+        /* ===== 服裝部位：雙層單選展開 UI ===== */
+        // 使用隱藏/顯示現有 DOM，而非重建，避免遺失尚未套用的勾選狀態與捲動位置。
         const partsContainer = document.createElement('div');
+        partsContainer.style.cssText = 'max-height:min(60vh,480px);overflow-y:auto;overflow-x:hidden;min-width:0;max-width:100%;box-sizing:border-box;';
         body.appendChild(partsContainer);
 
         const selections = {};
         const checkboxes = {};
+        let expandedSlot = null;
+        let expandedCloth = null;
+        const slotViews = new Map();
+
+        const toggleButton = (label, onClick) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.textContent = label;
+            button.style.cssText = 'display:block;width:100%;max-width:100%;min-width:0;box-sizing:border-box;text-align:left;padding:7px 9px;cursor:pointer;white-space:normal;overflow-wrap:anywhere;';
+            button.onclick = onClick;
+            return button;
+        };
+
+        const updateExpansion = () => {
+            slotViews.forEach((view, part) => {
+                const slotOpen = expandedSlot === part;
+                const clothOpen = slotOpen && expandedCloth === part;
+                view.slotBody.hidden = !slotOpen;
+                view.traitBody.hidden = !clothOpen;
+                view.slotButton.textContent = `${slotOpen ? '▼' : '▶'} ${part}`;
+                view.clothButton.textContent = `${clothOpen ? '▼' : '▶'} ${view.clothName}`;
+            });
+        };
 
         Object.keys(V.worn).forEach(part => {
+            if (part === 'all') return;
             const cloth = V.worn[part];
             if (!cloth || (cloth.name === 'naked' && !V.debug)) return;
 
@@ -111,47 +137,60 @@ Macro.add('clothTypeManager', {
 
             const block = document.createElement('div');
             block.className = 'dol-section-block';
+            block.style.cssText = 'min-width:0;max-width:100%;box-sizing:border-box;overflow-wrap:anywhere;';
 
-            block.innerHTML = `
-                <div style="margin-bottom:4px">
-                    <span style="color:gold;font-weight:bold">${part}：</span>
-                    <span style="color:white">${cloth.cn_name_cap || cloth.name}</span>
-                </div>
-            `;
+            const slotButton = toggleButton('', () => {
+                expandedSlot = expandedSlot === part ? null : part;
+                expandedCloth = null;
+                updateExpansion();
+            });
+            slotButton.style.color = 'gold';
+            block.appendChild(slotButton);
+
+            const slotBody = document.createElement('div');
+            slotBody.style.cssText = 'min-width:0;max-width:100%;box-sizing:border-box;padding-left:8px;';
+            block.appendChild(slotBody);
+
+            const clothName = cloth.cn_name_cap || cloth.name;
+            const clothButton = toggleButton('', () => {
+                expandedCloth = expandedCloth === part ? null : part;
+                updateExpansion();
+            });
+            slotBody.appendChild(clothButton);
+
+            const traitBody = document.createElement('div');
+            traitBody.style.cssText = 'min-width:0;max-width:100%;box-sizing:border-box;padding:6px 4px;';
+            slotBody.appendChild(traitBody);
 
             const currentTypes = Array.isArray(cloth.type)
                 ? cloth.type
                 : cloth.type ? [cloth.type] : [];
 
-            setup.clothTypeList.forEach(type => {
+            // 原版及其他 Mod 已定義的特質可勾選；不提供任意新增特質的輸入框。
+            const availableTypes = [...new Set([...setup.clothTypeList, ...currentTypes])];
+            availableTypes.forEach(type => {
                 const label = document.createElement('label');
-                label.style.display = 'inline-block';
-                label.style.marginRight = '8px';
-                label.style.fontSize = '0.85rem';
+                label.style.cssText = 'display:inline-block;margin-right:8px;font-size:0.85rem;max-width:100%;overflow-wrap:anywhere;';
 
                 const checkbox = document.createElement('input');
                 checkbox.type = 'checkbox';
-
                 if (currentTypes.includes(type)) {
                     checkbox.checked = true;
                     selections[part].add(type);
                 }
-
                 checkbox.onchange = () => {
-                    checkbox.checked
-                        ? selections[part].add(type)
-                        : selections[part].delete(type);
+                    checkbox.checked ? selections[part].add(type) : selections[part].delete(type);
                 };
-
                 label.appendChild(checkbox);
                 label.append(` ${setup.clothTypeNameMap[type] || type}`);
-                block.appendChild(label);
-
+                traitBody.appendChild(label);
                 checkboxes[part][type] = checkbox;
             });
 
+            slotViews.set(part, { slotButton, slotBody, clothButton, traitBody, clothName });
             partsContainer.appendChild(block);
         });
+        updateExpansion();
 
         /* ===== 套用 / 還原 ===== */
         const buttonBlock = document.createElement('div');

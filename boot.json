@@ -4,7 +4,7 @@
     "cn": "作弊拓展",
     "en": "Cheat Expansion"
   },
-  "version": "1.20.2",
+  "version": "1.20.3",
   "styleFileList": [
     "css/CE_CSS.css",
     "css/CE_EnemyStateCss.css",
@@ -46,6 +46,7 @@
     "scripts/CE_TimeTravelPlus.js",
     "scripts/CE_TransformationDG.js",
     "scripts/CE_clothTypeManager.js",
+    "scripts/CE_clothTraitEditor.js",
     "scripts/CE_customerSkinColor.js",
     "scripts/CE_customerEyesColor.js",
     "scripts/CE_customerHairColor.js",

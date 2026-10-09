@@ -762,3 +762,49 @@ select, input[type="text"], textarea {
     opacity: 1;
     transform: translateY(0);
 }
+
+.CEbuttonBar .CE-category-bar > button,
+.CEbuttonBar .CE-subtab-bar > button,
+.CEtab .CE-category-bar > button,
+.CEtab .CE-subtab-bar > button {
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
+    flex: 0 0 100px !important;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+.CEbuttonBar .CE-tab-label-viewport,
+.CEtab .CE-tab-label-viewport {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-align: center;
+}
+.CEbuttonBar .CE-tab-label-text,
+.CEtab .CE-tab-label-text {
+    display: inline-block;
+    white-space: nowrap;
+    max-width: none;
+    transform: translateX(0);
+}
+.CEbuttonBar .CE-tab-label-text.CE-tab-label-scrolling,
+.CEtab .CE-tab-label-text.CE-tab-label-scrolling {
+    animation: CE-tab-text-marquee var(--ce-tab-scroll-duration, 7s) ease-in-out infinite alternate;
+}
+@keyframes CE-tab-text-marquee {
+    0%, 16% { transform: translateX(0); }
+    84%, 100% { transform: translateX(calc(-1 * var(--ce-tab-scroll-distance, 0px))); }
+}
+.CEbuttonBar button:hover .CE-tab-label-scrolling,
+.CEbuttonBar button:focus-visible .CE-tab-label-scrolling,
+.CEtab button:hover .CE-tab-label-scrolling,
+.CEtab button:focus-visible .CE-tab-label-scrolling {
+    animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+    .CEbuttonBar .CE-tab-label-scrolling,
+    .CEtab .CE-tab-label-scrolling { animation: none; }
+}
