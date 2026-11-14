@@ -12,7 +12,7 @@
 
 	const ID = "forest-map-gui";
 	const STYLE_ID = ID + "-style";
-	const EVENT_NS = ".ForestMapGUI";
+	let view;
 
 	if (V.CE_ForestMapGUI === undefined) {
 		V.CE_ForestMapGUI = true;
@@ -172,7 +172,7 @@
 	function scrollToPlayer(scroller, player) {
 		if (!scroller || !player) return;
 
-		requestAnimationFrame(() => {
+		view.frame(() => {
 			if (!scroller.isConnected || !player.isConnected) return;
 			if (scroller.scrollWidth <= scroller.clientWidth) return;
 
@@ -351,7 +351,8 @@
 	}
 
 	function render() {
-		document.getElementById(ID)?.remove();
+		view.clear();
+		if (document.getElementById(ID)) return;
 
 		if (!V.CE_ForestMapGUI) {
 			return;
@@ -457,24 +458,13 @@
 			note
 		);
 
+		view.own(gui);
 		target.prepend(gui);
 		scrollToPlayer(map, player);
 	}
 
-	if (window.jQuery) {
-		jQuery(document).off(EVENT_NS);
-	}
 
 	installStyle();
 
-	if (window.jQuery) {
-		jQuery(document).on(
-			":passagedisplay" + EVENT_NS,
-			() => {
-				setTimeout(render, 0);
-			}
-		);
-	}
-
-	render();
+	view = setup.CE_mapView(ID, render);
 })();

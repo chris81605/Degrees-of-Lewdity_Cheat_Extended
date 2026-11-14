@@ -2,8 +2,12 @@
    自訂髮色系統 (DOL Style)
    ========================= */
 
+let CE_refreshHairSidebar_timer;
 function refreshHairSidebar(useFullRedraw = false, delay = 50) {
-    setTimeout(() => {
+    clearTimeout(CE_refreshHairSidebar_timer);
+    const refreshState = V;
+    CE_refreshHairSidebar_timer = setTimeout(() => {
+        if (V !== refreshState) return;
         try {
             if (useFullRedraw) {
                 Renderer.lastAnimation.stop();
@@ -463,3 +467,5 @@ Macro.add('CEhaircolourtext', {
         $(this.output).wiki(setup.CEHairColourMarkup(key));
     }
 });
+
+$(document).on(":passagestart.CErefreshHairSidebar", () => clearTimeout(CE_refreshHairSidebar_timer));

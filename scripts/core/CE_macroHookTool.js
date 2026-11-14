@@ -104,12 +104,39 @@
         console.log(`[Cheat Extended][macroHook] ✅ 宏 ${macroName} 已 Hook`);
     }
     
+    // 完全接管型 Macro Hook：回傳 true 時跳過原始 handler。
+    // 保留純潔度控制原有的開關、this、日誌與回退行為。
+    function hookMacroOverride(macroName, { cheatVar, modifyFunc, logFunc }) {
+        const macro = Macro.get(macroName);
+        if (!macro) {
+            console.warn(`[Cheat Extended] ⚠️ 找不到宏: ${macroName}`);
+            return;
+        }
+        const originalHandler = macro.handler;
+        if (cheatVar && typeof V[cheatVar] !== "boolean") V[cheatVar] = false;
+        macro.handler = function () {
+            const args = Array.from(this.args);
+            console.log(`[Cheat Extended][Hook][${macroName}] args snapshot:`, args);
+            if (cheatVar && V[cheatVar] && modifyFunc) {
+                const handled = modifyFunc.call(this, args);
+                if (handled === true) {
+                    if (logFunc) logFunc(macroName, args);
+                    return;
+                }
+            }
+            if (logFunc) logFunc(macroName, args);
+            return originalHandler.call(this);
+        };
+        console.log(`[Cheat Extended] ✅ 宏 ${macroName} 已 Hook`);
+    }
+
     /* =====================================================
     對外 API
     ===================================================== */
 
     window.CE_MacroHook = {
-        hookMacro
+        hookMacro,
+        hookMacroOverride
     };   
 
 })();

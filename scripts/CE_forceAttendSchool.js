@@ -39,29 +39,7 @@ window.CE_forceAttendSchool = CE_forceAttendSchool;
 // 2.註冊框架時間事件
 
 function registerCE_forceAttendSchool() {
-    const logger = window.modUtils.getLogger();
-    const maplebirchMod = window.modUtils.getMod('maplebirch');
-    const simpleMod = window.modUtils.getMod('Simple Frameworks');
-
-    if (maplebirchMod) {
-        maplebirch.dynamic.regTimeEvent('onDay', 'CE_forceAttendSchool', {
-            action: ()=>CE_forceAttendSchool(),
-            priority: 0,
-            once: false,
-            //accumulate: { unit: 'sec', target: 1 },
-        });
-     //   logger.log('[Cheat Extended] ✅ Maplebirch 已註冊用功學習事件');
-        console.log('[Cheat Extended] ✅ Maplebirch 已註冊用功學習事件');
-        
-    } else if (simpleMod) {
-        new TimeEvent('onDay', 'CE_forceAttendSchool').Action(()=>CE_forceAttendSchool());
-     //   logger.log('[Cheat Extended] ✅ Simple Frameworks 已註冊用功學習');
-        console.log('[Cheat Extended] ✅ Simple Frameworks 已註冊用功學習');
-        
-    } else {
-        logger.error('[Cheat Extended] ❌ 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊用功學習事件');
-        console.error('[Cheat Extended] ❌ 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊用功學習事件');
-    }
+    registerCE_genericTimeEvent('onDay', 'CE_forceAttendSchool', () => CE_forceAttendSchool());
 }
 // 3. 初始化
 registerCE_forceAttendSchool();

@@ -56,8 +56,11 @@
     width: 100px;             /* 按鈕寬度，可視需求調整 */
     padding: 0 8px;           /* 內距縮小，避免過大間距 */
     font-size: clamp(12px, 1.5vw, 16px);
-    border-color: var(--gold);
+    border: 2px solid var(--gold, #ffd700);
     background-color: var(--gold-bg, #444);
+    color: var(--gold, #ffd700);
+    font-weight: bold;
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
     border-radius: 5px;
 }
 
@@ -65,6 +68,12 @@
 .CEbuttonBar button:hover {
     background-color: var(--button-hover-bg, #333);
     color: var(--button-hover-color, #fff);
+}
+
+/* 內建作弊選單：選中分頁在 hover 時仍維持醒目狀態 */
+.CEbuttonBar button.CEbuttonBarSelected:hover {
+    background-color: var(--gold-bg, #444);
+    color: var(--gold, #ffd700);
 }
 
 

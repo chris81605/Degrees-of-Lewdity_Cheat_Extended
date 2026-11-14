@@ -5,19 +5,6 @@ function CEiconClicked() {
 }
 window.CEiconClicked = CEiconClicked;
 
-// 偵測 Simple Frameworks。
-// 僅記錄相容旗標；實際圖示插入方式由對應框架端處理。
-function CEiconSFdetect(){    
-    const simpleMod = window.modUtils.getAnyModByNameNoAlias('Simple Frameworks'); // ⚡ Simple Frameworks
-    const logger = window.modUtils.getLogger();
-    //logger.warn(`[cheat Extended][CEiconSFdetect] 🧾 simpleMod = ${simpleMod}`);
-    //console.warn(`[cheat Extended][CEiconSFdetect] 🧾 simpleMod = ${simpleMod}`);
-    if (simpleMod) V.CE_SFflag = true;
-    //logger.warn(`[cheat Extended][CEiconSFdetect] 🧾 V.CE_SFflag = ${V.CE_SFflag}`);
-    //console.warn(`[cheat Extended][CEiconSFdetect] 🧾 V.CE_SFflag = ${V.CE_SFflag}`);
-}
-CEiconSFdetect();
-
 // 用於CE主畫面顯示的安全渲染函數，避免容器不存在的情況仍然渲染導致錯誤
 function CE_renderSettings(wikiText) {
     const target = document.getElementById('CE_settingsDiv') || window.CE_activeSettingsDiv;
@@ -144,6 +131,11 @@ CE Statebox UI - JS Rebuild
             const refresh = () => {
 
                 ensureState();
+
+                // 禁用側邊欄操作介面時，不建立任何 UI
+                if (V.CE_hideCEToggleDisable === true) {
+                    return;
+                }
 
                 root.replaceChildren();
 
@@ -357,6 +349,38 @@ Macro.add('CE_CheatExtendedVersion', {
 
     // CE_TabManager：集中管理一級分類與二級功能 tab。
     const CE_TabManager = {
+        _active: true,
+        _epoch: 0,
+        _frames: new Set(),
+        frame(callback, node) {
+            if (!this._active) return;
+            const epoch = this._epoch, state = V;
+            const id = requestAnimationFrame(() => {
+                this._frames.delete(id);
+                if (this._active && this._epoch === epoch && V === state && node?.isConnected) callback();
+            });
+            this._frames.add(id);
+        },
+        releaseView() {
+            this._epoch++;
+            for (const id of this._frames) cancelAnimationFrame(id);
+            this._frames.clear();
+            this._marqueeObserver?.disconnect();
+            this._marqueeObserver = null;
+            this._container = this._categoryBar = this._tabBar = this._renderCategoryTabs = null;
+            this._btnMap = {};
+            this.releaseSortUI();
+        },
+        releaseSortUI() {
+            const wrap = this._sortWrap, body = this._sortBody;
+            this._sortWrap = this._sortBody = null;
+            if (!wrap) return;
+            try {
+                // Only our sole content still occupying the recorded native body owns this Dialog.
+                if (wrap.parentNode === body && body === Dialog.body() &&
+                    body.childElementCount === 1 && body.firstElementChild === wrap && Dialog.isOpen()) Dialog.close();
+            } finally { wrap.remove(); }
+        },
         tabs: [],           // 存放所有已註冊的 tab 物件
         _btnMap: {},        // tabId → button DOM 映射，用於 restore 上次選中 tab
         _sortWrap: null,    // 排序 UI 容器 DOM
@@ -538,6 +562,8 @@ Macro.add('CE_CheatExtendedVersion', {
          * 「標籤頁管理」固定附加在一級分類列末端，不參與一般 tab 排序。
          */
         render(container) {
+            if (!this._active || !container?.isConnected) return;
+            this.releaseView();
             ensureGlobalTabConfig();
             this.applyOrder();
             container.innerHTML = '';
@@ -568,11 +594,11 @@ Macro.add('CE_CheatExtendedVersion', {
 
             // 固定 Tab 寬度，僅讓超出範圍的文字在按鈕內左右滾動。
             // 重新建立 Tab 列表前，先中斷先前的觀察器。
-            this._marqueeObserver?.disconnect();
+            const viewEpoch = this._epoch;
             const marqueeObserver = typeof ResizeObserver === 'function'
                 ? new ResizeObserver(entries => {
                     entries.forEach(({ target }) => {
-                        if (target.isConnected) updateMarquee(target);
+                        if (this._active && this._epoch === viewEpoch && target.isConnected) updateMarquee(target);
                     });
                 })
                 : null;
@@ -593,7 +619,7 @@ Macro.add('CE_CheatExtendedVersion', {
                 }
             }
 
-            function setTabLabel(button, value) {
+            const setTabLabel = (button, value) => {
                 button.title = value;
                 const viewport = document.createElement('span');
                 viewport.className = 'CE-tab-label-viewport';
@@ -603,9 +629,7 @@ Macro.add('CE_CheatExtendedVersion', {
                 viewport.appendChild(label);
                 button.appendChild(viewport);
                 marqueeObserver?.observe(button);
-                requestAnimationFrame(() => {
-                    if (button.isConnected) updateMarquee(button);
-                });
+                this.frame(() => updateMarquee(button), button);
             }
 
             const categoryBar = document.createElement('div');
@@ -619,8 +643,8 @@ Macro.add('CE_CheatExtendedVersion', {
             const scrollSelectedIntoView = (categoryId, tabId) => {
                 // 等兩級標籤完成佈局後再捲動，避免剛進入選單時
                 // restore() 雖已選中項目，但瀏覽器尚未算出正確的水平位置。
-                requestAnimationFrame(() => {
-                    requestAnimationFrame(() => {
+                this.frame(() => {
+                    this.frame(() => {
                         const categoryBtn = categoryBar.querySelector(
                             `button[data-category-id="${categoryId}"]`
                         );
@@ -637,11 +661,12 @@ Macro.add('CE_CheatExtendedVersion', {
                             inline: 'center',
                             block: 'nearest'
                         });
-                    });
-                });
+                    }, container);
+                }, container);
             };
 
             const selectTab = (tab, categoryId) => {
+                if (!this._active || this._container !== container || !container.isConnected) return;
                 tabBar.querySelectorAll('button').forEach(btn => btn.classList.remove(selectedClass));
                 const btn = this._btnMap[tab.id];
                 if (btn) btn.classList.add(selectedClass);
@@ -656,6 +681,7 @@ Macro.add('CE_CheatExtendedVersion', {
             };
 
             const renderTabs = (categoryId, restoreTab = true) => {
+                if (!this._active || this._container !== container || !container.isConnected) return;
                 this._activeCategory = categoryId;
                 V.CE_LastCategory = categoryId;
                 this._btnMap = {};
@@ -1050,6 +1076,13 @@ Macro.add('CE_CheatExtendedVersion', {
         }
     };
 
+    const releaseCEView = () => CE_TabManager.releaseView();
+    $(document).on(':passagestart.CEUI', releaseCEView);
+    $(document).on(':oncloseoverlay.CEUI', (_, name) => {
+        if (name === 'CEcheatMenu') releaseCEView();
+    });
+    Save.onLoad.add(releaseCEView);
+
     // TEST：控制台檢查目前 GlobalConfig。
     Object.defineProperty(window, 'CE_TabGlobalConfigDebug', {
         value: {
@@ -1092,7 +1125,7 @@ Macro.add('CE_CheatExtendedVersion', {
         { id: 'blackStore', title: '黑心商店', category: 'money', onClick: () => CE_renderSettings('<<black_stores_setting>>') },
         { id: 'money', title: '收支倍率調整', category: 'money', onClick: () => CE_renderSettings('<<CE_moneyCheat>>') },
         { id: 'danceReward', title: '跳舞報酬加倍', category: 'money', onClick: () => CE_renderSettings('<<dance_reward_setting>>') },
-        { id: 'brothelReward', title: '尋歡洞報酬加倍', category: 'money', onClick: () => CE_renderSettings('<<brothel_basement_setting>>') },
+        { id: 'brothelReward', title: '尋歡洞報酬加倍', category: 'money', onClick: () => CE_renderSettings('<<brothelBasementManager>>') },
         { id: 'timeMultiplier', title: '時間流速控制', category: 'system', onClick: () => CE_renderSettings('<<CE_timeMultiplier>>') },
         { id: 'timeTravel', title: '時空穿越', category: 'system', onClick: () => CE_renderSettings('<<CE_TimeTravelPlus>>') },
         { id: 'debugMode', title: 'DEBUG MODE', category: 'system', onClick: () => CE_renderSettings('<<swich_DEBUG_MODE>>') },
@@ -1151,16 +1184,16 @@ Macro.add("title_cheatExtendedMenu", {
         // 由 CE_TabManager 生成分類列與功能 tab。
         if (window.CE_TabManager) {
             // 延後到下一幀，確保剛建立的容器已掛入 DOM。
-            requestAnimationFrame(() => {
+            CE_TabManager.frame(() => {
                 CE_TabManager.render(container); // 生成一級分類列與二級功能 tab
 
                 // render() 內部已建立按鈕、事件與選中狀態；再下一幀恢復上次位置。
-                requestAnimationFrame(() => {
+                CE_TabManager.frame(() => {
                     CE_TabManager.restore(); // 恢復最後選中的分類與功能 tab
-                });
+                }, container);
 
 
-            });
+            }, container);
         }
 
         // Overlay 使用 CE 自製關閉按鈕，避免依賴原版關閉按鈕行為。
@@ -1312,6 +1345,15 @@ Macro.add('cheat_extended', {
     setup.CE_registerOptions = function (options) {
         if (!Array.isArray(options)) return;
         options.forEach(setup.CE_registerOption);
+    };
+
+    // 選項群組只影響顯示排列，不改變原有選項的 key、儲存與回呼。
+    setup.CE_optionGroups = setup.CE_optionGroups || [];
+    setup.CE_registerOptionGroup = function (group) {
+        if (!group || !group.id || !group.title) return;
+        const index = setup.CE_optionGroups.findIndex(g => g.id === group.id);
+        if (index >= 0) setup.CE_optionGroups[index] = group;
+        else setup.CE_optionGroups.push(group);
     };
 
     /* =====================
@@ -1533,7 +1575,7 @@ Macro.add('cheat_extended', {
             };
 
             // 建立單一設定項
-            function makeItem(option) {
+            function makeItem(option, container = grid) {
                 initDefault(option, V);
 
                 const item = document.createElement("div");
@@ -1569,11 +1611,37 @@ Macro.add('cheat_extended', {
                 }
 
                 item.appendChild(document.createElement("hr"));
-                grid.appendChild(item);
+                container.appendChild(item);
             }
 
-            // 建立所有已註冊設定
-            (setup.CE_options ?? []).forEach(makeItem);
+            // 群組各自擁有獨立的設定容器，避免後續選項混入前一群組。
+            // 未指定 group 的外部模組選項會集中在「其他設定」，仍沿用原註冊 API。
+            const allOptions = setup.CE_options ?? [];
+            const groups = setup.CE_optionGroups ?? [];
+            const grouped = new Map();
+            allOptions.forEach(option => {
+                const groupId = option.group || "__ungrouped__";
+                if (!grouped.has(groupId)) grouped.set(groupId, []);
+                grouped.get(groupId).push(option);
+            });
+            grouped.forEach((members, groupId) => {
+                const definition = groups.find(group => group.id === groupId);
+                const section = document.createElement("section");
+                section.className = "CE-optionGroupSection";
+                section.style.cssText = "grid-column:1/-1;min-width:0;margin:0 0 12px;";
+
+                const heading = document.createElement("div");
+                heading.className = "CE-optionGroupHeading";
+                heading.textContent = definition?.title ?? (groupId === "__ungrouped__" ? "其他設定" : groupId);
+                heading.style.cssText = "font-weight:bold;margin:8px 0 6px;padding:5px 8px;border-bottom:1px solid currentColor;opacity:.85;";
+                section.appendChild(heading);
+
+                const sectionGrid = document.createElement("div");
+                sectionGrid.className = "settingsGrid";
+                members.forEach(option => makeItem(option, sectionGrid));
+                section.appendChild(sectionGrid);
+                grid.appendChild(section);
+            });
 
             /* =====================
              * 保存按鈕
@@ -1605,10 +1673,20 @@ Macro.add('cheat_extended', {
 (function () {
     "use strict";
 
+    setup.CE_registerOptionGroup({
+        id: "general",
+        title: "一般設定"
+    });
+    setup.CE_registerOptionGroup({
+        id: "explorationMaps",
+        title: "探索地圖 GUI"
+    });
+
     setup.CE_registerOptions([
         {
             type: "select",
             key: "CE_langMode",
+            group: "general",
             id: "CE_optionsLang",
             default: "t",
             desc: "設定作弊拓展介面使用的中文顯示方式。",
@@ -1674,6 +1752,7 @@ Macro.add('cheat_extended', {
         {
             type: "checkbox",
             key: "CE_hideUiBarToggleEnable",
+            group: "general",
             default: false,
             desc: `
                 隱藏畫布上的小箭頭、溫度計、防狼噴霧及避孕套 icon，讓畫面更乾淨<br>
@@ -1686,6 +1765,7 @@ Macro.add('cheat_extended', {
         {
             type: "select",
             key: "CE_HeadMaskMode",
+            group: "general",
             default: "compat",
             desc: `
                 頭部遮罩相容模式<br>
@@ -1709,6 +1789,7 @@ Macro.add('cheat_extended', {
         {
             type: "number",
             key: "CE_wardrobePageSize",
+            group: "general",
             default: 20,
             min: 1,
             max: 200,
@@ -1727,6 +1808,7 @@ Macro.add('cheat_extended', {
         {
 	        type: "checkbox",
 	        key: "CE_ForestMapGUI",
+            group: "explorationMaps",
 	        default: false,
 	        desc: "在森林探索頁面顯示森林深度與已發現地點的簡易導覽圖。",
 	        label: "顯示森林探索導覽圖",
@@ -1736,8 +1818,27 @@ Macro.add('cheat_extended', {
 	        `
         },
         {
+            type: "checkbox",
+            key: "CE_SeaMapGUI",
+            group: "explorationMaps",
+            default: false,
+            desc: "在海洋游泳頁面顯示海域深度與目前位置的簡易導覽圖。",
+            label: "顯示海洋探索導覽圖",
+            tooltip: "顯示目前所在海域與游泳進度，並標示海岸及堡壘島位置。"
+        },
+        {
+            type: "checkbox",
+            key: "CE_CatacombsMapGUI",
+            group: "explorationMaps",
+            default: false,
+            desc: "在地下墓穴顯示隨探索逐步揭露的簡易導覽圖。",
+            label: "顯示地下墓穴探索導覽圖",
+            tooltip: "顯示目前位置、已探索房間與相鄰未知區域；探索紀錄跟隨存檔。"
+        },
+        {
 	        type: "checkbox",
 	        key: "CE_SewersMapGUI",
+            group: "explorationMaps",
 	        default: false,
 	        desc: `
 		        在下水道及相關地下探索區域顯示地圖 GUI。<br>
@@ -1749,6 +1850,7 @@ Macro.add('cheat_extended', {
         {
 	        type: "checkbox",
 	        key: "CE_FarmRoadMapGUI",
+            group: "explorationMaps",
 	        default: false,
 	        desc: "在鄉間道路及荒原探索場景上方顯示地圖",
 	        label: "啟用鄉間道路與荒原地圖",

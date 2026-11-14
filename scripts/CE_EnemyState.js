@@ -5,6 +5,36 @@
     // ================================
 
     const lastPercents = Object.create(null);
+    // 僅管理本功能建立的延遲動畫；不修改血條動畫計算方式。
+    let renderEpoch = 0;
+    const pendingFrames = new Set(), pendingTimers = new Set();
+    function validView(epoch, state, node) {
+        return epoch === renderEpoch && V === state && node.isConnected;
+    }
+    function viewFrame(callback, epoch, state, node) {
+        const handle = requestAnimationFrame(() => {
+            pendingFrames.delete(handle);
+            if (validView(epoch, state, node)) callback();
+        });
+        pendingFrames.add(handle);
+    }
+    function viewTimeout(callback, delay, epoch, state, node) {
+        const handle = setTimeout(() => {
+            pendingTimers.delete(handle);
+            if (validView(epoch, state, node)) callback();
+        }, delay);
+        pendingTimers.add(handle);
+    }
+    function releaseEnemyView() {
+        renderEpoch++;
+        for (const handle of pendingFrames) cancelAnimationFrame(handle);
+        pendingFrames.clear();
+        for (const handle of pendingTimers) clearTimeout(handle);
+        pendingTimers.clear();
+    }
+    $(document).on(':passagestart.CEEnemyStateView', releaseEnemyView);
+    Save.onLoad.add(releaseEnemyView);
+
     
     setup.CE_StateBarInitialized ??= false;
 
@@ -31,6 +61,7 @@
     function animateFillLag(barDiv, fillDiv, key, currentPercent, color) {
         const lastPercent = getLastPercent(key, currentPercent);
         const isOpening = !setup.CE_StateBarInitialized;
+        const epoch = renderEpoch, state = V;
 
         const lagDiv = document.createElement('div');
         lagDiv.className = 'ce-enemy-state-fill-lag';
@@ -45,18 +76,18 @@
             barDiv.appendChild(lagDiv);
             barDiv.appendChild(fillDiv);
 
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
+            viewFrame(() => {
+                viewFrame(() => {
                     // 背景先開始填，速度由 .ce-enemy-state-fill-lag 控制
                     lagDiv.style.width = currentPercent + '%';
 
                     // 前景晚一點開始填，速度由 .ce-enemy-state-fill 控制
-                    setTimeout(() => {
+                    viewTimeout(() => {
                         fillDiv.style.width = currentPercent + '%';
                         setLastPercent(key, currentPercent);
-                    }, 500);
-                });
-            });
+                    }, 500, epoch, state, barDiv);
+                }, epoch, state, barDiv);
+            }, epoch, state, barDiv);
 
         return;
     }
@@ -72,8 +103,8 @@
         barDiv.appendChild(lagDiv);
         barDiv.appendChild(fillDiv);
 
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
+        viewFrame(() => {
+            viewFrame(() => {
                 // 前景永遠平滑移到新值
                 fillDiv.style.width = currentPercent + '%';
 
@@ -81,8 +112,8 @@
                 lagDiv.style.width = currentPercent + '%';
 
                 setLastPercent(key, currentPercent);
-            });
-        });
+            }, epoch, state, barDiv);
+        }, epoch, state, barDiv);
     }
 
     // ================================
@@ -545,6 +576,15 @@
 
 (function () {
 
+    // 此 IIFE 自行持有容器，避免跨 IIFE 參照未定義的變數。
+    const ownedContainers = new Set();
+    function releaseOwnedContainers() {
+        for (const node of ownedContainers) node.remove();
+        ownedContainers.clear();
+    }
+    $(document).on(":passagestart.CEEnemyStateContainers", releaseOwnedContainers);
+    Save.onLoad.add(releaseOwnedContainers);
+
     // ================================
     // 在第 3 個 div 開頭插入 CE 容器（支援多個 slot）
     // ================================
@@ -569,6 +609,7 @@
         container.appendChild(slot);
 
         targetDiv.insertBefore(container, targetDiv.firstChild);
+        ownedContainers.add(container);
 
         console.log(`[cheat Extended][EnemyStateBar] 容器已插入 id=${slotId}`);
         return slot;

@@ -1,29 +1,3 @@
-// 通用時間事件註冊函數
-function registerCE_genericTimeEvent(eventType, eventName, callback) {
-    const logger = window.modUtils.getLogger();
-    const maplebirchMod = window.modUtils.getMod('maplebirch');
-    const simpleMod = window.modUtils.getMod('Simple Frameworks');
-
-    if (maplebirchMod) {
-        maplebirch.dynamic.regTimeEvent(eventType, eventName, {
-            action: callback,
-            priority: 0,
-            once: false
-        });
-        console.log(`[Cheat Extended] ✅ Maplebirch 已註冊事件: ${eventName} (${eventType})`);
-
-    } else if (simpleMod) {
-        new TimeEvent(eventType, eventName).Action(callback);
-        console.log(`[Cheat Extended] ✅ Simple Frameworks 已註冊事件: ${eventName} (${eventType})`);
-
-    } else {
-        logger.error('[Cheat Extended] ❌ 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊事件');
-        console.error('[Cheat Extended] ❌ 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊事件');
-    }
-}
-
-window.registerCE_genericTimeEvent = registerCE_genericTimeEvent;
-
 // 範例使用：
 registerCE_genericTimeEvent(
     'onAfter',

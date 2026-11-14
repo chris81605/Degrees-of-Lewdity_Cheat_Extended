@@ -13,7 +13,7 @@
 
 	const ID = "farm-road-map-gui";
 	const STYLE_ID = ID + "-style";
-	const EVENT_NS = ".FarmRoadMapGUI";
+	let view;
 
 	/* =========================================================
 	 * 開關初始化
@@ -164,7 +164,7 @@
 	function scrollToPlayer(scroller, player) {
 		if (!scroller || !player) return;
 
-		requestAnimationFrame(() => {
+		view.frame(() => {
 			if (!scroller.isConnected || !player.isConnected) return;
 			if (scroller.scrollWidth <= scroller.clientWidth) return;
 
@@ -355,7 +355,8 @@
 	 * ========================================================= */
 
 	function render() {
-		document.getElementById(ID)?.remove();
+		view.clear();
+		if (document.getElementById(ID)) return;
 
 		/*
 		 * 獨立開關。
@@ -476,6 +477,7 @@
 
 		gui.append(title, map, note);
 
+		view.own(gui);
 		target.prepend(gui);
 		scrollToPlayer(map, player);
 	}
@@ -486,18 +488,7 @@
 
 	installStyle();
 
-	if (window.jQuery) {
-		jQuery(document)
-			.off(EVENT_NS)
-			.on(
-				":passagedisplay" + EVENT_NS,
-				() => {
-					setTimeout(render, 0);
-				}
-			);
-	}
-
-	render();
+	view = setup.CE_mapView(ID, render);
 })();
 
 /*=========================================
@@ -515,7 +506,7 @@
 
 	const ID = "moor-map-gui";
 	const STYLE_ID = ID + "-style";
-	const EVENT_NS = ".MoorMapGUI";
+	let view;
 
 	/* =========================================================
 	 * 地標
@@ -643,7 +634,7 @@
 	function scrollToPlayer(scroller, player) {
 		if (!scroller || !player) return;
 
-		requestAnimationFrame(() => {
+		view.frame(() => {
 			if (!scroller.isConnected || !player.isConnected) return;
 			if (scroller.scrollWidth <= scroller.clientWidth) return;
 
@@ -826,7 +817,8 @@
 	 * ========================================================= */
 
 	function render() {
-		document.getElementById(ID)?.remove();
+		view.clear();
+		if (document.getElementById(ID)) return;
 
 		if (!V.CE_FarmRoadMapGUI) {
 			return;
@@ -923,6 +915,7 @@
 
 		gui.append(title, map, note);
 
+		view.own(gui);
 		target.prepend(gui);
 		scrollToPlayer(map, player);
 	}
@@ -933,16 +926,5 @@
 
 	installStyle();
 
-	if (window.jQuery) {
-		jQuery(document)
-			.off(EVENT_NS)
-			.on(
-				":passagedisplay" + EVENT_NS,
-				() => {
-					setTimeout(render, 0);
-				}
-			);
-	}
-
-	render();
+	view = setup.CE_mapView(ID, render);
 })();

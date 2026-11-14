@@ -177,6 +177,8 @@ maxDepth 越高，
 
     // 已安裝 hook 的變數
     const installed = {};
+    const bindings = Object.create(null);
+    let recoveryEpoch = 0;
 
     // 是否啟用 DeepProxyHook
     if (typeof V.CE_DeepProxyHook_enable !== "boolean") {
@@ -340,6 +342,7 @@ maxDepth 越高，
     function unregister(varPath){
         delete registry[varPath];
         installed[varPath] = false;
+        // 不覆寫可能已由其他模組接管的屬性。
         log("unregister:", varPath);
     }
 
@@ -368,11 +371,6 @@ maxDepth 越高，
 
         try{
 
-            if (installed[path]){
-                log("skip installed:", path);
-                return;
-            }
-
             const resolved = getParentAndKey(path);
 
             if (!resolved){
@@ -381,6 +379,12 @@ maxDepth 越高，
             }
 
             const { obj, key } = resolved;
+            const previous = bindings[path];
+            if (previous && previous.obj === obj && obj[key] === previous.proxy){
+                installed[path] = true;
+                return;
+            }
+            if (previous) log("stale proxy, reinstall:", path);
 
             if (!(key in obj)){
                 warn("variable not found:", path);
@@ -713,7 +717,9 @@ maxDepth 越高，
             會進入 Proxy.set。
             ===================================================== */
 
-            obj[key] = proxify(target, path, 0);
+            const proxy = proxify(target, path, 0);
+            obj[key] = proxy;
+            bindings[path] = { obj, key, proxy };
             installed[path] = true;
 
             log("install deep proxy hook:", path);
@@ -755,13 +761,55 @@ maxDepth 越高，
     ===================================================== */
 
     $(document).on(":passagestart", () => {
-        for (const v in installed){
-            installed[v] = false;
-        }
-
+        // Passage / 讀檔後重新解析當前 State.variables；有效的 Hook 不重複包裝。
+        const epoch = ++recoveryEpoch;
         installAll();
+        // 部分巢狀目標可能稍後才由遊戲建立；只重試尚未安裝者。
+        const retry = (remaining) => {
+            if (epoch !== recoveryEpoch || remaining <= 0) return;
+            const pending = Object.keys(registry).some(path => {
+                const resolved = getParentAndKey(path);
+                if (!resolved) return true;
+                const { obj, key } = resolved;
+                const record = bindings[path];
+                if (!record || record.obj !== obj) return true;
+                if (record.proxy) return obj[key] !== record.proxy;
+                const desc = Object.getOwnPropertyDescriptor(obj, key);
+                return !desc || desc.get !== record.get || desc.set !== record.set;
+            });
+            if (!pending) return;
+            setTimeout(() => {
+                if (epoch !== recoveryEpoch) return;
+                installAll();
+                retry(remaining - 1);
+            }, 100);
+        };
+        retry(5);
     });
 
+
+    function inspect(){
+        const result = {};
+        for (const path of Object.keys(registry)){
+            const resolved = getParentAndKey(path);
+            if (!resolved || !(resolved.key in resolved.obj)){
+                result[path] = "pending";
+                continue;
+            }
+            const record = bindings[path];
+            if (!record || record.obj !== resolved.obj){
+                result[path] = "stale";
+                continue;
+            }
+            if (record.proxy){
+                result[path] = resolved.obj[resolved.key] === record.proxy ? "active" : "stale";
+            }else{
+                const desc = Object.getOwnPropertyDescriptor(resolved.obj, resolved.key);
+                result[path] = desc?.get === record.get && desc?.set === record.set ? "active" : "stale";
+            }
+        }
+        return result;
+    }
 
     /* =====================================================
     對外 API
@@ -770,7 +818,8 @@ maxDepth 越高，
     window.DeepProxyHook = {
         register,
         unregister,
-        installAll
+        installAll,
+        inspect
     };
 
 })();
@@ -896,6 +945,8 @@ Cheat Extended - RawHook 原始變數攔截框架
 
     // 已安裝 hook 的變數
     const installed = {};
+    const bindings = Object.create(null);
+    let recoveryEpoch = 0;
 
     // 事件監聽表
     const events = {};
@@ -1003,6 +1054,7 @@ Cheat Extended - RawHook 原始變數攔截框架
     function unregister(varPath){
         delete registry[varPath];
         installed[varPath] = false;
+        // 不覆寫可能已由其他模組接管的屬性。
         log("unregister:", varPath);
     }
 
@@ -1044,11 +1096,6 @@ Cheat Extended - RawHook 原始變數攔截框架
 
         try{
 
-            if (installed[path]){
-                log("skip installed:", path);
-                return;
-            }
-
             const resolved = getParentAndKey(path);
 
             if (!resolved){
@@ -1057,6 +1104,18 @@ Cheat Extended - RawHook 原始變數攔截框架
             }
 
             const { obj, key } = resolved;
+            const previous = bindings[path];
+            const current = Object.getOwnPropertyDescriptor(obj, key);
+            if (previous && previous.obj === obj &&
+                current?.get === previous.get && current?.set === previous.set){
+                installed[path] = true;
+                return;
+            }
+            if (previous) log("stale accessor, reinstall:", path);
+            if (current && !current.configurable){
+                warn("non-configurable property, cannot install:", path);
+                return;
+            }
 
             if (!(key in obj)){
                 warn("variable not found:", path);
@@ -1200,6 +1259,8 @@ Cheat Extended - RawHook 原始變數攔截框架
                 }
             });
 
+            const active = Object.getOwnPropertyDescriptor(obj, key);
+            bindings[path] = { obj, key, get: active.get, set: active.set };
             installed[path] = true;
         }
         catch(e){
@@ -1239,13 +1300,55 @@ Cheat Extended - RawHook 原始變數攔截框架
     $(document).on(":passagestart", () => {
         log("passage start reinstall");
 
-        for (const v in installed){
-            installed[v] = false;
-        }
-
+        // Passage / 讀檔後重新解析當前 State.variables；有效的 Hook 不重複包裝。
+        const epoch = ++recoveryEpoch;
         installAll();
+        // 部分巢狀目標可能稍後才由遊戲建立；只重試尚未安裝者。
+        const retry = (remaining) => {
+            if (epoch !== recoveryEpoch || remaining <= 0) return;
+            const pending = Object.keys(registry).some(path => {
+                const resolved = getParentAndKey(path);
+                if (!resolved) return true;
+                const { obj, key } = resolved;
+                const record = bindings[path];
+                if (!record || record.obj !== obj) return true;
+                if (record.proxy) return obj[key] !== record.proxy;
+                const desc = Object.getOwnPropertyDescriptor(obj, key);
+                return !desc || desc.get !== record.get || desc.set !== record.set;
+            });
+            if (!pending) return;
+            setTimeout(() => {
+                if (epoch !== recoveryEpoch) return;
+                installAll();
+                retry(remaining - 1);
+            }, 100);
+        };
+        retry(5);
     });
 
+
+    function inspect(){
+        const result = {};
+        for (const path of Object.keys(registry)){
+            const resolved = getParentAndKey(path);
+            if (!resolved || !(resolved.key in resolved.obj)){
+                result[path] = "pending";
+                continue;
+            }
+            const record = bindings[path];
+            if (!record || record.obj !== resolved.obj){
+                result[path] = "stale";
+                continue;
+            }
+            if (record.proxy){
+                result[path] = resolved.obj[resolved.key] === record.proxy ? "active" : "stale";
+            }else{
+                const desc = Object.getOwnPropertyDescriptor(resolved.obj, resolved.key);
+                result[path] = desc?.get === record.get && desc?.set === record.set ? "active" : "stale";
+            }
+        }
+        return result;
+    }
 
     /* =====================================================
     對外 API
@@ -1255,7 +1358,8 @@ Cheat Extended - RawHook 原始變數攔截框架
         register,
         unregister,
         installAll,
-        on
+        on,
+        inspect
     };
 
 })();
@@ -1417,6 +1521,8 @@ VarHook.on(...)
 
     // 已安裝 hook 的變數
     const installed = {};
+    const bindings = Object.create(null);
+    let recoveryEpoch = 0;
 
     // 事件監聽表
     const events = {};
@@ -1652,6 +1758,7 @@ VarHook.on(...)
     function unregister(varPath){
         delete registry[varPath];
         installed[varPath] = false;
+        // 不覆寫可能已由其他模組接管的屬性。
         log("unregister:", varPath);
     }
 
@@ -1698,11 +1805,6 @@ VarHook.on(...)
 
         try{
 
-            if (installed[path]){
-                log("skip installed:", path);
-                return;
-            }
-
             const resolved = getParentAndKey(path);
 
             if (!resolved){
@@ -1711,6 +1813,18 @@ VarHook.on(...)
             }
 
             const { obj, key } = resolved;
+            const previous = bindings[path];
+            const current = Object.getOwnPropertyDescriptor(obj, key);
+            if (previous && previous.obj === obj &&
+                current?.get === previous.get && current?.set === previous.set){
+                installed[path] = true;
+                return;
+            }
+            if (previous) log("stale accessor, reinstall:", path);
+            if (current && !current.configurable){
+                warn("non-configurable property, cannot install:", path);
+                return;
+            }
 
             if (!(key in obj)){
                 warn("variable not found:", path);
@@ -1903,6 +2017,8 @@ VarHook.on(...)
                 }
             });
 
+            const active = Object.getOwnPropertyDescriptor(obj, key);
+            bindings[path] = { obj, key, get: active.get, set: active.set };
             installed[path] = true;
         }
         catch(e){
@@ -1942,13 +2058,55 @@ VarHook.on(...)
     $(document).on(":passagestart", () => {
         log("passage start reinstall");
 
-        for (const v in installed){
-            installed[v] = false;
-        }
-
+        // Passage / 讀檔後重新解析當前 State.variables；有效的 Hook 不重複包裝。
+        const epoch = ++recoveryEpoch;
         installAll();
+        // 部分巢狀目標可能稍後才由遊戲建立；只重試尚未安裝者。
+        const retry = (remaining) => {
+            if (epoch !== recoveryEpoch || remaining <= 0) return;
+            const pending = Object.keys(registry).some(path => {
+                const resolved = getParentAndKey(path);
+                if (!resolved) return true;
+                const { obj, key } = resolved;
+                const record = bindings[path];
+                if (!record || record.obj !== obj) return true;
+                if (record.proxy) return obj[key] !== record.proxy;
+                const desc = Object.getOwnPropertyDescriptor(obj, key);
+                return !desc || desc.get !== record.get || desc.set !== record.set;
+            });
+            if (!pending) return;
+            setTimeout(() => {
+                if (epoch !== recoveryEpoch) return;
+                installAll();
+                retry(remaining - 1);
+            }, 100);
+        };
+        retry(5);
     });
 
+
+    function inspect(){
+        const result = {};
+        for (const path of Object.keys(registry)){
+            const resolved = getParentAndKey(path);
+            if (!resolved || !(resolved.key in resolved.obj)){
+                result[path] = "pending";
+                continue;
+            }
+            const record = bindings[path];
+            if (!record || record.obj !== resolved.obj){
+                result[path] = "stale";
+                continue;
+            }
+            if (record.proxy){
+                result[path] = resolved.obj[resolved.key] === record.proxy ? "active" : "stale";
+            }else{
+                const desc = Object.getOwnPropertyDescriptor(resolved.obj, resolved.key);
+                result[path] = desc?.get === record.get && desc?.set === record.set ? "active" : "stale";
+            }
+        }
+        return result;
+    }
 
     /* =====================================================
     對外 API
@@ -1958,7 +2116,8 @@ VarHook.on(...)
         register,
         unregister,
         installAll,
-        on
+        on,
+        inspect
     };
 })();
 

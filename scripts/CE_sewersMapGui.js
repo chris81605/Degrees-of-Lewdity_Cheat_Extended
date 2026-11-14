@@ -11,9 +11,9 @@
 
 	const ID = "sewers-map-gui";
 	const STYLE_ID = ID + "-style";
-	const EVENT_NS = ".SewersMapGUI";
+	let view;
 
-	let mapResizeObserver = null;
+	let mapResizeObserver = null, resizeFrame;
 	
 	if (V.CE_SewersMapGUI === undefined) {
 	    V.CE_SewersMapGUI = false;
@@ -26,9 +26,6 @@
 	// document.getElementById(ID)?.remove();
 	// document.getElementById(STYLE_ID)?.remove();
 
-	if (window.jQuery) {
-		jQuery(document).off(EVENT_NS);
-	}
 
 	/* =========================================================
 	 * 下水道內部節點
@@ -265,6 +262,24 @@
 
 	const GRAPH = buildGraph();
 
+	/* =========================================================
+	 * 探索紀錄：使用故事變數，隨遊戲存檔保存
+	 * 只記錄真正到達的主要房間；過渡頁面不新增探索紀錄。
+	 * ========================================================= */
+	function getDiscovered() {
+		if (!V.sewersMapDiscovered || typeof V.sewersMapDiscovered !== "object" || Array.isArray(V.sewersMapDiscovered)) {
+			V.sewersMapDiscovered = {};
+		}
+		return V.sewersMapDiscovered;
+	}
+
+	function recordDiscovery(current) {
+		if (Object.prototype.hasOwnProperty.call(NODES, State.passage)) {
+			getDiscovered()[current] = true;
+		}
+	}
+
+
 	function isDirectedEdge(a, b) {
 		return DIRECTED_EDGES.some(
 			([from, to]) => from === a && to === b
@@ -449,7 +464,7 @@
 	function scrollToPlayer(scroller, player) {
 		if (!scroller || !player) return;
 
-		requestAnimationFrame(() => {
+		view.frame(() => {
 			if (!scroller.isConnected || !player.isConnected) return;
 			if (scroller.scrollWidth <= scroller.clientWidth) return;
 
@@ -702,6 +717,8 @@
 	 * ========================================================= */
 
 	function disconnectResizeObserver() {
+		view?.cancelFrame(resizeFrame);
+		resizeFrame = undefined;
 		if (!mapResizeObserver) return;
 
 		mapResizeObserver.disconnect();
@@ -715,15 +732,14 @@
 			return;
 		}
 
-		let resizeFrame = 0;
 
-		mapResizeObserver = new ResizeObserver(() => {
-			cancelAnimationFrame(resizeFrame);
+		mapResizeObserver = new ResizeObserver(view.guard(() => {
+			view?.cancelFrame(resizeFrame);
 
-			resizeFrame = requestAnimationFrame(() => {
+			resizeFrame = view.frame(() => {
 				positionLines(area);
 			});
-		});
+		}, area));
 
 		mapResizeObserver.observe(area);
 	}
@@ -735,7 +751,8 @@
 	function render() {
 		disconnectResizeObserver();
 
-		document.getElementById(ID)?.remove();
+		view.clear();
+		if (document.getElementById(ID)) return;
 		
 		if (!V.CE_SewersMapGUI) {
 		    return;
@@ -744,6 +761,9 @@
 		const current = getCurrentNode();
 
 		if (!current) return;
+
+		recordDiscovery(current);
+		const discovered = getDiscovered();
 
 		const target =
 			document.querySelector("#passage-content") ||
@@ -831,17 +851,18 @@
 			if (!info || !pos) continue;
 
 			const node = document.createElement("div");
-			node.className = "sewers-map-node";
+			const explored = discovered[passage] === true;
+			node.className = "sewers-map-node" + (explored ? "" : " undiscovered");
 
 			node.style.left = `${pos.x}%`;
 			node.style.top = `${pos.y}%`;
 
 			node.innerHTML = `
 				<div class="sewers-map-dot"></div>
-				<div>${info.name}</div>
+				<div>${explored ? info.name : "？？？"}</div>
 			`;
 
-			node.title = passage;
+			node.title = explored ? info.name : "未探索區域";
 
 			area.appendChild(node);
 		}
@@ -875,12 +896,13 @@
 		const note = document.createElement("div");
 		note.className = "sewers-map-note";
 		note.textContent =
-			"高亮節點代表目前的所在區域；箭頭表示單向通道，虛線節點表示可以離開下水道的地點。";
+			"高亮節點代表目前的所在區域；？？？表示未探索區域；箭頭表示單向通道，虛線節點表示可以離開下水道的地點。";
 
 		gui.append(title, scroll, note);
+		view.own(gui);
 		target.prepend(gui);
 
-		requestAnimationFrame(() => {
+		view.frame(() => {
 			positionLines(area);
 			observeMapResize(area);
 			scrollToPlayer(scroll, currentNode);
@@ -893,16 +915,7 @@
 
 	installStyle();
 
-	if (window.jQuery) {
-		jQuery(document).on(
-			":passagedisplay" + EVENT_NS,
-			() => {
-				setTimeout(render, 0);
-			}
-		);
-	}
-
-	render();
+	view = setup.CE_mapView(ID, render, disconnectResizeObserver);
 
 	console.log(
 		"[Cheat Extended][SewersMapGUI] 下水道地圖已啟用"
@@ -922,7 +935,7 @@
 
 	const ID = "beach-cave-map-gui";
 	const STYLE_ID = ID + "-style";
-	const EVENT_NS = ".BeachCaveMapGUI";
+	let view;
 
 	/* =========================================================
 	 * 基本判定
@@ -1041,7 +1054,7 @@
 	function scrollToPlayer(scroller, player) {
 		if (!scroller || !player) return;
 
-		requestAnimationFrame(() => {
+		view.frame(() => {
 			if (!scroller.isConnected || !player.isConnected) return;
 			if (scroller.scrollWidth <= scroller.clientWidth) return;
 
@@ -1228,7 +1241,8 @@
 	 * ========================================================= */
 
 	function render() {
-		document.getElementById(ID)?.remove();
+		view.clear();
+		if (document.getElementById(ID)) return;
 
 		if (!V.CE_SewersMapGUI) {
 			return;
@@ -1323,6 +1337,7 @@
 
 		gui.append(title, map, note);
 
+		view.own(gui);
 		target.prepend(gui);
 		scrollToPlayer(map, player);
 	}
@@ -1333,16 +1348,5 @@
 
 	installStyle();
 
-	if (window.jQuery) {
-		jQuery(document)
-			.off(EVENT_NS)
-			.on(
-				":passagedisplay" + EVENT_NS,
-				() => {
-					setTimeout(render, 0);
-				}
-			);
-	}
-
-	render();
+	view = setup.CE_mapView(ID, render);
 })();

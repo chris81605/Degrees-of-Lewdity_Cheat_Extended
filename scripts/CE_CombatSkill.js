@@ -1160,7 +1160,7 @@ setup.myModCombatSkill.effects.angelBarrier = function (ctx) {
         }
 
         ctx.angelBarrierTargets.push(
-            npc.fullDescription ?? '對方'
+            npc.fullDescription_CN ?? '對方'
         );
     });
 
@@ -1830,7 +1830,7 @@ setup.myModCombatSkill.effects.demonPainTransfer = function (ctx) {
 
     // 訊息用
     ctx.demonPainTransferTargets = insertedTargets.map(
-        npc => npc.fullDescription ?? '對方'
+        npc => npc.fullDescription_CN ?? '對方'
     );
 };
 
@@ -2530,7 +2530,7 @@ setup.myModCombatSkill.effects.tightenCrush = function (ctx) {
     );
 
     ctx.crushedTargets = crushedNPCs.map(
-        npc => npc.fullDescription
+        npc => npc.fullDescription_CN
     );
 
     crushedNPCs.forEach(npc => {
@@ -2997,7 +2997,7 @@ setup.myModCombatSkill.reg({
     message: ({ targets }) => {
         const names = targets
             .filter(Boolean)
-            .map(t => t.fullDescription ?? '敵人');
+            .map(t => t.fullDescription_CN ?? '敵人');
 
         return `你以惡魔的力量侵蝕${names.join('與')}的意志，使其逐漸沉溺於慾望之中。`;
     }
@@ -3024,7 +3024,7 @@ setup.myModCombatSkill.reg({
     message: ({ targets }) => {
         const names = targets
             .filter(Boolean)
-            .map(t => t.fullDescription ?? '敵人');
+            .map(t => t.fullDescription_CN ?? '敵人');
 
         return `你將惡魔的力量注入${names.join('與')}體內，將其慾望轉化為痛苦。`;
     }
@@ -3082,7 +3082,7 @@ setup.myModCombatSkill.reg({
         const targetText = targets
             .filter(Boolean)
             .map(target =>
-                `${target.fullDescription}的${target.penisdesc}`
+                `${target.fullDescription_CN}的${target.penisdesc}`
             );
 
         if (targetText.length === 0) return;
@@ -3113,7 +3113,7 @@ setup.myModCombatSkill.reg({
         const targetText = targets
             .filter(Boolean)
             .map(target =>
-                `${target.fullDescription}的${target.penisdesc}`
+                `${target.fullDescription_CN}的${target.penisdesc}`
             );
 
         if (targetText.length === 0) return;
@@ -3344,7 +3344,7 @@ setup.myModCombatSkill.reg({
     message: ({ targets }) => {
         const names = targets
             .filter(Boolean)
-            .map(target => target.fullDescription ?? '敵人');
+            .map(target => target.fullDescription_CN ?? '敵人');
 
         const targetText = names.length > 0
             ? names.join('與')
@@ -3400,7 +3400,7 @@ setup.myModCombatSkill.reg({
         const targetText = targets
             .filter(Boolean)
             .map(target =>
-                `${target.fullDescription}的${target.penisdesc}`
+                `${target.fullDescription_CN}的${target.penisdesc}`
             );
 
         if (targetText.length === 0) return;
@@ -3454,7 +3454,7 @@ setup.myModCombatSkill.reg({
         const targetText = targets
             .filter(Boolean)
             .map(target =>
-                `${target.fullDescription}的${target.penisdesc}`
+                `${target.fullDescription_CN}的${target.penisdesc}`
             );
 
         if (targetText.length === 0) return;
@@ -3709,7 +3709,7 @@ setup.debugCombatTargets = function () {
             validIndex: i,
 
             name:
-                npc.fullDescription ??
+                npc.fullDescription_CN ??
                 npc.description ??
                 npc.name ??
                 'unknown',
@@ -3737,7 +3737,7 @@ setup.debugCombatTargets = function () {
                 targetIndex,
 
                 targetName:
-                    npc?.fullDescription ??
+                    npc?.fullDescription_CN ??
                     npc?.description ??
                     npc?.name ??
                     '無',

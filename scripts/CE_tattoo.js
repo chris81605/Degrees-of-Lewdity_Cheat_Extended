@@ -62,33 +62,17 @@ function addBodyWritingForMaplebirch(tattoos) {
 // 3. 註冊函數，兼容兩個框架
 // ----------------------------
 function registerCETattoos() {
-    const logger = window.modUtils.getLogger();
-    const maplebirchMod = window.modUtils.getAnyModByNameNoAlias('maplebirch');
-    const simpleMod = window.modUtils.getAnyModByNameNoAlias('Simple Frameworks');
-
+    if (!window.modUtils?.getAnyModByNameNoAlias?.('maplebirch')) {
+        console.error('[Cheat Extended] 未檢測到 MapleBirch，無法註冊 CE 紋身');
+        return;
+    }
     const tattoos = createCETattoos();
-
-    if (simpleMod) {
-        setup.modTattoos = setup.modTattoos || [];
-        setup.modTattoos.push(...tattoos);
-       // logger.log(`[Cheat Extended] ✅ Simple Frameworks 已註冊 CE 紋身，總數 ${setup.modTattoos.length}`);
-        console.log(`[Cheat Extended] ✅ Simple Frameworks 已註冊 CE 紋身，總數 ${setup.modTattoos.length}`);
-    }
-
-    if (maplebirchMod) {
-        // 等待 setup.bodywriting 初始化且已有資料後再添加
-        const interval = setInterval(() => {
-            if (setup.bodywriting && Object.keys(setup.bodywriting).length > 0) {
-                addBodyWritingForMaplebirch(tattoos);
-                clearInterval(interval);
-            }
-        }, 50);
-    }
-
-    if (!simpleMod && !maplebirchMod) {
-        logger.error('[Cheat Extended] ❌ 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊 CE 紋身');
-        console.error('[Cheat Extended] ❌ 未檢測到 Maplebirch 或 Simple Frameworks，無法註冊 CE 紋身');
-    }
+    const interval = setInterval(() => {
+        if (window.setup?.bodywriting && Object.keys(setup.bodywriting).length > 0) {
+            addBodyWritingForMaplebirch(tattoos);
+            clearInterval(interval);
+        }
+    }, 50);
 }
 
 // ----------------------------

@@ -91,8 +91,12 @@ function sortColorsByLuminance(skin){
 // -------------------------
 // 更新模型顯示
 // -------------------------
+let CE_refreshSkinSidebar_timer;
 function refreshSkinSidebar(useFullRedraw = false, delay = 50) {
-    setTimeout(() => {
+    clearTimeout(CE_refreshSkinSidebar_timer);
+    const refreshState = V;
+    CE_refreshSkinSidebar_timer = setTimeout(() => {
+        if (V !== refreshState) return;
         if (useFullRedraw) {
             Renderer.lastAnimation.stop();
             Renderer.animateLayersAgain();
@@ -748,3 +752,4 @@ Macro.add('skinToneFallback', {
         `);
     }
 });
+$(document).on(":passagestart.CErefreshSkinSidebar", () => clearTimeout(CE_refreshSkinSidebar_timer));

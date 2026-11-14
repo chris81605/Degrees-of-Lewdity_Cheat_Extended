@@ -1,80 +1,4 @@
 :: Widgets cheat_extended [widget]
-<!--棄用，以CE_QuickPanel取代-->
-<<widget "quick_swich">>
-	<<if $swich is 1>>
-	    <span class="gold">快捷</span>
-	    <br>
-		[[狀態全恢復|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]] |
-		[[PC立馬高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
-		<br>
-		<<if $quick_swich isnot undefined>>
-		    <<for _i to 0; _i lt $quick_swich.length; _i++>>
-		        <<set _j to _i + 1>>
-		        (_j) $quick_swich[_i]<br>
-		    <</for>>
-		<</if>>    
-	<</if>>
-<</widget>>			
-
-<!-- 棄用以CE_QuickPanelSettings取代-->
-<<widget "swich">>
-
-<div class="dol-settings dol-shadow">
-
-    <!-- 標題 -->
-    <div class="dol-header">
-        <span class="dol-title gold">左側快捷</span>
-    </div>
-
-    <!-- 主體內容 -->
-    <div class="dol-body">
-
-        <div class="dol-desc">
-            在左側顯示：一鍵恢復全狀態及 PC 立刻高潮。
-        </div>
-
-        <br>
-
-        <!-- 初始化變數 -->
-        <<if $swich is undefined>>
-            <<set $swich = 0>>
-        <</if>>
-
-        <!-- 開關按鈕 -->
-        <div class="dol-btn">
-            <<button "左側快捷開關">>
-                <<set $swich = $swich == 0 ? 1 : 0>>
-
-                <<replace #CE_settingsDiv>>
-                    <<swich>><br><br>
-                <</replace>>
-
-                <<replace #CEstatebox>>
-                    <<CE_UiLists>>
-                <</replace>>
-            <</button>>
-        </div>
-
-        <br><br>
-
-        <!-- 狀態顯示 -->
-        <div class="dol-desc">
-            快捷開關：
-            <<if $swich is 0>>
-                <span class="red">關</span>
-            <<else>>
-                <span class="green">開</span>
-            <</if>>
-        </div>
-        <div class="dol-section">
-            <<quick_swich>>   
-        </div>
-
-    </div> <!-- end dol-body -->
-
-</div> <!-- end dol-settings -->
-
-<</widget>>
 
 <<widget "black_stores_setting">>
 
@@ -270,114 +194,6 @@
 
 <</widget>>
 
-<!--brothel_basement_setting已棄用-->
-<<widget "brothel_basement_setting">>
-
-<div class="dol-settings dol-shadow">
-
-    <!-- 標題 -->
-    <div class="dol-header">
-        <span class="dol-title gold">尋歡洞報酬加倍</span>
-    </div>
-
-    <div class="dol-body">
-
-        <!-- 說明 -->
-        <div class="dol-desc">
-            尋歡洞報酬加倍，嫖妓可不便宜啊。
-        </div>
-        <br>
-
-        <!-- 初始化 -->
-        <<if $brothel_basement_swich is undefined>>
-            <<set $brothel_basement_swich = 0>>
-        <</if>>
-
-        <!-- 開關按鈕 -->
-        <div class="dol-btn">
-            <<button "尋歡洞報酬加倍">>
-                <<set $brothel_basement_swich = $brothel_basement_swich == 0 ? 1 : 0>>
-                <<replace #CE_settingsDiv>>
-                    <<brothel_basement_setting>><br><br>
-                <</replace>>
-            <</button>>
-        </div>
-        <br>
-
-        <!-- 狀態顯示 -->
-        <div class="dol-desc">
-            尋歡洞報酬加倍：
-            <<if $brothel_basement_swich is 0>>
-                <span class="red">關</span>
-                <<set $brothel_basement_price_FIX = 1>>
-            <<else>>
-                <span class="green">開</span>
-            <</if>>
-        </div>
-        <br>
-
-        <!-- 調整倍率 -->
-        <div class="dol-section">
-            <div class="dol-desc">
-                在此設定尋歡洞報酬加倍倍數：
-            </div>
-
-            <<if $brothel_basement_price_FIX is undefined>>
-                <<set $brothel_basement_price_FIX = 1>>
-            <</if>>
-
-            <<numberslider "$brothel_basement_price_FIX" $brothel_basement_price_FIX 1 200 1>>
-
-            <span class='dol-link'>
-                <<link "確定">>
-                    <<if $brothel_basement_swich isnot 1>>
-                        <<set $brothel_basement_price_FIX = 1>>
-                    <</if>>
-                    <<set $brothel_basement_price = $brothel_basement_price * $brothel_basement_price_FIX>>
-                    <<replace #CE_settingsDiv>>
-                        <<brothel_basement_setting>><br><br>
-                    <</replace>>
-                <</link>>
-            </span>
-        </div>
-        <br>
-
-        <!-- 顯示目前倍率與金額 -->
-        <div class="dol-desc">
-            當前尋歡洞報酬加倍倍數：
-            <span class="blue">$brothel_basement_price_FIX</span> 倍。
-            <br><br>
-            當前尋歡洞報酬：
-            <span class="blue"><<printmoney $brothel_basement_price>></span>
-        </div>
-        <br>
-
-        <!-- reset 預設 -->
-        <div class="dol-section">
-            <<link "<span class='dol-link'>恢復預設</span>">>
-                <<set $brothel_basement_price_FIX = 1>>
-
-                <<if $rng gte 95>>
-                    <<set $brothel_basement_price = 3000>>
-                <<elseif $rng gte 85>>
-                    <<set $brothel_basement_price = 2000>>
-                <<elseif $rng gte 45>>
-                    <<set $brothel_basement_price = 1000>>
-                <<else>>
-                    <<set $brothel_basement_price = 500>>
-                <</if>>
-
-                <<replace #CE_settingsDiv>>
-                    <<brothel_basement_setting>><br><br>
-                <</replace>>
-            <</link>>
-        </div>
-    </div> <!-- end dol-body -->
-</div> <!-- end dol-settings -->
-
-<</widget>>
-
-
 <<widget "swich_DEBUG_MODE">>
 
 <div class="dol-settings dol-shadow">
@@ -541,272 +357,367 @@
 
 <</widget>>
 
+
 <<widget "quick_yanling">>
-<div class="dol-settings dol-shadow">
+    <div class="dol-settings dol-shadow">
 
-    <!-- 標題 -->
-    <div class="dol-header">
-        <span class="dol-title gold">快速言靈/其他</span>
-    </div>
-    
-    <!-- 主體 -->
-    <div class="dol-body">
-        <div class="dol-title gold">其他功能：</div>
-        <div class ="settingsToggleItem">
-            <div class="small-description">
-                蜜癮者/植物愛好者特質鎖定
-            </div>
-            <label>
-                <<checkbox "$CE_nectarKeeperEnabled" false true autocheck>>蜜癮者/植物愛好者特質鎖定
-            </label>
-            <mouse class="tooltip linkBlue">(?)
-                <span>
-                   需先獲得植物愛好者特質，否則功能無效，可從原版作弊選單快速獲得         
-                </span>
-            </mouse>
+        <!-- 標題 -->
+        <div class="dol-header">
+            <span class="dol-title gold">快速言靈/其他</span>
         </div>
-        <hr>        
-        
-        <div class="settingsToggleItem">
-            <div class="small-description">
-                每日自動恢復額外狀態（疼痛、疲勞、壓力、自控等）
+
+        <!-- 主體 -->
+        <div class="dol-body">
+            <div class="dol-title gold">其他功能：</div>
+
+            <!-- 特質鎖定 -->
+            <div class="settingsToggleItem">
+                <div class="small-description">
+                    蜜癮者/植物愛好者特質鎖定
+                </div>
+                <label>
+                    <<checkbox "$CE_nectarKeeperEnabled" false true autocheck>>
+                    蜜癮者/植物愛好者特質鎖定
+                </label>
+                <mouse class="tooltip linkBlue">(?)
+                    <span>
+                        需先獲得植物愛好者特質，否則功能無效，可從原版作弊選單快速獲得
+                    </span>
+                </mouse>
             </div>
-            <label>
-                <<checkbox "$swich_extraStatusRestore" false true autocheck>>啟用每日額外恢復
-            </label>
-            <mouse class="tooltip linkBlue">(?)
-                <span>
-                    開啟後，每天遊戲時間將額外恢復各項狀態數值。<br>
-                    💡 注意：此恢復僅限額外狀態，不影響遊戲原本時間流逝造成的變化。
-                </span>
-            </mouse>
-        </div>
-        <hr>
-        
-        <div class="settingsToggleItem">
-            <div class="small-description">
-                啟用後，系統會統一管理以下狀態變數的變化：疼痛、興奮、疲勞、壓力、創傷以及自控。
-                可以透過 <<link "狀態控制">><<replace #CE_settingsDiv>><<CE_statControlPanel>><</replace>><</link>>來設定相關參數。
-            </div>
-            <label>
-                <<checkbox "$CE_VarHook_enable" false true autocheck>>
-                ⚠️狀態變數hook                    
-            </label>                    
-            <mouse class="tooltip linkBlue">(?)<span>
-               實驗性功能，可能存在非預期的作用。<br>              
-            </span></mouse><br>
             <hr>
-            
-            <div class="small-description">
-                天使化Pc放逐觸手次數不再減少，<br>
-                需啟用狀態變數hook。
-            </div>            
-            <label>    
-                <<checkbox "$CE_noAngelBanishLoss" false true autocheck>>
-                天使無限放逐                     
-            </label>
-            <mouse class="tooltip linkBlue">(?)<span>
-                實驗性功能，可能存在非預期的作用。  
-            </span></mouse><br>
-            <hr>
-            
-            <div class="small-description">                
-                戰鬥場景&水下場景氧氣值將鎖定在最大值。<br>
-                需啟用狀態變數hook。
+
+            <!-- 每日額外恢復 -->
+            <div class="settingsToggleItem">
+                <div class="small-description">
+                    每日自動恢復額外狀態（疼痛、疲勞、壓力、自控等）
+                </div>
+                <label>
+                    <<checkbox "$swich_extraStatusRestore" false true autocheck>>
+                    啟用每日額外恢復
+                </label>
+                <mouse class="tooltip linkBlue">(?)
+                    <span>
+                        開啟後，每天遊戲時間將額外恢復各項狀態數值。<br>
+                        💡 注意：此恢復僅限額外狀態，不影響遊戲原本時間流逝造成的變化。
+                    </span>
+                </mouse>
             </div>
-            <label>
-                <<checkbox "$CE_lockOxygenEnabled" false true autocheck>>永不耗氧
-            </label>
-            <mouse class="tooltip linkBlue">(?)
-                <span>
-                    戰鬥（敵人嘗試掐Pc脖子）及潛水場景不再消耗氧氣       
+            <hr>
+
+            <!-- 狀態變數 Hook -->
+            <div class="settingsToggleItem">
+                <div class="small-description">
+                    啟用後，系統會統一管理以下狀態變數的變化：疼痛、興奮、疲勞、壓力、創傷以及自控。
+                    可以透過 <<link "狀態控制">><<replace #CE_settingsDiv>><<CE_statControlPanel>><</replace>><</link>>來設定相關參數。
+                </div>
+                <label>
+                    <<checkbox "$CE_VarHook_enable" false true autocheck>>
+                    ⚠️狀態變數hook
+                </label>
+                <mouse class="tooltip linkBlue">(?)
+                    <span>
+                        實驗性功能，可能存在非預期的作用。<br>
+                    </span>
+                </mouse>
+                <br>
+                <hr>
+
+                <!-- 天使無限放逐 -->
+                <div class="small-description">
+                    天使化Pc放逐觸手次數不再減少，<br>
+                    需啟用狀態變數hook。
+                </div>
+                <label>
+                    <<checkbox "$CE_noAngelBanishLoss" false true autocheck>>
+                    天使無限放逐
+                </label>
+                <mouse class="tooltip linkBlue">(?)
+                    <span>
+                        實驗性功能，可能存在非預期的作用。
+                    </span>
+                </mouse>
+                <br>
+                <hr>
+
+                <!-- 永不耗氧 -->
+                <div class="small-description">
+                    戰鬥場景&水下場景氧氣值將鎖定在最大值。<br>
+                    需啟用狀態變數hook。
+                </div>
+                <label>
+                    <<checkbox "$CE_lockOxygenEnabled" false true autocheck>>
+                    永不耗氧
+                </label>
+                <mouse class="tooltip linkBlue">(?)
+                    <span>
+                        戰鬥（敵人嘗試掐Pc脖子）及潛水場景不再消耗氧氣
+                    </span>
+                </mouse>
+                <br>
+            </div>
+            <hr>
+
+            <div class="dol-title gold">一鍵執行各種言靈：</div>
+            <br>
+
+            <!-- 衣物與身體 -->
+            <details>
+                <summary>衣物 / 身體</summary>
+                <br>
+                <span class="dol-link">
+                    [[一鍵烘乾衣服|$passage][$upperwet to 0, $lowerwet to 0, $underlowerwet to 0, $underupperwet to 0]]
                 </span>
-            </mouse><br>
-            
+                <br>
+                <span class="dol-link">
+                    [[pc縫衣服中…|$passage][$worn.upper.integrity += 1000,$worn.lower.integrity += 1000,$worn.under_lower.integrity += 1000,$worn.under_upper.integrity += 1000]]
+                </span>
+                <br>
+            </details>
+
+            <!-- 狀態 / 性 -->
+            <details>
+                <summary>狀態 / 性</summary>
+                <br>
+                <span class="dol-link">
+                    [[狀態全恢復|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[PC立馬高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
+                </span>
+                <br>
+            </details>
+
+            <!-- 防狼噴霧 / 道具 -->
+            <details>
+                <summary>防狼噴霧 / 道具</summary>
+                <br>
+                <span class="dol-link">
+                    [[防狼噴霧+1|$passage][$spray +=1]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[防狼噴霧上限+1|$passage][$spraymax +=1]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[防狼噴霧上限-1|$passage][$spraymax +=-1]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[防狼噴霧補滿|$passage][$spray = $spraymax]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[金貞操帶|Lake Ruin Box][$rng = 96]]
+                </span>
+                <br>
+            </details>
+
+            <!-- 變化 / 轉化特性 -->
+            <details>
+                <summary>變化 / 轉化特性</summary>
+                <br>
+                <span class="dol-link">
+                    [[pc長翅膀|$passage][$harpy to 100,$birdFly to 1]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[去踏🐴的神殿 一鍵恢復貞潔誓言特質|$passage][$player.virginity.temple to true]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[去除催眠暗示|$passage][$hypnosis to undefined]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[去除渴望特質|$passage][$hypnosis_traits.scream to undefined]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[去除炫耀特質|$passage][$hypnosis_traits.cover to undefined]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[去除異種癖特質|$passage][$hypnosis_traits.deviancy to undefined]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[一鍵恢復全童真|$passage][$player.virginity.vaginal to true,$player.virginity.penile to true,$player.virginity.anal to true,$player.virginity.oral to true,$player.virginity.handholding to true,$player.virginity.kiss to true]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[增加🥛量+50000|$passage][$milk_volume to 50000]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[🥛量上限+50000|$passage][$milk_max to 50000]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[天使放逐次數上限(50)|$passage][$angelBanishMax to 50, $angelBanish to 50]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[吃媚藥|$passage][$drugged += 1000]]
+                </span>
+                <br>
+            </details>
+
+            <!-- 動物化特性 -->
+            <details>
+                <summary>動物化特性</summary>
+                <br>
+                <span class="dol-link">
+                    [[貓化特性|$passage][$cat = 6]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[牛化特性|$passage][$cow = 6]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[鳥化特性|$passage][$harpy = 6, $birdFly=1]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[狼化特性|$passage][$wolfgirl = 6]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[狐化特性|$passage][$fox = 6]]
+                </span>
+                <br>
+                <span class="dol-link">
+                    [[長獠牙|$passage][$transformationParts.traits.fangs to String.fromCharCode (105,115,110,111,32,116,100,101,102,97,117,108,116)]]
+                </span>
+                <br>
+            </details>
+
+            <!-- 蒐集 / 解鎖 -->
+            <details>
+                <summary>蒐集/解鎖</summary>
+                <br>
+
+                <!-- 學會所有食譜 -->
+                <span class="dol-link">
+                    <<link [[學會所有食譜|$passage]]>>
+                        <<set _recipeCount to 0>>
+                        <<for _recipeKey range Object.keys(setup.foodstuff)>>
+                            <<if setup.foodstuff[_recipeKey].recipe?.ingredients?.length >= 1>>
+                                <<if !$foodstuff[_recipeKey]>>
+                                    <<set $foodstuff[_recipeKey] to {amount: 0}>>
+                                <</if>>
+                                <<set $foodstuff[_recipeKey].knows_recipe to true>>
+                            <</if>>
+                        <</for>>
+                        <<for _recipeKey range Object.keys(setup.foodstuff)>>
+                            <<if $foodstuff[_recipeKey]?.knows_recipe is true>>
+                                <<set _recipeCount++>>
+                            <</if>>
+                        <</for>>
+                        <<if _recipeCount >= 5>>
+                            <<earnFeat "Chef de Tournant">>
+                        <</if>>
+                        <<if _recipeCount >= 20>>
+                            <<earnFeat "Chef de Partie">>
+                        <</if>>
+                        <<if _recipeCount >= 50>>
+                            <<earnFeat "Sous Chef">>
+                        <</if>>
+                    <</link>>
+                </span>
+                <br>
+
+                <!-- 獲得所有種子 -->
+                <span class="dol-link">
+                    <<link [[獲得所有種子|$passage]]>>
+                        <<run unlockAllSeeds()>>
+                    <</link>>
+                </span>
+                <br>
+
+                <!-- 獲得所有一般古董 -->
+                <span class="dol-link">
+                    <<link [[獲得所有一般古董|$passage]]>>
+                        <<updateMuseumAntiques>>
+                        <<set _antiqueValues to {
+                            antiquebox: 10,
+                            antiquesilverring: 20,
+                            antiquegoldnecklace: 250,
+                            antiquecrystal: 200,
+                            antiquehorn: 100,
+                            antiquewatch: 200,
+                            antiquedildo: 50,
+                            antiquecandlestick: 50,
+                            antiqueforestarrow: 20,
+                            antiqueforestdagger: 40,
+                            antiqueforestgem: 100,
+                            antiquesilverbrooch: 50,
+                            antiquetrashcup: 50,
+                            antiquetrashburner: 100,
+                            antiquebrassstatuette: 120,
+                            antiquecoppercompass: 50,
+                            antiquegrenade: 80,
+                            antiquestonetalisman: 1200,
+                            antiquesilvermask: 3000,
+                            antiquediamond: 2000,
+                            antiquesilvercompass: 2200,
+                            antiquesilverdagger: 240,
+                            antiquerustedcutlass: 10,
+                            antiquecutlass: 120,
+                            antiqueleathermap: 4000,
+                            antiquebell: 10000,
+                            antiquebullet: 50,
+                            antiqueshell: 100,
+                            antiquegoldring: 1500,
+                            antiquegoldbrooch: 500,
+                            antiquecoralring: 800,
+                            antiquehourglass: 1400,
+                            antiquecoppercoin: 10,
+                            antiquesilvercoin: 20,
+                            antiquegoldcoin: 150,
+                            antiquesilverblade: 60,
+                            antiqueivorystatuette: 500,
+                            antiquestrangefetish: 15,
+                            antiquesilvergoblet: 60,
+                            antiquesilvercrown: 1200,
+                            antiquewhitecrystal: 2000,
+                            antiqueminesign: 140,
+                            antiqueobsidiandisc: 500,
+                            antiquewoodenmask: 40,
+                            antiquetrilobitefossil: 50,
+                            antiqueislandarrow: 20,
+                            antiquegoldcompass: 5000,
+                            antiqueswordcane: 50,
+                            antiquechocolate: 25,
+                            antiqueteacaddy: 20,
+                            antiquewoodenfigurine: 15,
+                            antiquecopperring: 5,
+                            antiquesilveramulet: 200,
+                            antiquebucket: 200,
+                            antiquesilvermanacle: 400,
+                            antiquesnuffer: 200,
+                            antiquewhip: 200,
+                            antiquehorn2: 400,
+                            antiquegolddagger: 4000,
+                            antiquegoldamulet: 4000,
+                            antiquegoldmask: 12000
+                        }>>
+                        <<for _antiqueKey range Object.keys(_antiqueValues)>>
+                            <<if $museumAntiques.antiques[_antiqueKey] is "notFound">>
+                                <<museumAntiqueStatus _antiqueKey "found">>
+                                <<if $museumAntiques.antiques[_antiqueKey] is "found">>
+                                    <<set $antiquemoney += _antiqueValues[_antiqueKey]>>
+                                <</if>>
+                            <</if>>
+                        <</for>>
+                    <</link>>
+                </span>
+                <br>
+            </details>
+
         </div>
-        <hr>
-        
-        <div class="dol-title gold">一鍵執行各種言靈：</div>
-        <br>
-
-        <!-- 衣物與身體 -->
-        <details>
-            <summary>衣物 / 身體</summary>
-            <br>
-            <span class="dol-link">
-                [[一鍵烘乾衣服|$passage][$upperwet to 0, $lowerwet to 0, $underlowerwet to 0, $underupperwet to 0]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[pc縫衣服中…|$passage][$worn.upper.integrity += 1000,$worn.lower.integrity += 1000,$worn.under_lower.integrity += 1000,$worn.under_upper.integrity += 1000]]
-            </span>
-            <br>
-        </details>
-
-        <!-- 狀態 / 性 -->
-        <details>
-            <summary>狀態 / 性</summary>
-            <br>
-            <span class="dol-link">
-                [[狀態全恢復|$passage][$pain = 0,$arousal = 0,$tiredness = 0,$stress = 0,$trauma = 0,$control = 1000,$drunk = 0,$drugged = 0,$hallucinogen = 0]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[PC立馬高潮|$passage][$semen_amount = $semen_volume,$semen_volume += 1000,$arousal = 10000]]
-            </span>
-            <br>
-        </details>
-
-        <!-- 噴霧與道具 -->
-        <details>
-            <summary>防狼噴霧 / 道具</summary>
-            <br>
-            <span class="dol-link">
-                [[防狼噴霧+1|$passage][$spray +=1]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[防狼噴霧上限+1|$passage][$spraymax +=1]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[防狼噴霧上限-1|$passage][$spraymax +=-1]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[防狼噴霧補滿|$passage][$spray = $spraymax]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[金貞操帶|Lake Ruin Box][$rng = 96]]
-            </span>
-            <br>
-        </details>
-
-        <!-- 變化 / 轉化 -->
-        <details>
-            <summary>變化 / 轉化特性</summary>
-            <br>
-            <span class="dol-link">
-                [[pc長翅膀|$passage][$harpy to 100,$birdFly to 1]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[去踏🐴的神殿 一鍵恢復貞潔誓言特質|$passage][$player.virginity.temple to true]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[去除催眠暗示|$passage][$hypnosis to undefined]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[去除渴望特質|$passage][$hypnosis_traits.scream to undefined]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[去除炫耀特質|$passage][$hypnosis_traits.cover to undefined]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[去除異種癖特質|$passage][$hypnosis_traits.deviancy to undefined]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[一鍵恢復全童真|$passage][$player.virginity.vaginal to true,$player.virginity.penile to true,$player.virginity.anal to true,$player.virginity.oral to true,$player.virginity.handholding to true,$player.virginity.kiss to true]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[增加🥛量+50000|$passage][$milk_volume to 50000]] 
-            </span>
-            <br>
-            <span class="dol-link">
-                [[🥛量上限+50000|$passage][$milk_max to 50000]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[天使放逐次數上限(50)|$passage][$angelBanishMax to 50, $angelBanish to 50]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[吃媚藥|$passage][$drugged += 1000]]
-            </span>
-            <br>
-        </details>
-
-        <!-- 動物 / 轉化 -->
-        <details>
-            <summary>動物化特性</summary>
-            <br>
-            <span class="dol-link">
-                [[貓化特性|$passage][$cat = 6]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[牛化特性|$passage][$cow = 6]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[鳥化特性|$passage][$harpy = 6, $birdFly=1]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[狼化特性|$passage][$wolfgirl = 6]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[狐化特性|$passage][$fox = 6]]
-            </span>
-            <br>
-            <span class="dol-link">
-                [[長獠牙|$passage][$transformationParts.traits.fangs to String.fromCharCode (105,115,110,111,32,116,100,101,102,97,117,108,116)]]
-            </span>
-            <br>
-        </details>
-
     </div>
-</div>
-<</widget>>
-
-<<widget "Times_jumps">>
-
-<div class="dol-settings dol-shadow">
-
-    <!-- 標題 -->
-    <div class="dol-header">
-        <span class="dol-title gold">時空穿越</span>
-    </div>
-
-    <!-- 主體 -->
-    <div class="dol-body">
-
-        <div class="dol-desc">快速跳轉時間到指定小時：</div>
-        <br>
-
-        <span class="dol-link">[[時空穿越到0點|$passage][Time.setTime(0, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到1點|$passage][Time.setTime(1, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到2點|$passage][Time.setTime(2, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到3點|$passage][Time.setTime(3, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到4點|$passage][Time.setTime(4, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到5點|$passage][Time.setTime(5, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到6點|$passage][Time.setTime(6, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到7點|$passage][Time.setTime(7, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到8點|$passage][Time.setTime(8, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到9點|$passage][Time.setTime(9, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到10點|$passage][Time.setTime(10, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到11點|$passage][Time.setTime(11, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到12點|$passage][Time.setTime(12, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到13點|$passage][Time.setTime(13, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到14點|$passage][Time.setTime(14, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到15點|$passage][Time.setTime(15, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到16點|$passage][Time.setTime(16, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到17點|$passage][Time.setTime(17, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到18點|$passage][Time.setTime(18, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到19點|$passage][Time.setTime(19, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到20點|$passage][Time.setTime(20, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到21點|$passage][Time.setTime(21, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到22點|$passage][Time.setTime(22, 0)]]</span><br>
-        <span class="dol-link">[[時空穿越到23點|$passage][Time.setTime(23, 0)]]</span><br>
-    </div>
-</div>
-
 <</widget>>

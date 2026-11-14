@@ -3,160 +3,24 @@
  * 對齊 MapleBirch / Simple Framework 兩種時間旅行函數
  * ========================================================= */
 const TimeTravelAdapter = (() => {
-
-    const LOG_PREFIX = '[cheat Extended][timeTrevel] ⏱️';
-
-    // 判斷遊戲是否有 Simple Framework
-    const hasSimpleFramework =
-        !!window.modUtils?.getAnyModByNameNoAlias?.('Simple Frameworks');
-
-    console.info(
-        `${LOG_PREFIX} Adapter 初始化，框架模式：`,
-        hasSimpleFramework ? 'Simple Framework' : 'MapleBirch'
-    );
-    
-    /* =====================================================
-     *  detectTimeTravelAPI
-     *  MapleBirch時空穿越api呼叫方式新版與舊版不同
-     *  此為兼容函數
-     *  功能為返回需要呼叫的方式(返回字串以供條件判斷)
-     * ===================================================== */
-    function detectTimeTravelAPI() {
-        if (typeof maplebirch?.dynamic?.timeTravel === "function") return "dynamic";
-        if (typeof maplebirch?.state?.timeTravel === "function") return "state";
-    return "none";
+    const LOG_PREFIX = '[Cheat Extended][TimeTravel]';
+    function getAPI() {
+        if (typeof window.maplebirch?.dynamic?.timeTravel === 'function') return window.maplebirch.dynamic.timeTravel.bind(window.maplebirch.dynamic);
+        if (typeof window.maplebirch?.state?.timeTravel === 'function') return window.maplebirch.state.timeTravel.bind(window.maplebirch.state);
+        console.warn(`${LOG_PREFIX} MapleBirch timeTravel API 不存在`);
+        return null;
     }
-
-    /* =====================================================
-     * travelAbsolute
-     * 將目標絕對時間傳給 MapleBirch 或 Simple Framework
-     * ===================================================== */
-    function travelAbsolute({ year, month, day, hour, minute, second }) {
-
-        console.info(
-            `${LOG_PREFIX} 絕對時間請求`,
-            { year, month, day, hour, minute, second }
-        );
-
-        if (!hasSimpleFramework) {
-            // MapleBirch / DoL 原生呼叫
-            //maplebirch.state.timeTravel({ year, month, day, hour, minute, second });
-            //maplebirch.dynamic.timeTravel({ year, month, day, hour, minute, second });
-            
-            const timeTravelMethod = detectTimeTravelAPI();
-            ({
-                dynamic: () => maplebirch.dynamic?.timeTravel({ year, month, day, hour, minute, second }),
-                state:   () => maplebirch.state?.timeTravel({ year, month, day, hour, minute, second }),
-                none:    () => console.warn("[cheat extended ]timeTravel 函式不存在於當前框架版本")
-            })[timeTravelMethod]();
-            Engine.play(V.passage);
-            return;
-        }
-
-        // ===== Simple Framework 精準計算 =====
-        const curr = new Date(Time.year, Time.month - 1, Time.monthDay, Time.hour, Time.minute, Time.second);
-        const target = new Date(year, month - 1, day, hour, minute, second);
-
-        // 判斷是向前還是向後時間旅行
-        let backward = target < curr;
-        let start = backward ? target : curr;
-        let end = backward ? curr : target;
-
-        // 初始化當前日期
-        let y = start.getFullYear();
-        let m = start.getMonth();
-        let d = start.getDate();
-        let h = start.getHours();
-        let min = start.getMinutes();
-        let s = start.getSeconds();
-
-        let years = 0, months = 0;
-
-        // 計算年份差
-        while (new Date(y + 1, m, d, h, min, s) <= end) {
-            y++;
-            years++;
-        }
-
-        // 計算月份差
-        while (new Date(y, m + 1, d, h, min, s) <= end) {
-            m++;
-            months++;
-            if (m > 11) { 
-                m = 0; 
-                y++; // 處理跨年
-            }
-        }
-
-        // 計算剩餘天/時/分/秒
-        let tempDate = new Date(y, m, d, h, min, s);
-        let diffMs = end - tempDate;
-
-        let days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-        diffMs -= days * 1000 * 60 * 60 * 24;
-
-        let hours = Math.floor(diffMs / (1000 * 60 * 60));
-        diffMs -= hours * 1000 * 60 * 60;
-
-        let minutes = Math.floor(diffMs / (1000 * 60));
-        diffMs -= minutes * 1000 * 60;
-
-        let seconds = Math.floor(diffMs / 1000);
-
-        const payload = { year: years, month: months, day: days, hour: hours, min: minutes, sec: seconds };
-
-        console.info(`${LOG_PREFIX} Simple Framework 精準時間呼叫`, { payload, backward });
-
-        // 呼叫 Simple Framework 的時間旅行
-        TimeHandle.timeTravel(payload, backward);
-        Engine.play(V.passage);
+    function execute(payload) {
+        const api = getAPI();
+        if (!api) return;
+        const result = api(payload);
+        if (result !== false) Engine.play(V.passage);
     }
-
-    /* =====================================================
-     * travelRelative
-     * 直接使用相對時間（增減年/月/日/時/分/秒）
-     * ===================================================== */
-    function travelRelative(opts) {
-
-        console.info(`${LOG_PREFIX} 相對時間請求`, opts);
-
-        if (!hasSimpleFramework) {
-            // MapleBirch 直接傳入
-            //maplebirch.state.timeTravel(opts);
-            //maplebirch.dynamic.timeTravel(opts);
-            const timeTravelMethod = detectTimeTravelAPI();
-
-            ({
-                dynamic: () => maplebirch.dynamic?.timeTravel(opts),
-                state:   () => maplebirch.state?.timeTravel(opts),
-                none:    () => console.warn("timeTravel 函式不存在於當前框架版本")
-            })[timeTravelMethod]();
-            
-            Engine.play(V.passage);
-            return;
-        }
-
-        // Simple Framework：判斷是否有負值，決定 backward
-        const backward = Object.values(opts).some(v => Number(v) < 0);
-
-        // 組裝正數 payload，Simple Framework 只接受正數
-        const payload = {
-            year:  Math.abs(Number(opts.addYears)  || 0),
-            month: Math.abs(Number(opts.addMonths) || 0),
-            day:   Math.abs(Number(opts.addDays)   || 0),
-            hour:  Math.abs(Number(opts.addHours)  || 0),
-            min:   Math.abs(Number(opts.addMinutes)|| 0)
-        };
-
-        console.info(`${LOG_PREFIX} Simple Framework 相對時間呼叫`, { payload, backward });
-
-        TimeHandle.timeTravel(payload, backward);
-        Engine.play(V.passage);
-    }
-
     return {
-        absolute: travelAbsolute,
-        relative: travelRelative
+        absolute({ year, month, day, hour, minute, second }) {
+            execute({ year, month, day, hour, minute, second });
+        },
+        relative(opts) { execute(opts); }
     };
 })();
 

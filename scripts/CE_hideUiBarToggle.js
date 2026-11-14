@@ -21,11 +21,3 @@ $(document).on(":passagedisplay", () => {
         $(ids.join(",")).toggle(show);
     }, 100); // 延時 100ms，可視情況調整
 });
-
-//隱藏cheat Extended 於狀態欄的操作介面
-$(document).on(":passageend", () => {
-    const toggleEnabled = V.CE_hideCEToggleDisable === true;
-    $("#CE_Toggle").toggle(!toggleEnabled);
-    $("#CEstatebox").toggle(!toggleEnabled);
-    
-});

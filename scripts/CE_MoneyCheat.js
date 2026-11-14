@@ -175,7 +175,6 @@ function registerMoneyWatchEvent() {
 
     const logger = window.modUtils.getLogger();
     const maplebirchMod = window.modUtils.getMod('maplebirch');
-    const simpleMod = window.modUtils.getMod('Simple Frameworks');
 
     let lastMoney =null;
         
@@ -229,18 +228,9 @@ function registerMoneyWatchEvent() {
 
 
     if (maplebirchMod) {
-        maplebirch.dynamic.regTimeEvent('onSec', 'CE_money_Watch', {
-            action: moneyWatchAction,
-            priority: 0,
-            once: false
-        });
+        registerCE_genericTimeEvent('onSec', 'CE_money_Watch', moneyWatchAction);
       //  logger.log('[Cheat Extended] ✅ Maplebirch 已註冊金錢變化監控事件');
         console.log('[Cheat Extended] ✅ Maplebirch 已註冊金錢變化監控事件');
-
-    } else if (simpleMod) {
-        new TimeEvent('onSec', 'CE_money_Watch').Action(moneyWatchAction);
-      //  logger.log('[Cheat Extended] ✅ Simple Frameworks 已註冊金錢變化監控事件');
-        console.log('[Cheat Extended] ✅ Simple Frameworks 已註冊金錢變化監控事件');
 
     } else {
         logger.error('[Cheat Extended] ❌ 未檢測到框架，無法註冊金錢監控事件');

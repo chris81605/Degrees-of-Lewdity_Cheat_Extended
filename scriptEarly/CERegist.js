@@ -44,29 +44,7 @@
                     return;
                 }
 
-                // Simple Frameworks 框架檢測
-                const simpleMod = window.modUtils.getMod('Simple Frameworks');
-                if (simpleMod) {
-                    if (compareVersions(simpleMod.version, "2.0.5") === 1) {
-                        logger.log(`[Cheat Extended] 检测到 Simple Frameworks 框架 v${simpleMod.version}`);
-
-                        // Simple Frameworks 註冊 Cheat Extended
-                        simpleFrameworks.addto('iModCheats', 'cheat_extended');                     
-                        simpleFrameworks.addto('ModMenuBig', 'CE_originalCheatButton');
-                      //  simpleFrameworks.addto('ModMenuBig', 'CE_buttom');                      
-                        simpleFrameworks.addto('ModCaptionAfterDescription', 'CEstatebox');
-                        simpleFrameworks.addto('iModOptions', 'CE_options');
-                        simpleFrameworks.addto('iModFooter', 'CE_CheatExtendedVersion');
-                       // V.CE_SFflag = true;
-
-                    } else {
-                        logger.error(`[Cheat Extended] Simple Frameworks 版本過低，至少需要 v2.0.5，當前 v${simpleMod.version}`);
-                    }
-                    return;
-                }
-
-                // 都沒檢測到
-                logger.error(`[Cheat Extended] 未检测到 maplebirch 或 Simple Frameworks 框架，请加载前置模组`);
+                logger.error('[Cheat Extended] 未檢測到 maplebirch 框架，請安裝 MapleBirch >=3.2.5');
             },
         }
     );
